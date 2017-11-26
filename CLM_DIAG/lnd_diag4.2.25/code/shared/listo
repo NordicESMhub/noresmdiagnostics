@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Picks off four fields from an "hsi ls -P" listing; sorting on these lines and picking off the file name
+# produces a listing in tape order with files sorted in beginning-to-end order on the tape
+
+# Sample usage: % listo HPSS.list
+#
+# where HPSS.list is an "ls -P" listing of files on the HPSS to be transferred to disk
+
+awk '$3 != 0 {printf("%s %12.12d %12.12d %s\n",substr($6,0,6),substr($5,0,index($5,"+")-1),substr($5,index($5,"+")+1),$2)}' $1
