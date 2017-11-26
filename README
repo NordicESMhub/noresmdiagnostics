@@ -1,0 +1,75 @@
+===========================================================
+NorESM-version of the NCAR AMWG Diagnostics Package on NIRD
+===========================================================
+Author: Johan Liakka
+Last updated: 01/11/2017
+
+
+Table of contents
+-----------------
+1.  Objective of README
+2.  Description of diag_run
+3.  Basic usage
+4.  Major changes in diagnostics packages compared to the NCAR versions
+4.1 CAM_DIAG specific changes
+4.2 CLM_DIAG specific changes
+4.3 CICE_DIAG specific changes
+5.  Contact information
+-----------------
+
+
+1. Objective of README
+-----------------------------------------------------------
+This README describes version 1.0.0 of the application diag_run, which is used to run NorESM diagnostics packages from the command line.
+In addition, this README documents some major changes that has been made to the diagnostics packages since their original versions (developed by NCAR).
+All future modifications to diag_run and the associated diagnostics packages are documented by git (https://github.com/johiak/NoresmDiagnostics).
+
+For simplicity, throughout this README, all directories are written as roots of /projects/NS2345K/noresm_diagnostics.
+Hence, for example ./mydir/myfile -> /projects/NS2345K/noresm_diagnostics/mydir/myfile.
+
+
+2. Description of diag_run
+-----------------------------------------------------------
+./bin/diag_run is an executable bash application, wrapping around the different c shell (csh) scripts, used to run the diagnostics of each of the NorESM components.
+Hence, instead of modifying each csh script manually for each component, diag_run enables the user to run and configure each package from the command line.
+
+At the moment, the atmospheric (CAM), land (CLM) and sea-ice (CICE) diagnostics packages have been implemented to diag_run (micom and pop are under development).
+The code to those packages are located in ./CAM_DIAG, ./CLM_DIAG and ./CICE_DIAG, respectively.
+
+
+3. Basic usage
+-----------------------------------------------------------
+A user manual of diag_run is avalable on the NorESM wiki (https://wiki.met.no/noresm/modeldiagnostics), and also appears if you run ./bin/diag_run
+
+
+4. Major changes in diagnostics packages compared to the NCAR versions
+-----------------------------------------------------------
+Note that I here only report on the major modifications to the packages, i.e. those that are probably noticeable for the user.
+In addition to the major modifications, however, a lot of "minor" performance imporvements have also been implemented, such as bug fixing and code optimizations.
+Unfortunately, because anz version control system (such as Git) was not used from the beginning of the development work, many of those minor changes have not been explicitly documented. If needed there is however the always the possiliby to compare in detail the state of the present code to the code versions I started with, in order to isolate the changes that have been made.
+
+The following major changes have been made in all diagnostic packages:
+- The calculation of the climatology has been improved, using the ncclimo oporator from nco.
+- The csh variables publish_html and publish_html_root have been added in order to enable publication of the html on the NIRD web server.
+- There is now the option to calculate time series over the entire simulation (default). Hence, the start and end years of the time series must no longer be specified.
+- The csh variable CLIMO_TIME_SERIES_SWITCH has been added in order to allow for diag_run to compute only climatology or time series if desired.
+- The environmental variable ncclimo_dir has been added in order to allow for diag_run to be run by cron.
+
+4.1 CAM_DIAG specific major changes
+-----------------------------------------------------------
+- The CAM diagnostics (amwg) now calculate the annual and global mean time series of the net TOA radiation balance. The results are published on the web server together with the other figures.
+
+4.2. CLM_DIAG specific major changes
+-----------------------------------------------------------
+- The amount of variables used in the time series calculations have been dramatically reduced in order to reduce time and computational resources
+- If time series or climatology is computed is now determined by the selected sets in the computation.
+
+4.3 CICE_DIAG specific major changes
+-----------------------------------------------------------
+- The switch CNTL has been added in order to determine whether one or two cases should be plotted.
+
+5. Contact information
+-----------------------------------------------------------
+Please contact me if you encounter any problems, or have any comments or questions:
+E-mail: johan.liakka@nersc.no
+Phone: +47 555 89842
