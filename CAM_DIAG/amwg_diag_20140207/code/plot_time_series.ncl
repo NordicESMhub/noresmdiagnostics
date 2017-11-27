@@ -16,6 +16,8 @@ color_type = getenv("COLORTYPE")
 time_stamp = getenv("TIMESTAMP")
 version    = getenv("VERSION")
 
+vars = (/"netTOA","TREFHT","CLDTOT","CLDLOW","CLDMED","CLDHGH","SST","SWCF","LWCF"/)
+
 f1 = addfile(test_input+"/"+"time_series_ANN_yrs"+syr1+"-"+eyr1+".nc","r")
 
 if (compare .eq. "USER") then
