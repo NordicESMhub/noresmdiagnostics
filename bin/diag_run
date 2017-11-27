@@ -545,7 +545,7 @@ do
 	fi
 
 	# CHANGE WEB DIR IN DIAGNOSTICS SCRIPT
-	echo "-CHANGING publish_html_root in $DIAG_FILE"
+	echo "-CHANGING publish_html_root to $WEB_PATH in $DIAG_FILE"
 	if /usr/bin/grep -q /path/to/html/directory $DIAG_FILE
 	then
     	    /usr/bin/sed -i "s+/path/to/html/directory+${WEB_PATH}+g" $DIAG_FILE
