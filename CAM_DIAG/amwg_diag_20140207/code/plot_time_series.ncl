@@ -1,6 +1,8 @@
 ; NCL script
 ; plot_time_series.ncl
 ; Johan Liakka Nov 2017
+load "$DIAG_CODE/functions_time_series.ncl"
+
 begin
 
 test_input = getenv("TEST_INPUT")
@@ -16,142 +18,216 @@ color_type = getenv("COLORTYPE")
 time_stamp = getenv("TIMESTAMP")
 version    = getenv("VERSION")
 
-vars = (/"netTOA","TREFHT","CLDTOT","CLDLOW","CLDMED","CLDHGH","SST","SWCF","LWCF"/)
-
-f1 = addfile(test_input+"/"+"time_series_ANN_yrs"+syr1+"-"+eyr1+".nc","r")
+inptr1 = addfile(test_input+"/"+"time_series_ANN_yrs"+syr1+"-"+eyr1+".nc","r")
 
 if (compare .eq. "USER") then
    cntl_input = getenv("CNTL_INPUT")
    case2      = getenv("CASE2")
-   f2 = addfile(cntl_input+"/"+"time_series_ANN_yrs"+syr2+"-"+eyr2+".nc","r")
-   case = case1+" and "+case2
-   ncases = 2
+   inptr2     = addfile(cntl_input+"/"+"time_series_ANN_yrs"+syr2+"-"+eyr2+".nc","r")
+   case       = case1+" and "+case2
+   ncases     = 2
 else
-   case = case1
-   ncases = 1
+   case       = case1
+   ncases     = 1
 end if
 
-fsnt_1 = f1->FSNT
-flnt_1 = f1->FLNT
+vars   = (/"Rnet","TREFHT","CLDTOT","CLDLOW","CLDMED","CLDHGH","SST","SWCF","LWCF"/)
+nvars  = dimsizes(vars)
 
-ndim = dimsizes(fsnt_1)
-ntimes1 = ndim(0)
-ntimes_tot = ntimes1
+do i = 0, nvars-1
 
-if (ncases .gt. 1) then
-   fsnt_2 = f2->FSNT
-   flnt_2 = f2->FLNT
-
-   ndim = dimsizes(fsnt_2)
-   ntimes2 = ndim(0)
-
-   ntimes_tot = max((/ntimes1,ntimes2/))
-end if
-
-if (compare .eq. "OBS") then
-   if (color_type .eq. "COLOR") then
-      plotname = "tset1_FSNT-FLNT_obsc"
-   else
-      plotname = "tset1_FSNT-FLNT_obs"
+   if (vars(i).eq."Rnet") then
+      A = get_Rnet (inptr1)
    end if
-else
-   if (color_type .eq. "COLOR") then
-      plotname = "tset1_FSNT-FLNT_c"
-   else
-      plotname = "tset1_FSNT-FLNT"
+
+   if (vars(i).eq."TREFHT") then
+      A = get_TREFHT (inptr1)
    end if
-end if
-title = "net TOA raditation flux"
 
-; plot resources
-res                        = True
-res@gsnFrame               = False
-res@gsnDraw                = False
-res@pmLegendSide           = "Right"
-res@pmLegendWidthF         = 0.15
-res@pmLegendDisplayMode    = "Always"
-res@lgPerimOn              = False
-res@lgLabelFontHeightF     = 0.015
-res@trXReverse             = False
-if (compare .eq."OBS") then
-  res@pmLegendHeightF        = 0.08
-  res@xyExplicitLegendLabels = (/case1/)
-  res@xyLineThicknesses      = (/2./)
-  res@pmLegendParallelPosF   = 0.95
-  if (color_type .eq. "COLOR") then
-    res@xyLineColors           = (/"blue"/)
-    res@xyDashPatterns         = (/0/)
-  else
-    res@xyMonoLineColor      = True
-    res@xyLineColor          = "black"
-    res@xyDashPatterns       = (/0/)
-  end if
-else
-  res@pmLegendHeightF        = 0.10
-  res@xyExplicitLegendLabels = (/case1,case2/)
-  res@lgItemOrder  = (/ 1,0 /)
-  res@xyLineThicknesses      = (/2.,2./)
-  res@pmLegendParallelPosF   = 0.9
-  if (color_type .eq. "COLOR") then
-    res@xyLineColors           = (/"blue","red"/)
-    res@xyDashPatterns         = (/0,0/)
-  else
-    res@xyMonoLineColor      = True
-    res@xyLineColor          = "black"
-    res@xyDashPatterns       = (/0,1/)
-  end if
-end if
-res@tiYAxisString          = "FSNT-FLNT [W m~S~-2~N~]"
-res@tiXAxisString          = "Years"
-res@tiMainString           = title
-res@tiXAxisFontHeightF     = 0.02
-res@tiYAxisFontHeightF     = 0.02
-res@tiMainFontHeightF      = 0.02
-res@txFontHeightF          = 0.01
-res@gsnYRefLine            = 0.0
+   if (vars(i).eq."CLDTOT") then
+      A = get_CLDTOT (inptr1)
+   end if
 
-data = new((/ncases,ntimes_tot/),float)        ; data to plot
-pyrs = fspan(1,ntimes_tot,ntimes_tot)
+   if (vars(i).eq."CLDLOW") then
+      A = get_CLDLOW (inptr1)
+   end if
 
-wks = gsn_open_wks("ps",wkdir+"/"+plotname)
+   if (vars(i).eq."CLDMED") then
+      A = get_CLDMED (inptr1)
+   end if
 
-plotO = new(1,"graphic")
+   if (vars(i).eq."CLDHGH") then
+      A = get_CLDHGH (inptr1)
+   end if
 
-res@pmLegendOrthogonalPosF = -0.7
+   if (vars(i).eq."SST") then
+      A = get_SST (inptr1)
+   end if
 
-data(0,0:ntimes1-1) = (/fsnt_1 - flnt_1/)
-if (compare .eq. "USER") then
-   data(1,0:ntimes2-1) = (/fsnt_2 - flnt_2/)
-end if
-plotO = gsn_csm_xy(wks,pyrs,data,res)
+   if (vars(i).eq."SWCF") then
+      A = get_SWCFTOA (inptr1)
+   end if
 
-pan = True
-pan@gsnMaximize = True
-pan@gsnPaperOrientation = "portrait"
-pan@gsnFrame = False
-pan@gsnPanelTop = 0.96
-if (time_stamp .eq. "True") then
-  pan@gsnPanelBottom = 0.05
-  gsn_panel(wks,(/plotO/),(/1,1/),pan)
-  infoTimeStamp(wks,0.011,"DIAG Version: "+version)
-else
-  gsn_panel(wks,(/plotO/),(/1,1/),pan)
-end if
-;txres = True
-;txres@txFontHeightF = 0.025
-;gsn_text_ndc(wks,title,0.5,0.98,txres)
+   if (vars(i).eq."LWCF") then
+      A = get_LWCFTOA (inptr1)
+   end if
 
-frame (wks)
-delete (wks)
-delete (data)
-delete (pyrs)
-delete(res@xyExplicitLegendLabels)
-delete(res@xyLineThicknesses)
-delete(res@xyDashPatterns)
-;delete (res@gsnLeftString)
-if (color_type .eq. "COLOR") then
-  delete (res@xyLineColors)
-end if
+   if (all(A.eq.-999.)) then
+      print (vars(i)+" not present in test case input file.")
+      delete(A)
+      continue       ; procede to next variable in do loop
+   end if
+
+   ndim = dimsizes(A)
+   ntimes1 = ndim(0)
+   ntimes_tot = ntimes1
+
+   if (ncases .gt. 1) then
+      if (vars(i).eq."Rnet") then
+         B = get_Rnet (inptr2)
+      end if
+
+      if (vars(i).eq."TREFHT") then
+         B = get_TREFHT (inptr2)
+      end if
+
+      if (vars(i).eq."CLDTOT") then
+         B = get_CLDTOT (inptr2)
+      end if
+
+      if (vars(i).eq."CLDLOW") then
+         B = get_CLDLOW (inptr2)
+      end if
+
+      if (vars(i).eq."CLDMED") then
+         B = get_CLDMED (inptr2)
+      end if
+
+      if (vars(i).eq."CLDHGH") then
+         B = get_CLDHGH (inptr2)
+      end if
+
+      if (vars(i).eq."SST") then
+         B = get_SST (inptr2)
+      end if
+
+      if (vars(i).eq."SWCF") then
+         B = get_SWCFTOA (inptr2)
+      end if
+
+      if (vars(i).eq."LWCF") then
+         B = get_LWCFTOA (inptr2)
+      end if
+
+      ndim = dimsizes(B)
+      ntimes2 = ndim(0)
+      ntimes_tot = max((/ntimes1,ntimes2/))
+   end if
+
+   if (compare .eq. "OBS") then
+      if (color_type .eq. "COLOR") then
+         plotname = "tset1_"+vars(i)+"_obsc"
+      else
+         plotname = "tset1_"+vars(i)+"_obs"
+      end if
+   else
+      if (color_type .eq. "COLOR") then
+         plotname = "tset1_"+vars(i)+"_c"
+      else
+         plotname = "tset1_"+vars(i)
+      end if
+   end if
+
+;  plot resources
+   res                        = True
+   res@gsnFrame               = False
+   res@gsnDraw                = False
+   res@pmLegendSide           = "Right"
+   res@pmLegendWidthF         = 0.15
+   res@pmLegendDisplayMode    = "Always"
+   res@lgPerimOn              = False
+   res@lgLabelFontHeightF     = 0.015
+   res@trXReverse             = False
+   if (compare .eq."OBS") then
+      res@pmLegendHeightF        = 0.08
+      res@xyExplicitLegendLabels = (/case1/)
+      res@xyLineThicknesses      = (/2./)
+      res@pmLegendParallelPosF   = 0.95
+      if (color_type .eq. "COLOR") then
+         res@xyLineColors           = (/"blue"/)
+         res@xyDashPatterns         = (/0/)
+      else
+         res@xyMonoLineColor      = True
+         res@xyLineColor          = "black"
+         res@xyDashPatterns       = (/0/)
+      end if
+   else
+      res@pmLegendHeightF        = 0.10
+      res@xyExplicitLegendLabels = (/case1,case2/)
+      res@lgItemOrder  = (/ 1,0 /)
+      res@xyLineThicknesses      = (/2.,2./)
+      res@pmLegendParallelPosF   = 0.9
+      if (color_type .eq. "COLOR") then
+         res@xyLineColors           = (/"blue","red"/)
+         res@xyDashPatterns         = (/0,0/)
+      else
+         res@xyMonoLineColor      = True
+         res@xyLineColor          = "black"
+         res@xyDashPatterns       = (/0,1/)
+      end if
+   end if
+   res@tiYAxisString          = "["+A@units+"]"
+   res@tiXAxisString          = "Years"
+   res@tiMainString           = A@long_name
+   res@tiXAxisFontHeightF     = 0.02
+   res@tiYAxisFontHeightF     = 0.02
+   res@tiMainFontHeightF      = 0.02
+   res@txFontHeightF          = 0.01
+   res@gsnYRefLine            = 0.0
+
+   data = new((/ncases,ntimes_tot/),float)        ; data to plot
+   pyrs = fspan(1,ntimes_tot,ntimes_tot)
+
+   wks = gsn_open_wks("ps",wkdir+"/"+plotname)
+   plotO = new(1,"graphic")
+
+   res@pmLegendOrthogonalPosF = -0.7
+
+   data(0,0:ntimes1-1) = (/A/)
+   if (compare .eq. "USER") then
+      data(1,0:ntimes2-1) = (/B/)
+   end if
+   plotO = gsn_csm_xy(wks,pyrs,data,res)
+
+   pan = True
+   pan@gsnMaximize = True
+   pan@gsnPaperOrientation = "portrait"
+   pan@gsnFrame = False
+   pan@gsnPanelTop = 0.96
+   if (time_stamp .eq. "True") then
+      pan@gsnPanelBottom = 0.05
+      gsn_panel(wks,(/plotO/),(/1,1/),pan)
+      infoTimeStamp(wks,0.011,"DIAG Version: "+version)
+   else
+      gsn_panel(wks,(/plotO/),(/1,1/),pan)
+   end if
+
+   ;txres = True
+   ;txres@txFontHeightF = 0.025
+   ;gsn_text_ndc(wks,title,0.5,0.98,txres)
+
+   frame (wks)
+   delete (wks)
+   delete (data)
+   delete (pyrs)
+   delete(res@xyExplicitLegendLabels)
+   delete(res@xyLineThicknesses)
+   delete(res@xyDashPatterns)
+   ;delete (res@gsnLeftString)
+   if (color_type .eq. "COLOR") then
+      delete (res@xyLineColors)
+   end if
+end
 
 exit
 end

@@ -49,7 +49,7 @@ setenv LOCAL_LN           0	#1=soft link; 0=copy
 #setenv DIAG_HOME /work-common/shared/bjerknes/diagnostics/Packages/CLM_DIAG/lnd_diag4.2.25		# Grunch
 #setenv DIAG_HOME /projects/NS2345K/noresm_diagnostics/CLM_DIAG/lnd_diag4.2.25 # Nird
 # NIRD (do not change this! -JL, Nov 2017)
-setenv DIAG_HOME /projects/NS2345K/noresm_diagnostics/CLM_DIAG/lnd_diag4.2.25
+setenv DIAG_HOME /path/to/code/and/data
 
 #*****************************************************************
 # 2b:  Path to observational datasets
@@ -57,7 +57,7 @@ setenv DIAG_HOME /projects/NS2345K/noresm_diagnostics/CLM_DIAG/lnd_diag4.2.25
 # setenv OBS_HOME  /project/tss/diag/lnd_diag4.2		# CGD
 #setenv OBS_HOME  /work-common/shared/bjerknes/diagnostics/Packages/CLM_DIAG/lnd_diag4.2.25
 # NIRD (do not change this! -JL, Nov 2017)
-setenv OBS_HOME /projects/NS2345K/noresm_diagnostics/CLM_DIAG/lnd_diag4.2.25 
+setenv OBS_HOME /path/to/code/and/data
 
 #*****************************************************************
 # 2c:  Compare to Observations in set 2

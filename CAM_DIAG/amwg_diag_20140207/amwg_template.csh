@@ -111,12 +111,12 @@ set time_start_script = `date +%s`
 # The climatology files are in: $test_path_climo
 # The diagnostic plots are: $test_path_diag
 #
-set test_casename = N1850_f19_tn11_230815
+set test_casename = your_test_simulation
 set test_filetype = monthly_history
 
-set diag_dir = /scratch/johiak/noresm_diagnostics2/CAM_DIAG
+set diag_dir = /path/to/your/diagnostics
 
-set test_path_history_root = /projects/NS2345K/noresm/cases
+set test_path_history_root = /path/to/test_case/history
 set test_path_history      = $test_path_history_root/$test_casename/atm/hist
 set test_path_climo        = $diag_dir/climo/$test_casename
 set test_path_diag         = $diag_dir/diag/$test_casename
@@ -130,7 +130,7 @@ set test_path_diag         = $diag_dir/diag/$test_casename
 # Select the type of control case to be compared with your model
 # test case (select one). 
 
-set CNTL = OBS # OBS or USER
+set CNTL = type_of_control_case # OBS or USER
 #set CNTL = OBS                 # observed data (reanalysis etc)
 #set CNTL = USER                # user defined model control (see below)
 
@@ -171,8 +171,8 @@ set cntl_compute_climo = 0  # (0=ON,1=OFF)
 # First year of data is: $test_first_yr     (must be >= 1)
 # Number of years is: $test_nyrs         (must be >= 1)
 
-set test_first_yr = 21  # first year (must be >= 1)
-set test_nyrs     = 30  # number of yrs (must be >= 1)
+set test_first_yr = fyr_of_test  # first year (must be >= 1)
+set test_nyrs     = nyr_of_test  # number of yrs (must be >= 1)
 
 # FOR CNTL == USER ONLY (otherwise skip this section)
 # First year of data is: $cntl_first_yr     (must be >= 1)
@@ -218,7 +218,7 @@ set timeseries_path = $diag_dir/time_series
 # of this script, as well as in ${test_path_diag}/URL
 
 set publish_html      = 0   # (0=ON,1=OFF)
-set publish_html_root = /projects/NS2345K/www/test
+set publish_html_root = /path/to/html/directory
 
 #******************************************************************
 
@@ -270,7 +270,7 @@ setenv TAYLOR_BASECASE ccsm3_5  # Base case to compare against
 
 # Switch between climo and time-series computation, used by diag_run
 # -JL, Nov 2017
-set CLIMO_TIME_SERIES_SWITCH = ONLY_TIME_SERIES
+set CLIMO_TIME_SERIES_SWITCH = SWITCHED_OFF
 
 #******************************************************************
 
@@ -411,7 +411,7 @@ set sig_lvl = 0.05           # level of significance
 #setenv DIAG_HOME /project/amp/amwg/amwg_diagnostics 
 
 # NIRD
-setenv DIAG_HOME /projects/NS2345K/noresm_diagnostics/CAM_DIAG/amwg_diag_20140207
+setenv DIAG_HOME /path/to/code/and/data
 
 
 #*****************************************************************
