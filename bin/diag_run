@@ -432,7 +432,7 @@ do
             echo "*** EXITING THE SCRIPT"
 	    exit 1
 	fi
-	exit
+
 	if /usr/bin/grep -q current_date config.log
 	then
 	    /usr/bin/sed -i "s/current_date/${cdate}/g" config.log
@@ -479,18 +479,22 @@ do
 	    exit 1
 	fi
 	
-	# CHANGE THE ROOT DIRECTORY INCLUDING ALL CODES AND DATA
-	echo "-CHANGING ROOT DIRECTORY FOR CODES AND DATA to ${DIAG_DIR} in $DIAG_FILE"
-	/usr/bin/sed -i "s+/path/to/code/and/data+${DIAG_DIR}+g;q1" $DIAG_FILE
-	if [ $? -ne 0 ]; then
+	# CHANGE THE ROOT DIRECTORY INCLUDING ALL CODE AND DATA
+	echo "-CHANGING ROOT DIRECTORY FOR CODE AND DATA to ${DIAG_DIR} in $DIAG_FILE"
+	if /usr/bin/grep -q /path/to/code/and/data $DIAG_FILE
+	then
+	    /usr/bin/sed -i "s+/path/to/code/and/data+${DIAG_DIR}+g" $DIAG_FILE
+	else
 	    echo "ERROR: modifying $DIAG_PATH/$MODEL_DIAG_CAPS/$DIAG_FILE with new DIAG_DIR failed"
             echo "*** EXITING THE SCRIPT"
 	    exit 1
 	fi
 	echo "# ROOT DIRECTORY TO CODE AND DATA:" >> config.log
 	echo "DIAG_HOME = ${DIAG_DIR}" >> config.log
-	/usr/bin/sed -i "/DIAG_HOME/d;q1" required_vars
-	if [ $? -ne 0 ]; then
+	if /usr/bin/grep -q DIAG_HOME required_vars
+	then
+	    /usr/bin/sed -i "/DIAG_HOME/d" required_vars
+	else
 	    echo "ERROR: deleting DIAG_HOME from required_vars failed"
             echo "*** EXITING THE SCRIPT"
 	    exit 1
@@ -498,16 +502,20 @@ do
 
 	# CHANGE INPUT DIRECTORY 1
 	echo "-CHANGING INPUT DIR 1 to $HISTORY_PATH1 in $DIAG_FILE"
-    	/usr/bin/sed -i "s+/path/to/test_case/history+${HISTORY_PATH1}+g;q1" $DIAG_FILE
-	if [ $? -ne 0 ]; then
+	if /usr/bin/grep -q /path/to/test_case/history $DIAG_FILE
+	then
+    	    /usr/bin/sed -i "s+/path/to/test_case/history+${HISTORY_PATH1}+g" $DIAG_FILE
+	else
 	    echo "ERROR: modifying $DIAG_PATH/$MODEL_DIAG_PATH/$DIAG_FILE with new HISTORY_PATH1 failed"
 	    echo "*** EXITING THE SCRIPT"
 	    exit 1
 	fi
 	echo "# TEST CASE SIMULATION DIRECTORY:" >> config.log
 	echo "${INPUT_DIR_NAME1} = $HISTORY_PATH1" >> config.log
-	/usr/bin/sed -i "/${INPUT_DIR_NAME1}/d;q1" required_vars
-	if [ $? -ne 0 ]; then
+	if /usr/bin/grep -q $INPUT_DIR_NAME1 required_vars
+	then
+	    /usr/bin/sed -i "/${INPUT_DIR_NAME1}/d" required_vars
+	else
 	    echo "ERROR: deleting ${INPUT_DIR_NAME1} from required_vars failed"
             echo "*** EXITING THE SCRIPT"
 	    exit 1
@@ -516,16 +524,20 @@ do
 	# CHANGE INPUT DIRECTORY 2
 	if [ $CASE2 != none ]; then
     	    echo "-CHANGING INPUT DIR 2 to $HISTORY_PATH2 in $DIAG_FILE"
-    	    /usr/bin/sed -i "s+/path/to/cntl_case/history+${HISTORY_PATH2}+g;q1" $DIAG_FILE
-	    if [ $? -ne 0 ]; then
+	    if /usr/bin/grep -q /path/to/cntl_case/history $DIAG_FILE
+	    then
+    		/usr/bin/sed -i "s+/path/to/cntl_case/history+${HISTORY_PATH2}+g" $DIAG_FILE
+	    else
 		echo "ERROR: modifying $DIAG_PATH/$MODEL_DIAG_PATH/$DIAG_FILE with new HISTORY_PATH2 failed"
 		echo "*** EXITING THE SCRIPT"
 		exit 1
 	    fi
 	    echo "# CONTROL CASE SIMULATION DIRECTORY:" >> config.log
 	    echo "${INPUT_DIR_NAME2} = $HISTORY_PATH2" >> config.log
-	    /usr/bin/sed -i "/${INPUT_DIR_NAME2}/d;q1" required_vars
-	    if [ $? -ne 0 ]; then
+	    if /usr/bin/grep -q $INPUT_DIR_NAME2 required_vars
+	    then
+		/usr/bin/sed -i "/${INPUT_DIR_NAME2}/d" required_vars
+	    else
 		echo "ERROR: deleting ${INPUT_DIR_NAME2} from required_vars failed"
 		echo "*** EXITING THE SCRIPT"
 		exit 1
@@ -534,16 +546,20 @@ do
 
 	# CHANGE WEB DIR IN DIAGNOSTICS SCRIPT
 	echo "-CHANGING publish_html_root in $DIAG_FILE"
-    	/usr/bin/sed -i "s+/path/to/html/directory+${WEB_PATH}+g;q1" $DIAG_FILE
-	if [ $? -ne 0 ]; then
+	if /usr/bin/grep -q /path/to/html/directory $DIAG_FILE
+	then
+    	    /usr/bin/sed -i "s+/path/to/html/directory+${WEB_PATH}+g" $DIAG_FILE
+	else
 	    echo "ERROR: modifying $DIAG_PATH/$MODEL_DIAG_CAPS/$DIAG_FILE with new WEB_PATH failed"
 	    echo "*** EXITING THE SCRIPT"
 	    exit 1
 	fi
 	echo "# HTML DIRECTORY:" >> config.log
 	echo "${WEB_DIR_NAME} = $WEB_PATH" >> config.log
-	/usr/bin/sed -i "/${WEB_DIR_NAME}/d;q1" required_vars
-	if [ $? -ne 0 ]; then
+	if /usr/bin/grep -q $WEB_DIR_NAME required_vars
+	then
+	    /usr/bin/sed -i "/${WEB_DIR_NAME}/d" required_vars
+	else
 	    echo "ERROR: deleting ${WEB_DIR_NAME} from required_vars failed"
 	    echo "*** EXITING THE SCRIPT"
 	    exit 1
@@ -558,16 +574,20 @@ do
 		RUN_DIAG=0
 		final_message="CANNOT RUN ${DIAG_FILE} (see previous warning(s))."
 	    fi
-	    /usr/bin/sed -i "s+your_test_simulation+${CASE1}+g;q1" $DIAG_FILE
-	    if [ $? -ne 0 ]; then
+	    if /usr/bin/grep -q your_test_simulation $DIAG_FILE
+	    then
+		/usr/bin/sed -i "s+your_test_simulation+${CASE1}+g" $DIAG_FILE
+	    else
 		echo "ERROR: modifying $DIAG_PATH/$MODEL_DIAG_CAPS/$DIAG_FILE with new TEST CASE failed"
 		echo "*** EXITING THE SCRIPT"
 		exit 1
 	    fi
 	    echo "# TEST SIMULATION NAME:" >> config.log
 	    echo "${TEST_CASE_NAME} = ${CASE1}" >> config.log
-	    /usr/bin/sed -i "/${TEST_CASE_NAME}/d;q1" required_vars
-	    if [ $? -ne 0 ]; then
+	    if /usr/bin/grep -q $TEST_CASE_NAME required_vars
+	    then
+		/usr/bin/sed -i "/${TEST_CASE_NAME}/d" required_vars
+	    else
 		echo "ERROR: deleting ${TEST_CASE_NAME} from required_vars failed"
 		echo "*** EXITING THE SCRIPT"
 		exit 1
@@ -575,40 +595,52 @@ do
 	    # SET CNTL=OBS IF CASE2 IS NOT PROVIDED
 	    if [ $CASE2 == none ]; then
        		echo "-CHANGING CNTL TO OBS in $DIAG_FILE"
-		/usr/bin/sed -i "s+type_of_control_case+OBS+g;q1" $DIAG_FILE
-		if [ $? -ne 0 ]; then
+		if /usr/bin/grep -q type_of_control_case $DIAG_FILE
+		then
+		    /usr/bin/sed -i "s+type_of_control_case+OBS+g" $DIAG_FILE
+		else
 		    echo "ERROR: modifying $DIAG_PATH/$MODEL_DIAG_CAPS/$DIAG_FILE with new type_of_control_case failed"
 		    echo "*** EXITING THE SCRIPT"
 		    exit 1
 		fi
 		echo "# TYPE OF CONTROL CASE:" >> config.log
 		echo "${CNTL_NAME} = OBS" >> config.log
-		/usr/bin/sed -i "/${CNTL_NAME}/d;q1" required_vars
-		if [ $? -ne 0 ]; then
+		if /usr/bin/grep -q $CNTL_NAME required_vars
+		then
+		    /usr/bin/sed -i "/${CNTL_NAME}/d" required_vars
+		else
 		    echo "ERROR: deleting ${CNTL_NAME} from required_vars failed"
 		    echo "*** EXITING THE SCRIPT"
 		    exit 1
 		fi
-		/usr/bin/sed -i "/${CNTL_CASE_NAME}/d;q1" required_vars
-		if [ $? -ne 0 ]; then
+		if /usr/bin/grep -q $CNTL_CASE_NAME required_vars
+		then
+		    /usr/bin/sed -i "/${CNTL_CASE_NAME}/d" required_vars
+		else
 		    echo "ERROR: deleting ${CNTL_CASE_NAME} from required_vars failed"
 		    echo "*** EXITING THE SCRIPT"
 		    exit 1
 		fi
-		/usr/bin/sed -i "/${CNTL_FIRST_YR_NAME}/d;q1" required_vars
-		if [ $? -ne 0 ]; then
+		if /usr/bin/grep -q $CNTL_FIRST_YR_NAME required_vars
+		then
+		    /usr/bin/sed -i "/${CNTL_FIRST_YR_NAME}/d" required_vars
+		else
 		    echo "ERROR: deleting ${CNTL_FIRST_YR_NAME} from required_vars failed"
 		    echo "*** EXITING THE SCRIPT"
 		    exit 1
 		fi
-		/usr/bin/sed -i "/${CNTL_NYRS_NAME}/d;q1" required_vars
-		if [ $? -ne 0 ]; then
+		if /usr/bin/grep -q $CNTL_NYRS_NAME required_vars
+		then
+		    /usr/bin/sed -i "/${CNTL_NYRS_NAME}/d" required_vars
+		else
 		    echo "ERROR: deleting ${CNTL_NYRS_NAME} from required_vars failed"
 		    echo "*** EXITING THE SCRIPT"
 		    exit 1
 		fi
-		/usr/bin/sed -i "/${INPUT_DIR_NAME2}/d;q1" required_vars
-		if [ $? -ne 0 ]; then
+		if /usr/bin/grep -q $INPUT_DIR_NAME2 required_vars
+		then
+		    /usr/bin/sed -i "/${INPUT_DIR_NAME2}/d" required_vars
+		else
 		    echo "ERROR: deleting ${INPUT_DIR_NAME2} from required_vars failed"
 		    echo "*** EXITING THE SCRIPT"
 		    exit 1
@@ -619,16 +651,20 @@ do
     	# CHANGE START YR OF TEST CASE IN DIAGNOSTICS SCRIPT
 	if [ $SYR1 -ge 0 ]; then
 	    echo "-CHANGING FIRST YR IN TEST CASE TO $SYR1 in $DIAG_FILE"
-    	    /usr/bin/sed -i "s+fyr_of_test+${SYR1}+g;q1" $DIAG_FILE
-	    if [ $? -ne 0 ]; then
+	    if /usr/bin/grep -q fyr_of_test $DIAG_FILE
+	    then
+    		/usr/bin/sed -i "s+fyr_of_test+${SYR1}+g" $DIAG_FILE
+	    else
 		echo "ERROR: modifying $DIAG_PATH/$MODEL_DIAG_CAPS/$DIAG_FILE with new SYR1 failed"
 		echo "*** EXITING THE SCRIPT"
 		exit 1
 	    fi
     	    echo "# START YEAR IN TEST CASE:" >> config.log
 	    echo "${TEST_FIRST_YR_NAME} = $SYR1" >> config.log
-	    /usr/bin/sed -i "/${TEST_FIRST_YR_NAME}/d;q1" required_vars
-	    if [ $? -ne 0 ]; then
+	    if /usr/bin/grep -q $TEST_FIRST_YR_NAME required_vars
+	    then
+		/usr/bin/sed -i "/${TEST_FIRST_YR_NAME}/d" required_vars
+	    else
 		echo "ERROR: deleting ${TEST_FIRST_YR_NAME} from required_vars failed"
 		echo "*** EXITING THE SCRIPT"
 		exit 1
@@ -640,16 +676,20 @@ do
 	    if [ $EYR1 -gt $SYR1 ]; then
 		NYR1="$(($EYR1 - $SYR1 + 1))"
 		echo "-CHANGING NUMBER OF YEARS IN TEST CASE to $NYR1 in $DIAG_FILE"
-    		/usr/bin/sed -i "s+nyr_of_test+${NYR1}+g;q1" $DIAG_FILE
-		if [ $? -ne 0 ]; then
+		if /usr/bin/grep -q nyr_of_test $DIAG_FILE
+		then
+    		    /usr/bin/sed -i "s+nyr_of_test+${NYR1}+g" $DIAG_FILE
+		else
 		    echo "ERROR: modifying $DIAG_PATH/$MODEL_DIAG_CAPS/$DIAG_FILE with new NYR1 failed"
 		    echo "*** EXITING THE SCRIPT"
 		    exit 1
 		fi
     		echo "# END YEAR IN TEST CASE:" >> config.log
 		echo "${TEST_NYRS_NAME} = $NYR1" >> config.log
-		/usr/bin/sed -i "/${TEST_NYRS_NAME}/d;q1" required_vars
-		if [ $? -ne 0 ]; then
+		if /usr/bin/grep -q $TEST_NYRS_NAME required_vars
+		then
+		    /usr/bin/sed -i "/${TEST_NYRS_NAME}/d" required_vars
+		else
 		    echo "ERROR: deleting ${TEST_NYRS_NAME} from required_vars failed"
 		    echo "*** EXITING THE SCRIPT"
 		    exit 1
@@ -670,32 +710,40 @@ do
 		RUN_DIAG=0
 		final_message="CANNOT RUN ${DIAG_FILE} (see previous warning(s))."
 	    fi
-	    /usr/bin/sed -i "s+your_cntl_simulation+${CASE2}+g;q1" $DIAG_FILE
-	    if [ $? -ne 0 ]; then
+	    if /usr/bin/grep -q your_cntl_simulation $DIAG_FILE
+	    then
+		/usr/bin/sed -i "s+your_cntl_simulation+${CASE2}+g" $DIAG_FILE
+	    else
 		echo "ERROR: modifying $DIAG_PATH/$MODEL_DIAG_PATH/$DIAG_FILE with new CNTL CASE failed"
 		echo "*** EXITING THE SCRIPT"
 		exit 1
 	    fi
     	    echo "# CONTROL SIMULATION NAME:" >> config.log
 	    echo "${CNTL_CASE_NAME} = ${CASE2}" >> config.log
-    	    /usr/bin/sed -i "/${CNTL_CASE_NAME}/d;q1" required_vars
-	    if [ $? -ne 0 ]; then
+	    if /usr/bin/grep -q $CNTL_CASE_NAME required_vars
+	    then
+    		/usr/bin/sed -i "/${CNTL_CASE_NAME}/d" required_vars
+	    else
 		echo "ERROR: deleting ${CNTL_CASE_NAME} from required_vars failed"
 		echo "*** EXITING THE SCRIPT"
 		exit 1
 	    fi
 	    # SET CNTL=USER
 	    echo "-CHANGING CNTL to USER in $DIAG_FILE"
-	    /usr/bin/sed -i "s+type_of_control_case+USER+g;q1" $DIAG_FILE
-	    if [ $? -ne 0 ]; then
+	    if /usr/bin/grep -q type_of_control_case $DIAG_FILE
+	    then
+		/usr/bin/sed -i "s+type_of_control_case+USER+g" $DIAG_FILE
+	    else
 		echo "ERROR: modifying $DIAG_PATH/$MODEL_DIAG_PATH/$DIAG_FILE with new type_of_control_case failed"
 		echo "*** EXITING THE SCRIPT"
 		exit 1
 	    fi
     	    echo "# TYPE OF CONTROL CASE:" >> config.log
 	    echo "${CNTL_NAME} = USER" >> config.log
-	    /usr/bin/sed -i "/${CNTL_NAME}/d;q1" required_vars
-	    if [ $? -ne 0 ]; then
+	    if /usr/bin/grep -q $CNTL_NAME required_vars
+	    then
+		/usr/bin/sed -i "/${CNTL_NAME}/d" required_vars
+	    else
 		echo "ERROR: deleting ${CNTL_NAME} from required_vars failed"
 		echo "*** EXITING THE SCRIPT"
 		exit 1
@@ -705,16 +753,20 @@ do
 	# CHANGE START YR OF CNTL CASE IN DIAGNOSTICS SCRIPT
 	if [ $SYR2 -ge 0 ]; then
     	    echo "-CHANGING FIRST YR IN CNTL CASE to $SYR2 in $DIAG_FILE"
-    	    /usr/bin/sed -i "s+fyr_of_cntl+${SYR2}+g;q1" $DIAG_FILE
-	    if [ $? -ne 0 ]; then
+	    if /usr/bin/grep -q fyr_of_cntl $DIAG_FILE
+	    then
+    		/usr/bin/sed -i "s+fyr_of_cntl+${SYR2}+g" $DIAG_FILE
+	    else
 		echo "ERROR: modifying $DIAG_PATH/$MODEL_DIAG_PATH/$DIAG_FILE with new SYR2 failed"
 		echo "*** EXITING THE SCRIPT"
 		exit 1
 	    fi
 	    echo "# START YEAR IN CONTROL CASE:" >> config.log
 	    echo "${CNTL_FIRST_YR_NAME} = $SYR2" >> config.log
-	    /usr/bin/sed -i "/${CNTL_FIRST_YR_NAME}/d;q1" required_vars
-	    if [ $? -ne 0 ]; then
+	    if /usr/bin/grep -q $CNTL_FIRST_YR_NAME required_vars
+	    then
+		/usr/bin/sed -i "/${CNTL_FIRST_YR_NAME}/d" required_vars
+	    else
 		echo "ERROR: deleting ${CNTL_FIRST_YR_NAME} from required_vars failed"
 		echo "*** EXITING THE SCRIPT"
 		exit 1
@@ -726,16 +778,20 @@ do
 	    if [ $EYR2 -gt $SYR2 ]; then
 		NYR2="$(($EYR2 - $SYR2 + 1))"
 		echo "-CHANGING NUMBER OF YEARS IN CNTL CASE to $NYR2 in $DIAG_FILE"
-    		/usr/bin/sed -i "s+nyr_of_cntl+${NYR2}+g;q1" $DIAG_FILE
-		if [ $? -ne 0 ]; then
+		if /usr/bin/grep -q nyr_of_cntl $DIAG_FILE
+		then
+    		    /usr/bin/sed -i "s+nyr_of_cntl+${NYR2}+g" $DIAG_FILE
+		else
 		    echo "ERROR: modifying $DIAG_PATH/$MODEL_DIAG_CAPS/$DIAG_FILE with new NYR2 failed"
 		    echo "*** EXITING THE SCRIPT"
 		    exit 1
 		fi
 		echo "# END YEAR IN CONTROL CASE:" >> config.log
 		echo "${CNTL_NYRS_NAME} = $NYR2" >> config.log
-		/usr/bin/sed -i "/${CNTL_NYRS_NAME}/d;q1" required_vars
-		if [ $? -ne 0 ]; then
+		if /usr/bin/grep -q $CNTL_NYRS_NAME required_vars
+		then
+		    /usr/bin/sed -i "/${CNTL_NYRS_NAME}/d" required_vars
+		else
 		    echo "ERROR: deleting ${CNTL_NYRS_NAME} from required_vars failed"
 		    echo "*** EXITING THE SCRIPT"
 		    exit 1
@@ -751,16 +807,20 @@ do
 	if [ $TYPE_OF_DIAG != both ]; then
 	    if [ $TYPE_OF_DIAG == climo ]; then
 		echo "-MODIFYING $DIAG_FILE FOR CLIMATOLOGY DIAGNOSTICS"
-    		/usr/bin/sed -i "s/SWITCHED_OFF/ONLY_CLIMO/g;q1" $DIAG_FILE
-		if [ $? -ne 0 ]; then
+		if /usr/bin/grep -q SWITCHED_OFF $DIAG_FILE
+		then
+    		    /usr/bin/sed -i "s/SWITCHED_OFF/ONLY_CLIMO/g" $DIAG_FILE
+		else
 		    echo "ERROR: modifying $DIAG_PATH/$MODEL_DIAG_CAPS/$DIAG_FILE with new TYPE_OF_DIAG failed"
 		    echo "*** EXITING THE SCRIPT"
 		    exit 1
 		fi
 	    elif [ $TYPE_OF_DIAG == time_series ]; then
 		echo "-MODIFYING $DIAG_FILE FOR TIME SERIES DIAGNOSTICS"
-    		/usr/bin/sed -i "s/SWITCHED_OFF/ONLY_TIME_SERIES/g;q1" $DIAG_FILE
-		if [ $? -ne 0 ]; then
+		if /usr/bin/grep -q SWITCHED_OFF $DIAG_FILE
+		then
+    		    /usr/bin/sed -i "s/SWITCHED_OFF/ONLY_TIME_SERIES/g" $DIAG_FILE
+		else
 		    echo "ERROR: modifying $DIAG_PATH/$MODEL_DIAG_CAPS/$DIAG_FILE with new TYPE_OF_DIAG failed"
 		    echo "*** EXITING THE SCRIPT"
 		    exit 1
@@ -773,8 +833,10 @@ do
 	# CHECK IF RUN BY CRON
 	if [ ! -z ${RUN_BY_CRON} ]; then
  	    echo "-RUN BY CRONTAB"
-            /usr/bin/sed -i "s+/usr/local/bin+${BIN_DIR}/crontab+g;q1" $DIAG_FILE
-	    if [ $? -ne 0 ]; then
+	    if /usr/bin/grep -q /usr/local/bin $DIAG_FILE
+	    then
+		/usr/bin/sed -i "s+/usr/local/bin+${BIN_DIR}/crontab+g" $DIAG_FILE
+	    else
 		echo "ERROR: modifying for RUN_BY_CRON in $DIAG_FILE failed"
 		echo "*** EXITING THE SCRIPT"
 		exit 1
@@ -803,42 +865,22 @@ do
 	    
 	    if /usr/bin/grep -Fxq "$CNTL_CASE_NAME" required_vars
 	    then
-		/usr/bin/sed -i "/$CNTL_CASE_NAME/a\ (only if CNTL==USER);q1" required_vars
-		if [ $? -ne 0 ]; then
-		    echo "ERROR: appending to $CNTL_CASE_NAME in required_vars failed"
-		    echo "*** EXITING THE SCRIPT"
-		    exit 1
-		fi
+		/usr/bin/sed -i "/$CNTL_CASE_NAME/a\ (only if CNTL==USER)" required_vars
 	    fi
 
 	    if /usr/bin/grep -Fxq "$CNTL_FIRST_YR_NAME" required_vars
 	    then
-		/usr/bin/sed -i "/$CNTL_FIRST_YR_NAME/a\ (only if CNTL==USER);q1" required_vars
-		if [ $? -ne 0 ]; then
-		    echo "ERROR: appending to $CNTL_FIRST_YR_NAME in required_vars failed"
-		    echo "*** EXITING THE SCRIPT"
-		    exit 1
-		fi
+		/usr/bin/sed -i "/$CNTL_FIRST_YR_NAME/a\ (only if CNTL==USER)" required_vars
 	    fi
 	
 	    if /usr/bin/grep -Fxq "$CNTL_NYRS_NAME" required_vars
 	    then
-		/usr/bin/sed -i "/$CNTL_NYRS_NAME/a\ (only if CNTL==USER);q1" required_vars
-		if [ $? -ne 0 ]; then
-		    echo "ERROR: appending to $CNTL_NYRS_NAME in required_vars failed"
-		    echo "*** EXITING THE SCRIPT"
-		    exit 1
-		fi
+		/usr/bin/sed -i "/$CNTL_NYRS_NAME/a\ (only if CNTL==USER)" required_vars
 	    fi
 
 	    if /usr/bin/grep -Fxq "$INPUT_DIR_NAME2" required_vars
 	    then
-		/usr/bin/sed -i "/$INPUT_DIR_NAME2/a\ (only if CNTL==USER);q1" required_vars
-		if [ $? -ne 0 ]; then
-		    echo "ERROR: appending to $INPUT_DIR_NAME2 in required_vars failed"
-		    echo "*** EXITING THE SCRIPT"
-		    exit 1
-		fi
+		/usr/bin/sed -i "/$INPUT_DIR_NAME2/a\ (only if CNTL==USER)" required_vars
 	    fi
 
 	    echo " " >> config.log

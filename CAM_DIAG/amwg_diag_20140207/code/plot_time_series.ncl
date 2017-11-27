@@ -31,7 +31,7 @@ else
    ncases     = 1
 end if
 
-vars   = (/"Rnet","TREFHT","CLDTOT","CLDLOW","CLDMED","CLDHGH","SST","SWCF","LWCF"/)
+vars   = (/"Rnet","TREFHT","CLDTOT","CLDLOW","CLDMED","CLDHGH","SWCF","LWCF"/)
 nvars  = dimsizes(vars)
 
 do i = 0, nvars-1
@@ -58,10 +58,6 @@ do i = 0, nvars-1
 
    if (vars(i).eq."CLDHGH") then
       A = get_CLDHGH (inptr1)
-   end if
-
-   if (vars(i).eq."SST") then
-      A = get_SST (inptr1)
    end if
 
    if (vars(i).eq."SWCF") then
@@ -105,10 +101,6 @@ do i = 0, nvars-1
 
       if (vars(i).eq."CLDHGH") then
          B = get_CLDHGH (inptr2)
-      end if
-
-      if (vars(i).eq."SST") then
-         B = get_SST (inptr2)
       end if
 
       if (vars(i).eq."SWCF") then
@@ -227,7 +219,7 @@ do i = 0, nvars-1
    if (color_type .eq. "COLOR") then
       delete (res@xyLineColors)
    end if
-end
+end do
 
 exit
 end

@@ -27,7 +27,7 @@ set casetype          = $7
 set cam_grid          = $8
 
 set modelname=`cat ${path_diag}/attributes/${casetype}_modelname`
-set req_vars="gw FSNT FLNT TREFHT CLDTOT CLDLOW CLDMED CLDHGH SWCF LWCF SST TS OCNFRAC"
+set req_vars="gw FSNT FLNT TREFHT CLDTOT CLDLOW CLDMED CLDHGH SWCF LWCF"
 set history_path=$history_path_root/$casename/atm/hist
 set fullpath_filename=$history_path/$casename.$modelname.h0.`printf "%04d" ${syr}`-01.nc
 
@@ -51,7 +51,6 @@ foreach var ($req_vars)
    endif
 end
 
-echo "$var_list"
 echo  ${var_list}  > ${path_diag}/attributes/${casetype}_var_list_ts
 echo  ${req_vars}  > ${path_diag}/attributes/required_vars_ts
 
