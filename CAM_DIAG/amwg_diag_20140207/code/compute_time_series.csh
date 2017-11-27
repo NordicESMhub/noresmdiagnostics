@@ -12,8 +12,8 @@
 # $path_diag           Local directory of diagnostics
 # $casetype            test or cntl
 
-if ($#argv != 8) then
-  echo "usage: compute_time_series.csh needs 7 arguments"
+if ($#argv != 9) then
+  echo "usage: compute_time_series.csh needs 9 arguments"
   exit 1
 endif
 
@@ -25,11 +25,12 @@ set eyr               = $5
 set path_diag         = $6
 set casetype          = $7
 set cam_grid          = $8
+set four_seas         = $9
 
-set modelname=`cat ${path_diag}/attributes/${casetype}_modelname`
-set req_vars="gw FSNT FLNT TREFHT CLDTOT CLDLOW CLDMED CLDHGH SWCF LWCF"
-set history_path=$history_path_root/$casename/atm/hist
-set fullpath_filename=$history_path/$casename.$modelname.h0.`printf "%04d" ${syr}`-01.nc
+set modelname = `cat ${path_diag}/attributes/${casetype}_modelname`
+set req_vars = "gw FSNT FLNT TREFHT PRECT PRECC PRECL CLDTOT CLDLOW CLDMED CLDHGH SWCF LWCF"
+set history_path = $history_path_root/$casename/atm/hist
+set fullpath_filename = $history_path/$casename.$modelname.h0.`printf "%04d" ${syr}`-01.nc
 
 set first_find = 1
 set var_list = " "
@@ -54,30 +55,77 @@ end
 echo  ${var_list}  > ${path_diag}/attributes/${casetype}_var_list_ts
 echo  ${req_vars}  > ${path_diag}/attributes/required_vars_ts
 
-if ( ! -e $timeseries_root/$casename/time_series_ANN_yrs${syr}-${eyr}.nc ) then
+if ($four_seas == 1) then
+   if ( -e $timeseries_root/$casename/time_series_ANN_yrs${syr}-${eyr}.nc && \
+        -e $timeseries_root/$casename/time_series_DJF_yrs${syr}-${eyr}.nc && \
+	-e $timeseries_root/$casename/time_series_JJA_yrs${syr}-${eyr}.nc ) then
+      echo " ANN, DJF and JJA time_series for $casename already exist."
+   else     
+      if ( ! -d $timeseries_root/$casename ) then
+         mkdir -p $timeseries_root/$casename
+      endif
 
-    if ( ! -d $timeseries_root/$casename ) then
-	mkdir -p $timeseries_root/$casename
-    endif
-
-    set time_out_path = $timeseries_root/$casename
+      set time_out_path = $timeseries_root/$casename
     
-    set iyr = $syr
-    while ( $iyr <= $eyr )
-	set iyr_prnt = `printf "%04d" ${iyr}`
-	echo " COMPUTING GLOBAL AND ANNUAL MEAN OF $casename FOR YR=$iyr_prnt"
-	$ncclimo_dir/ncclimo --clm_md=mth -m $modelname -v $var_list -a sdd --season=ANN --no_amwg_links -c $casename -s $iyr -e $iyr -i $history_path -o $time_out_path > $time_out_path/tmp_ncclimo.txt
-	/usr/bin/ncwa -h -O -w gw -a lat,lon $time_out_path/${casename}_ANN_${iyr_prnt}01_${iyr_prnt}12_climo.nc $time_out_path/global_mean_${iyr_prnt}.nc
-	@ iyr = $iyr + 1
-    end
+      set iyr = $syr
+      while ( $iyr <= $eyr )
+ 	 set iyr_prnt = `printf "%04d" ${iyr}`
+	 echo " COMPUTING ANN, DJF, JJA AND GLOBAL MEAN OF $casename FOR YR=$iyr_prnt"
+	 $ncclimo_dir/ncclimo --clm_md=mth -m $modelname -v $var_list -a sdd --no_amwg_links -c $casename -s $iyr -e $iyr -i $history_path -o $time_out_path > $time_out_path/tmp_ncclimo.txt
+	 /usr/bin/ncwa -h -O -w gw -a lat,lon $time_out_path/${casename}_ANN_${iyr_prnt}01_${iyr_prnt}12_climo.nc $time_out_path/global_mean_ANN_${iyr_prnt}.nc
+	 /usr/bin/ncwa -h -O -w gw -a lat,lon $time_out_path/${casename}_DJF_${iyr_prnt}01_${iyr_prnt}12_climo.nc $time_out_path/global_mean_DJF_${iyr_prnt}.nc
+	 /usr/bin/ncwa -h -O -w gw -a lat,lon $time_out_path/${casename}_JJA_${iyr_prnt}06_${iyr_prnt}08_climo.nc $time_out_path/global_mean_JJA_${iyr_prnt}.nc
+	 @ iyr = $iyr + 1
+      end
 
-    /usr/local/bin/ncrcat -O $time_out_path/global_mean_*.nc $time_out_path/time_series_ANN_yrs${syr}-${eyr}.nc
+      /usr/local/bin/ncrcat -O $time_out_path/global_mean_ANN_*.nc $time_out_path/time_series_ANN_yrs${syr}-${eyr}.nc
+      /usr/local/bin/ncrcat -O $time_out_path/global_mean_DJF_*.nc $time_out_path/time_series_DJF_yrs${syr}-${eyr}.nc
+      /usr/local/bin/ncrcat -O $time_out_path/global_mean_JJA_*.nc $time_out_path/time_series_JJA_yrs${syr}-${eyr}.nc
 
-    foreach mon (01 02 03 04 05 06 07 08 09 10 11 12 ANN)
-	rm $time_out_path/${casename}_${mon}_*_climo.nc
-    end
-    rm $time_out_path/global_mean_*.nc
-    rm $time_out_path/tmp_*.txt
+      foreach mon (01 02 03 04 05 06 07 08 09 10 11 12 ANN DJF JJA)
+         rm $time_out_path/${casename}_${mon}_*_climo.nc
+      end
+      rm $time_out_path/global_mean_*.nc
+      rm $time_out_path/tmp_*.txt
+   endif
 else
-    echo " $timeseries_root/$casename/time_series_ANN_yrs${syr}-${eyr}.nc already exists."
+   if ( -e $timeseries_root/$casename/time_series_ANN_yrs${syr}-${eyr}.nc && \
+        -e $timeseries_root/$casename/time_series_DJF_yrs${syr}-${eyr}.nc && \
+        -e $timeseries_root/$casename/time_series_MAM_yrs${syr}-${eyr}.nc && \
+	-e $timeseries_root/$casename/time_series_JJA_yrs${syr}-${eyr}.nc && \
+	-e $timeseries_root/$casename/time_series_SON_yrs${syr}-${eyr}.nc ) then
+      echo " ANN, DJF, MAM, JJA and SON time_series for $casename already exist."
+   else     
+      if ( ! -d $timeseries_root/$casename ) then
+         mkdir -p $timeseries_root/$casename
+      endif
+
+      set time_out_path = $timeseries_root/$casename
+    
+      set iyr = $syr
+      while ( $iyr <= $eyr )
+ 	 set iyr_prnt = `printf "%04d" ${iyr}`
+	 echo " COMPUTING SEASONAL AND GLOBAL MEAN OF $casename FOR YR=$iyr_prnt"
+	 $ncclimo_dir/ncclimo --clm_md=mth -m $modelname -v $var_list -a sdd --no_amwg_links -c $casename -s $iyr -e $iyr -i $history_path -o $time_out_path > $time_out_path/tmp_ncclimo.txt
+	 /usr/bin/ncwa -h -O -w gw -a lat,lon $time_out_path/${casename}_ANN_${iyr_prnt}01_${iyr_prnt}12_climo.nc $time_out_path/global_mean_ANN_${iyr_prnt}.nc
+	 /usr/bin/ncwa -h -O -w gw -a lat,lon $time_out_path/${casename}_DJF_${iyr_prnt}01_${iyr_prnt}12_climo.nc $time_out_path/global_mean_DJF_${iyr_prnt}.nc
+	 /usr/bin/ncwa -h -O -w gw -a lat,lon $time_out_path/${casename}_MAM_${iyr_prnt}03_${iyr_prnt}05_climo.nc $time_out_path/global_mean_MAM_${iyr_prnt}.nc
+	 /usr/bin/ncwa -h -O -w gw -a lat,lon $time_out_path/${casename}_JJA_${iyr_prnt}06_${iyr_prnt}08_climo.nc $time_out_path/global_mean_JJA_${iyr_prnt}.nc
+	 /usr/bin/ncwa -h -O -w gw -a lat,lon $time_out_path/${casename}_SON_${iyr_prnt}09_${iyr_prnt}11_climo.nc $time_out_path/global_mean_SON_${iyr_prnt}.nc
+	 @ iyr = $iyr + 1
+      end
+
+      /usr/local/bin/ncrcat -O $time_out_path/global_mean_ANN_*.nc $time_out_path/time_series_ANN_yrs${syr}-${eyr}.nc
+      /usr/local/bin/ncrcat -O $time_out_path/global_mean_DJF_*.nc $time_out_path/time_series_DJF_yrs${syr}-${eyr}.nc
+      /usr/local/bin/ncrcat -O $time_out_path/global_mean_MAM_*.nc $time_out_path/time_series_MAM_yrs${syr}-${eyr}.nc
+      /usr/local/bin/ncrcat -O $time_out_path/global_mean_JJA_*.nc $time_out_path/time_series_JJA_yrs${syr}-${eyr}.nc
+      /usr/local/bin/ncrcat -O $time_out_path/global_mean_SON_*.nc $time_out_path/time_series_SON_yrs${syr}-${eyr}.nc
+
+      foreach mon (01 02 03 04 05 06 07 08 09 10 11 12 ANN DJF MAM JJA SON)
+         rm $time_out_path/${casename}_${mon}_*_climo.nc
+      end
+      rm $time_out_path/global_mean_*.nc
+      rm $time_out_path/tmp_*.txt
+   endif
 endif
+

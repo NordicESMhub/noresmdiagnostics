@@ -20,7 +20,7 @@ Table of contents
 
 1. Objective of README
 -----------------------------------------------------------
-This README describes version 1.0.0 of the application diag_run, which is used to run NorESM diagnostics packages from the command line.
+This README describes version 1.0 of the application diag_run, which is used to run NorESM diagnostics packages from the command line.
 In addition, this README documents some major changes that has been made to the diagnostics packages since their original versions (developed by NCAR).
 All future modifications to diag_run and the associated diagnostics packages are documented by git (https://github.com/johiak/NoresmDiagnostics).
 

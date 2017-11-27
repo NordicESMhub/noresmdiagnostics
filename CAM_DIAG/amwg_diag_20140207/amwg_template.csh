@@ -286,7 +286,7 @@ set CLIMO_TIME_SERIES_SWITCH = SWITCHED_OFF
 # Note:  four_seasons is not currently supported for model vs OBS diagnostics.
 # if ($CNTL == OBS) then four_seasons is turned OFF.
 
-set four_seasons = 1            # (0=ON; 1=OFF)
+set four_seasons = 0            # (0=ON; 1=OFF)
 
 #------------------------------------------------------------------
 # For four_seasons == 2 (otherwise skip this section)
@@ -1355,9 +1355,10 @@ if ($tset_1 == 0) then
    echo "---------------------------"
    @ m = 1
    foreach CASE_TO_READ ($CASES_TO_READ)
-      $DIAG_CODE/compute_time_series.csh $timeseries_path $CASE_TO_READ $DATA_ROOT_VEC[$m] $BEGYRS[$m] $ENDYRS[$m] $test_path_diag $CASE_TYPES[$m] $CAM_GRIDS[$m]
+      $DIAG_CODE/compute_time_series.csh $timeseries_path $CASE_TO_READ $DATA_ROOT_VEC[$m] $BEGYRS[$m] $ENDYRS[$m] $test_path_diag $CASE_TYPES[$m] $CAM_GRIDS[$m] $four_seasons
       @ m++
    end
+   $DIAG_CODE/global_mean_obs.csh $timeseries_path $test_casename
 endif
 
 #**************************************************************************
@@ -2406,23 +2407,32 @@ endif
 #*****************************************************************
 if ($tset_1 == 0) then
 
-    setenv CASE1      $test_casename
-    setenv TEST_INPUT $timeseries_path/$test_casename
-    setenv SYR1       $BEGYRS[1]
-    setenv EYR1       $ENDYRS[1]
-
-    if ($CNTL == USER) then
-        setenv CASE2      $cntl_casename
-	setenv CNTL_INPUT $timeseries_path/$cntl_casename
-        setenv SYR2       $BEGYRS[2]
-        setenv EYR2       $ENDYRS[2]
-    endif
-
     echo " "
-    echo "TSET 1 GLOBAL AND ANNUAL TIME SERIES PLOTS"
-    echo " "
-    $NCL < $DIAG_CODE/plot_time_series.ncl
+    echo "TSET 1 GLOBAL MEAN TIME SERIES PLOTS"
+    foreach name ($plots)
+	setenv SEASON     $name
+	setenv CASE1      $test_casename
+	setenv TEST_INPUT $timeseries_path/$test_casename
+	setenv SYR1       $BEGYRS[1]
+	setenv EYR1       $ENDYRS[1]
 
+	if ($CNTL == USER) then
+	    setenv CASE2      $cntl_casename
+	    setenv CNTL_INPUT $timeseries_path/$cntl_casename
+	    setenv SYR2       $BEGYRS[2]
+	    setenv EYR2       $ENDYRS[2]
+	endif
+
+	echo " "
+	echo " COMPUTING $SEASON MEAN ..."
+	if ($SEASON == DJF || $SEASON == JJA || $SEASON == ANN) then
+	   $NCL < $DIAG_CODE/plot_time_series_vs_obs.ncl
+   	   $NCL < $DIAG_CODE/plot_time_series_Rnet.ncl
+	else
+	   $NCL < $DIAG_CODE/plot_time_series.ncl
+	endif
+    end
+    
     if ($web_pages == 0) then
         $DIAG_HOME/code/ps2imgwww.csh tset1 $image &
     endif
@@ -3265,23 +3275,12 @@ if ($web_pages == 0 && $publish_html == 0) then
    if ( $status == 0 ) then
       if ( $path_pref == $web_server_path) then
          set full_url = ${web_server}/${path_suff}/${tardir}/sets.htm
-         if ($climo_required == 0) then
-	    echo "URL:"
-	    echo "***********************************************************************************"
-	    echo "${full_url}"
-	    echo "***********************************************************************************"
-	    echo "COPY AND PASTE THE URL INTO THE ADDRESS BAR OF YOUR WEB BROWSER TO VIEW THE RESULTS"
-         endif
-         if ($tset_1 == 0) then
-	    if ($CNTL == OBS) then
-	       echo "URL TO TIME SERIES PLOT:"
-	       echo " ${web_server}/${path_suff}/FSNT-FLNT_vs_yrs.$image"
-            else
-               echo "URL TO TIME SERIES PLOT:"
-	       echo " ${web_server}/${path_suff}/FSNT-FLNT_2models_vs_yrs.$image"
-            endif
-	 endif
-         $HTML_HOME/redirect_html.csh $tardir $publish_html_path $full_url $tset_1 $CNTL $c_type $image
+         echo "URL:"
+	 echo "***********************************************************************************"
+	 echo "${full_url}"
+	 echo "***********************************************************************************"
+	 echo "COPY AND PASTE THE URL INTO THE ADDRESS BAR OF YOUR WEB BROWSER TO VIEW THE RESULTS"
+         $HTML_HOME/redirect_html.csh $tardir $publish_html_path $full_url
       else
          echo "THE HTML FILES ARE LOCATED IN:"
          echo "${publish_html_path}/${tardir}"
