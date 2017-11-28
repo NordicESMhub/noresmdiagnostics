@@ -272,6 +272,9 @@ setenv TAYLOR_BASECASE ccsm3_5  # Base case to compare against
 # -JL, Nov 2017
 set CLIMO_TIME_SERIES_SWITCH = SWITCHED_OFF
 
+# Switch on comparison with observation for time series (default=off)
+set time_series_obs = 1 # (0=ON,1=OFF)
+
 #******************************************************************
 
 # **************************************
@@ -1358,7 +1361,9 @@ if ($tset_1 == 0) then
       $DIAG_CODE/compute_time_series.csh $timeseries_path $CASE_TO_READ $DATA_ROOT_VEC[$m] $BEGYRS[$m] $ENDYRS[$m] $test_path_diag $CASE_TYPES[$m] $CAM_GRIDS[$m] $four_seasons
       @ m++
    end
-   $DIAG_CODE/global_mean_obs.csh $timeseries_path $test_casename
+   if ($time_series_obs == 0) then
+      $DIAG_CODE/global_mean_obs.csh $timeseries_path $test_casename
+   endif
 endif
 
 #**************************************************************************
@@ -1469,7 +1474,7 @@ if ($web_pages == 0) then
     setenv WEBDIR ${test_path_diag}/yrs${test_first_yr}to${test_end}-obs
     if (! -e $WEBDIR) mkdir $WEBDIR
     cd $WEBDIR
-    $HTML_HOME/setup_obs $test_casename $image
+    $HTML_HOME/setup_obs $test_casename $image $time_series_obs
     cd $test_path_diag
     set tarfile = yrs${test_first_yr}to${test_end}-obs.tar
   else          # model-to-model 
@@ -2425,12 +2430,16 @@ if ($tset_1 == 0) then
 
 	echo " "
 	echo " COMPUTING $SEASON MEAN ..."
-	if ($SEASON == DJF || $SEASON == JJA || $SEASON == ANN) then
-	   $NCL < $DIAG_CODE/plot_time_series_vs_obs.ncl
-   	   $NCL < $DIAG_CODE/plot_time_series_Rnet.ncl
-	else
-	   $NCL < $DIAG_CODE/plot_time_series.ncl
-	endif
+	if ($time_series_obs == 0) then
+  	   if ($SEASON == DJF || $SEASON == JJA || $SEASON == ANN) then
+	      $NCL < $DIAG_CODE/plot_time_series_vs_obs.ncl
+              $NCL < $DIAG_CODE/plot_time_series_Rnet.ncl
+	   else
+	      $NCL < $DIAG_CODE/plot_time_series.ncl
+           endif
+        else
+           $NCL < $DIAG_CODE/plot_time_series.ncl
+        endif
     end
     
     if ($web_pages == 0) then

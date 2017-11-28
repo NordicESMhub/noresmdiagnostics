@@ -35,6 +35,12 @@ end if
 vars   = (/"Rnet","TREFHT","PRECT","CLDTOT","CLDLOW","CLDMED","CLDHGH","SWCF","LWCF"/)
 nvars  = dimsizes(vars)
 
+; Define min and max y range for the annual case
+if (season.eq."ANN") then
+   y_range_min = (/-3.,282.,2.6,60.,35.,25.,35.,-60.,20./)
+   y_range_max = (/3.,292.,3.2,75.,50.,40.,50.,-40.,40./)
+end if   
+
 do i = 0, nvars-1
 
    if (vars(i).eq."Rnet") then
@@ -191,11 +197,15 @@ do i = 0, nvars-1
    res@tiMainFontHeightF      = 0.02
    res@txFontHeightF          = 0.01
    res@gsnYRefLine            = 0.0
+   if (season.eq."ANN") then
+      res@trYMaxF                = y_range_max(i)
+      res@trYMinF                = y_range_min(i)
+   end if
 
    pyrs = fspan(1,ntimes_tot,ntimes_tot)
    wks = gsn_open_wks("ps",wkdir+"/"+plotname)
    plotO = new(1,"graphic")
-   res@pmLegendOrthogonalPosF = 0
+   res@pmLegendOrthogonalPosF = -0.9
 
    
    data = new((/ncases,ntimes_tot/),float)
