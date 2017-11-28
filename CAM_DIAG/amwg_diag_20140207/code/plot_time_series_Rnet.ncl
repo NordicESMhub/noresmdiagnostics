@@ -1,5 +1,5 @@
 ; NCL script
-; plot_time_series.ncl
+; plot_time_series_Rnet.ncl
 ; Johan Liakka Nov 2017
 load "$DIAG_CODE/functions_time_series.ncl"
 
@@ -32,118 +32,33 @@ else
    ncases     = 1
 end if
 
-vars   = (/"Rnet","TREFHT","PRECT","CLDTOT","CLDLOW","CLDMED","CLDHGH","SWCF","LWCF"/)
-nvars  = dimsizes(vars)
+vars = "Rnet"
 
-do i = 0, nvars-1
+A = get_Rnet (inptr1)
+ndim = dimsizes(A)
+ntimes1 = ndim(0)
+ntimes_tot = ntimes1
 
-   if (vars(i).eq."Rnet") then
-      A = get_Rnet (inptr1)
-   end if
+if (compare .eq. "USER") then
+   B = get_Rnet (inptr2)
+   ndim = dimsizes(B)
+   ntimes2 = ndim(0)
+   ntimes_tot = max((/ntimes1,ntimes2/))
+end if
 
-   if (vars(i).eq."TREFHT") then
-      A = get_TREFHT (inptr1)
-   end if
-
-   if (vars(i).eq."PRECT") then
-      A = get_PRECT (inptr1)
-   end if
-
-   if (vars(i).eq."CLDTOT") then
-      A = get_CLDTOT (inptr1)
-   end if
-
-   if (vars(i).eq."CLDLOW") then
-      A = get_CLDLOW (inptr1)
-   end if
-
-   if (vars(i).eq."CLDMED") then
-      A = get_CLDMED (inptr1)
-   end if
-
-   if (vars(i).eq."CLDHGH") then
-      A = get_CLDHGH (inptr1)
-   end if
-
-   if (vars(i).eq."SWCF") then
-      A = get_SWCFTOA (inptr1)
-   end if
-
-   if (vars(i).eq."LWCF") then
-      A = get_LWCFTOA (inptr1)
-   end if
-
-   if (all(A.eq.-999.)) then
-      print (vars(i)+" not present in test case input file.")
-      delete(A)
-      continue       ; procede to next variable in do loop
-   end if
-
-   ndim = dimsizes(A)
-   ntimes1 = ndim(0)
-   ntimes_tot = ntimes1
-
-   if (compare .eq. "USER") then
-      if (vars(i).eq."Rnet") then
-         B = get_Rnet (inptr2)
-      end if
-
-      if (vars(i).eq."TREFHT") then
-         B = get_TREFHT (inptr2)
-      end if
-
-      if (vars(i).eq."PRECT") then
-         B = get_PRECT (inptr2)
-      end if
-
-      if (vars(i).eq."CLDTOT") then
-         B = get_CLDTOT (inptr2)
-      end if
-
-      if (vars(i).eq."CLDLOW") then
-         B = get_CLDLOW (inptr2)
-      end if
-
-      if (vars(i).eq."CLDMED") then
-         B = get_CLDMED (inptr2)
-      end if
-
-      if (vars(i).eq."CLDHGH") then
-         B = get_CLDHGH (inptr2)
-      end if
-
-      if (vars(i).eq."SWCF") then
-         B = get_SWCFTOA (inptr2)
-      end if
-
-      if (vars(i).eq."LWCF") then
-         B = get_LWCFTOA (inptr2)
-      end if
-
-      if (all(B.eq.-999.)) then
-         print (vars(i)+" not present in cntl case input file.")
-         delete(B)
-         continue       ; procede to next variable in do loop
-      end if
-
-      ndim = dimsizes(B)
-      ntimes2 = ndim(0)
-      ntimes_tot = max((/ntimes1,ntimes2/))
-   end if
-
-   if (compare .eq. "OBS") then
-      if (color_type .eq. "COLOR") then
-         plotname = "tset1_"+season+"_"+vars(i)+"_obsc"
-      else
-         plotname = "tset1_"+season+"_"+vars(i)+"_obs"
-      end if
+if (compare .eq. "OBS") then
+   if (color_type .eq. "COLOR") then
+      plotname = "tset1_"+season+"_"+vars+"_obsc"
    else
-      if (color_type .eq. "COLOR") then
-         plotname = "tset1_"+season+"_"+vars(i)+"_c"
-      else
-         plotname = "tset1_"+season+"_"+vars(i)
-      end if
+      plotname = "tset1_"+season+"_"+vars+"_obs"
    end if
+else
+   if (color_type .eq. "COLOR") then
+      plotname = "tset1_"+season+"_"+vars+"_c"
+   else
+      plotname = "tset1_"+season+"_"+vars
+   end if
+end if
 
 ;  plot resources
    res                        = True
@@ -233,7 +148,6 @@ do i = 0, nvars-1
    if (color_type .eq. "COLOR") then
       delete (res@xyLineColors)
    end if
-end do
 
 exit
 end

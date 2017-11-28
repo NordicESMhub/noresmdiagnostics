@@ -71,7 +71,7 @@ set SCRIPT_HOME = /path/to/your/diagnostics
 
 #--- Set DIAG_HOME to the root location of the diagnostic code.
 
-setenv DIAG_HOME /projects/NS2345K/noresm_diagnostics/CICE_DIAG/ice_diag_20120323
+setenv DIAG_HOME /path/to/code/and/data
 
 #--- setenv SCRATCH /work/$LOGNAME/noresm/cice_diag
 setenv SCRATCH $SCRIPT_HOME

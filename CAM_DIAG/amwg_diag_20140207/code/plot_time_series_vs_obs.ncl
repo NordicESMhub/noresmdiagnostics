@@ -1,5 +1,5 @@
 ; NCL script
-; plot_time_series.ncl
+; plot_time_series_vs_obs.ncl
 ; Johan Liakka Nov 2017
 load "$DIAG_CODE/functions_time_series.ncl"
 
@@ -26,20 +26,26 @@ if (compare .eq. "USER") then
    case2      = getenv("CASE2")
    inptr2     = addfile(cntl_input+"/"+"time_series_"+season+"_yrs"+syr2+"-"+eyr2+".nc","r")
    case       = case1+" and "+case2
-   ncases     = 2
+   ncases     = 3
 else
    case       = case1
-   ncases     = 1
+   ncases     = 2
 end if
 
-vars   = (/"Rnet","TREFHT","PRECT","CLDTOT","CLDLOW","CLDMED","CLDHGH","SWCF","LWCF"/)
+if ((season.eq."ANN").or.(season.eq."DJF").or.(season.eq."JJA")) then
+   inptr_leg = addfile(test_input+"/LEGATES_"+season+"_gm.nc","r")
+   inptr_cld = addfile(test_input+"/CLOUDSAT_"+season+"_gm.nc","r")
+   inptr_erb = addfile(test_input+"/ERBE_"+season+"_gm.nc","r")
+end if
+
+vars       = (/"TREFHT","PRECT","CLDTOT","CLDLOW","CLDMED","CLDHGH","SWCF","LWCF"/)
+obs_source = (/"LEGATES","LEGATES","CLOUDSAT","CLOUDSAT","CLOUDSAT","CLOUDSAT","ERBE","ERBE"/)
+legend_ent = (/"Legates & Willmott (1920-80)","Legates & Willmott (1920-80)",\
+              "CLOUDSAT (sep2006-dec2010)","CLOUDSAT (sep2006-dec2010)","CLOUDSAT (sep2006-dec2010)","CLOUDSAT (sep2006-dec2010)",\
+	      "ERBE (feb1985-apr1989)","ERBE (feb1985-apr1989)"/)
 nvars  = dimsizes(vars)
 
 do i = 0, nvars-1
-
-   if (vars(i).eq."Rnet") then
-      A = get_Rnet (inptr1)
-   end if
 
    if (vars(i).eq."TREFHT") then
       A = get_TREFHT (inptr1)
@@ -84,9 +90,6 @@ do i = 0, nvars-1
    ntimes_tot = ntimes1
 
    if (compare .eq. "USER") then
-      if (vars(i).eq."Rnet") then
-         B = get_Rnet (inptr2)
-      end if
 
       if (vars(i).eq."TREFHT") then
          B = get_TREFHT (inptr2)
@@ -131,6 +134,38 @@ do i = 0, nvars-1
       ntimes_tot = max((/ntimes1,ntimes2/))
    end if
 
+   if (vars(i).eq."TREFHT") then
+      A_obs = get_TREFHT_obs (inptr_leg,ntimes_tot)
+   end if
+
+   if (vars(i).eq."PRECT") then
+      A_obs = get_PRECT_obs (inptr_leg,ntimes_tot)
+   end if
+
+   if (vars(i).eq."CLDTOT") then
+      A_obs = get_CLDTOT_obs (inptr_cld,ntimes_tot)
+   end if
+
+   if (vars(i).eq."CLDLOW") then
+      A_obs = get_CLDLOW_obs (inptr_cld,ntimes_tot)
+   end if
+
+   if (vars(i).eq."CLDMED") then
+      A_obs = get_CLDMED_obs (inptr_cld,ntimes_tot)
+   end if
+
+   if (vars(i).eq."CLDHGH") then
+      A_obs = get_CLDHGH_obs (inptr_cld,ntimes_tot)
+   end if
+
+   if (vars(i).eq."SWCF") then
+      A_obs = get_SWCFTOA_obs (inptr_erb,ntimes_tot)
+   end if
+
+   if (vars(i).eq."LWCF") then
+      A_obs = get_LWCFTOA_obs (inptr_erb,ntimes_tot)
+   end if
+
    if (compare .eq. "OBS") then
       if (color_type .eq. "COLOR") then
          plotname = "tset1_"+season+"_"+vars(i)+"_obsc"
@@ -157,30 +192,31 @@ do i = 0, nvars-1
    res@trXReverse             = False
    if (compare .eq."OBS") then
       res@pmLegendHeightF        = 0.12
-      res@xyExplicitLegendLabels = (/case1/)
-      res@xyLineThicknesses      = (/2/)
-      res@pmLegendParallelPosF   = 0.1
-      if (color_type .eq. "COLOR") then
-         res@xyLineColors           = (/"blue"/)
-         res@xyDashPatterns         = (/0/)
-      else
-         res@xyMonoLineColor      = True
-         res@xyLineColor          = "black"
-         res@xyDashPatterns       = (/0/)
-      end if
-   else
-      res@pmLegendHeightF        = 0.12
-      res@xyExplicitLegendLabels = (/case1,case2/)
+      res@xyExplicitLegendLabels = (/legend_ent(i),case1/)
       res@lgItemOrder  = (/ 1,0 /)
       res@xyLineThicknesses      = (/2.,2./)
       res@pmLegendParallelPosF   = 0.1
       if (color_type .eq. "COLOR") then
-         res@xyLineColors           = (/"blue","red"/)
-         res@xyDashPatterns         = (/0,0/)
+         res@xyLineColors           = (/"black","blue"/)
+         res@xyDashPatterns         = (/1,0/)
       else
          res@xyMonoLineColor      = True
          res@xyLineColor          = "black"
-         res@xyDashPatterns       = (/0,1/)
+         res@xyDashPatterns       = (/1,0/)
+      end if
+   else
+      res@pmLegendHeightF        = 0.12
+      res@xyExplicitLegendLabels = (/legend_ent(i),case1,case2/)
+      res@lgItemOrder  = (/ 2,1,0 /)
+      res@xyLineThicknesses      = (/2.,2.,2./)
+      res@pmLegendParallelPosF   = 0.1
+      if (color_type .eq. "COLOR") then
+         res@xyLineColors           = (/"black","blue","red"/)
+         res@xyDashPatterns         = (/1,0,0/)
+      else
+         res@xyMonoLineColor      = True
+         res@xyLineColor          = "black"
+         res@xyDashPatterns       = (/1,0,2/)
       end if
    end if
    res@tiYAxisString          = "["+A@units+"]"
@@ -199,9 +235,10 @@ do i = 0, nvars-1
 
    
    data = new((/ncases,ntimes_tot/),float)
-   data(0,0:ntimes1-1) = (/A/)
+   data(0,0:ntimes_tot-1) = (/A_obs/)
+   data(1,0:ntimes1-1) = (/A/)
    if (compare .eq. "USER") then
-      data(1,0:ntimes2-1) = (/B/)
+      data(2,0:ntimes2-1) = (/B/)
    end if
    plotO = gsn_csm_xy(wks,pyrs,data,res)
 
