@@ -1,0 +1,9 @@
+MICOM Diagnostics Package, 25/03/15
+Detelina Ivanova, detelina.ivanova@nersc.no
+
+In this directory you will find Matlab scripts for:
+
+temp2d_climat_diff_xxx_woaxx.m
+
+Creates Horizontal plots of mean model climatology of T & S at different depths and differences with observations (WOA09 or WOA13) and differences with Control Case
+
