@@ -7,8 +7,8 @@
 
 set HTML = $HTML_HOME/model-obs
 #------------------------------------------------------------------
-if ($#argv != 2) then
-  echo "usage: setup_obs <model name> <gif,jpg,png>"
+if ($#argv != 3) then
+  echo "usage: setup_obs <model name> <gif,jpg,png> <time_series_obs>"
   exit
 endif
 # create the needed subdirectories
@@ -206,7 +206,12 @@ if (-e tset1/tset1.htm) then
   rm tset1/tset1.htm
 endif
 cp tset1/tset1_1.htm tset1/tset1.htm
-echo $1 "<br>and<br>" OBS data >> tset1/tset1.htm
+set ts_obs = $3
+if ($ts_obs == 0) then
+   echo $1 "<br>and<br>" OBS data >> tset1/tset1.htm
+else
+   echo $1 >> tset1/tset1.htm
+endif
 cat tset1/tset1_2.htm | sed -e s/xxx/$2/ >> tset1/tset1.htm
 
 # WSET1
