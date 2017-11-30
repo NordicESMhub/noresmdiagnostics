@@ -18,26 +18,26 @@
 # Usage: ./ann_avg_hy.csh $DATE_FORMAT $FIRST_YEAR $LAST_YEAR
 
 
-set CASENAME = N1850_f19_tn11_E17
-set PATHDAT = /fimm/work/detivan/mnt/viljework/archive/${CASENAME}/ocn/hist
-set WORKDIR = /fimm/work/detivan/noresm/micom_diag/diag_new/
+set CASENAME = B1850MICOM_f09_tn14_01
+set PATHDAT = /projects/NS2345K/noresm/cases/${CASENAME}/ocn/hist
+set WORKDIR = /scratch/johiak/micom_diag
 set MODEL = micom
-set FILETYPE = hy
+set FILETYPE = hm
 set FILE_HEADER = ${CASENAME}.${MODEL}.${FILETYPE}.
 set SEAS_MEAN = ann
 
-echo $FILE_HEADER
+#echo $FILE_HEADER
 
-if ($#argv != 3) then
-  echo "usage: ./ann_avg_hy.csh $DATE_FORMAT $FIRST_YEAR $LAST_YEAR "
-  exit
-endif
+#if ($#argv != 3) then
+#  echo "usage: ./ann_avg_hy.csh $DATE_FORMAT $FIRST_YEAR $LAST_YEAR "
+#  exit
+#endif
 
-set echo on
+#set echo on
 
-set DATE_FORMAT = $1
-@ first_yr = $2
-@ last_yr = $3
+#set DATE_FORMAT = $1
+@ first_yr = 21
+@ last_yr = 50
 
 @ YR = $first_yr
 # Delete existing djf file, or it gets bigger and bigger
