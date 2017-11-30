@@ -585,7 +585,7 @@ if (! $?NCARG_ROOT) then
   echo ERROR: environment variable NCARG_ROOT is not set
   echo "Do this in your .cshrc file (or whatever shell you use)"
   echo setenv NCARG_ROOT /contrib      # most NCAR systems 
-  exit
+  exit 1
 else
   set NCL = $NCARG_ROOT/bin/ncl       # works everywhere
 endif 
@@ -634,7 +634,7 @@ setenv HTML_HOME  $DIAG_HOME/html
 if ($CNTL != OBS) then
 if ($CNTL != USER) then
    echo "ERROR: CNTL MUST BE EITHER =OBS OR =USER"
-   exit
+   exit 1
 endif
 endif            
 
@@ -741,13 +741,13 @@ if (! -e ${test_path_diag}) then
   if (! -e ${test_path_diag}) then
     echo ERROR: Unable to create \$test_path_diag : ${test_path_diag}    
     echo ERROR: Please create: ${test_path_diag} 
-  exit
+  exit 1
   endif
 endif
 
 if (! -w ${test_path_diag}) then
   echo ERROR: YOU DO NOT HAVE WRITE ACCESS TO \$test_path_diag ${test_path_diag}
-  exit
+  exit 1
 endif
 
 if (! -e ${test_path_history}) then
@@ -757,7 +757,7 @@ if (! -e ${test_path_history}) then
   if (! -e ${test_path_history}) then
     echo ERROR: Unable to create \$test_path_history: ${test_path_history} 
     echo ERROR: Please create ${test_path_history} 
-   exit
+   exit 1
   endif
 endif
 
@@ -768,7 +768,7 @@ if (! -e ${test_path_climo}) then
   if (! -e ${test_path_climo}) then
     echo ERROR: Unable to create \$test_path_climo: ${test_path_climo} 
     echo ERROR: Please create ${test_path_climo} 
-   exit
+   exit 1
   endif
 endif
 
@@ -779,7 +779,7 @@ if (! -e ${test_path_diag}) then
   if (! -e ${test_path_diag}) then
     echo ERROR: Unable to create \$test_path_diag: ${test_path_diag} 
     echo ERROR: Please create ${test_path_diag} 
-   exit
+   exit 1
   endif
 endif
 
@@ -791,7 +791,7 @@ if ($CNTL == USER) then
     if (! -e ${cntl_path_history}) then
        echo ERROR: Unable to create \$cntl_path_history: ${cntl_path_history} 
        echo ERROR: Please create ${cntl_path_history} 
-       exit
+       exit 1
     endif
   endif
 endif
@@ -804,7 +804,7 @@ if ($CNTL == USER) then
     if (! -e ${cntl_path_climo}) then
        echo ERROR: Unable to create \$cntl_path_climo: ${cntl_path_climo} 
        echo ERROR: Please create  ${cntl_path_climo} 
-       exit
+       exit 1
     endif
   endif
 endif
@@ -858,10 +858,10 @@ if ($significance == 0) then
     setenv SIG_LVL "null"
   else if ($CNTL == USER && $test_nyrs < 10) then
     echo "ERROR: NUMBER OF TEST CASE YRS $test_nyrs IS TOO SMALL FOR SIGNIFICANCE TEST."
-    exit
+    exit 1
   else if ($CNTL == USER && $cntl_nyrs < 10) then
     echo "ERROR: NUMBER OF CNTL CASE YRS $cntl_nyrs IS TOO SMALL FOR SIGNIFICANCE TEST."
-    exit
+    exit 1
   else
     setenv SIG_PLOT True
     setenv SIG_LVL $sig_lvl
@@ -907,7 +907,7 @@ if ($test_in == $cntl_in) then
   echo EROOR: test_path_climo and cntl_path_climo SHOULD BE DIFFERENT
   echo ERROR: test_path_climo   $test_in 
   echo ERROR: cntl_path_climo   $cntl_in 
-  exit  ##++ hannay  =>want to change script to allow to compare two 2 time-periods of the same run
+  exit 1 ##++ hannay  =>want to change script to allow to compare two 2 time-periods of the same run
 endif   
 if ($CNTL == USER) then    
   if ($test_casename == $cntl_casename) then
@@ -917,7 +917,7 @@ if ($CNTL == USER) then
   if ($test_path_history == $cntl_path_history) then
     echo ERROR: THE TEST PATH AND CNTL PATH ARE IDENTICAL
     echo THEY MUST BE DIFFERENT TO RECEIVE HPSS DOWNLOADS!
-    exit  
+    exit 1  
   endif
 endif   
 
@@ -950,7 +950,7 @@ $DIAG_CODE/determine_output_attributes.csh   test  \
 if ($status > 0) then
    echo "*** CRASH IN determine_output_attributes.csh (test)"  
    echo "*** EXITING THE SCRIPT"
-   exit
+   exit 1
 endif
     
 set test_rootname  = `cat $test_path_diag/attributes/test_rootname`
@@ -987,7 +987,7 @@ if ($CNTL == USER) then
     if ($status > 0) then
        echo "*** CRASH IN determine_output_attributes.csh (cntl)"
        echo "*** EXITING THE SCRIPT"
-       exit
+       exit 1
     endif
 
     set cntl_rootname  = `cat $test_path_diag/attributes/cntl_rootname`
@@ -1028,7 +1028,7 @@ if ($test_compute_climo == 0) then
     if ($status > 0) then
        echo "*** CRASH IN check_history_present.csh (test)"
        echo "*** EXITING THE SCRIPT"
-       exit
+       exit 1
     endif
     
     # For DJF determine if we use December from previous year or from
@@ -1053,11 +1053,11 @@ if ($test_compute_climo == 0) then
                                    $strip_off_vars \
                                    $test_var_list \
                                    test_file_list.txt
-    if ($status == 1) then
+    if ($status > 0) then
       echo "*** Test case: not all CAM output files were found."  
       echo "*** Check that the casename and year ranges are correct."
       echo "*** Exiting the script."
-      exit
+      exit 1
     endif
 
     set test_djf = `head -n 1 $test_path_climo/DJF.txt`
@@ -1082,7 +1082,7 @@ if ($CNTL == USER && $cntl_compute_climo == 0) then
     if ($status > 0) then
        echo "*** CRASH IN check_history_present.csh (cntl)"
        echo "*** EXITING THE SCRIPT"
-       exit
+       exit 1
     endif
     
     # For DJF determine if we use December from previous year or from
@@ -1111,7 +1111,7 @@ if ($CNTL == USER && $cntl_compute_climo == 0) then
       echo "*** Control case: Not all CAM output files were found."  
       echo "*** Check that the casename and year ranges are correct."
       echo "*** Exiting the script."
-      exit
+      exit 1
     endif
     set cntl_djf = `head -n 1 $cntl_path_climo/DJF.txt`
   endif
@@ -1157,7 +1157,7 @@ if ($test_compute_climo == 0) then
     if ($status > 0) then
        echo "*** CRASH IN compute_climo.csh (test)"  
        echo "*** EXITING THE SCRIPT"
-       exit
+       exit 1
     endif
 				 
 endif
@@ -1185,7 +1185,7 @@ if ( ($CNTL == USER) && ($cntl_compute_climo == 0)  ) then
     if ($status > 0) then
        echo "*** CRASH IN compute_climo.csh (cntl)"  
        echo "*** EXITING THE SCRIPT"
-       exit
+       exit 1
     endif
 				 
 endif  ## end of if ( ($CNTL == USER) && ($cntl_compute_climo == 0) )
@@ -1268,7 +1268,7 @@ if ($climo_required == 0) then
 	if (! -e $climo_file) then    
 	    echo ' '
 	    echo ERROR: $climo_file  NOT FOUND
-	    exit
+	    exit 1
 	else
 	    echo FOUND : $climo_file
 	endif
@@ -1292,7 +1292,7 @@ if ($climo_required == 0) then
 	    if (! -e $climo_file) then    
 		echo ' '
 		echo ERROR: $climo_file  NOT FOUND
-		exit
+		exit 1
 	    else
 		echo FOUND : $climo_file
 	    endif
@@ -1338,7 +1338,7 @@ if ($tset_1 == 0) then
       if ("$first_file" == "") then
          echo "ERROR: No history files ${CASE_TO_READ} exist in $DATA_ROOT"
          echo "***EXITING THE SCRIPT"
-         exit
+         exit 1
       endif
       set fyr_in_dir_prnt = `echo $first_file | rev | cut -c 7-10 | rev`
       set fyr_in_dir      = `echo $fyr_in_dir_prnt | sed 's/^0*//'`
@@ -1347,7 +1347,7 @@ if ($tset_1 == 0) then
       if ($fyr_in_dir == $lyr_in_dir) then
          echo "ERROR: First and last year in ${CASE_TO_READ} are identical: cannot compute trends"
          echo "***EXITING THE SCRIPT"
-         exit
+         exit 1
       endif
       set BEGYRS = ($BEGYRS $fyr_in_dir)
       set ENDYRS = ($ENDYRS $lyr_in_dir)
@@ -1378,7 +1378,7 @@ if ($set_1 == 1 && $set_2 == 1 && $set_3 == 1 && $set_4 == 1 && $set_4a == 1 && 
     $all_sets == 1 && $all_waccm_sets == 1 && $all_chem_sets == 1) then
   echo ' '
   echo "NO DIAGNOSTIC SETS SELECTED (1-13)" 
-  exit
+  exit 1
 endif
 
 # Set this to 0; WACCM sets can turn it on.
@@ -1390,7 +1390,7 @@ if ($plot_ANN_climo == 1 && $plot_DJF_climo == 1 && \
     $plot_JJA_climo == 1 && $plot_MON_climo == 1) then
   echo ' '
   echo "NO SELECTION MADE (ANN, MAM, JJA, SON, DJF, MON) FOR TABLES AND/OR PLOTS"
-  exit
+  exit 1
 endif
 
 
@@ -1467,7 +1467,7 @@ if ($web_pages == 0) then
   endif
   if ($p_type != ps) then
     echo ERROR: WEBPAGES ARE ONLY MADE FOR POSTSCRIPT PLOT TYPE
-    exit
+    exit 1
   endif
   @ test_end = $test_first_yr + $test_nyrs - 1
   if ($CNTL == OBS) then
@@ -2752,7 +2752,7 @@ if ($web_pages == 0) then
   endif
   if ($p_type != ps) then
     echo ERROR: WEBPAGES ARE ONLY MADE FOR POSTSCRIPT PLOT TYPE
-    exit
+    exit 1
   endif
   if ($CNTL == OBS) then
     setenv WEBDIR ${test_path_diag}/$test_casename-obs
@@ -3064,7 +3064,7 @@ if ($web_pages == 0) then
   endif
   if ($p_type != ps) then
     echo ERROR: WEBPAGES ARE ONLY MADE FOR POSTSCRIPT PLOT TYPE
-    exit
+    exit 1
   endif
   if ($CNTL == OBS) then
     setenv WEBDIR ${WKDIR}/$test_casename-obs
@@ -3273,7 +3273,7 @@ if ($web_pages == 0 && $publish_html == 0) then
       mkdir -p ${publish_html_path}
       if (! -e ${publish_html_path}) then
          echo ERROR: Unable to create \$publish_html_path : ${publish_html_path}
-         exit
+         exit 1
       endif
    endif
    set web_server      = ns2345k.web.sigma2.no

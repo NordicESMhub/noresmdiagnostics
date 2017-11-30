@@ -164,7 +164,7 @@ if (! $?NCARG_ROOT) then
   echo "Do this in your .cshrc file (or whatever shell you use)"
   echo "setenv NCARG_ROOT /contrib"      # most NCAR systems
   echo "***EXITING THE SCRIPT"
-  exit
+  exit 1
 else
   set NCL = "$NCARG_ROOT/bin/ncl -Q"    # works everywhere
 endif
@@ -186,7 +186,7 @@ if ( `which convert | wc -w` == 1 ) then
 else
   echo "ERROR: CONVERT NOT FOUND"
   echo "***EXITING THE SCRIPT"
-  exit
+  exit 1
 endif
 
 echo " "
@@ -223,7 +223,7 @@ if ($CLIMO_TIME_SERIES_SWITCH == ONLY_CLIMO) then
    else
       echo "ERROR: CNTL must be set to either OBS or USER if CLIMO_TIME_SERIES_SWITCH == ONLY_CLIMO"
       echo "***EXITING THE SCRIPT"
-      exit
+      exit 1
    endif
 else if ($CLIMO_TIME_SERIES_SWITCH == ONLY_TIME_SERIES) then
    if ($CNTL == OBS) then
@@ -249,6 +249,7 @@ else if ($CLIMO_TIME_SERIES_SWITCH == ONLY_TIME_SERIES) then
    else
       echo "ERROR: CNTL must be set to either OBS or USER if CLIMO_TIME_SERIES_SWITCH == ONLY_TIME_SERIES"
       echo "***EXITING THE SCRIPT"
+      exit 1
    endif
 else
    if ($CNTL == OBS) then
@@ -278,6 +279,7 @@ else
    else
       echo "ERROR: CNTL must be set to either OBS, USER or OFF"
       echo "***EXITING THE SCRIPT"
+      exit 1
    endif
 endif
 
@@ -305,7 +307,7 @@ endif
 if ($TO_DIFF < 0) then
    echo "ERROR: TO_DIFF must be either 0 or 1."
    echo "***EXITING THE SCRIPT"
-   exit
+   exit 1
 endif
 
 set FILE_HEAD = ()
@@ -339,7 +341,7 @@ if ($PLOT_LINE == 1 || $PLOT_LINE_DIFF == 1) then
 	    if ("$first_file" == "") then
 		echo "ERROR: No history files ${CASE_TO_READ} exist in $DATA_ROOT"
 		echo "***EXITING THE SCRIPT"
-		exit
+		exit 1
 	    endif
 	    set fyr_in_dir_prnt = `echo $first_file | rev | cut -c 7-10 | rev`
 	    set fyr_in_dir      = `echo $fyr_in_dir_prnt | sed 's/^0*//'`
@@ -348,7 +350,7 @@ if ($PLOT_LINE == 1 || $PLOT_LINE_DIFF == 1) then
 	    if ($fyr_in_dir == $lyr_in_dir) then
 		echo "ERROR: First and last year in ${CASE_TO_READ} are identical: cannot compute trends"
 		echo "***EXITING THE SCRIPT"
-		exit
+		exit 1
 	    endif
 	    set BEGYRS = ($BEGYRS $fyr_in_dir)
    	    set ENDYRS = ($ENDYRS $lyr_in_dir)
@@ -424,7 +426,7 @@ foreach CASE_TO_READ ($CASES_TO_READ)
 	if ($status > 0) then
            echo "Part 1: ERROR IN check_history.csh"
 	   echo "***EXITING THE SCRIPT"
-           exit
+           exit 1
         endif
      
         echo " Calling NCL preprocessing"
@@ -526,7 +528,7 @@ foreach CASE_TO_READ ($CASES_TO_READ)
        if ($status > 0) then
           echo "Part 2: ERROR IN check_history.csh"
           echo "***EXITING THE SCRIPT"
-          exit
+          exit 1
        endif
        echo " ========================================="
        echo " Computing climatology for cont/vect plots"
@@ -663,7 +665,7 @@ if ($TO_DIFF == 1) then
   
   if (-e $CASES_TO_READ[2] && $TO_DIFF == 1) then
     echo " Need 2 cases for difference plots"
-    exit
+    exit 1
   endif
 
   setenv CASE_PREV $CASES_TO_READ[2]      # getenv in ncl only
@@ -806,7 +808,7 @@ if ($web_pages == 1 && $publish_html == 1) then
       if (! -e ${publish_html_path}) then
          echo ERROR: Unable to create \$publish_html_path : ${publish_html_path}
          echo "***EXITING THE SCRIPT"
-         exit
+         exit 1
       endif
    endif
    set web_server      = ns2345k.web.sigma2.no

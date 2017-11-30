@@ -3,7 +3,7 @@
 # Written by Johan Liakka (latest update is the version number)
 # johan.liakka@nersc.no
 
-VERSION=2.1
+VERSION=2.2
 BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 ETC_DIR=$ROOT_DIR/etc
@@ -276,7 +276,7 @@ else
     done
 fi
 
-## Security checks
+# SECURITY CHECKS
 if [[ ${DIAG_PATH:0:1} != "/" ]]; then
     echo "ERROR: ${DIAG_PATH} is not a directory. Please give the full path."
     echo "*** EXITING THE SCRIPT"
@@ -289,17 +289,26 @@ if [ $TYPE_OF_DIAG != both ] && [ $TYPE_OF_DIAG != climo ] && [ $TYPE_OF_DIAG !=
     exit 1
 fi
 
-CAM_DIAG_DIR="${ROOT_DIR}/CAM_DIAG/amwg_diag_20140207"
-CLM_DIAG_DIR="${ROOT_DIR}/CLM_DIAG/lnd_diag4.2.25"
-CICE_DIAG_DIR="${ROOT_DIR}/CICE_DIAG/ice_diag_20120323"
-CAM_DIAG_FILE="amwg_template.csh"
-CLM_DIAG_FILE="lnd_template.csh"
-CICE_DIAG_FILE="ice_diag_template.csh"
+# CREATE DATE_STAMP
+dateYYYYMMDD=`date +%y%m%d`
+dateHHMMSS=`date +%H%M%S`
+
+# DEFINE VARIABLES
+CAM_DIAG_DIR=${ROOT_DIR}/CAM_DIAG/amwg_diag_20140207
+CLM_DIAG_DIR=${ROOT_DIR}/CLM_DIAG/lnd_diag4.2.25
+CICE_DIAG_DIR=${ROOT_DIR}/CICE_DIAG/ice_diag_20120323
+CAM_DIAG_FILE=amwg_template.csh
+CLM_DIAG_FILE=lnd_template.csh
+CICE_DIAG_FILE=ice_diag_template.csh
+CAM_FILE_OUT=amwg_${dateYYYYMMDD}_${dateHHMMSS}.csh
+CLM_FILE_OUT=lnd_${dateYYYYMMDD}_${dateHHMMSS}.csh
+CICE_FILE_OUT=ice_diag_${dateYYYYMMDD}_${dateHHMMSS}.csh
 
 MODELS=(cam clm cice)
 MODELS_CAPS=(CAM CLM CICE)
 DIAG_DIRS=($CAM_DIAG_DIR $CLM_DIAG_DIR $CICE_DIAG_DIR)
 DIAG_FILES=($CAM_DIAG_FILE $CLM_DIAG_FILE $CICE_DIAG_FILE)
+DIAG_FILES_OUT=($CAM_FILE_OUT $CLM_FILE_OUT $CICE_FILE_OUT)
 TEST_CASE_NAMES=(test_casename caseid_1 CASE_TO_CONT)
 TEST_FIRST_YR_NAMES=(test_first_yr clim_first_yr_1 FIRST_YR_CLIMO1)
 TEST_NYRS_NAMES=(test_nyrs clim_num_yrs_1 NYRS_CLIMO1)
@@ -320,6 +329,7 @@ if [ "$USER_MODEL" == "micom" ] || [ "$USER_MODEL" == "pop" ]; then
     exit
 fi
 
+# CHECK NAME DEVIATIONS
 if [ "$USER_MODEL" == "clm2" ]; then
     USER_MODEL=clm
 fi
@@ -328,6 +338,7 @@ if [ "$USER_MODEL" == "cam2" ]; then
     USER_MODEL=cam
 fi
 
+# DETERMINE WHICH PACKAGE TO RUN
 if [ "$USER_MODEL" == "cam" ]; then
     RUN_MODELS=(1 0 0)
 elif [ "$USER_MODEL" == "clm" ] || [ "$USER_MODEL" == "clm2" ]; then
@@ -361,6 +372,7 @@ do
 	MODEL_CAPS=${MODELS_CAPS[icount]}
 	DIAG_DIR=${DIAG_DIRS[icount]}
 	DIAG_FILE=${DIAG_FILES[icount]}
+	DIAG_FILE_OUT=${DIAG_FILES_OUT[icount]}
 	MODEL_DIAG_CAPS=${MODEL_CAPS}_DIAG
 	TEST_CASE_NAME=${TEST_CASE_NAMES[icount]}
 	TEST_FIRST_YR_NAME=${TEST_FIRST_YR_NAMES[icount]}
@@ -376,7 +388,7 @@ do
 		
 	# CREATE USER DIAGNOSTICS DIRECTORY
 	if [ ! -d $DIAG_PATH/$MODEL_DIAG_CAPS ]; then
-	    mkdir -p $DIAG_PATH/$MODEL_DIAG_CAPS
+	    /usr/bin/mkdir -p $DIAG_PATH/$MODEL_DIAG_CAPS
 	    if [ $? -ne 0 ]; then
 		echo "ERROR: creating directory ${DIAG_PATH}/${MODEL_DIAG_CAPS} failed"
 		echo "*** EXITING THE SCRIPT"
@@ -899,8 +911,23 @@ do
 	echo $final_message
 	echo "-------------------------------------------------"
 	if [ $RUN_DIAG -eq 1 ]; then
-	    ./${DIAG_FILE}
+	    /usr/bin/mv $DIAG_FILE $DIAG_FILE_OUT
+	    /usr/bin/mv config.log config_${dateYYYYMMDD}_${dateHHMMSS}.log
+	    ./$DIAG_FILE_OUT $@ | /usr/bin/tee out_${dateYYYYMMDD}_${dateHHMMSS}.log
+	    if [ ${PIPESTATUS[0]} -ne 0 ]; then
+		echo "ERROR reported in ${MODEL_CAPS} diagnostics: see $DIAG_PATH/$MODEL_DIAG_CAPS/config/logs/$CASE1/out_${dateYYYYMMDD}_${dateHHMMSS}.log"
+	    fi 
+	    if [ ! -d ./config/$CASE1/run_scripts ]; then
+		/usr/bin/mkdir -p ./config/$CASE1/run_scripts
+	    fi
+	    if [ ! -d ./config/$CASE1/logs ]; then
+		/usr/bin/mkdir -p ./config/$CASE1/logs
+	    fi
+	    /usr/bin/mv $DIAG_FILE_OUT ./config/$CASE1/run_scripts
+	    /usr/bin/mv config_${dateYYYYMMDD}_${dateHHMMSS}.log ./config/$CASE1/logs
+	    /usr/bin/mv out_${dateYYYYMMDD}_${dateHHMMSS}.log ./config/$CASE1/logs
 	fi
+	
 	cd $BIN_DIR
 
 	# SAVE TIME INFORMATION FOR EACH COMPONENT
