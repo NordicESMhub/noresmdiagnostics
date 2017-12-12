@@ -915,7 +915,7 @@ do
 	    /usr/bin/mv config.log config_${dateYYYYMMDD}_${dateHHMMSS}.log
 	    ./$DIAG_FILE_OUT $@ | /usr/bin/tee out_${dateYYYYMMDD}_${dateHHMMSS}.log
 	    if [ ${PIPESTATUS[0]} -ne 0 ]; then
-		echo "ERROR reported in ${MODEL_CAPS} diagnostics: see $DIAG_PATH/$MODEL_DIAG_CAPS/config/logs/$CASE1/out_${dateYYYYMMDD}_${dateHHMMSS}.log"
+		echo "ERROR reported in ${MODEL_CAPS} diagnostics: see $DIAG_PATH/$MODEL_DIAG_CAPS/config/$CASE1/logs/out_${dateYYYYMMDD}_${dateHHMMSS}.log"
 	    fi 
 	    if [ ! -d ./config/$CASE1/run_scripts ]; then
 		/usr/bin/mkdir -p ./config/$CASE1/run_scripts
