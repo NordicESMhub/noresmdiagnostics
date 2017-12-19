@@ -81,7 +81,6 @@ do
 	first_find_remaining=1
 	var_list=" "
 	var_list_remaining=" "
-	echo $fullpath_filename
 	for var in $req_vars
 	do
 	    $NCKS --quiet -d y,0 -d x,0 -d sigma,0 -d depth,0 -v $var $fullpath_filename >/dev/null 2>&1
@@ -118,19 +117,32 @@ do
 	elif [ $remaining_any -eq 1 ] && [ $filetype == hm ]; then
 	    echo ${var_list_remaining} > $WKDIR/attributes/required_vars
 	else
-	    exit 0
+	    break
 	fi
     fi
 done
 
+if [ $mode == climo ]; then
+    if [ -f $WKDIR/attributes/vars_climo_${casename}_hy ] && [ -f $WKDIR/attributes/vars_climo_${casename}_hm ]; then
+	var_list_hy=`cat $WKDIR/attributes/vars_climo_${casename}_hy`
+	var_list_hm=`cat $WKDIR/attributes/vars_climo_${casename}_hm`
+	var_list_tot="${var_list_hy},${var_list_hm}"
+	echo $var_list_tot > $WKDIR/attributes/vars_climo_${casename}
+    elif [ ! -f $WKDIR/attributes/vars_${mode}_${casename}_hy ] && [ -f $WKDIR/attributes/vars_${mode}_${casename}_hm ]; then
+	cp $WKDIR/attributes/vars_climo_${casename}_hm $WKDIR/attributes/vars_climo_${casename}
+    elif [ -f $WKDIR/attributes/vars_${mode}_${casename}_hy ] && [ ! -f $WKDIR/attributes/vars_${mode}_${casename}_hm ]; then
+	cp $WKDIR/attributes/vars_climo_${casename}_hy $WKDIR/attributes/vars_climo_${casename}
+    fi
+fi
+
 if [ $file_flag -eq 0 ]; then
-    echo "ERROR: could not find the required (hy or hm) history files for $casename in $pathdat"
-    echo "*** EXITING THE SCRIPT ***"
-    exit 1
+    echo "ERROR: could not find the required history files for $casename in $pathdat"
+    echo "*** EXITING THE SCRIPT (with status 0) ***"
+    exit 0
 fi
 
 if [ $var_flag -eq 0 ]; then
-    echo "ERROR: could not find the required variables (${req_vars}) in $casename history files"
+    echo "ERROR: could not find any required variables (${req_vars}) in $casename history files"
     echo "*** EXITING THE SCRIPT ***"
     exit 1
 fi

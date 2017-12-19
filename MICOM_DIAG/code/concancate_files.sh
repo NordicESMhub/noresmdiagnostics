@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # MICOM DIAGNOSTICS package: concancate_files.sh
-# PURPOSE: Merge the two climo or ts files (hy and hm)
+# PURPOSE: Merge two climo or ts files (hy and hm)
 # Johan Liakka, NERSC, johan.liakka@nersc.no
 # Last update Dec 2017
 
@@ -38,12 +38,8 @@ elif [ $mode == ts_ann ]; then
     ann_file_hy=${casename}_ANN_${first_yr}-${last_yr}_ts_hy.nc
     ann_file_hm=${casename}_ANN_${first_yr}-${last_yr}_ts_hm.nc
     ann_file=${casename}_ANN_${first_yr}-${last_yr}_ts.nc
-elif [ $mode == ts_mon ]; then
-    ann_file_hy=${casename}_MON_${first_yr}-${last_yr}_ts_hm.nc
-    ann_file_hm=${casename}_MON_${first_yr}-${last_yr}_ts_hd.nc
-    ann_file=${casename}_MON_${first_yr}-${last_yr}_ts.nc
 else
-    echo "ERROR: mode must be climo, ts_ann or ts_mon."
+    echo "ERROR: mode must be climo or ts_ann."
     exit 1
 fi
     

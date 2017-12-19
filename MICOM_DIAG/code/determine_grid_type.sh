@@ -34,6 +34,9 @@ nmiss_tn025v1=682899
 nmiss_tn025v3=681867
 nmiss_tn025v4=682843
 nmiss_tn1v1=51715
+nmiss_tn1v1_lgm=60417
+nmiss_tn1v1_mis3=60675
+nmiss_tn1v1_plio=52387
 nmiss_tn1v2=51775
 nmiss_tn1v3=51828
 nmiss_tn1v4=51892
@@ -73,6 +76,12 @@ if [ $? -eq 0 ]; then
             grid_ver=3
 	elif [ $nmiss -eq $nmiss_tn1v4 ]; then
             grid_ver=4
+	elif [ $nmiss -eq $nmiss_tn1v1_lgm ]; then
+            grid_ver=1_lgm
+	elif [ $nmiss -eq $nmiss_tn1v1_mis3 ]; then
+            grid_ver=1_mis3
+	elif [ $nmiss -eq $nmiss_tn1v1_plio ]; then
+            grid_ver=1_PlioMIP2
 	else
             echo "ERROR: could not determine version of tn1 grid:"
             echo "Number of missing values found: $nmiss"

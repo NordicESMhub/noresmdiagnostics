@@ -52,7 +52,7 @@ if [ $filetype == hy ]; then
 	filenames+=($filename)
 	let YR++
     done
-    echo "Climatological annual mean"
+    echo "Climatological annual mean of $var_list"
     $NCRA -O --no_tmp_fl --hdr_pad=10000 -v $var_list -p $pathdat ${filenames[*]} $ann_avg_file
     if [ $? -ne 0 ]; then
 	echo "ERROR in computation of climatological annual mean: $NCRA -O --no_tmp_fl --hdr_pad=10000 -v $var_list -p $pathdat ${filenames[*]} $ann_avg_file"
@@ -67,7 +67,7 @@ if [ $filetype == hm ]; then
     mon_avg_files=()
     for month in 01 02 03 04 05 06 07 08 09 10 11 12
     do
-	echo "Climatological monthly mean for month=${month}"
+	echo "Climatological monthly mean of $var_list for month=${month}"
 	filenames=()
 	YR=$first_yr
 	while [ $YR -le $last_yr ]
@@ -88,7 +88,7 @@ if [ $filetype == hm ]; then
 	eval $NCRA -O --no_tmp_fl --hdr_pad=10000 -v $var_list -p $pathdat ${filenames[*]} $climodir/$mon_avg_file &
 	pid+=($!)
     done
-    for ((m=1;m<=12;m++))
+    for ((m=0;m<=11;m++))
     do
 	wait ${pid[$m]}
         if [ $? -ne 0 ]; then
@@ -99,7 +99,7 @@ if [ $filetype == hm ]; then
     done
     wait
     # COMPUTE ANNUAL MEAN
-    echo "Climatological weighted annual mean"
+    echo "Climatological weighted annual mean of $var_list"
     $NCRA -O -w 31,28,31,30,31,30,31,31,30,31,30,31 --no_tmp_fl --hdr_pad=10000 -p $climodir ${mon_avg_files[*]} $ann_avg_file
     if [ $? -ne 0 ]; then
 	echo "ERROR in computation of climatological annual mean: $NCRA -O -w 31,28,31,30,31,30,31,31,30,31,30,31 --no_tmp_fl --hdr_pad=10000 -p $climodir ${mon_avg_files[*]} $ann_avg_file"

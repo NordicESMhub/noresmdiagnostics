@@ -49,8 +49,9 @@ let "nyrs = $last_yr - $first_yr + 1"
 let "nchunks = $nyrs / $nproc"
 let "residual = $nyrs % $nproc"
 
-grid_file=$DIAG_GRID/`cat $WKDIR/attributes/grid_${casename}`/grid.nc
-if [ $PALEO -eq 1 ]; then
+if [ -z $PGRIDPATH ]; then
+    grid_file=$DIAG_GRID/`cat $WKDIR/attributes/grid_${casename}`/grid.nc
+else
     grid_file=$PGRIDPATH/grid.nc
 fi
 if [ ! -f $grid_file ]; then
@@ -76,6 +77,7 @@ do
     else
 	nyrs=$nproc
     fi
+    let "nyrsm = $nyrs - 1"
     pid=()
     iproc=1
     let "YR_start = ($ichunk - 1) * $nproc + $first_yr"
@@ -92,7 +94,7 @@ do
             pid+=($!)
             let iproc++
 	done
-	for ((m=1;m<=$nyrs;m++))
+	for ((m=0;m<=$nyrsm;m++))
 	do
             wait ${pid[$m]}
 	    if [ $? -ne 0 ]; then
@@ -121,7 +123,7 @@ do
             pid+=($!)
             let iproc++
 	done
-       	for ((m=1;m<=$nyrs;m++))
+       	for ((m=0;m<=$nyrsm;m++))
 	do
             wait ${pid[$m]}
 	    if [ $? -ne 0 ]; then
@@ -164,7 +166,7 @@ do
 		pid+=($!)
 		let iproc++
 	    done
-	    for ((m=1;m<=$nyrs;m++))
+	    for ((m=0;m<=$nyrsm;m++))
 	    do
 		wait ${pid[$m]}
 		if [ $? -ne 0 ]; then
@@ -190,7 +192,7 @@ do
 		pid+=($!)
 		let iproc++
 	    done
-	    for ((m=1;m<=$nyrs;m++))
+	    for ((m=0;m<=$nyrsm;m++))
 	    do
 		wait ${pid[$m]}
 		if [ $? -ne 0 ]; then
