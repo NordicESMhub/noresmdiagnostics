@@ -36,8 +36,8 @@ PATHDAT1=$pathdat_root1/$CASENAME1/ocn/hist
 # SELECT TYPE OF CONTROL CASE
 # NOTE: CNTL=USER IS NOT YET SUPPORTED
 # ---------------------------------------------------------
-CNTL=OBS    # compare case1 to observations (model-obs diagnostics)
-#CNTL=USER   # compare case1 to another experiment case2 (model-model diagnostics)
+#CNTL=OBS    # compare case1 to observations (model-obs diagnostics)
+CNTL=USER   # compare case1 to another experiment case2 (model-model diagnostics)
 
 # ---------------------------------------------------------
 # CNTL CASENAME AND YEARS TO BE AVERAGED (CASE2)
@@ -232,8 +232,8 @@ if [ $CNTL == USER ]; then
 fi
 
 # Set required variables for climatology and time series
-required_vars_climo="depth_bnds,sst,sealv,mld,templvl,salnlvl,mmflxd,region"
-required_vars_ts_ann="depth_bnds,time,section,voltr,sst,temp,saln,templvl,salnlvl,mmflxd,region,dp"
+required_vars_climo="depth_bnds,sealv,mld,templvl,salnlvl,mmflxd,region"
+required_vars_ts_ann="depth_bnds,time,section,voltr,temp,saln,templvl,salnlvl,mmflxd,region,dp"
 
 # Check which sets should be plotted based on CLIMO_TIME_SERIES_SWITCH
 if [ $CLIMO_TIME_SERIES_SWITCH == ONLY_CLIMO ]; then

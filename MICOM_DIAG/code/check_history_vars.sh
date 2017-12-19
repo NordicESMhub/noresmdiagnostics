@@ -68,6 +68,14 @@ do
 	done
     fi
 
+    # Look for sst (used to determine grid type and version)
+    if [ ! -f $WKDIR/attributes/sst_file_${casename} ]; then
+	$NCKS --quiet -d y,0 -d x,0 -v sst $fullpath_filename >/dev/null 2>&1
+	if [ $? -eq 0 ]; then
+	    echo $fullpath_filename > $WKDIR/attributes/sst_file_${casename}
+	fi
+    fi
+    
     # Check which variables are present
     if [ $check_vars -eq 1 ]; then
 	file_flag=1
@@ -86,10 +94,6 @@ do
 	    $NCKS --quiet -d y,0 -d x,0 -d sigma,0 -d depth,0 -v $var $fullpath_filename >/dev/null 2>&1
 	    if [ $? -eq 0 ]; then
 		find_any=1
-		# Save info about sst history file for later (used to determine grid version)
-		if [ $var == sst ] && [ ! -f $WKDIR/attributes/sst_file_${casename} ]; then
-		    echo $fullpath_filename > $WKDIR/attributes/sst_file_${casename}
-		fi
 		if [ $first_find -eq 1 ]; then
 		    var_list=$var
 		    first_find=0
