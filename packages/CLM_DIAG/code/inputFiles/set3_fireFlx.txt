@@ -1,0 +1,8 @@
+globalMeanDay   COL_FIRE_CLOSS
+globalMeanDay   COL_FIRE_NLOSS
+globalMeanDay   PFT_FIRE_CLOSS
+globalMeanDay   PFT_FIRE_NLOSS
+globalMeanNat   FIRESEASONL
+globalMeanNat   FIRE_PROB
+globalMeanNat   ANN_FAREA_BURNED
+globalMeanNat   MEAN_FIRE_PROB

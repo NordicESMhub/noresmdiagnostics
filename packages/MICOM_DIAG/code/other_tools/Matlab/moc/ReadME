@@ -1,0 +1,15 @@
+MICOM diagnostics package 25/03/15
+Detelina Ivanova, detelina.ivanova@nersc.no
+
+In this directory you will find Matlab scripts for:
+
+plot_moc.m 
+plots the Meridional Overturning Circulation for region of choice:
+ 1- Atlantic; 2- Indo-Pacific; 3- Global
+and choice of vertical coordinates (0 -isopycnal; 1- depths)
+
+
+amoc_ts_3exp.m
+plots AMOC Time Series from extracted time series of MOC variables (input is a netcdf file created by extract_moc_hy.csh) in 
+3 North Atlantic locations and for multiple experiments
+

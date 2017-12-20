@@ -1,0 +1,12 @@
+MICOM DIAGNOSTICS package, 25/03/15
+Detelina Ivanova detelina.ivanova@nersc.no
+
+In this directory you will find Matlab scripts for:
+
+atlantic_zonalmean_2x2.m 
+indopac_zonalmean_2x2.m 
+atlantic_zonalmean_diff_obs/cntrl_woa13_2x2.m
+indopac_zonalmean_diff_obs/cntrl_woa13_2x2.m
+
+Creates vertical zonal means of T, S & PD for Atlantic and Indo-Pacific mean model climatologies as well as  compared to observations and Control Case
+
