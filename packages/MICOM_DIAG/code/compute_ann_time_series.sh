@@ -153,7 +153,7 @@ do
     do
 	# Mass weighted 3D averaging of temp and saln
 	if [ $var == temp ] || [ $var == saln ]; then
-            echo "Mass weighted global average of $var for yrs ${YR_start}-${YR_end}"
+            echo "Mass weighted global average of $var (yrs ${YR_start}-${YR_end})"
             pid=()
             iproc=1
             while [ $iproc -le $nyrs ]
@@ -179,7 +179,7 @@ do
 	fi
 	# Area weighted horizontal global average of templvl, salnlvl and sst
 	if [ $var == templvl ] || [ $var == salnlvl ] || [ $var == sst ]; then
-            echo "Area weighted global average of $var for yrs ${YR_start}-${YR_end}"
+            echo "Area weighted global average of $var (yrs ${YR_start}-${YR_end})"
             pid=()
             iproc=1
             while [ $iproc -le $nyrs ]
@@ -205,7 +205,7 @@ do
 	fi
 	# Max AMOC between 20-60N
 	if [ $var == mmflxd ]; then
-	    echo "Max AMOC between 20-60N for yrs ${YR_start}-${YR_end}"
+	    echo "Max AMOC (yrs ${YR_start}-${YR_end})"
             iproc=1
             while [ $iproc -le $nyrs ]
 	    do
@@ -214,16 +214,25 @@ do
 		infile=${casename}_ANN_${yr_prnt}.nc
 		outfile_tmp=${var}_${casename}_ANN_${yr_prnt}_tmp.nc
      		outfile=${var}_${casename}_ANN_${yr_prnt}.nc
+		# Max AMOC 20-60N
 		$NCKS -F --no_tmp_fl -O -v $var -d lat,20.0,60.0 -d region,1 $WKDIR/$infile $WKDIR/$outfile_tmp
 		$NCAP2 -O -s 'mmflxd_max=mmflxd.max($lat,$depth)' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
 		$NCKS --no_tmp_fl -O -v mmflxd_max,region $WKDIR/$outfile_tmp $WKDIR/$outfile
+		# Max AMOC at 26.5N
+		$NCKS -F --no_tmp_fl -O -v $var -d lat,26.5 -d region,1 $WKDIR/$infile $WKDIR/$outfile_tmp
+		$NCAP2 -O -s 'mmflxd265=mmflxd.max($lat,$depth)' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
+		$NCKS --no_tmp_fl -A -v mmflxd265 -o $WKDIR/$outfile $WKDIR/$outfile_tmp
+		# Max AMOC at 45N
+		$NCKS -F --no_tmp_fl -O -v $var -d lat,45.0 -d region,1 $WKDIR/$infile $WKDIR/$outfile_tmp
+		$NCAP2 -O -s 'mmflxd45=mmflxd.max($lat,$depth)' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
+		$NCKS --no_tmp_fl -A -v mmflxd45 -o $WKDIR/$outfile $WKDIR/$outfile_tmp
 		rm -f $WKDIR/$outfile_tmp
 		let iproc++
 	    done
 	fi
 	# Section transports
 	if [ $var == voltr ]; then
-            echo "Section transports for yrs ${YR_start}-${YR_end}"
+            echo "Section transports (yrs ${YR_start}-${YR_end})"
             iproc=1
             while [ $iproc -le $nyrs ]
 	    do

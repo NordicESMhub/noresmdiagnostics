@@ -111,6 +111,46 @@ begin
    return (xvar)
 end
 
+function get_mmflxd265 (inptr:file) 
+begin
+   if (isfilevar(inptr,"mmflxd265")) then
+      tmp = inptr->mmflxd265
+      if (typeof(tmp).eq."double") then
+         xvar = dble2flt(tmp)
+      else
+         xvar = tmp
+      end if
+      xvar = (/xvar*1.0e-9/)
+      xvar@long_name = "Max AMOC 26.5N"
+      xvar@units = "Sv"
+      assignFillValue(xvar,xvar)
+   else
+      print("get_mmflxd265: no mmflxd265 variable present")
+      xvar = -999.0
+   end if
+   return (xvar)
+end
+
+function get_mmflxd45 (inptr:file) 
+begin
+   if (isfilevar(inptr,"mmflxd45")) then
+      tmp = inptr->mmflxd45
+      if (typeof(tmp).eq."double") then
+         xvar = dble2flt(tmp)
+      else
+         xvar = tmp
+      end if
+      xvar = (/xvar*1.0e-9/)
+      xvar@long_name = "Max AMOC 45N"
+      xvar@units = "Sv"
+      assignFillValue(xvar,xvar)
+   else
+      print("get_mmflxd45: no mmflxd45 variable present")
+      xvar = -999.0
+   end if
+   return (xvar)
+end
+
 function get_templvl (inptr:file) 
 begin
    if (isfilevar(inptr,"templvl")) then

@@ -18,7 +18,7 @@ fi
 
 # Time series plots
 echo "<br>" >> $WEBDIR/index.html
-echo "<TABLE style='width:10%'>" >> $WEBDIR/index.html
+echo "<TABLE width='200'>" >> $WEBDIR/index.html
 echo "<TH colspan='2'>ENSO indices [<a href='https://climatedataguide.ucar.edu/climate-data/nino-sst-indices-nino-12-3-34-4-oni-and-tni' target='_blank'>?</a>]" >> $WEBDIR/index.html
 echo "<TR>" >> $WEBDIR/index.html
 if [ -f $WEBDIR/set2/set2_mon_sst3_${cinfo}.png ]; then

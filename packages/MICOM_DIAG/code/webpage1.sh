@@ -17,7 +17,7 @@ if [ $COMPARE == USER ]; then
 fi
 
 # Volume transports
-echo "<TABLE style='width:50%'>" >> $WEBDIR/index.html
+echo "<TABLE width='1000'>" >> $WEBDIR/index.html
 echo "<TH colspan='5'>Section transports" >> $WEBDIR/index.html
 echo "<TR>" >> $WEBDIR/index.html
 if ls $WEBDIR/set1/set1_ann_voltr*_${cinfo}.png >/dev/null 2>&1
@@ -61,7 +61,7 @@ fi
 echo "</TABLE>" >> $WEBDIR/index.html
 # Global averages
 echo "<br>" >> $WEBDIR/index.html
-echo "<TABLE style='width:10%'>" >> $WEBDIR/index.html
+echo "<TABLE width='200'>" >> $WEBDIR/index.html
 echo "<TH colspan='2'>Global averages" >> $WEBDIR/index.html
 echo "<TR>" >> $WEBDIR/index.html
 if [ -f $WEBDIR/set1/set1_ann_temp_${cinfo}.png ]; then
@@ -77,19 +77,29 @@ fi
 echo "</TABLE>" >> $WEBDIR/index.html
 # AMOC
 echo "<br>" >> $WEBDIR/index.html
-echo "<TABLE style='width:15%'>" >> $WEBDIR/index.html
+echo "<TABLE width='200'>" >> $WEBDIR/index.html
 echo "<TR>" >> $WEBDIR/index.html
-echo "<TH>AMOC" >> $WEBDIR/index.html
+echo "<TH colspan='3'>Maximum AMOC" >> $WEBDIR/index.html
 echo "<TR>" >> $WEBDIR/index.html
-if [ -f $WEBDIR/set1/set1_ann_mmflxd_max_${cinfo}.png ]; then
-    echo "<TD><a href='set1/set1_ann_mmflxd_max_${cinfo}.png'>Max 20-60N</a>" >> $WEBDIR/index.html
+if [ -f $WEBDIR/set1/set1_ann_mmflxd265_${cinfo}.png ]; then
+    echo "<TD><a href='set1/set1_ann_mmflxd265_${cinfo}.png'>26.5N</a>" >> $WEBDIR/index.html
 else
-    echo "<TD><I>Max 20-60N</I>" >> $WEBDIR/index.html
+    echo "<TD><I>26.5N</I>" >> $WEBDIR/index.html
+fi
+if [ -f $WEBDIR/set1/set1_ann_mmflxd45_${cinfo}.png ]; then
+    echo "<TD><a href='set1/set1_ann_mmflxd45_${cinfo}.png'>45N</a>" >> $WEBDIR/index.html
+else
+    echo "<TD><I>45N</I>" >> $WEBDIR/index.html
+fi
+if [ -f $WEBDIR/set1/set1_ann_mmflxd_max_${cinfo}.png ]; then
+    echo "<TD><a href='set1/set1_ann_mmflxd_max_${cinfo}.png'>20N-60N</a>" >> $WEBDIR/index.html
+else
+    echo "<TD><I>20N-60N</I>" >> $WEBDIR/index.html
 fi
 echo "</TABLE>" >> $WEBDIR/index.html
 # Hovmöller
 echo "<br>" >> $WEBDIR/index.html
-echo "<TABLE style='width:10%'>" >> $WEBDIR/index.html
+echo "<TABLE width='200'>" >> $WEBDIR/index.html
 echo "<TH colspan='2'>Hovmoeller plots" >> $WEBDIR/index.html
 echo "<TR>" >> $WEBDIR/index.html
 if [ -f $WEBDIR/set1/set1_ann_templvl_${cinfo}.png ]; then

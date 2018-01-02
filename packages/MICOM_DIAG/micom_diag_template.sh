@@ -8,12 +8,14 @@ set -e
 #***************************
 #*** USER MODIFY SECTION ***
 #***************************
+time_start_script=`date +%s`
 # ---------------------------------------------------------
 # TEST CASENAME AND YEARS TO BE AVERAGED (CASE1)
 # ---------------------------------------------------------
-#CASENAME1=N1850_f19_tn11_01_E1
-CASENAME1=B1850MICOM_f09_tn14_01
-FIRST_YR_CLIMO1=21
+#CASENAME1=N18_f19_tn11_080617
+CASENAME1=N1850_f19_tn11_01_E1
+#CASENAME1=B1850MICOM_f09_tn14_01
+FIRST_YR_CLIMO1=171
 NYRS_CLIMO1=30
 
 # ---------------------------------------------------------
@@ -36,14 +38,14 @@ PATHDAT1=$pathdat_root1/$CASENAME1/ocn/hist
 # SELECT TYPE OF CONTROL CASE
 # NOTE: CNTL=USER IS NOT YET SUPPORTED
 # ---------------------------------------------------------
-CNTL=OBS    # compare case1 to observations (model-obs diagnostics)
-#CNTL=USER   # compare case1 to another experiment case2 (model-model diagnostics)
+#CNTL=OBS    # compare case1 to observations (model-obs diagnostics)
+CNTL=USER   # compare case1 to another experiment case2 (model-model diagnostics)
 
 # ---------------------------------------------------------
 # CNTL CASENAME AND YEARS TO BE AVERAGED (CASE2)
 # ---------------------------------------------------------
-CASENAME2=N1850_f19_tn11_01_E1
-FIRST_YR_CLIMO2=171
+CASENAME2=N18_f19_tn11_080617
+FIRST_YR_CLIMO2=21
 NYRS_CLIMO2=30
 
 # ---------------------------------------------------------
@@ -61,7 +63,7 @@ PATHDAT2=$pathdat_root2/$CASENAME2/ocn/hist
 # ---------------------------------------------------------
 # SELECT DIRECTORY WHERE THE DIAGNOSTICS ARE TO BE COMPUTED
 # ---------------------------------------------------------
-DIAG_ROOT=/projects/NS2345K/noresm_diagnostics_dev/out
+DIAG_ROOT=/projects/NS2345K/noresm_diagnostics_dev/out/MICOM_DIAG
 
 # ---------------------------------------------------------
 # SELECT SETS (1-5)
@@ -70,7 +72,8 @@ set_1=1 # (1=ON,0=OFF) Annual time series plots
 set_2=1 # (1=ON,0=OFF) ENSO indices
 set_3=1 # (1=ON,0=OFF) 2D (lat-lon) contour plots
 set_4=1 # (1=ON,0=OFF) MOCs for different regions
-set_5=1 # (1=ON,0=OFF) Zonal mean (lat-depth) plots
+set_5=1 # (1=ON,0=OFF) Zonal mean (lat-depth) plot
+set_6=1 # (1=ON,0=OFF) Equatorial (lon-depth) plots
 
 # ---------------------------------------------------------
 # NINO SST INDICES
@@ -128,6 +131,7 @@ export DIAG_CODE=$DIAG_HOME/code
 export DIAG_OBS=$DIAG_HOME/obs_data
 export DIAG_HTML=$DIAG_HOME/html
 export DIAG_GRID=$DIAG_HOME/grid_files
+export DIAG_RGB=$DIAG_HOME/rgb
 
 # Set bash-shell limits
 ulimit -s unlimited
@@ -232,14 +236,14 @@ if [ $CNTL == USER ]; then
 fi
 
 # Set required variables for climatology and time series
-required_vars_climo="depth_bnds,sealv,mld,templvl,salnlvl,mmflxd,region"
+required_vars_climo="depth_bnds,sealv,templvl,salnlvl,temp,saln,dz,mmflxd,region"
 required_vars_ts_ann="depth_bnds,time,section,voltr,temp,saln,templvl,salnlvl,mmflxd,region,dp"
 
 # Check which sets should be plotted based on CLIMO_TIME_SERIES_SWITCH
 if [ $CLIMO_TIME_SERIES_SWITCH == ONLY_CLIMO ]; then
-    set_1=0 ; set_2=0 ; set_3=1 ; set_4=1 ; set_5=1
+    set_1=0 ; set_2=0 ; set_3=1 ; set_4=1 ; set_5=1 ; set_6=1
 elif [ $CLIMO_TIME_SERIES_SWITCH == ONLY_TIME_SERIES ]; then
-    set_1=1 ; set_2=1 ; set_3=0 ; set_4=0 ; set_5=0
+    set_1=1 ; set_2=1 ; set_3=0 ; set_4=0 ; set_5=0 ; set_6=0
 fi
 compute_climo=0
 compute_time_series_ann=0
@@ -250,11 +254,11 @@ fi
 if [ $set_2 -eq 1 ]; then
     compute_time_series_mon=1
 fi
-if [ $set_3 -eq 1 ] || [ $set_4 -eq 1 ] || [ $set_5 -eq 1 ]; then
+if [ $set_3 -eq 1 ] || [ $set_4 -eq 1 ] || [ $set_5 -eq 1 ] || [ $set_6 -eq 1 ]; then
     compute_climo=1
 fi
-if [ $set_1 -eq 0 ] && [ $set_2 -eq 0 ] && \
-   [ $set_3 -eq 0 ] && [ $set_4 -eq 0 ] && [ $set_5 -eq 0 ]; then
+if [ $set_1 -eq 0 ] && [ $set_2 -eq 0 ] && [ $set_3 -eq 0 ] && \
+   [ $set_4 -eq 0 ] && [ $set_5 -eq 0 ] && [ $set_6 -eq 0 ]; then
     echo "ERROR: All sets are zero. Please modify."
     echo "*** EXITING THE SCRIPT ***"
     exit 1
@@ -277,6 +281,7 @@ echo "set_2 = $set_2"
 echo "set_3 = $set_3"
 echo "set_4 = $set_4"
 echo "set_5 = $set_5"
+echo "set_6 = $set_6"
 
 # Determine the first and last yr of time series (if TRENDS_ALL=1)
 if [ $TRENDS_ALL -eq 1 ]; then
@@ -414,6 +419,8 @@ do
 	    $DIAG_CODE/add_attributes.sh $CASENAME $ANN_AVG_FILE $CLIMO_TS_DIR
 	    # Remap the grid to 1x1 rectangular grid
 	    $DIAG_CODE/remap_climo.sh $CASENAME $ANN_AVG_FILE $ANN_RGR_FILE $CLIMO_TS_DIR
+	    # Compute zonal mean
+	    $DIAG_CODE/zonal_mean.sh $CASENAME $FYR_PRNT_CLIMO $LYR_PRNT_CLIMO $CLIMO_TS_DIR
 	else
 	    echo "$CLIMO_TS_DIR/$ANN_RGR_FILE already exists."
 	    echo "-> SKIPPING REMAPPING CLIMATOLOGY"
@@ -549,6 +556,30 @@ elif [ $set_4 -eq 1 ] && [ -f $CLIMO_TS_DIR1/$ANN_AVG_FILE1 ]; then
 	set_4=0
     fi
 fi
+# set_5: ZM_FILE: assumes that all zm files exist if "glb" is present
+ZM_FILE1=${CASENAME1}_ANN_${FYR_PRNT_CLIMO1}-${LYR_PRNT_CLIMO1}_climo_remap_zm_glb.nc
+if [ $set_5 -eq 1 ] && [ ! -f $CLIMO_TS_DIR1/$ZM_FILE1 ]; then
+    echo "$CLIMO_TS_DIR1/$ZM_FILE1 not found: skipping set_5"
+    set_5=0
+elif [ $set_5 -eq 1 ] && [ -f $CLIMO_TS_DIR1/$ZM_FILE1 ]; then
+    ZM_FILE2=${CASENAME2}_ANN_${FYR_PRNT_CLIMO2}-${LYR_PRNT_CLIMO2}_climo_remap_zm_glb.nc
+    if [ $CNTL == USER ] && [ ! -f $CLIMO_TS_DIR2/$ZM_FILE2 ]; then
+	echo "$CLIMO_TS_DIR2/$ZM_FILE2 not found: skipping set_5"
+	set_5=0
+    fi
+fi
+# set_6: ANN_RGR_FILE
+ANN_RGR_FILE1=${CASENAME1}_ANN_${FYR_PRNT_CLIMO1}-${LYR_PRNT_CLIMO1}_climo_remap.nc
+if [ $set_6 -eq 1 ] && [ ! -f $CLIMO_TS_DIR1/$ANN_RGR_FILE1 ]; then
+    echo "$CLIMO_TS_DIR1/$ANN_RGR_FILE1 not found: skipping set_6"
+    set_6=0
+elif [ $set_6 -eq 1 ] && [ -f $CLIMO_TS_DIR1/$ANN_RGR_FILE1 ]; then
+    ANN_RGR_FILE2=${CASENAME2}_ANN_${FYR_PRNT_CLIMO2}-${LYR_PRNT_CLIMO2}_climo_remap.nc
+    if [ $CNTL == USER ] && [ ! -f $CLIMO_TS_DIR2/$ANN_RGR_FILE2 ]; then
+	echo "$CLIMO_TS_DIR2/$ANN_RGR_FILE2 not found: skipping set_6"
+	set_6=0
+    fi
+fi
 
 # ---------------------------------
 # Create the web interface
@@ -564,6 +595,7 @@ mkdir -p $WEBDIR/set2
 mkdir -p $WEBDIR/set3
 mkdir -p $WEBDIR/set4
 mkdir -p $WEBDIR/set5
+mkdir -p $WEBDIR/set6
 cp $DIAG_HTML/index.html $WEBDIR
 cdate=`date`
 sed -i "s/test_run/$CASENAME1/g" $WEBDIR/index.html
@@ -597,7 +629,7 @@ if [ $set_1 -eq 1 ]; then
     fi
     echo "Plotting time series of volume transport (plot_time_series_voltr.ncl)..."
     $NCL -Q < $DIAG_CODE/plot_time_series_voltr.ncl
-    echo "Plotting time series of temp and saln (plot_time_series_ann.ncl)..."
+    echo "Plotting time series of temp, saln and mmflxd (plot_time_series_ann.ncl)..."
     $NCL -Q < $DIAG_CODE/plot_time_series_ann.ncl
     echo "Plotting Hovmoeller of temp and saln (plot_hovmoeller.ncl)..."
     $NCL -Q < $DIAG_CODE/plot_hovmoeller.ncl
@@ -645,7 +677,7 @@ if [ $set_2 -eq 1 ]; then
     $DIAG_CODE/webpage2.sh
 fi
 
-if [ $set_3 -eq 1 ] || [ $set_4 -eq 1 ] || [ $set_5 -eq 1 ]; then
+if [ $set_3 -eq 1 ] || [ $set_4 -eq 1 ] || [ $set_5 -eq 1 ] || [ $set_6 -eq 1 ]; then
     if [ $set_1 -eq 1 ] || [ $set_2 -eq 1 ]; then
 	echo "<br>" >> $WEBDIR/index.html
     fi
@@ -660,7 +692,6 @@ if [ $set_3 -eq 1 ]; then
     echo "SET 3: 2D LAT/LON CONTOUR PLOTS"
     echo "****************************************************"
     export COMPARE=$CNTL
-    export RGB_FILE=$DIAG_HOME/rgb/blueyellowred.rgb
     export CASE1=$CASENAME1
     export FYR1=$FIRST_YR_CLIMO1
     export LYR1=$LAST_YR_CLIMO1
@@ -692,7 +723,6 @@ if [ $set_4 -eq 1 ]; then
     echo "SET 4: MOC PLOTS"
     echo "****************************************************"
     export COMPARE=$CNTL
-    export RGB_FILE=$DIAG_HOME/rgb/blueyellowred.rgb
     export CASE1=$CASENAME1
     export FYR1=$FIRST_YR_CLIMO1
     export LYR1=$LAST_YR_CLIMO1
@@ -722,8 +752,65 @@ if [ $set_5 -eq 1 ]; then
     echo "****************************************************"
     echo "SET 5: ZONAL MEAN PLOTS"
     echo "****************************************************"
-    echo "Coming soon..."
+    export COMPARE=$CNTL
+    export CASE1=$CASENAME1
+    export FYR1=$FIRST_YR_CLIMO1
+    export LYR1=$LAST_YR_CLIMO1
+    export INFILE2=$DIAG_OBS
+    if [ $CNTL == USER ]; then
+	export CASE2=$CASENAME2
+	export FYR2=$FIRST_YR_CLIMO2
+	export LYR2=$LAST_YR_CLIMO2
+    fi
+    for reg in glb pac atl ind so
+    do
+	export REGION=$reg
+	export INFILE1=$CLIMO_TS_DIR1/${CASENAME1}_ANN_${FYR_PRNT_CLIMO1}-${LYR_PRNT_CLIMO1}_climo_remap_zm_$REGION.nc
+	if [ $CNTL == USER ]; then
+	    export INFILE2=$CLIMO_TS_DIR2/${CASENAME2}_ANN_${FYR_PRNT_CLIMO2}-${LYR_PRNT_CLIMO2}_climo_remap_zm_$REGION.nc
+	fi
+	echo "Zonal mean plots of region $REGION (plot_zonal_mean.ncl)..."
+	$NCL -Q < $DIAG_CODE/plot_zonal_mean.ncl
+    done
+    
+    $DIAG_CODE/ps2png.sh set5 $density
+    if [ $? -ne 0 ]; then
+	"ERROR occurred in ps2png.sh (set5)"
+	"*** EXITING THE SCRIPT ***"
+	exit 1
+    fi
     $DIAG_CODE/webpage5.sh
+fi
+# ---------------------------------
+# set 6: Equatorial plots
+# ---------------------------------
+if [ $set_6 -eq 1 ]; then
+    echo " "
+    echo "****************************************************"
+    echo "SET 6: EQUATORIAL PLOTS"
+    echo "****************************************************"
+    export COMPARE=$CNTL
+    export CASE1=$CASENAME1
+    export FYR1=$FIRST_YR_CLIMO1
+    export LYR1=$LAST_YR_CLIMO1
+    export INFILE1=$CLIMO_TS_DIR1/${CASENAME1}_ANN_${FYR_PRNT_CLIMO1}-${LYR_PRNT_CLIMO1}_climo_remap.nc
+    export INFILE2=$DIAG_OBS
+    if [ $CNTL == USER ]; then
+	export CASE2=$CASENAME2
+	export FYR2=$FIRST_YR_CLIMO2
+	export LYR2=$LAST_YR_CLIMO2
+	export INFILE2=$CLIMO_TS_DIR2/${CASENAME2}_ANN_${FYR_PRNT_CLIMO2}-${LYR_PRNT_CLIMO2}_climo_remap.nc
+    fi
+    echo "Equatorial plots of temp and saln (plot_eq.ncl)..."
+    $NCL -Q < $DIAG_CODE/plot_eq.ncl
+    # Convert time series figure to png
+    $DIAG_CODE/ps2png.sh set6 $density
+    if [ $? -ne 0 ]; then
+	"ERROR occurred in ps2png.sh (set6)"
+	"*** EXITING THE SCRIPT ***"
+	exit 1
+    fi
+    $DIAG_CODE/webpage6.sh
 fi
 
 # Making tar file
@@ -768,9 +855,16 @@ fi
 if [ -d $WEBDIR ]; then
     rm -rf $WEBDIR
 fi
+time_end_script=`date +%s`
+runtime_s=`expr ${time_end_script} - ${time_start_script}`
+runtime_script_m=`expr ${runtime_s} / 60`
+min_in_secs=`expr ${runtime_script_m} \* 60`
+runtime_script_s=`expr ${runtime_s} - ${min_in_secs}`
+
 echo " "
 echo "****************************************************"
 echo "NORMAL EXIT FROM SCRIPT"
+echo "TOTAL RUNTIME: ${runtime_script_m}m${runtime_script_s}s"
 date
 echo "****************************************************"
 

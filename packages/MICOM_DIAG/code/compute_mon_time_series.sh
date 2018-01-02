@@ -117,7 +117,15 @@ do
 	fi
     done
     # Compute the average SSTs for the index region
-    echo "Computing monthly time series of nino$ENSOidx sst for yr=${yr_prnt}"
+    let "YRM = $YR - 1"
+    let "residual = $YRM % 10"
+    if [ $residual -eq 0 ]; then
+	let "YRP = $YRM + 10"
+	if [ $YRP -gt $last_yr ]; then
+	   YRP=$last_yr
+	fi
+	echo "Monthly time series of nino$ENSOidx sst (yrs=${YR}-${YRP})"
+    fi
     pid=()
     for month in 01 02 03 04 05 06 07 08 09 10 11 12
 	do
@@ -126,7 +134,7 @@ do
 	    eval $NCWA --no_tmp_fl -O -v sst -w mask${ENSOidx} -a x,y $WKDIR/$infile $WKDIR/$outfile &
 	    pid+=($!)
 	done
-    for ((m=1;m<=11;m++))
+    for ((m=0;m<=11;m++))
     do
 	wait ${pid[$m]}
 	if [ $? -ne 0 ]; then
@@ -179,48 +187,6 @@ fi
 rm -f $WKDIR/${casename}_*.nc
 if [ $? -ne 0 ]; then
     echo "ERROR in deleting: $WKDIR/${casename}_*.nc"
-    echo "*** EXITING THE SCRIPT ***"
-    exit 1
-fi
-# Compute a climatology
-echo "Monthly climatology nino$ENSOidx sst"
-$CDO -s selyear,${first_yrc}/${last_yrc} $tsdir/$mon_ts_file $WKDIR/${casename}_climo_yr.nc >/dev/null 2>&1
-if [ $? -ne 0 ]; then
-    "ERROR in selecting climatology years: $CDO -s selyear,${first_yrc}/${last_yrc} $tsdir/$mon_ts_file $WKDIR/clim_years.nc >/dev/null 2>&1"
-    echo "*** EXITING THE SCRIPT ***"
-    exit 1
-fi
-$CDO -s ymonmean $WKDIR/${casename}_climo_yr.nc $WKDIR/${casename}_climo.nc >/dev/null 2>&1
-if [ $? -ne 0 ]; then
-    "ERROR in computing monthly climatology: $CDO -s ymonmean $WKDIR/${casename}_climo_yr.nc $WKDIR/${casename}_climo.nc >/dev/null 2>&1"
-    echo "*** EXITING THE SCRIPT ***"
-    exit 1
-fi
-# Change attribute
-$NCATTED -O -a long_name,sst${ENSOidx},o,c,"SST climatology in Nino${ENSOidx} region" $WKDIR/${casename}_climo.nc
-if [ $? -ne 0 ]; then
-    echo "ERROR in changing long_name attribute: $NCATTED -O -a long_name,sst,o,c,SST climatology in Nino${ENSOidx} region $tsdir/$mon_ts_file"
-    echo "*** EXITING THE SCRIPT ***"
-    exit 1
-fi
-# Remane the sst variable
-$NCRENAME -v sst${ENSOidx},sst_clim $WKDIR/${casename}_climo.nc
-if [ $? -ne 0 ]; then
-    echo "ERROR in renaming: $NCRENAME -v sst,sst_clim $WKDIR/${casename}_climo.nc"
-    echo "*** EXITING THE SCRIPT ***"
-    exit 1
-fi
-# Append
-$NCKS --no_tmp_fl -A -v sst_clim -o $tsdir/$mon_ts_file $WKDIR/${casename}_climo.nc
-if [ $? -ne 0 ]; then
-    echo "ERROR in appending: $NCKS --no_tmp_fl -A -v sst_clim -o $tsdir/$mon_ts_file $WKDIR/${casename}_climo.nc"
-    echo "*** EXITING THE SCRIPT ***"
-    exit 1
-fi
-# Clean 
-rm $WKDIR/${casename}_climo*.nc
-if [ $? -ne 0 ]; then
-    echo "ERROR in deleting: rm $WKDIR/${casename}_climo*.nc"
     echo "*** EXITING THE SCRIPT ***"
     exit 1
 fi

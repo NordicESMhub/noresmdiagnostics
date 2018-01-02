@@ -17,7 +17,7 @@ if [ $COMPARE == USER ]; then
 fi
 
 echo "<br>" >> $WEBDIR/index.html
-echo "<TABLE style='width:30%'>" >> $WEBDIR/index.html
+echo "<TABLE width='700'>" >> $WEBDIR/index.html
 echo "<TH colspan='6'>Horizontal fields" >> $WEBDIR/index.html
 echo "<TR>" >> $WEBDIR/index.html
 if [ -f $WEBDIR/set3/set3_ann_mld_${cinfo}.png ]; then
@@ -26,9 +26,9 @@ else
     echo "<TD colspan='2'><I>Mixed layer depth</I>" >> $WEBDIR/index.html
 fi
 if [ -f $WEBDIR/set3/set3_ann_sealv_${cinfo}.png ]; then
-    echo "<TD colspan='3'><a href='set3/set3_ann_sealv_${cinfo}.png'>Sea level</a>" >> $WEBDIR/index.html
+    echo "<TD colspan='3'><a href='set3/set3_ann_sealv_${cinfo}.png'>Sea surface height</a>" >> $WEBDIR/index.html
 else
-    echo "<TD colspan='3'><I>Sea level</I>" >> $WEBDIR/index.html
+    echo "<TD colspan='3'><I>Sea surface height</I>" >> $WEBDIR/index.html
 fi
 echo "<TR>" >> $WEBDIR/index.html
 echo "<TD>Temperature" >> $WEBDIR/index.html
@@ -55,9 +55,9 @@ else
     echo "<TD><I>4000m</I>" >> $WEBDIR/index.html
 fi
 echo "<TR>" >> $WEBDIR/index.html
-if ls $WEBDIR/set3/set3_ann_templvl*_${cinfo}.png >/dev/null 2>&1
+echo "<TD>Salinity" >> $WEBDIR/index.html
+if ls $WEBDIR/set3/set3_ann_salnlvl*_${cinfo}.png >/dev/null 2>&1
 then
-    echo "<TD>Salinity" >> $WEBDIR/index.html
     echo "<TD><a href='set3/set3_ann_salnlvl0_${cinfo}.png'>0m</a>" >> $WEBDIR/index.html
     echo "<TD><a href='set3/set3_ann_salnlvl50_${cinfo}.png'>50m</a>" >> $WEBDIR/index.html
     echo "<TD><a href='set3/set3_ann_salnlvl100_${cinfo}.png'>100m</a>" >> $WEBDIR/index.html

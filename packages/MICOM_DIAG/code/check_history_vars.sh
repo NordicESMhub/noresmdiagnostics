@@ -36,6 +36,29 @@ filetypes="hy hm hd"
 if [ $mode == ts_mon ]; then
     filetypes="hm hd"
 fi
+
+# Look for sst (used to determine grid type and version)
+if [ ! -f $WKDIR/attributes/sst_file_${casename} ]; then
+    for filetype in $filetypes
+    do
+	if [ $filetype == hy ]; then
+	    fullpath_filename=$pathdat/$casename.micom.$filetype.`printf "%04d" ${first_yr}`.nc
+	else
+	    fullpath_filename=$pathdat/$casename.micom.$filetype.`printf "%04d" ${first_yr}`-01.nc
+	fi
+	$NCKS --quiet -d y,0 -d x,0 -v sst $fullpath_filename >/dev/null 2>&1
+	if [ $? -eq 0 ]; then
+	    echo $fullpath_filename > $WKDIR/attributes/sst_file_${casename}
+	fi
+    done
+fi
+
+if [ ! -f $WKDIR/attributes/sst_file_${casename} ]; then
+    echo "ERROR: the variable sst was not found in any of the history files (hy, hm and hd)."
+    echo "*** EXITING THE SCRIPT ***"
+    exit 1
+fi
+
 for filetype in $filetypes
 do
     check_vars=1
@@ -66,14 +89,6 @@ do
 	    fi
 	    let iyr++
 	done
-    fi
-
-    # Look for sst (used to determine grid type and version)
-    if [ ! -f $WKDIR/attributes/sst_file_${casename} ]; then
-	$NCKS --quiet -d y,0 -d x,0 -v sst $fullpath_filename >/dev/null 2>&1
-	if [ $? -eq 0 ]; then
-	    echo $fullpath_filename > $WKDIR/attributes/sst_file_${casename}
-	fi
     fi
     
     # Check which variables are present
@@ -151,8 +166,3 @@ if [ $var_flag -eq 0 ]; then
     exit 1
 fi
 
-if [ ! -f $WKDIR/attributes/sst_file_${casename} ]; then
-    echo "ERROR: the variable sst was not found in any of the history files (hy, hm and hd)."
-    echo "*** EXITING THE SCRIPT ***"
-    exit 1
-fi

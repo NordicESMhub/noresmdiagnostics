@@ -17,7 +17,7 @@ if [ $COMPARE == USER ]; then
 fi
 
 echo "<br>" >> $WEBDIR/index.html
-echo "<TABLE style='width:15%'>" >> $WEBDIR/index.html
+echo "<TABLE width='300'>" >> $WEBDIR/index.html
 echo "<TH colspan='3'>Overturning circulation" >> $WEBDIR/index.html
 echo "<TR>" >> $WEBDIR/index.html
 if ls $WEBDIR/set4/set4_ann_mmflxd*_${cinfo}.png >/dev/null 2>&1

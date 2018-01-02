@@ -29,8 +29,10 @@ begin
   lyrs1      = getenv("LYR_TS1")
   fyr1 = stringtointeger(fyrs1)
   lyr1 = stringtointeger(lyrs1)
-  fyrc1      = getenv("FYR_CLIMO1")
-  lyrc1      = getenv("LYR_CLIMO1")
+  fyrcs1      = getenv("FYR_CLIMO1")
+  lyrcs1      = getenv("LYR_CLIMO1")
+  fyrc1 = stringtointeger(fyrcs1)
+  lyrc1 = stringtointeger(lyrcs1)
   datadir1   = getenv("DATADIR1")
 
   if (compare.eq."USER") then
@@ -39,8 +41,10 @@ begin
     lyrs2    = getenv("LYR_TS2")
     fyr2 = stringtointeger(fyrs2)
     lyr2 = stringtointeger(lyrs2)
-    fyrc2    = getenv("FYR_CLIMO2")
-    lyrc2    = getenv("LYR_CLIMO2")
+    fyrcs2    = getenv("FYR_CLIMO2")
+    lyrcs2    = getenv("LYR_CLIMO2")
+    fyrc2 = stringtointeger(fyrcs2)
+    lyrc2 = stringtointeger(lyrcs2)
     datadir2 = getenv("DATADIR2")
   end if
 
@@ -52,13 +56,6 @@ begin
   do i = 0,nvars-1
     infile1=datadir1+"/"+case1+"_MON_"+fyrs1+"-"+lyrs1+"_"+vars(i)+"_ts.nc"
     inptr1 = addfile(infile1,"r")
-
-    ; Read climatology
-    sstClim1 = get_sst_clim(inptr1)
-    if (all(sstClim1.eq.-999.)) then
-       print("sstClim variable not found in case1.")
-       status_exit(1)
-    end if
 
     if (vars(i).eq."sst3") then
        sst1=get_sst3(inptr1)
@@ -77,17 +74,24 @@ begin
        continue
     end if
     sst1!0 = "time"
-    
-    
+
+;   -------------------
+;   Compute climatology
+;   -------------------
+    nyrsc1 = lyrc1-fyrc1+1
+    isc = 12*(fyrc1-fyr1)
+    sstClim1 = new(12,float)
+    sstClim1(:) = 0.0
+    do im = 0,11
+       do iy = 1,nyrsc1
+          sstClim1(im) = sstClim1(im) + sst1(isc+12*(iy-1)+im)/tofloat(nyrsc1)
+       end do
+    end do   
+    delete(isc)
+
     if (compare.eq."USER") then
       infile2=datadir2+"/"+case2+"_MON_"+fyrs2+"-"+lyrs2+"_"+vars(i)+"_ts.nc"
       inptr2 = addfile(infile2,"r")
-
-      sstClim2 = get_sst_clim(inptr2)
-      if (all(sstClim2.eq.-999.)) then
-        print("sstClim variable not found in case2.")
-        status_exit(1)
-      end if
 
       if (vars(i).eq."sst3") then
          sst2=get_sst3(inptr2)
@@ -102,6 +106,21 @@ begin
         continue
       end if
       sst2!0 = "time"
+
+;     -------------------
+;     Compute climatology
+;     -------------------
+      nyrsc2 = lyrc2-fyrc2+1
+      isc = 12*(fyrc2-fyr2)
+      sstClim2 = new(12,float)
+      sstClim2(:) = 0.0
+      do im = 0,11
+         do iy = 1,nyrsc2
+            sstClim2(im) = sstClim2(im) + sst2(isc+12*(iy-1)+im)/tofloat(nyrsc2)
+         end do
+      end do   
+      delete(isc)
+
     end if
 
 ;   --------------------------------------------
@@ -111,13 +130,14 @@ begin
     ntimes1  = ndim(0)
     nyrs1    = ntimes1/12
     sstAnom1 = sst1
-    ic=0
-    do iy=0,nyrs1-1
-      do im=0,11
+    ic = 0
+    do iy = 1,nyrs1
+      do im = 0,11
         sstAnom1(ic)=sst1(ic)-sstClim1(im)
-	ic=ic+1
+        ic = ic + 1
       end do
     end do
+    delete(ic)
     sstAnom1@long_name = keyword+" SST anom"
     yrfrac1   = fspan(fyr1,lyr1,ntimes1)
     if (compare.eq."OBS")
@@ -129,13 +149,14 @@ begin
       ntimes2  = ndim(0)
       nyrs2    = ntimes2/12
       sstAnom2 = sst2
-      ic=0
-      do iy=0,nyrs2-1
-        do im=0,11
+      ic = 0
+      do iy = 1,nyrs2
+        do im = 0,11
           sstAnom2(ic)=sst2(ic)-sstClim2(im)
-	  ic=ic+1
+          ic = ic + 1
         end do
       end do
+      delete(ic)
       sstAnom2@long_name = keyword+" SST anom"
       yrfrac2   = fspan(fyr2,lyr2,ntimes2)
       plot      = new(2,"graphic")
@@ -215,10 +236,10 @@ begin
     txres@txJust        = "BottomRight"
     xpos                = int2flt(lyr1)-nyrs1*0.01
     ypos                = -4.8
-    dum1=gsn_add_text(wks,plot(0),"base: "+fyrc1+"-"+lyrc1,xpos,ypos,txres)
+    dum1=gsn_add_text(wks,plot(0),"base: "+fyrcs1+"-"+lyrcs1,xpos,ypos,txres)
     if (compare.eq."USER") then
       xpos                = int2flt(lyr2)-nyrs2*0.01
-      dum2=gsn_add_text(wks,plot(1),"base: "+fyrc2+"-"+lyrc2,xpos,ypos,txres)
+      dum2=gsn_add_text(wks,plot(1),"base: "+fyrcs2+"-"+lyrcs2,xpos,ypos,txres)
     end if
 
     if (compare.eq."OBS") then

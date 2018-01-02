@@ -9,8 +9,7 @@ load "$DIAG_CODE/functions_latlon.ncl"
 begin
 
 compare    = getenv("COMPARE")
-rgb_file   = getenv("RGB_FILE")
-;  season     = getenv("SEASON")
+rgb_dir    = getenv("DIAG_RGB")
 wkdir      = getenv("WKDIR")
 infile1    = getenv("INFILE1")     ; case1 climo input filename
 fyr1       = getenv("FYR1")
@@ -52,11 +51,16 @@ delete(gw1temp)
 gw1!0 = "lat"
 gw1&lat = lat1
 
+; Define RGB files
+rgb_file  = rgb_dir+"/blueyellowred2.rgb"
+rgb_filed = rgb_dir+"/bluered2.rgb"
+
 ; CASE 2 MODEL OR OBS
 if (compare .eq. "OBS") then
   ptr_woa13t = addfile(infile2+"/WOA13/1deg/woa13_decav_t00_01.nc","r")
   ptr_woa13s = addfile(infile2+"/WOA13/1deg/woa13_decav_s00_01.nc","r")
   ptr_woce   = addfile(infile2+"/MLD/mld_clim_WOCE_ANN.nc","r")
+  ptr_maxi   = addfile(infile2+"/SSH/MDOT110107.nc","r")
 else
   inptr2   = addfile(infile2,"r")
   case2    = getenv("CASE2")
@@ -100,41 +104,38 @@ end if
 ;************************************************
 ; contours definition (global)
 cntrs_templvl_top=(/-2,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36/)
-dcntrs_templvl_top=(/-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9/)
+dcntrs_templvl_top=(/-9,-8,-7,-6,-5,-4,-3,-2,-1,1,2,3,4,5,6,7,8,9/)
 
 cntrs_templvl_bot=(/-2,-1.5,-1,-0.5,0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5/)
-dcntrs_templvl_bot=(/-4.5,-4,-3.5,-3,-2.5,-2,-1.5,-1,-0.5,0,0.5,1,1.5,2,2.5,3,3.5,4,4.5/)
+dcntrs_templvl_bot=(/-4.5,-4,-3.5,-3,-2.5,-2,-1.5,-1,-0.5,0.5,1,1.5,2,2.5,3,3.5,4,4.5/)
 
 cntrs_salnlvl_top=(/28.5,29,29.5,30,30.5,31,31.5,32,32.5,33,33.5,34,34.5,35,35.5,36,36.5,37,37.5,38/)
-dcntrs_salnlvl_top=(/-2,-1.6,-1.4,-1.2,-1,-0.8,-0.6,-0.4,-0.2,0,0.2,0.4,0.6,0.8,1,1.2,1.4,1.6,2/)
+dcntrs_salnlvl_top=(/-2,-1.6,-1.4,-1.2,-1,-0.8,-0.6,-0.4,-0.2,0.2,0.4,0.6,0.8,1,1.2,1.4,1.6,2/)
 cntrs_salnlvl_bot=(/33.2,33.4,33.6,33.8,34,34.2,34.4,34.6,34.8,35,35.2,35.4,35.6,35.8,36,36.2,36.4,36.6,36.8,37/)
-dcntrs_salnlvl_bot=(/-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9/)
+dcntrs_salnlvl_bot=(/-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9/)
 
 cntrs_mld=(/10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200/)
-dcntrs_mld=(/-80,-70,-60,-50,-40,-30,-20,-10,-5,0,5,10,20,30,40,50,60,70,80/)
+dcntrs_mld=(/-80,-70,-60,-50,-40,-30,-20,-10,-5,5,10,20,30,40,50,60,70,80/)
 
-cntrs_sealv=(/-1,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,-0.05,0.05,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,1/)
-dcntrs_sealv=(/-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,-0.05,0,0.05,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8/)
+cntrs_sealv=(/-1.9,-1.7,-1.5,-1.3,-1.1,-0.9,-0.7,-0.5,-0.3,-0.1,0.1,0.3,0.5,0.7,0.9,1.1,1.3,1.5,1.7,1.9/)
+dcntrs_sealv=(/-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9/)
 
 ; model variables
-vars = (/"templvl0","templvl50","templvl100","templvl250","templvl500",\
+vars = (/"mld","templvl0","templvl50","templvl100","templvl250","templvl500",\
          "templvl1000","templvl2000","templvl3000","templvl4000",\
          "salnlvl0","salnlvl50","salnlvl100","salnlvl250","salnlvl500",\
-	 "salnlvl1000","salnlvl2000","salnlvl3000","salnlvl4000",\
-         "mld","sealv"/)
+	 "salnlvl1000","salnlvl2000","salnlvl3000","salnlvl4000","sealv"/)
 
 ; define contour intervals
-cntrs = (/cntrs_templvl_top,cntrs_templvl_top,cntrs_templvl_top,cntrs_templvl_top,cntrs_templvl_top,\
+cntrs = (/cntrs_mld,cntrs_templvl_top,cntrs_templvl_top,cntrs_templvl_top,cntrs_templvl_top,cntrs_templvl_top,\
           cntrs_templvl_top,cntrs_templvl_bot,cntrs_templvl_bot,cntrs_templvl_bot,\
           cntrs_salnlvl_top,cntrs_salnlvl_top,cntrs_salnlvl_top,cntrs_salnlvl_top,cntrs_salnlvl_top,\
-	  cntrs_salnlvl_bot,cntrs_salnlvl_bot,cntrs_salnlvl_bot,cntrs_salnlvl_bot,\
-          cntrs_mld,cntrs_sealv/)
+	  cntrs_salnlvl_bot,cntrs_salnlvl_bot,cntrs_salnlvl_bot,cntrs_salnlvl_bot,cntrs_sealv/)
 
-dcntrs = (/dcntrs_templvl_top,dcntrs_templvl_top,dcntrs_templvl_top,dcntrs_templvl_top,dcntrs_templvl_top,\
+dcntrs = (/dcntrs_mld,dcntrs_templvl_top,dcntrs_templvl_top,dcntrs_templvl_top,dcntrs_templvl_top,dcntrs_templvl_top,\
            dcntrs_templvl_top,dcntrs_templvl_bot,dcntrs_templvl_bot,dcntrs_templvl_bot,\
            dcntrs_salnlvl_top,dcntrs_salnlvl_top,dcntrs_salnlvl_top,dcntrs_salnlvl_top,dcntrs_salnlvl_top,\
-           dcntrs_salnlvl_bot,dcntrs_salnlvl_bot,dcntrs_salnlvl_bot,dcntrs_salnlvl_bot,\
-           dcntrs_mld,dcntrs_sealv/)
+           dcntrs_salnlvl_bot,dcntrs_salnlvl_bot,dcntrs_salnlvl_bot,dcntrs_salnlvl_bot,dcntrs_sealv/)
 
 nvars = dimsizes(vars)
 
@@ -145,13 +146,13 @@ if (compare .eq. "OBS") then
   woa13t_vars = (/"t_an0","t_an50","t_an100","t_an250","t_an500","t_an1000","t_an2000","t_an3000","t_an4000"/)
   woa13s_vars = (/"s_an0","s_an50","s_an100","s_an250","s_an500","s_an1000","s_an2000","s_an3000","s_an4000"/)
   woce_vars = (/"mld"/)
+  maxi_vars = (/"mdot"/)
 
   ; observations: list of variables to plot
-  obsvars = (/"t_an0","t_an50","t_an100","t_an250","t_an500",\
+  obsvars = (/"mld","t_an0","t_an50","t_an100","t_an250","t_an500",\
               "t_an1000","t_an2000","t_an3000","t_an4000",\
               "s_an0","s_an50","s_an100","s_an250","s_an500",\
-	      "s_an1000","s_an2000","s_an3000","s_an4000",\
-              "mld","dummy"/) 
+	      "s_an1000","s_an2000","s_an3000","s_an4000","mdot"/) 
 end if
 ;-------------------------------------------------------------
 ; common resources for global contour plots 
@@ -173,19 +174,19 @@ res@mpFillOn = False
 res@lbLabelBarOn = True
 res@lbTitleOn = True
 res@lbBoxMinorExtentF = 0.15
-res@lbLabelStride = 1
 res@txFontHeightF = 0.020
 res@tiMainFontHeightF = 0.025
+res@lbLabelAutoStride = False
 res@lbOrientation = "Vertical"
 res@lbLabelFontHeightF = 0.015
 res@lbTitleFontHeightF = 0.018
-res@lbLabelStride      = 2
 res@cnLevelSelectionMode = "ExplicitLevels"
 res@cnFillOn = True
 res@cnLinesOn = False
-res@cnMissingValFillColor = "Background"
+res@cnMissingValFillColor = "gray75"
 res@cnLineLabelsOn = False
-cmap = RGBtoCmap(rgb_file)
+cmap  = RGBtoCmap(rgb_file)
+cmapd = RGBtoCmap(rgb_filed)
 
 ;--------------------------------------------------------------
 ; common resources for panel plots
@@ -203,6 +204,10 @@ do i = 0, nvars-1
 ;----------------------------
 ; Test case: CASE 1 MODEL
 ;----------------------------
+
+  if (vars(i) .eq. "mld") then
+    A = get_mld (inptr1)
+  end if
 
   if (vars(i) .eq. "templvl0") then
     A = get_templvl (inptr1,depth1,0.0)
@@ -300,10 +305,6 @@ do i = 0, nvars-1
     A = get_salnlvl (inptr1,depth1,5000.0)
   end if
 
-  if (vars(i) .eq. "mld") then
-    A = get_mld (inptr1)
-  end if
-
   if (vars(i) .eq. "sealv") then
     A = get_sealv (inptr1)
   end if
@@ -337,7 +338,12 @@ do i = 0, nvars-1
 
    if (any(obsvars(i) .eq. woce_vars)) then
      inptr2 = ptr_woce
-     case2 = "WOCE"
+     case2 = "de Boyer Montegut et al. (2004)"
+   end if
+
+   if (any(obsvars(i) .eq. maxi_vars)) then
+     inptr2 = ptr_maxi
+     case2 = "Maximenko et al. (2009)"
    end if
    
 ;   get latitudes,longitudes, and weights
@@ -525,6 +531,13 @@ do i = 0, nvars-1
       B@units = "m"      
     end if
 
+    if (vars(i).eq."sealv") then
+      delete(B)    
+      B = inptr2->mdot(:,:)
+      B@long_name = "SSH"
+      B@units = "m"      
+    end if
+
     if (all(B.eq.-999.)) then
       print (vars(i)+" not present in observations: plotting only model results")
     end if
@@ -534,6 +547,10 @@ do i = 0, nvars-1
  ;-------------
 
   else                               ; CASE 2 IS MODEL
+
+    if (vars(i) .eq. "mld") then
+      B = get_mld (inptr2)
+    end if
 
     if (vars(i) .eq. "templvl0") then
       B = get_templvl (inptr2,depth2,0.0)
@@ -631,10 +648,6 @@ do i = 0, nvars-1
       B = get_salnlvl (inptr2,depth2,5000.0)
     end if
 
-    if (vars(i) .eq. "mld") then
-      B = get_mld (inptr2)
-    end if
-
     if (vars(i) .eq. "sealv") then
        B = get_sealv (inptr2)
     end if
@@ -721,7 +734,6 @@ do i = 0, nvars-1
   else
     wks = gsn_open_wks("ps",wkdir+"/set3_ann_"+vars(i)+"_2models") 
   end if
-  gsn_define_colormap (wks,cmap)
 
   if (compare .eq. "OBS") then
     delete(gw2)
@@ -737,10 +749,10 @@ do i = 0, nvars-1
     min2 = min(B)
     max2 = max(B)
   end if
+  res@lbLabelStride = 2
   res@cnLevels = cntrs(i,:)
   res@lbTitleString = "Min = "+sprintf("%6.2f",min1)+ \
                      " Max = "+sprintf("%6.2f",max1)
-;  res@cnFillMode = RasterFill
 
   if (isvar("yrs_ave1")) then
     res@tiMainString = case1+" (yrs "+yrs_ave1+")"
@@ -750,6 +762,8 @@ do i = 0, nvars-1
   res@gsnLeftString = A@long_name
   res@gsnRightString = A@units
   res@gsnCenterString = "mean= "+sprintf("%6.2f",gblmean_A)
+  res@cnFillPalette   = cmap
+;  gsn_define_colormap (wks,cmap)
 
   if (all(B.eq.-999.)) then
     plot = gsn_csm_contour_map_ce(wks,A,res)   ; plot model data
@@ -765,7 +779,6 @@ do i = 0, nvars-1
     else  
       res@tiMainString = case2
     end if
-
     res@gsnCenterString = "mean= "+sprintf("%6.2f",gblmean_B)
     res@lbTitleString = "Min = "+sprintf("%6.2f",min2)+ \
                         " Max = "+sprintf("%6.2f",max2)
@@ -779,6 +792,7 @@ do i = 0, nvars-1
     delete (max2)
   end if
   delete (res@cnLevels)
+  delete (res@cnFillPalette)
   delete (res@gsnLeftString)
   delete (min1)
   delete (max1)
@@ -792,6 +806,8 @@ do i = 0, nvars-1
   else
     mind = min(C)
     maxd = max(C)
+    res@cnFillPalette   = cmapd
+    res@lbLabelStride = 1
     res@tiMainString = case1+" - "+case2
     res@gsnLeftString = "mean = "+sprintf("%6.2f",gblmean_C)
     res@gsnCenterString = "rmse = "+sprintf("%6.2f",gblrmse)
@@ -805,6 +821,7 @@ do i = 0, nvars-1
     delete (res@gsnLeftString)
     delete (res@gsnRightString)
     delete (res@gsnCenterString)
+    delete (res@cnFillPalette)
     delete (mind)
     delete (maxd)
     delete (C)
