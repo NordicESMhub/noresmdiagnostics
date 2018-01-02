@@ -11,7 +11,7 @@ ROOT_FOLD=$(basename $ROOT_DIR)
 
 ## Initial values
 THIS_SCRIPT_NAME=`basename "$0"`
-DIAG_PATH=/scratch/$USER/$ROOT_FOLD
+DIAG_PATH=$ROOT_DIR/out/$USER
 USER_MODEL=none
 CASE1=none
 SYR1=-1
@@ -45,10 +45,11 @@ if [ $# -eq 0 ]; then
     echo "Command-line options:"
     echo "-m, --model=MODEL                             Specify the diagnostics package (REQUIRED)."
     echo "                                              Valid arguments:"
-    echo "                                                cam  : atmospheric package (AMWG)"
-    echo "                                                clm  : land package (LMWG)"
-    echo "                                                cice : sea-ice package"
-    echo "                                                all  : configure all available packages (currently cam, clm and cice; micom and pop are still in development)."
+    echo "                                                cam   : atmospheric package (AMWG)"
+    echo "                                                clm   : land package (LMWG)"
+    echo "                                                cice  : sea-ice package"
+    echo "                                                micom : ocean package"
+    echo "                                                all   : configure all available packages."
     echo "-c, -c1, --case=CASE1, --case1=CASE1          Test case simulation (OPTIONAL)."
     echo "-s, -s1, --start_yr=SYR1, --start_yr1=SYR1    Start year of test case climatology (OPTIONAL)."
     echo "-e, -e1, --end_yr=EYR1, --end_yr1=EYR1        End year of test case climatology (OPTIONAL)."
@@ -56,16 +57,16 @@ if [ $# -eq 0 ]; then
     echo "-s2, --start_yr2=SYR2                         Start year of control case climatology (OPTIONAL)."
     echo "-e2, --end_yr2=EYR2                           End year of control case climatology (OPTIONAL)."
     echo "-i, -i1, --input-dir=DIR, --input-dir1=DIR    Specify the directory where the test case history files are located (OPTIONAL)."
-    echo "                                              Default is --input-dir=/projects/NS2345K/noresm/cases"
+    echo "                                              Default is --input-dir=$HISTORY_PATH1"
     echo "-i2, --input-dir2=DIR                         Specify the directory where the control case history files are located (OPTIONAL)."
-    echo "                                              Default is --input-dir=/projects/NS2345K/noresm/cases"
+    echo "                                              Default is --input-dir=$HISTORY_PATH2"
     echo "-o, --output-dir=DIR                          Specify the directory where the package(s) should be installed (OPTIONAL)."
-    echo "                                              Default is --output-dir=/scratch/$USER/noresm_diagnostics"
+    echo "                                              Default is --output-dir=$DIAG_PATH"
     echo "-p, --passive-mode                            Run the script in passive mode: the diagnostic script will be configured but not executed (OPTIONAL)."
     echo "-t, --type=TYPE                               Specify climatology or time series diagnostics (OPTIONAL): valid options are --type=climo and --type=time_series."
     echo "                                              Default is to run both. Note that the time series are computed over the entire simulation."
     echo "-w, --web-dir=DIR                             Specify the directory where the html should be published (OPTIONAL)."
-    echo "                                              Default is --web-dir=/projects/NS2345K/www/noresm_diagnostics"
+    echo "                                              Default is --web-dir=$WEB_PATH"
     echo " "
     echo "Examples:"
     echo "${THIS_SCRIPT_NAME} -m all -c N1850_f19_tn11_exp1 -s 21 -e 50 # model-obs diagnostics of N1850_f19_tn11_exp1 for all (available) components."
@@ -294,67 +295,74 @@ dateYYYYMMDD=`date +%y%m%d`
 dateHHMMSS=`date +%H%M%S`
 
 # DEFINE VARIABLES
-CAM_DIAG_DIR=${ROOT_DIR}/CAM_DIAG/amwg_diag_20140207
-CLM_DIAG_DIR=${ROOT_DIR}/CLM_DIAG/lnd_diag4.2.25
-CICE_DIAG_DIR=${ROOT_DIR}/CICE_DIAG/ice_diag_20120323
+CAM_DIAG_DIR=${ROOT_DIR}/packages/CAM_DIAG
+CLM_DIAG_DIR=${ROOT_DIR}/packages/CLM_DIAG
+CICE_DIAG_DIR=${ROOT_DIR}/packages/CICE_DIAG
+MICOM_DIAG_DIR=${ROOT_DIR}/packages/MICOM_DIAG
 CAM_DIAG_FILE=amwg_template.csh
 CLM_DIAG_FILE=lnd_template.csh
 CICE_DIAG_FILE=ice_diag_template.csh
+MICOM_DIAG_FILE=micom_diag_template.sh
 CAM_FILE_OUT=amwg_${dateYYYYMMDD}_${dateHHMMSS}.csh
 CLM_FILE_OUT=lnd_${dateYYYYMMDD}_${dateHHMMSS}.csh
 CICE_FILE_OUT=ice_diag_${dateYYYYMMDD}_${dateHHMMSS}.csh
+MICOM_FILE_OUT=micom_diag_${dateYYYYMMDD}_${dateHHMMSS}.sh
 
-MODELS=(cam clm cice)
-MODELS_CAPS=(CAM CLM CICE)
-DIAG_DIRS=($CAM_DIAG_DIR $CLM_DIAG_DIR $CICE_DIAG_DIR)
-DIAG_FILES=($CAM_DIAG_FILE $CLM_DIAG_FILE $CICE_DIAG_FILE)
-DIAG_FILES_OUT=($CAM_FILE_OUT $CLM_FILE_OUT $CICE_FILE_OUT)
-TEST_CASE_NAMES=(test_casename caseid_1 CASE_TO_CONT)
-TEST_FIRST_YR_NAMES=(test_first_yr clim_first_yr_1 FIRST_YR_CLIMO1)
-TEST_NYRS_NAMES=(test_nyrs clim_num_yrs_1 NYRS_CLIMO1)
-DIAG_DIR_NAMES=(diag_dir PTMPDIR SCRIPT_HOME)
-CNTL_NAMES=(CNTL CNTL CNTL)
-CNTL_CASE_NAMES=(cntl_casename caseid_2 CASE_TO_DIFF)
-CNTL_FIRST_YR_NAMES=(cntl_first_yr clim_first_yr_2 FIRST_YR_CLIMO2)
-CNTL_NYRS_NAMES=(cntl_nyrs clim_num_yrs_2 NYRS_CLIMO2)
-WEB_DIR_NAMES=(publish_html_root publish_html_root publish_html_root)
-INPUT_DIR_NAMES1=(test_path_history_root SOURCE_1 DATA_ROOT1)
-INPUT_DIR_NAMES2=(cntl_path_history_root SOURCE_2 DATA_ROOT2)
-DIAG_RUNTIMES=(null null null)
+MODELS=(cam clm cice micom)
+MODELS_CAPS=(CAM CLM CICE MICOM)
+DIAG_DIRS=($CAM_DIAG_DIR $CLM_DIAG_DIR $CICE_DIAG_DIR $MICOM_DIAG_DIR)
+DIAG_FILES=($CAM_DIAG_FILE $CLM_DIAG_FILE $CICE_DIAG_FILE $MICOM_DIAG_FILE)
+DIAG_FILES_OUT=($CAM_FILE_OUT $CLM_FILE_OUT $CICE_FILE_OUT $MICOM_FILE_OUT)
+TEST_CASE_NAMES=(test_casename caseid_1 CASE_TO_CONT CASENAME1)
+TEST_FIRST_YR_NAMES=(test_first_yr clim_first_yr_1 FIRST_YR_CLIMO1 FIRST_YR_CLIMO1)
+TEST_NYRS_NAMES=(test_nyrs clim_num_yrs_1 NYRS_CLIMO1 NYRS_CLIMO1)
+DIAG_DIR_NAMES=(diag_dir PTMPDIR SCRIPT_HOME DIAG_ROOT)
+CNTL_NAMES=(CNTL CNTL CNTL CNTL)
+CNTL_CASE_NAMES=(cntl_casename caseid_2 CASE_TO_DIFF CASENAME2)
+CNTL_FIRST_YR_NAMES=(cntl_first_yr clim_first_yr_2 FIRST_YR_CLIMO2 FIRST_YR_CLIMO2)
+CNTL_NYRS_NAMES=(cntl_nyrs clim_num_yrs_2 NYRS_CLIMO2 NYRS_CLIMO2)
+WEB_DIR_NAMES=(publish_html_root publish_html_root publish_html_root publish_html_root)
+INPUT_DIR_NAMES1=(test_path_history_root SOURCE_1 DATA_ROOT1 pathdat_root1)
+INPUT_DIR_NAMES2=(cntl_path_history_root SOURCE_2 DATA_ROOT2 pathdat_root2)
+DIAG_RUNTIMES=(null null null null)
 runtime_s_tot=0
 
-if [ "$USER_MODEL" == "micom" ] || [ "$USER_MODEL" == "pop" ]; then
-    echo "$USER_MODEL diagnostics is still in development. Coming soon ..."
-    echo "*** EXITING THE SCRIPT"
-    exit
-fi
-
-# CHECK NAME DEVIATIONS
-if [ "$USER_MODEL" == "clm2" ]; then
-    USER_MODEL=clm
-fi
-
-if [ "$USER_MODEL" == "cam2" ]; then
-    USER_MODEL=cam
-fi
-
 # DETERMINE WHICH PACKAGE TO RUN
-if [ "$USER_MODEL" == "cam" ]; then
-    RUN_MODELS=(1 0 0)
-elif [ "$USER_MODEL" == "clm" ] || [ "$USER_MODEL" == "clm2" ]; then
-    RUN_MODELS=(0 1 0)
-elif [ "$USER_MODEL" == "cice" ]; then
-    RUN_MODELS=(0 0 1)
-elif [ "$USER_MODEL" == "all" ]; then
-    RUN_MODELS=(1 1 1)
-elif [ "$USER_MODEL" == "cam,clm" ] || [ "$USER_MODEL" == "clm,cam" ]; then
-    RUN_MODELS=(1 1 0)
-elif [ "$USER_MODEL" == "cam,cice" ] || [ "$USER_MODEL" == "cice,cam" ]; then
-    RUN_MODELS=(1 0 1)
-elif [ "$USER_MODEL" == "clm,cice" ] || [ "$USER_MODEL" == "cice,clm" ]; then
-    RUN_MODELS=(0 1 1)
+if [ "$USER_MODEL" == "all" ]; then
+    RUN_MODELS=(1 1 1 1)
 else
-    echo "ERROR: please specify a model (-m cam, -m clm, -m cice or -m all):"
+    USER_MODEL_SPACE=`echo $USER_MODEL | sed 's/,/ /g'`
+    RUN_MODELS=(0 0 0 0)
+    for model in $USER_MODEL_SPACE
+    do
+	if [ "$model" == "cam" ] || [ "$model" == "cam2" ]; then
+	    let RUN_MODELS[0]=${RUN_MODELS[0]}+1
+	elif [ "$model" == "clm" ] || [ "$model" == "clm2" ]; then
+	    let RUN_MODELS[1]=${RUN_MODELS[1]}+1
+	elif [ "$model" == "cice" ]; then
+	    let RUN_MODELS[2]=${RUN_MODELS[2]}+1
+	elif [ "$model" == "micom" ]; then
+	    let RUN_MODELS[3]=${RUN_MODELS[3]}+1
+	fi
+    done
+fi
+
+# SECURITY CHECKS
+all_zeros=1
+icount=0
+for model_flag in "${RUN_MODELS[@]}"
+do
+    if [ $model_flag -gt 0 ]; then
+	all_zeros=0
+	if [ $model_flag -gt 1 ]; then
+	    RUN_MODELS[$icount]=1
+	fi
+    fi
+    let icount++
+done
+
+if [ $all_zeros -eq 1 ]; then
+    echo "ERROR: please specify a model (-m cam,clm,cice,micom or -m all):"
     echo "*** EXITING THE SCRIPT"
     exit 1
 fi
