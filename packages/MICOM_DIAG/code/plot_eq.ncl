@@ -86,9 +86,10 @@ end if
 ;************************************************
 ; contours definition (global)
 cntrs_templvl=(/-4,-2,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34/)
-dcntrs_templvl=(/-9,-8,-7,-6,-5,-4,-3,-2,-1,1,2,3,4,5,6,7,8,9/)
+dcntrs_templvl=(/-4,-3.5,-3,-2.5,-2,-1.5,-1,-0.5,-0.25,0.25,0.5,1,1.5,2,2.5,3,3.5,4/)
+
 cntrs_salnlvl=(/30.4,30.8,31.2,31.6,32,32.4,32.8,33.2,33.6,34,34.4,34.8,35.2,35.6,36,36.4,36.8,37.2,37.6,38/)
-dcntrs_salnlvl=(/-1.8,-1.6,-1.4,-1.2,-1,-0.8,-0.6,-0.4,-0.2,0.2,0.4,0.6,0.8,1,1.2,1.4,1.6,1.8/)
+dcntrs_salnlvl=(/-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9/)
 
 ; model variables
 vars = (/"templvl","salnlvl"/)
@@ -121,7 +122,7 @@ end if
  cres@txFontHeightF = 0.023
  cres@cnLevelSelectionMode = "ExplicitLevels"
  cres@cnFillOn             = True
- cres@cnLinesOn            = False
+ cres@cnLinesOn            = True
  cres@cnLineLabelsOn       = False
  cres@lbLabelAutoStride = False
  cres@tiMainFont = "Helvetica"
@@ -130,8 +131,8 @@ end if
  cres@lbLabelFontHeightF = 0.018
  cres@lbTitleFontHeightF = 0.02
  cres@cnMissingValFillColor = "gray75"
- cres@trYLog = False
  cres@trYReverse = True
+ cres@gsnYAxisIrregular2Linear = True
  cmap  = RGBtoCmap(rgb_file)
  cmapd = RGBtoCmap(rgb_filed)
 ;-------------------------------------------

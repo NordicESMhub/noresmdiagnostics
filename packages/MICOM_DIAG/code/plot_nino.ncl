@@ -210,24 +210,24 @@ begin
     res@tiMainString   = case1
     res@tiYAxisString  = sstAnom1@long_name+" ["+sstAnom1@units+"]"
     res@gsnLeftString  = "Std dev = "+sprintf("%5.3f",sstAnom1sd)
-    res@gsnRightString = obsstr
+;    res@gsnRightString = obsstr
 
     plot(0) = gsn_csm_xy (wks,yrfrac1,sstAnom1,res)
 
     delete(res@tiMainString)
     delete(res@tiYAxisString)
     delete(res@gsnLeftString)
-    delete(res@gsnRightString)
+;    delete(res@gsnRightString)
     if (compare.eq."USER") then
        res@tiMainString   = case2
        res@tiYAxisString  = sstAnom2@long_name+" ["+sstAnom2@units+"]"
        res@gsnLeftString  = "Std dev = "+sprintf("%5.3f",sstAnom2sd)
-       res@gsnRightString = obsstr
+;       res@gsnRightString = obsstr
        plot(1) = gsn_csm_xy (wks,yrfrac2,sstAnom2,res)
        delete(res@tiMainString)
        delete(res@tiYAxisString)
        delete(res@gsnLeftString)
-       delete(res@gsnRightString)
+;       delete(res@gsnRightString)
     end if
 
 ;   Add text about base years

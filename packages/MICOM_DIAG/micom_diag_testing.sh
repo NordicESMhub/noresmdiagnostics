@@ -12,8 +12,8 @@ time_start_script=`date +%s`
 # ---------------------------------------------------------
 # TEST CASENAME AND YEARS TO BE AVERAGED (CASE1)
 # ---------------------------------------------------------
-CASENAME1=N1850_f19_tn11_01_E1
-FIRST_YR_CLIMO1=171
+CASENAME1=N18_f19_tn11_080617
+FIRST_YR_CLIMO1=21
 NYRS_CLIMO1=30
 
 # ---------------------------------------------------------
@@ -36,14 +36,14 @@ PATHDAT1=$pathdat_root1/$CASENAME1/ocn/hist
 # SELECT TYPE OF CONTROL CASE
 # NOTE: CNTL=USER IS NOT YET SUPPORTED
 # ---------------------------------------------------------
-#CNTL=OBS    # compare case1 to observations (model-obs diagnostics)
-CNTL=USER   # compare case1 to another experiment case2 (model-model diagnostics)
+CNTL=OBS    # compare case1 to observations (model-obs diagnostics)
+#CNTL=USER   # compare case1 to another experiment case2 (model-model diagnostics)
 
 # ---------------------------------------------------------
 # CNTL CASENAME AND YEARS TO BE AVERAGED (CASE2)
 # ---------------------------------------------------------
-CASENAME2=N18_f19_tn11_080617
-FIRST_YR_CLIMO2=21
+CASENAME2=N1850_f19_tn11_01_E1
+FIRST_YR_CLIMO2=171
 NYRS_CLIMO2=30
 
 # ---------------------------------------------------------
@@ -67,11 +67,11 @@ DIAG_ROOT=/projects/NS2345K/noresm_diagnostics_dev/out/MICOM_DIAG
 # SELECT SETS (1-5)
 # ---------------------------------------------------------
 set_1=1 # (1=ON,0=OFF) Annual time series plots
-set_2=1 # (1=ON,0=OFF) ENSO indices
-set_3=1 # (1=ON,0=OFF) 2D (lat-lon) contour plots
-set_4=1 # (1=ON,0=OFF) MOCs for different regions
-set_5=1 # (1=ON,0=OFF) Zonal mean (lat-depth) plot
-set_6=1 # (1=ON,0=OFF) Equatorial (lon-depth) plots
+set_2=0 # (1=ON,0=OFF) ENSO indices
+set_3=0 # (1=ON,0=OFF) 2D (lat-lon) contour plots
+set_4=0 # (1=ON,0=OFF) MOCs for different regions
+set_5=0 # (1=ON,0=OFF) Zonal mean (lat-depth) plot
+set_6=0 # (1=ON,0=OFF) Equatorial (lon-depth) plots
 
 # ---------------------------------------------------------
 # NINO SST INDICES
@@ -101,7 +101,7 @@ NINO_INDICES=3,34
 # The figures are converted to png. The quality of the
 # figures is determined by the density variable.
 publish_html=1 # (1=ON,0=OFF)
-publish_html_root=/projects/NS2345K/www/micom_test
+publish_html_root=/projects/NS2345K/www/noresm_diagnostics_dev
 density=85
 
 # ---------------------------------------------------------
@@ -619,7 +619,6 @@ if [ $set_1 -eq 1 ]; then
     export INFILE1=$CLIMO_TS_DIR1/${CASENAME1}_ANN_${FYR_PRNT_TS1}-${LYR_PRNT_TS1}_ts.nc
     export CASE1=$CASENAME1
     export FYR1=$FIRST_YR_TS1
-    export RGB_FILE=$DIAG_HOME/rgb/blueyellowred.rgb
     if [ $CNTL == USER ]; then
 	export INFILE2=$CLIMO_TS_DIR2/${CASENAME2}_ANN_${FYR_PRNT_TS2}-${LYR_PRNT_TS2}_ts.nc
 	export CASE2=$CASENAME2

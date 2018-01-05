@@ -11,7 +11,7 @@ compare    = getenv("COMPARE")
 infile1    = getenv("INFILE1")
 case1      = getenv("CASE1")
 fyrs1      = getenv("FYR1")
-rgb_file   = getenv("RGB_FILE")
+rgb_dir    = getenv("DIAG_RGB")
 
 ncases = 1
 inptr1 = addfile(infile1,"r")
@@ -29,9 +29,12 @@ end if
 vars   = (/"templvl","salnlvl"/)
 nvars  = dimsizes(vars)
 
-con = new((/2,20/),float)
-con(0,:)=(/1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20/)   ; temp
-con(1,:)=(/34.25,34.3,34.35,34.4,34.45,34.5,34.55,34.6,34.65,34.7,34.75,34.8,34.85,34.9,34.95,35.0,35.05,35.10,35.15,35.2/) ; saln
+rgb_file  = rgb_dir+"/bluered2.rgb"
+
+con = new((/2,18/),float)
+con(0,:)=(/-1.7,-1.5,-1.3,-1.1,-0.9,-0.7,-0.5,-0.3,-0.1,0.1,0.3,0.5,0.7,0.9,1.1,1.3,1.5,1.7/)   ; temp
+con(1,:)=(/-0.225,-0.2,-0.175,-0.15,-0.125,-0.1,-0.075,-0.05,-0.025,0.025,0.05,0.075,0.1,0.125,0.15,0.175,0.2,0.225/)   ; saln
+;print(con)
 
 ;**********************************************************************
 ; common resources for contour plots
@@ -46,18 +49,20 @@ res@tiXAxisString            = "Years"
 res@tiMainFont               = "Helvetica"
 res@tiMainFontHeightF        = 0.025
 res@txFontHeightF            = 0.02
-res@cnLevelSelectionMode     = "ExplicitLevels" 
+res@cnLevelSelectionMode     = "ExplicitLevels"
 res@cnFillOn                 = True
-res@cnLinesOn                = False
+res@cnLinesOn                = True
 res@cnLineLabelsOn           = False
 res@lbTitleOn                = True
 res@lbLabelFontHeightF       = 0.018
 res@lbTitleFontHeightF       = 0.018
-res@lbLabelStride            = 2
+res@lbLabelAutoStride        = False
+res@lbLabelStride            = 1
 res@lbOrientation            = "Vertical"
 res@gsnYAxisIrregular2Linear = False
 res@pmLabelBarWidthF = 0.1
 cmap = RGBtoCmap(rgb_file)
+res@cnFillPalette  = cmap
 ;-------------------------------------------
 ; common resoureces for panel plot 
 pan                     = True
@@ -68,42 +73,57 @@ pan@gsnFrame            = False
 
 do i = 0,nvars-1
    if (vars(i) .eq. "templvl") then
-      data1 = get_templvl (inptr1)
+      A = get_templvl (inptr1)
    end if
    if (vars(i) .eq. "salnlvl") then
-      data1 = get_salnlvl (inptr1)
+      A = get_salnlvl (inptr1)
    end if
   
-   if (all(data1.eq.-999.)) then
+   if (all(A.eq.-999.)) then
       print (vars(i)+" not present in case1 input file.")
-      delete (data1)
+      delete (A)
       continue
    end if
 
-   ndim = dimsizes(data1)
+   ndim = dimsizes(A)
    ntimes1 = ndim(0)
    eyr1 = fyr1+ntimes1-1
    time_new1 = fspan(fyr1,eyr1,ntimes1)
 
+   data1 = A
+
+;  Subtract starting values
+   do it = 0, ntimes1-1
+     data1(it,:) = A(it,:)-A(0,:)
+   end do
+   delete(A)
+
    if (compare.eq."USER") then
       if (vars(i) .eq. "templvl") then
-         data2 = get_templvl (inptr2)
+         B = get_templvl (inptr2)
       end if
       if (vars(i) .eq. "salnlvl") then
-         data2 = get_salnlvl (inptr2)
+         B = get_salnlvl (inptr2)
       end if
   
-      if (all(data2.eq.-999.)) then
+      if (all(B.eq.-999.)) then
          print (vars(i)+" not present in case2 input file.")
-	 delete (data1)
-         delete (data2)
+         delete (B)
          continue
       end if
 
-      ndim = dimsizes(data2)
+      ndim = dimsizes(B)
       ntimes2 = ndim(0)
       eyr2 = fyr2+ntimes2-1
       time_new2 = fspan(fyr2,eyr2,ntimes2)
+
+      data2 = B
+
+;     Subtract starting values
+      do it = 0, ntimes2-1
+         data2(it,:) = B(it,:)-B(0,:)
+      end do
+
    end if
 
    if (compare.eq."OBS") then
@@ -115,7 +135,6 @@ do i = 0,nvars-1
    end if
    
    wks  = gsn_open_wks("ps",wkdir+"/"+plotname)
-   gsn_define_colormap(wks,cmap)      
    res@cnLevels = con(i,:)
 
    min1 = min(data1)
@@ -125,7 +144,7 @@ do i = 0,nvars-1
                        "~C~MAX="+sprintf("%6.2f",max1)
    res@sfXArray := time_new1
    res@tiMainString = case1
-   cnplot(0) = gsn_csm_hov(wks,transpose(data1),res)
+   cnplot(0) = gsn_csm_contour(wks,transpose(data1),res)
 
    delete (res@lbTitleString)
    delete (res@tiMainString)
@@ -141,7 +160,7 @@ do i = 0,nvars-1
                           "~C~MAX="+sprintf("%6.2f",max2)
       res@sfXArray := time_new2
       res@tiMainString = case2
-      cnplot(1) = gsn_csm_hov(wks,transpose(data2),res)
+      cnplot(1) = gsn_csm_contour(wks,transpose(data2),res)
       delete (res@lbTitleString)
       delete (res@tiMainString)
       delete (res@sfXArray)

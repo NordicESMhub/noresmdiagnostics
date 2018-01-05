@@ -11,9 +11,9 @@ time_start_script=`date +%s`
 # ---------------------------------------------------------
 # TEST CASENAME AND YEARS TO BE AVERAGED (CASE1)
 # ---------------------------------------------------------
-CASENAME1=N1850OCDMS_Test_01
-FIRST_YR_CLIMO1=10
-NYRS_CLIMO1=20
+CASENAME1=N1850OCBDRD_f09_tn14
+FIRST_YR_CLIMO1=21
+NYRS_CLIMO1=30
 
 # ---------------------------------------------------------
 # TIME SERIES SETTING FOR TEST CASE (CASE1)
@@ -41,9 +41,9 @@ CNTL=OBS    # compare case1 to observations (model-obs diagnostics)
 # ---------------------------------------------------------
 # CNTL CASENAME AND YEARS TO BE AVERAGED (CASE2)
 # ---------------------------------------------------------
-CASENAME2=N18_f19_tn11_080617
-FIRST_YR_CLIMO2=21
-NYRS_CLIMO2=30
+CASENAME2=N1850OCDMS_Test_01
+FIRST_YR_CLIMO2=10
+NYRS_CLIMO2=20
 
 # ---------------------------------------------------------
 # TIME SERIES SETTING FOR CNTL CASE (CASE2)
@@ -66,8 +66,8 @@ DIAG_ROOT=/projects/NS2345K/noresm_diagnostics_dev/out/$USER/HAMMOC_DIAG
 # SELECT SETS (1-3)
 # ---------------------------------------------------------
 set_1=1 # (1=ON,0=OFF) Annual time series plots
-set_2=0 # (1=ON,0=OFF) 2D (lat-lon) contour plots
-set_3=0 # (1=ON,0=OFF) Zonal mean (lat-depth) plot
+set_2=1 # (1=ON,0=OFF) 2D (lat-lon) contour plots
+set_3=1 # (1=ON,0=OFF) Zonal mean (lat-depth) plot
 
 # ---------------------------------------------------------
 # SELECT GRID FILE (OPTIONAL)
@@ -92,7 +92,7 @@ set_3=0 # (1=ON,0=OFF) Zonal mean (lat-depth) plot
 # also choose the colormap for the full fields
 # (difference fields are always plotted with blue-white-red)
 publish_html=1 # (1=ON,0=OFF)
-publish_html_root=/projects/NS2345K/www/hammoc_test
+publish_html_root=/projects/NS2345K/www/noresm_diagnostics_dev
 density=85
 # Available colormap options:
 #  default = purple-brown palette provided by Marco Van Hulten
