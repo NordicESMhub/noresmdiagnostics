@@ -24,9 +24,11 @@ begin
 ; Compute rho
   rho_nom=a11+t*(a12+a14*t+a15*s)+s*(a13+a16*s)+p*(b11+b12*t+b13*s)
   rho_denom=a21+t*(a22+a24*t+a25*s)+s*(a23+a26*s)+p*(b21+b22*t+b23*s)
+  rho=t ; copy metadata
   rho=rho_nom/rho_denom
   rho@long_name = "density"
   rho@units = "kg/m3"
+  assignFillValue(rho,rho)
   delete(rho_nom)
   delete(rho_denom)
   return rho

@@ -16,8 +16,6 @@ script_start=`date +%s`
 #  $pathdat    directory where the history files are located
 #  $tsdir      directory where the climatology files are located
 #  $ENSOidx    3 or 34
-#  $first_yrc  first yr of climatology
-#  $last_yrc   first yr of climatology
 
 filetype=$1
 casename=$2
@@ -26,8 +24,6 @@ last_yr=$4
 pathdat=$5
 tsdir=$6
 ENSOidx=$7
-first_yrc=$8
-last_yrc=$9
 
 echo " "
 echo "---------------------------"
@@ -41,8 +37,6 @@ echo " last_yr   = $last_yr"
 echo " pathdat   = $pathdat"
 echo " tsdir     = $tsdir"
 echo " ENSOidx   = $ENSOidx"
-echo " first_yrc = $first_yrc"
-echo " last_yrc  = $last_yrc"
 echo " "
 
 first_yr_prnt=`printf "%04d" ${first_yr}`
@@ -89,7 +83,7 @@ do
 	pid=()
 	for month in 01 02 03 04 05 06 07 08 09 10 11 12
 	do
-	    infile=${casename}.micom.hm.${yr_prnt}-${month}.nc
+	    infile=${casename}.micom.hd.${yr_prnt}-${month}.nc
 	    tmpfile=${casename}_${yr_prnt}-${month}.nc
 	    eval $NCRA --no_tmp_fl -O -F -d time,1,,1 -v sst $pathdat/$infile $WKDIR/$tmpfile &
 	    pid+=($!)

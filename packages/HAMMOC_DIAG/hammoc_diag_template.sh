@@ -1,8 +1,7 @@
 #!/bin/bash
 #
-# MICOM DIAGNOSTICS package
+# HAMMOC DIAGNOSTICS package
 # Johan Liakka, NERSC, johan.liakka@nersc.no
-# built upon previous work by Detelina Ivanova
 # Last update Jan 2018
 set -e
 #***************************
@@ -12,9 +11,9 @@ time_start_script=`date +%s`
 # ---------------------------------------------------------
 # TEST CASENAME AND YEARS TO BE AVERAGED (CASE1)
 # ---------------------------------------------------------
-CASENAME1=your_test_simulation
-FIRST_YR_CLIMO1=fyr_of_test
-NYRS_CLIMO1=nyr_of_test
+CASENAME1=N1850OCDMS_Test_01
+FIRST_YR_CLIMO1=10
+NYRS_CLIMO1=20
 
 # ---------------------------------------------------------
 # TIME SERIES SETTING FOR TEST CASE (CASE1)
@@ -29,21 +28,22 @@ LAST_YR_TS1=0
 # ---------------------------------------------------------
 # ROOT DIRECTORY FOR HISTORY FILES (CASE1)
 # ---------------------------------------------------------
-pathdat_root1=/path/to/test_case/history
+pathdat_root1=/projects/NS2345K/noresm/cases
 PATHDAT1=$pathdat_root1/$CASENAME1/ocn/hist
 
 # ---------------------------------------------------------
 # SELECT TYPE OF CONTROL CASE
 # NOTE: CNTL=USER IS NOT YET SUPPORTED
 # ---------------------------------------------------------
-CNTL=type_of_control_case   # compare case1 to another experiment case2 (model-model diagnostics)
+CNTL=OBS    # compare case1 to observations (model-obs diagnostics)
+#CNTL=USER   # compare case1 to another experiment case2 (model-model diagnostics)
 
 # ---------------------------------------------------------
 # CNTL CASENAME AND YEARS TO BE AVERAGED (CASE2)
 # ---------------------------------------------------------
-CASENAME2=your_cntl_simulation
-FIRST_YR_CLIMO2=fyr_of_cntl
-NYRS_CLIMO2=nyr_of_cntl
+CASENAME2=N18_f19_tn11_080617
+FIRST_YR_CLIMO2=21
+NYRS_CLIMO2=30
 
 # ---------------------------------------------------------
 # TIME SERIES SETTING FOR CNTL CASE (CASE2)
@@ -54,30 +54,20 @@ LAST_YR_TS2=0
 # ---------------------------------------------------------
 # ROOT DIRECTORY FOR HISTORY FILES (CASE2)
 # ---------------------------------------------------------
-pathdat_root2=/path/to/cntl_case/history
+pathdat_root2=/projects/NS2345K/noresm/cases
 PATHDAT2=$pathdat_root2/$CASENAME2/ocn/hist
 
 # ---------------------------------------------------------
 # SELECT DIRECTORY WHERE THE DIAGNOSTICS ARE TO BE COMPUTED
 # ---------------------------------------------------------
-DIAG_ROOT=/path/to/your/diagnostics
+DIAG_ROOT=/projects/NS2345K/noresm_diagnostics_dev/out/$USER/HAMMOC_DIAG
 
 # ---------------------------------------------------------
-# SELECT SETS (1-5)
+# SELECT SETS (1-3)
 # ---------------------------------------------------------
 set_1=1 # (1=ON,0=OFF) Annual time series plots
-set_2=1 # (1=ON,0=OFF) ENSO indices
-set_3=1 # (1=ON,0=OFF) 2D (lat-lon) contour plots
-set_4=1 # (1=ON,0=OFF) MOCs for different regions
-set_5=1 # (1=ON,0=OFF) Zonal mean (lat-depth) plot
-set_6=1 # (1=ON,0=OFF) Equatorial (lon-depth) plots
-
-# ---------------------------------------------------------
-# NINO SST INDICES
-# ---------------------------------------------------------
-# Select the Nino SST indices to plot for set_2.
-# Currently supported options: 3, 34 (nino 3, 3.4).
-NINO_INDICES=3,34
+set_2=0 # (1=ON,0=OFF) 2D (lat-lon) contour plots
+set_3=0 # (1=ON,0=OFF) Zonal mean (lat-depth) plot
 
 # ---------------------------------------------------------
 # SELECT GRID FILE (OPTIONAL)
@@ -98,10 +88,16 @@ NINO_INDICES=3,34
 # where it should be published. If the path is left empty,
 # it is set to /projects/NS2345K/www/noresm_diagnostics.
 # The figures are converted to png. The quality of the
-# figures is determined by the density variable.
+# figures is determined by the density variable. You can
+# also choose the colormap for the full fields
+# (difference fields are always plotted with blue-white-red)
 publish_html=1 # (1=ON,0=OFF)
-publish_html_root=/path/to/html/directory
+publish_html_root=/projects/NS2345K/www/hammoc_test
 density=85
+# Available colormap options:
+#  default = purple-brown palette provided by Marco Van Hulten
+#  blueyellowred = color map from MICOM diagnostics
+colormap=default
 
 # ---------------------------------------------------------
 # SWITCH BETWEEN CLIMO AND TIME-SERIES COMPUTATION
@@ -116,7 +112,7 @@ CLIMO_TIME_SERIES_SWITCH=SWITCHED_OFF
 # Do not change this unless you copy the whole diagnostics
 # package (including all grid files and observational data)
 # to another directory.
-export DIAG_HOME=/path/to/code/and/data
+export DIAG_HOME=/projects/NS2345K/noresm_diagnostics_dev/packages/HAMMOC_DIAG
 
 #**********************************
 #*** END OF USER MODIFY SECTION ***
@@ -128,7 +124,6 @@ export DIAG_CODE=$DIAG_HOME/code
 export DIAG_OBS=$DIAG_HOME/obs_data
 export DIAG_HTML=$DIAG_HOME/html
 export DIAG_GRID=$DIAG_HOME/grid_files
-export DIAG_RGB=$DIAG_HOME/rgb
 
 # Set bash-shell limits
 ulimit -s unlimited
@@ -233,29 +228,25 @@ if [ $CNTL == USER ]; then
 fi
 
 # Set required variables for climatology and time series
-required_vars_climo="depth_bnds,sealv,templvl,salnlvl,temp,saln,dz,mmflxd,region"
-required_vars_ts_ann="depth_bnds,time,section,voltr,temp,saln,templvl,salnlvl,mmflxd,region,dp"
+required_vars_climo="depth_bnds,o2lvl,silvl,po4lvl,no3lvl,dissiclvl"
+required_vars_climo_zm="o2lvl,silvl,po4lvl,no3lvl,dissiclvl"
+required_vars_ts_ann="o2,si,po4,no3,dissic,co2fxd,co2fxu,pp,pddpo"
 
 # Check which sets should be plotted based on CLIMO_TIME_SERIES_SWITCH
 if [ $CLIMO_TIME_SERIES_SWITCH == ONLY_CLIMO ]; then
-    set_1=0 ; set_2=0 ; set_3=1 ; set_4=1 ; set_5=1 ; set_6=1
+    set_1=0 ; set_2=1 ; set_3=1
 elif [ $CLIMO_TIME_SERIES_SWITCH == ONLY_TIME_SERIES ]; then
-    set_1=1 ; set_2=1 ; set_3=0 ; set_4=0 ; set_5=0 ; set_6=0
+    set_1=1 ; set_2=0 ; set_3=0
 fi
 compute_climo=0
 compute_time_series_ann=0
-compute_time_series_mon=0
 if [ $set_1 -eq 1 ]; then
     compute_time_series_ann=1
 fi
-if [ $set_2 -eq 1 ]; then
-    compute_time_series_mon=1
-fi
-if [ $set_3 -eq 1 ] || [ $set_4 -eq 1 ] || [ $set_5 -eq 1 ] || [ $set_6 -eq 1 ]; then
+if [ $set_2 -eq 1 ] || [ $set_3 -eq 1 ]; then
     compute_climo=1
 fi
-if [ $set_1 -eq 0 ] && [ $set_2 -eq 0 ] && [ $set_3 -eq 0 ] && \
-   [ $set_4 -eq 0 ] && [ $set_5 -eq 0 ] && [ $set_6 -eq 0 ]; then
+if [ $set_1 -eq 0 ] && [ $set_2 -eq 0 ] && [ $set_3 -eq 0 ]; then
     echo "ERROR: All sets are zero. Please modify."
     echo "*** EXITING THE SCRIPT ***"
     exit 1
@@ -263,7 +254,7 @@ fi
 
 echo " "
 echo "****************************************************"
-echo "          MICOM DIAGNOSTICS PACKAGE"
+echo "          HAMMOC DIAGNOSTICS PACKAGE"
 echo "          NCARG_ROOT = "$NCARG_ROOT
 echo "          CDO        = "$CDO
 echo "          "`date`
@@ -276,9 +267,6 @@ echo "Selected sets:"
 echo "set_1 = $set_1"
 echo "set_2 = $set_2"
 echo "set_3 = $set_3"
-echo "set_4 = $set_4"
-echo "set_5 = $set_5"
-echo "set_6 = $set_6"
 
 # Determine the first and last yr of time series (if TRENDS_ALL=1)
 if [ $TRENDS_ALL -eq 1 ]; then
@@ -366,8 +354,8 @@ do
 	# Compute annual climatology
 	# ---------------------------------
 	# Strategy:
-	# 1. First attempt to compute climatology from the annual-mean history files (hy)
-	# 2. Use the monthly-mean history files (hm) for the remaining variables, or if hy files don't exist
+	# 1. First attempt to compute climatology from the annual-mean history files (hbgcy)
+	# 2. Use the monthly-mean history files (hbgcm) for the remaining variables, or if hy files don't exist
 	echo " "
 	echo "****************************************************"
 	echo "COMPUTING CLIMATOLOGY ($CASENAME)"
@@ -377,14 +365,14 @@ do
 	if [ ! -f $CLIMO_TS_DIR/$ANN_AVG_FILE ]; then
 	    echo $required_vars_climo > $WKDIR/attributes/required_vars
 	    $DIAG_CODE/check_history_vars.sh $CASENAME $FIRST_YR_CLIMO $LAST_YR_CLIMO $PATHDAT climo
-	    if [ -f $WKDIR/attributes/vars_climo_${CASENAME}_hy ]; then
-		$DIAG_CODE/compute_climo.sh hy $CASENAME $FIRST_YR_CLIMO $LAST_YR_CLIMO $PATHDAT $CLIMO_TS_DIR
+	    if [ -f $WKDIR/attributes/vars_climo_${CASENAME}_hbgcy ]; then
+		$DIAG_CODE/compute_climo.sh hbgcy $CASENAME $FIRST_YR_CLIMO $LAST_YR_CLIMO $PATHDAT $CLIMO_TS_DIR
 	    fi
-	    if [ -f $WKDIR/attributes/vars_climo_${CASENAME}_hm ]; then
-		$DIAG_CODE/compute_climo.sh hm $CASENAME $FIRST_YR_CLIMO $LAST_YR_CLIMO $PATHDAT $CLIMO_TS_DIR
+	    if [ -f $WKDIR/attributes/vars_climo_${CASENAME}_hbgcm ]; then
+		$DIAG_CODE/compute_climo.sh hbgcm $CASENAME $FIRST_YR_CLIMO $LAST_YR_CLIMO $PATHDAT $CLIMO_TS_DIR
 	    fi
-	    if [ ! -f $WKDIR/attributes/vars_climo_${CASENAME}_hy ] && [ ! -f $WKDIR/attributes/vars_climo_${CASENAME}_hm ]; then
-		echo "ERROR: Annual climatology can only be computed from hy and hm history files"
+	    if [ ! -f $WKDIR/attributes/vars_climo_${CASENAME}_hbgcy ] && [ ! -f $WKDIR/attributes/vars_climo_${CASENAME}_hbgcm ]; then
+		echo "ERROR: Annual climatology can only be computed from hbgcy and hbgcm history files"
 		echo "*** EXITING THE SCRIPT ***"
 		exit 1
 	    fi
@@ -404,7 +392,7 @@ do
 	ANN_RGR_FILE=${CASENAME}_ANN_${FYR_PRNT_CLIMO}-${LYR_PRNT_CLIMO}_climo_remap.nc
 	if [ ! -f $CLIMO_TS_DIR/$ANN_RGR_FILE ]; then
 	    # Check if sst file is present
-	    if [ ! -f $WKDIR/attributes/sst_file_${CASENAME} ]; then
+	    if [ ! -f $WKDIR/attributes/co2fxd_file_${CASENAME} ]; then
 		echo $required_vars_climo > $WKDIR/attributes/required_vars
 		$DIAG_CODE/check_history_vars.sh $CASENAME $FIRST_YR_CLIMO $LAST_YR_CLIMO $PATHDAT climo
 	    fi
@@ -417,6 +405,7 @@ do
 	    # Remap the grid to 1x1 rectangular grid
 	    $DIAG_CODE/remap_climo.sh $CASENAME $ANN_AVG_FILE $ANN_RGR_FILE $CLIMO_TS_DIR
 	    # Compute zonal mean
+	    echo $required_vars_climo_zm > $WKDIR/attributes/required_zm_vars
 	    $DIAG_CODE/zonal_mean.sh $CASENAME $FYR_PRNT_CLIMO $LYR_PRNT_CLIMO $CLIMO_TS_DIR
 	else
 	    echo "$CLIMO_TS_DIR/$ANN_RGR_FILE already exists."
@@ -443,13 +432,13 @@ do
 	    if [ ! -f $WKDIR/attributes/grid_${CASENAME} ] && [ -z $PGRIDPATH ]; then
 		$DIAG_CODE/determine_grid_type.sh $CASENAME
 	    fi
-	    if [ -f $WKDIR/attributes/vars_ts_ann_${CASENAME}_hy ]; then
-		$DIAG_CODE/compute_ann_time_series.sh hy $CASENAME $FIRST_YR_TS $LAST_YR_TS $PATHDAT $CLIMO_TS_DIR
+	    if [ -f $WKDIR/attributes/vars_ts_ann_${CASENAME}_hbgcy ]; then
+		$DIAG_CODE/compute_ann_time_series.sh hbgcy $CASENAME $FIRST_YR_TS $LAST_YR_TS $PATHDAT $CLIMO_TS_DIR
 	    fi
-	    if [ -f $WKDIR/attributes/vars_ts_ann_${CASENAME}_hm ]; then
-		$DIAG_CODE/compute_ann_time_series.sh hm $CASENAME $FIRST_YR_TS $LAST_YR_TS $PATHDAT $CLIMO_TS_DIR
+	    if [ -f $WKDIR/attributes/vars_ts_ann_${CASENAME}_hbgcm ]; then
+		$DIAG_CODE/compute_ann_time_series.sh hbgcm $CASENAME $FIRST_YR_TS $LAST_YR_TS $PATHDAT $CLIMO_TS_DIR
 	    fi
-	    if [ ! -f $WKDIR/attributes/vars_ts_ann_${CASENAME}_hy ] && [ ! -f $WKDIR/attributes/vars_ts_ann_${CASENAME}_hm ]; then
+	    if [ ! -f $WKDIR/attributes/vars_ts_ann_${CASENAME}_hbgcy ] && [ ! -f $WKDIR/attributes/vars_ts_ann_${CASENAME}_hbgcm ]; then
 		echo "WARNING: could not find required variables ($required_vars_ts_mon) for annual time series."
 		echo "-> SKIPPING COMPUTING ANNUAL TIME SERIES"
 	    fi
@@ -459,40 +448,6 @@ do
 	    echo "$CLIMO_TS_DIR/$ANN_TS_FILE already exists."
 	    echo "-> SKIPPING COMPUTING ANNUAL TIME SERIES"
 	fi
-    fi
-
-    if [ $compute_time_series_mon -eq 1 ]; then
-	# ---------------------------------
-	# Compute nino time series
-	# ---------------------------------
-	echo " "
-	echo "****************************************************"
-	echo "NINO MONTHLY TIME SERIES ($CASENAME)"
-	echo "****************************************************"
-	# Loop over Nino indices
-	for NINOidx in `echo $NINO_INDICES | sed 's/,/ /g'`
-	do
-	    MON_TS_FILE=${CASENAME}_MON_${FYR_PRNT_TS}-${LYR_PRNT_TS}_sst${NINOidx}_ts.nc
-	    if [ ! -f $CLIMO_TS_DIR/$MON_TS_FILE ]; then
-		echo "sst" > $WKDIR/attributes/required_vars
-		$DIAG_CODE/check_history_vars.sh $CASENAME $FIRST_YR_TS $LAST_YR_TS $PATHDAT ts_mon
-		# Check for grid information
-		if [ ! -f $WKDIR/attributes/grid_${CASENAME} ] && [ -z $PGRIDPATH ]; then
-		    $DIAG_CODE/determine_grid_type.sh $CASENAME
-		fi
-		if [ -f $WKDIR/attributes/vars_ts_mon_${CASENAME}_hm ]; then
-		    $DIAG_CODE/compute_mon_time_series.sh hm $CASENAME $FIRST_YR_TS $LAST_YR_TS $PATHDAT $CLIMO_TS_DIR $NINOidx
-		elif [ -f $WKDIR/attributes/vars_ts_mon_${CASENAME}_hd ]; then
-		    $DIAG_CODE/compute_mon_time_series.sh hd $CASENAME $FIRST_YR_TS $LAST_YR_TS $PATHDAT $CLIMO_TS_DIR $NINOidx
-		else
-		    echo "WARNING: could not find the sst variable for Nino time series."
-		    echo "-> SKIPPING COMPUTING NINO TIME SERIES"
-		fi
-	    else
-		echo "$CLIMO_TS_DIR/$MON_TS_FILE already exists."
-		echo "-> SKIPPING COMPUTING NINO TIME SERIES"
-	    fi
-	done
     fi
     let i=$i+1
 done
@@ -512,69 +467,28 @@ elif [ $set_1 -eq 1 ] && [ -f $CLIMO_TS_DIR1/$ANN_TS_FILE1 ]; then
 	set_1=0
     fi
 fi
-# set_2: MON_TS_FILES
-if [ $set_2 -eq 1 ]; then
-    for NINOidx in `echo $NINO_INDICES | sed 's/,/ /g'`
-    do
-	MON_TS_FILE1=${CASENAME1}_MON_${FYR_PRNT_TS1}-${LYR_PRNT_TS1}_sst${NINOidx}_ts.nc
-	if [ ! -f $CLIMO_TS_DIR1/$MON_TS_FILE1 ]; then
-	    echo "$CLIMO_TS_DIR1/$MON_TS_FILE1 not found: skipping set_2"
-	    set_2=0
-	else
-	    MON_TS_FILE2=${CASENAME2}_MON_${FYR_PRNT_TS2}-${LYR_PRNT_TS2}_sst${NINOidx}_ts.nc
-	    if [ $CNTL == USER ] && [ ! -f $CLIMO_TS_DIR2/$MON_TS_FILE2 ]; then
-		echo "$CLIMO_TS_DIR2/$MON_TS_FILE2 not found: skipping set_2"
-		set_2=0
-	    fi
-	fi
-    done
-fi
-# set_3: ANN_RGR_FILE
+# set_2: ANN_RGR_FILE
 ANN_RGR_FILE1=${CASENAME1}_ANN_${FYR_PRNT_CLIMO1}-${LYR_PRNT_CLIMO1}_climo_remap.nc
-if [ $set_3 -eq 1 ] && [ ! -f $CLIMO_TS_DIR1/$ANN_RGR_FILE1 ]; then
-    echo "$CLIMO_TS_DIR1/$ANN_RGR_FILE1 not found: skipping set_3"
-    set_3=0
-elif [ $set_3 -eq 1 ] && [ -f $CLIMO_TS_DIR1/$ANN_RGR_FILE1 ]; then
+if [ $set_2 -eq 1 ] && [ ! -f $CLIMO_TS_DIR1/$ANN_RGR_FILE1 ]; then
+    echo "$CLIMO_TS_DIR1/$ANN_RGR_FILE1 not found: skipping set_2"
+    set_2=0
+elif [ $set_2 -eq 1 ] && [ -f $CLIMO_TS_DIR1/$ANN_RGR_FILE1 ]; then
     ANN_RGR_FILE2=${CASENAME2}_ANN_${FYR_PRNT_CLIMO2}-${LYR_PRNT_CLIMO2}_climo_remap.nc
     if [ $CNTL == USER ] && [ ! -f $CLIMO_TS_DIR2/$ANN_RGR_FILE2 ]; then
-	echo "$CLIMO_TS_DIR2/$ANN_RGR_FILE2 not found: skipping set_3"
-	set_3=0
+	echo "$CLIMO_TS_DIR2/$ANN_RGR_FILE2 not found: skipping set_2"
+	set_2=0
     fi
 fi
-# set_4: ANN_AVG_FILE
-ANN_AVG_FILE1=${CASENAME1}_ANN_${FYR_PRNT_CLIMO1}-${LYR_PRNT_CLIMO1}_climo.nc
-if [ $set_4 -eq 1 ] && [ ! -f $CLIMO_TS_DIR1/$ANN_AVG_FILE1 ]; then
-    echo "$CLIMO_TS_DIR1/$ANN_AVG_FILE1 not found: skipping set_4"
-    set_4=0
-elif [ $set_4 -eq 1 ] && [ -f $CLIMO_TS_DIR1/$ANN_AVG_FILE1 ]; then
-    ANN_AVG_FILE2=${CASENAME2}_ANN_${FYR_PRNT_CLIMO2}-${LYR_PRNT_CLIMO2}_climo.nc
-    if [ $CNTL == USER ] && [ ! -f $CLIMO_TS_DIR2/$ANN_AVG_FILE2 ]; then
-	echo "$CLIMO_TS_DIR2/$ANN_AVG_FILE2 not found: skipping set_4"
-	set_4=0
-    fi
-fi
-# set_5: ZM_FILE: assumes that all zm files exist if "glb" is present
+# set_3: ZM_FILE: assumes that all zm files exist if "glb" is present
 ZM_FILE1=${CASENAME1}_ANN_${FYR_PRNT_CLIMO1}-${LYR_PRNT_CLIMO1}_climo_remap_zm_glb.nc
-if [ $set_5 -eq 1 ] && [ ! -f $CLIMO_TS_DIR1/$ZM_FILE1 ]; then
-    echo "$CLIMO_TS_DIR1/$ZM_FILE1 not found: skipping set_5"
-    set_5=0
-elif [ $set_5 -eq 1 ] && [ -f $CLIMO_TS_DIR1/$ZM_FILE1 ]; then
+if [ $set_3 -eq 1 ] && [ ! -f $CLIMO_TS_DIR1/$ZM_FILE1 ]; then
+    echo "$CLIMO_TS_DIR1/$ZM_FILE1 not found: skipping set_3"
+    set_3=0
+elif [ $set_3 -eq 1 ] && [ -f $CLIMO_TS_DIR1/$ZM_FILE1 ]; then
     ZM_FILE2=${CASENAME2}_ANN_${FYR_PRNT_CLIMO2}-${LYR_PRNT_CLIMO2}_climo_remap_zm_glb.nc
     if [ $CNTL == USER ] && [ ! -f $CLIMO_TS_DIR2/$ZM_FILE2 ]; then
-	echo "$CLIMO_TS_DIR2/$ZM_FILE2 not found: skipping set_5"
-	set_5=0
-    fi
-fi
-# set_6: ANN_RGR_FILE
-ANN_RGR_FILE1=${CASENAME1}_ANN_${FYR_PRNT_CLIMO1}-${LYR_PRNT_CLIMO1}_climo_remap.nc
-if [ $set_6 -eq 1 ] && [ ! -f $CLIMO_TS_DIR1/$ANN_RGR_FILE1 ]; then
-    echo "$CLIMO_TS_DIR1/$ANN_RGR_FILE1 not found: skipping set_6"
-    set_6=0
-elif [ $set_6 -eq 1 ] && [ -f $CLIMO_TS_DIR1/$ANN_RGR_FILE1 ]; then
-    ANN_RGR_FILE2=${CASENAME2}_ANN_${FYR_PRNT_CLIMO2}-${LYR_PRNT_CLIMO2}_climo_remap.nc
-    if [ $CNTL == USER ] && [ ! -f $CLIMO_TS_DIR2/$ANN_RGR_FILE2 ]; then
-	echo "$CLIMO_TS_DIR2/$ANN_RGR_FILE2 not found: skipping set_6"
-	set_6=0
+	echo "$CLIMO_TS_DIR2/$ZM_FILE2 not found: skipping set_3"
+	set_3=0
     fi
 fi
 
@@ -590,9 +504,6 @@ fi
 mkdir -p $WEBDIR/set1
 mkdir -p $WEBDIR/set2
 mkdir -p $WEBDIR/set3
-mkdir -p $WEBDIR/set4
-mkdir -p $WEBDIR/set5
-mkdir -p $WEBDIR/set6
 cp $DIAG_HTML/index.html $WEBDIR
 cdate=`date`
 sed -i "s/test_run/$CASENAME1/g" $WEBDIR/index.html
@@ -600,9 +511,18 @@ sed -i "s/date_and_time/$cdate/g" $WEBDIR/index.html
 if [ $CNTL == USER ]; then
     sed -i "17i<br>and $CASENAME2" $WEBDIR/index.html
 fi
-if [ $set_1 -eq 1 ] || [ $set_2 -eq 1 ]; then
+if [ $set_1 -eq 1 ]; then
     echo "<font color=maroon size=+1><b><u>Time series plots</u></b></font><br>" >> $WEBDIR/index.html
     echo "<br>" >> $WEBDIR/index.html
+fi
+
+# ------------------
+# Determine colormap
+# ------------------
+export RGB_FILE_DIFF=$DIAG_HOME/rgb/bluered2.rgb
+export RGB_FILE=$DIAG_HOME/rgb/rainbow_marco.rgb
+if [ $colormap == blueyellowred ]; then
+    export RGB_FILE=$DIAG_HOME/rgb/blueyellowred2.rgb
 fi
 
 cd $WKDIR
@@ -618,18 +538,13 @@ if [ $set_1 -eq 1 ]; then
     export INFILE1=$CLIMO_TS_DIR1/${CASENAME1}_ANN_${FYR_PRNT_TS1}-${LYR_PRNT_TS1}_ts.nc
     export CASE1=$CASENAME1
     export FYR1=$FIRST_YR_TS1
-    export RGB_FILE=$DIAG_HOME/rgb/blueyellowred.rgb
     if [ $CNTL == USER ]; then
 	export INFILE2=$CLIMO_TS_DIR2/${CASENAME2}_ANN_${FYR_PRNT_TS2}-${LYR_PRNT_TS2}_ts.nc
 	export CASE2=$CASENAME2
 	export FYR2=$FIRST_YR_TS2
     fi
-    echo "Plotting time series of volume transport (plot_time_series_voltr.ncl)..."
-    $NCL -Q < $DIAG_CODE/plot_time_series_voltr.ncl
-    echo "Plotting time series of temp, saln and mmflxd (plot_time_series_ann.ncl)..."
+    echo "Plotting time series (plot_time_series_ann.ncl)..."
     $NCL -Q < $DIAG_CODE/plot_time_series_ann.ncl
-    echo "Plotting Hovmoeller of temp and saln (plot_hovmoeller.ncl)..."
-    $NCL -Q < $DIAG_CODE/plot_hovmoeller.ncl
     # Convert time series figure to png
     $DIAG_CODE/ps2png.sh set1 $density
     if [ $? -ne 0 ]; then
@@ -639,54 +554,19 @@ if [ $set_1 -eq 1 ]; then
     fi
     $DIAG_CODE/webpage1.sh
 fi
-# ---------------------------------
-# set 2: nino index
+if [ $set_2 -eq 1 ] || [ $set_3 -eq 1 ]; then
+    if [ $set_1 -eq 1 ]; then
+        echo "<br>" >> $WEBDIR/index.html
+    fi
+    echo "<font color=maroon size=+1><b><u>Climatology plots</u></b></font><br>" >> $WEBDIR/index.html
+fi
+#----------------------------------
+# set 2: lat/lon plots
 # ---------------------------------
 if [ $set_2 -eq 1 ]; then
     echo " "
     echo "****************************************************"
-    echo "SET 2: NINO INDEX PLOTS"
-    echo "****************************************************"
-    export COMPARE=$CNTL
-    export CASE1=$CASENAME1
-    export FYR_TS1=$FYR_PRNT_TS1
-    export LYR_TS1=$LYR_PRNT_TS1
-    export FYR_CLIMO1=$FIRST_YR_CLIMO1
-    export LYR_CLIMO1=$LAST_YR_CLIMO1
-    export DATADIR1=$CLIMO_TS_DIR1
-    if [ $CNTL == USER ]; then
-	export CASE2=$CASENAME2
-	export FYR_TS2=$FYR_PRNT_TS2
-	export LYR_TS2=$LYR_PRNT_TS2
-	export FYR_CLIMO2=$FIRST_YR_CLIMO2
-	export LYR_CLIMO2=$LAST_YR_CLIMO2
-        export DATADIR2=$CLIMO_TS_DIR2
-    fi
-    echo "Plotting NINO SST index (plot_nino.ncl)..."
-    $NCL -Q < $DIAG_CODE/plot_nino.ncl
-    # Convert time series figure to png
-    $DIAG_CODE/ps2png.sh set2 $density
-    if [ $? -ne 0 ]; then
-	"ERROR occurred in ps2png.sh (set2)"
-	"*** EXITING THE SCRIPT ***"
-	exit 1
-    fi
-    $DIAG_CODE/webpage2.sh
-fi
-
-if [ $set_3 -eq 1 ] || [ $set_4 -eq 1 ] || [ $set_5 -eq 1 ] || [ $set_6 -eq 1 ]; then
-    if [ $set_1 -eq 1 ] || [ $set_2 -eq 1 ]; then
-	echo "<br>" >> $WEBDIR/index.html
-    fi
-    echo "<font color=maroon size=+1><b><u>Climatology plots</u></b></font><br>" >> $WEBDIR/index.html
-fi
-# ---------------------------------
-# set 3: lat/lon plots
-# ---------------------------------
-if [ $set_3 -eq 1 ]; then
-    echo " "
-    echo "****************************************************"
-    echo "SET 3: 2D LAT/LON CONTOUR PLOTS"
+    echo "SET 2: 2D LAT/LON CONTOUR PLOTS"
     echo "****************************************************"
     export COMPARE=$CNTL
     export CASE1=$CASENAME1
@@ -703,51 +583,21 @@ if [ $set_3 -eq 1 ]; then
     echo "2D contour plots (plot_latlon.ncl)..."
     $NCL -Q < $DIAG_CODE/plot_latlon.ncl
     # Convert time series figure to png
-    $DIAG_CODE/ps2png.sh set3 $density
+    $DIAG_CODE/ps2png.sh set2 $density
     if [ $? -ne 0 ]; then
-	"ERROR occurred in ps2png.sh (set3)"
+	"ERROR occurred in ps2png.sh (set2)"
 	"*** EXITING THE SCRIPT ***"
 	exit 1
     fi
-    $DIAG_CODE/webpage3.sh
+    $DIAG_CODE/webpage2.sh
 fi
 # ---------------------------------
-# set 4: MOCs
+# set 3: zonal means
 # ---------------------------------
-if [ $set_4 -eq 1 ]; then
+if [ $set_3 -eq 1 ]; then
     echo " "
     echo "****************************************************"
-    echo "SET 4: MOC PLOTS"
-    echo "****************************************************"
-    export COMPARE=$CNTL
-    export CASE1=$CASENAME1
-    export FYR1=$FIRST_YR_CLIMO1
-    export LYR1=$LAST_YR_CLIMO1
-    export INFILE1=$CLIMO_TS_DIR1/${CASENAME1}_ANN_${FYR_PRNT_CLIMO1}-${LYR_PRNT_CLIMO1}_climo.nc
-    if [ $CNTL == USER ]; then
-	export CASE2=$CASENAME2
-	export FYR2=$FIRST_YR_CLIMO2
-	export LYR2=$LAST_YR_CLIMO2
-	export INFILE2=$CLIMO_TS_DIR2/${CASENAME2}_ANN_${FYR_PRNT_CLIMO2}-${LYR_PRNT_CLIMO2}_climo.nc
-    fi
-    echo "MOC plots (plot_moc.ncl)..."
-    $NCL -Q < $DIAG_CODE/plot_moc.ncl
-    # Convert time series figure to png
-    $DIAG_CODE/ps2png.sh set4 $density
-    if [ $? -ne 0 ]; then
-	"ERROR occurred in ps2png.sh (set4)"
-	"*** EXITING THE SCRIPT ***"
-	exit 1
-    fi
-    $DIAG_CODE/webpage4.sh
-fi
-# ---------------------------------
-# set 5: Zonal means
-# ---------------------------------
-if [ $set_5 -eq 1 ]; then
-    echo " "
-    echo "****************************************************"
-    echo "SET 5: ZONAL MEAN PLOTS"
+    echo "SET 3: ZONAL MEAN PLOTS"
     echo "****************************************************"
     export COMPARE=$CNTL
     export CASE1=$CASENAME1
@@ -770,44 +620,13 @@ if [ $set_5 -eq 1 ]; then
 	$NCL -Q < $DIAG_CODE/plot_zonal_mean.ncl
     done
     
-    $DIAG_CODE/ps2png.sh set5 $density
+    $DIAG_CODE/ps2png.sh set3 $density
     if [ $? -ne 0 ]; then
-	"ERROR occurred in ps2png.sh (set5)"
+	"ERROR occurred in ps2png.sh (set3)"
 	"*** EXITING THE SCRIPT ***"
 	exit 1
     fi
-    $DIAG_CODE/webpage5.sh
-fi
-# ---------------------------------
-# set 6: Equatorial plots
-# ---------------------------------
-if [ $set_6 -eq 1 ]; then
-    echo " "
-    echo "****************************************************"
-    echo "SET 6: EQUATORIAL PLOTS"
-    echo "****************************************************"
-    export COMPARE=$CNTL
-    export CASE1=$CASENAME1
-    export FYR1=$FIRST_YR_CLIMO1
-    export LYR1=$LAST_YR_CLIMO1
-    export INFILE1=$CLIMO_TS_DIR1/${CASENAME1}_ANN_${FYR_PRNT_CLIMO1}-${LYR_PRNT_CLIMO1}_climo_remap.nc
-    export INFILE2=$DIAG_OBS
-    if [ $CNTL == USER ]; then
-	export CASE2=$CASENAME2
-	export FYR2=$FIRST_YR_CLIMO2
-	export LYR2=$LAST_YR_CLIMO2
-	export INFILE2=$CLIMO_TS_DIR2/${CASENAME2}_ANN_${FYR_PRNT_CLIMO2}-${LYR_PRNT_CLIMO2}_climo_remap.nc
-    fi
-    echo "Equatorial plots of temp and saln (plot_eq.ncl)..."
-    $NCL -Q < $DIAG_CODE/plot_eq.ncl
-    # Convert time series figure to png
-    $DIAG_CODE/ps2png.sh set6 $density
-    if [ $? -ne 0 ]; then
-	"ERROR occurred in ps2png.sh (set6)"
-	"*** EXITING THE SCRIPT ***"
-	exit 1
-    fi
-    $DIAG_CODE/webpage6.sh
+    $DIAG_CODE/webpage3.sh
 fi
 
 # Making tar file
@@ -822,7 +641,7 @@ if [ $? -eq 0 ] && [ $publish_html -eq 1 ]; then
     if [ -z $publish_html_root ]; then
 	publish_html_root=${web_server_path}/noresm_diagnostics
     fi
-    publish_html_path=$publish_html_root/$CASENAME1/MICOM_DIAG
+    publish_html_path=$publish_html_root/$CASENAME1/HAMMOC_DIAG
     if [ ! -d $publish_html_path ]; then
 	mkdir -p $publish_html_path
     fi
