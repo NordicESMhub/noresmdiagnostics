@@ -3,7 +3,7 @@
 # Written by Johan Liakka (latest update is the version number)
 # johan.liakka@nersc.no
 
-VERSION=2.2
+VERSION=3.0
 BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 ETC_DIR=$ROOT_DIR/etc
