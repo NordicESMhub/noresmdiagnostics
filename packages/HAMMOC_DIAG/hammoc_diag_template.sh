@@ -92,12 +92,12 @@ set_3=1 # (1=ON,0=OFF) Zonal mean (lat-depth) plot
 # also choose the colormap for the full fields
 # (difference fields are always plotted with blue-white-red)
 publish_html=1 # (1=ON,0=OFF)
-publish_html_root=/projects/NS2345K/www/noresm_diagnostics_dev
+publish_html_root=/projects/NS2345K/www/noresm_diagnostics_dev2
 density=85
 # Available colormap options:
 #  default = purple-brown palette provided by Marco Van Hulten
 #  blueyellowred = color map from MICOM diagnostics
-colormap=default
+colormap=blueyellowred
 
 # ---------------------------------------------------------
 # SWITCH BETWEEN CLIMO AND TIME-SERIES COMPUTATION

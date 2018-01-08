@@ -99,19 +99,30 @@ fi
 echo "</TABLE>" >> $WEBDIR/index.html
 # Hovmöller
 echo "<br>" >> $WEBDIR/index.html
-echo "<TABLE width='500'>" >> $WEBDIR/index.html
+echo "<TABLE width='450'>" >> $WEBDIR/index.html
 echo "<TH colspan='2'>Hovmoeller plots" >> $WEBDIR/index.html
 echo "<TR>" >> $WEBDIR/index.html
 echo "<TD>Relative to start of simulation" >> $WEBDIR/index.html
-if [ -f $WEBDIR/set1/set1_ann_templvl_${cinfo}.png ]; then
-    echo "<TD><a href='set1/set1_ann_templvl_${cinfo}.png'>Temperature</a>" >> $WEBDIR/index.html
+if [ -f $WEBDIR/set1/set1_ann_templvl1_${cinfo}.png ]; then
+    echo "<TD><a href='set1/set1_ann_templvl1_${cinfo}.png'>Temperature</a>" >> $WEBDIR/index.html
 else
     echo "<TD><I>Temperature (temp)</I>" >> $WEBDIR/index.html
 fi
-if [ -f $WEBDIR/set1/set1_ann_salnlvl_${cinfo}.png ]; then
-    echo "<TD><a href='set1/set1_ann_salnlvl_${cinfo}.png'>Salinity</a>" >> $WEBDIR/index.html
+if [ -f $WEBDIR/set1/set1_ann_salnlvl1_${cinfo}.png ]; then
+    echo "<TD><a href='set1/set1_ann_salnlvl1_${cinfo}.png'>Salinity</a>" >> $WEBDIR/index.html
 else
     echo "<TD><I>Salinity (saln)</I>" >> $WEBDIR/index.html
 fi
-# End
+echo "<TR>" >> $WEBDIR/index.html
+echo "<TD>Relative to WOA13 climatology" >> $WEBDIR/index.html
+if [ -f $WEBDIR/set1/set1_ann_templvl1_${cinfo}.png ]; then
+    echo "<TD><a href='set1/set1_ann_templvl2_${cinfo}.png'>Temperature</a>" >> $WEBDIR/index.html
+else
+    echo "<TD><I>Temperature (temp)</I>" >> $WEBDIR/index.html
+fi
+if [ -f $WEBDIR/set1/set1_ann_salnlvl1_${cinfo}.png ]; then
+    echo "<TD><a href='set1/set1_ann_salnlvl2_${cinfo}.png'>Salinity</a>" >> $WEBDIR/index.html
+else
+    echo "<TD><I>Salinity (saln)</I>" >> $WEBDIR/index.html
+fi
 echo '</TABLE>' >> $WEBDIR/index.html

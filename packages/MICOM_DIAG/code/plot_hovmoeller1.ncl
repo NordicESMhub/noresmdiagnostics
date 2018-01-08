@@ -1,5 +1,6 @@
 ; NCL script
-; plot_hovmoeller.ncl
+; plot_hovmoeller1.ncl
+; use start of simulation as starting state
 ; Johan Liakka, Dec 2017
 ;**************************************
 load "$DIAG_CODE/functions_time_series.ncl"
@@ -128,10 +129,10 @@ do i = 0,nvars-1
 
    if (compare.eq."OBS") then
       cnplot = new(1,"graphic")
-      plotname = "set1_ann_"+vars(i)+"_1model"
+      plotname = "set1_ann_"+vars(i)+"1_1model"
    else
       cnplot = new(2,"graphic")
-      plotname = "set1_ann_"+vars(i)+"_2models"
+      plotname = "set1_ann_"+vars(i)+"1_2models"
    end if
    
    wks  = gsn_open_wks("ps",wkdir+"/"+plotname)

@@ -1,5 +1,6 @@
 ; NCL script
-; plot_hovmoeller.ncl
+; plot_hovmoeller2.ncl
+; use WOA13 climatology as starting state
 ; Johan Liakka, Dec 2017
 ;**************************************
 load "$DIAG_CODE/functions_time_series.ncl"
@@ -12,10 +13,13 @@ infile1    = getenv("INFILE1")
 case1      = getenv("CASE1")
 fyrs1      = getenv("FYR1")
 rgb_dir    = getenv("DIAG_RGB")
+obs_dir    = getenv("DIAG_OBS")
 
 ncases = 1
 inptr1 = addfile(infile1,"r")
 fyr1   = stringtointeger(fyrs1)
+z1 = inptr1->depth
+nz1 = dimsizes(z1)
 
 if (compare.eq."USER") then
    infile2 = getenv("INFILE2")
@@ -24,6 +28,8 @@ if (compare.eq."USER") then
    inptr2  = addfile(infile2,"r")
    ncases  = 2
    fyr2    = stringtointeger(fyrs2)
+   z2 = inptr2->depth
+   nz2 = dimsizes(z2)
 end if
 
 vars   = (/"templvl","salnlvl"/)
@@ -35,6 +41,10 @@ con = new((/2,18/),float)
 con(0,:)=(/-1.7,-1.5,-1.3,-1.1,-0.9,-0.7,-0.5,-0.3,-0.1,0.1,0.3,0.5,0.7,0.9,1.1,1.3,1.5,1.7/)   ; temp
 con(1,:)=(/-0.225,-0.2,-0.175,-0.15,-0.125,-0.1,-0.075,-0.05,-0.025,0.025,0.05,0.075,0.1,0.125,0.15,0.175,0.2,0.225/)   ; saln
 ;print(con)
+
+; Read WOA13 data
+inptr_WOAt = addfile(obs_dir+"/WOA13/1deg/woa13_decav_t00_01_gm.nc","r")
+inptr_WOAs = addfile(obs_dir+"/WOA13/1deg/woa13_decav_s00_01_gm.nc","r")
 
 ;**********************************************************************
 ; common resources for contour plots
@@ -72,11 +82,18 @@ pan@gsnFrame            = False
 ;***********************************************************
 
 do i = 0,nvars-1
+
    if (vars(i) .eq. "templvl") then
       A = get_templvl (inptr1)
+      xobs=inptr_WOAt->t_an
+      zobs=inptr_WOAt->depth
+      nzobs = dimsizes(zobs)
    end if
    if (vars(i) .eq. "salnlvl") then
       A = get_salnlvl (inptr1)
+      xobs=inptr_WOAs->s_an
+      zobs=inptr_WOAt->depth
+      nzobs = dimsizes(zobs)
    end if
   
    if (all(A.eq.-999.)) then
@@ -90,11 +107,25 @@ do i = 0,nvars-1
    eyr1 = fyr1+ntimes1-1
    time_new1 = fspan(fyr1,eyr1,ntimes1)
 
+   if (nz1.lt.nzobs) then            ; model less levels than obs
+     xobs_int= linint1_n_Wrap(zobs, xobs, False, z1, 0, 1)
+     delete(xobs)
+     xobs = xobs_int
+     delete(xobs_int)
+   end if
+
+   if (nz1.gt.nzobs) then            ; model more levels than obs
+     A_int= linint1_n_Wrap(z1, A, False, zobs, 0, 1)
+     delete(A)
+     A = A_int
+     delete(A_int)
+   end if
+
    data1 = A
 
 ;  Subtract starting values
    do it = 0, ntimes1-1
-     data1(it,:) = A(it,:)-A(0,:)
+     data1(it,:) = A(it,:)-xobs(0,:)
    end do
    delete(A)
 
@@ -117,21 +148,37 @@ do i = 0,nvars-1
       eyr2 = fyr2+ntimes2-1
       time_new2 = fspan(fyr2,eyr2,ntimes2)
 
+      if (nz2.lt.nzobs) then            ; model less levels than obs
+        xobs_int= linint1_n_Wrap(zobs, xobs, False, z2, 0, 1)
+        delete(xobs)
+        xobs = xobs_int
+        delete(xobs_int)
+      end if
+
+      if (nz2.gt.nzobs) then            ; model more levels than obs
+        B_int= linint1_n_Wrap(z2, B, False, zobs, 0, 1)
+        delete(B)
+        B = B_int
+        delete(B_int)
+      end if
+
       data2 = B
 
 ;     Subtract starting values
       do it = 0, ntimes2-1
-         data2(it,:) = B(it,:)-B(0,:)
+         data2(it,:) = B(it,:)-xobs(0,:)
       end do
 
    end if
 
+   delete(xobs)
+
    if (compare.eq."OBS") then
       cnplot = new(1,"graphic")
-      plotname = "set1_ann_"+vars(i)+"_1model"
+      plotname = "set1_ann_"+vars(i)+"2_1model"
    else
       cnplot = new(2,"graphic")
-      plotname = "set1_ann_"+vars(i)+"_2models"
+      plotname = "set1_ann_"+vars(i)+"2_2models"
    end if
    
    wks  = gsn_open_wks("ps",wkdir+"/"+plotname)

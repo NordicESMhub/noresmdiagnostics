@@ -36,8 +36,8 @@ PATHDAT1=$pathdat_root1/$CASENAME1/ocn/hist
 # SELECT TYPE OF CONTROL CASE
 # NOTE: CNTL=USER IS NOT YET SUPPORTED
 # ---------------------------------------------------------
-CNTL=OBS    # compare case1 to observations (model-obs diagnostics)
-#CNTL=USER   # compare case1 to another experiment case2 (model-model diagnostics)
+#CNTL=OBS    # compare case1 to observations (model-obs diagnostics)
+CNTL=USER   # compare case1 to another experiment case2 (model-model diagnostics)
 
 # ---------------------------------------------------------
 # CNTL CASENAME AND YEARS TO BE AVERAGED (CASE2)
@@ -67,11 +67,11 @@ DIAG_ROOT=/projects/NS2345K/noresm_diagnostics_dev/out/MICOM_DIAG
 # SELECT SETS (1-5)
 # ---------------------------------------------------------
 set_1=1 # (1=ON,0=OFF) Annual time series plots
-set_2=0 # (1=ON,0=OFF) ENSO indices
-set_3=0 # (1=ON,0=OFF) 2D (lat-lon) contour plots
-set_4=0 # (1=ON,0=OFF) MOCs for different regions
-set_5=0 # (1=ON,0=OFF) Zonal mean (lat-depth) plot
-set_6=0 # (1=ON,0=OFF) Equatorial (lon-depth) plots
+set_2=1 # (1=ON,0=OFF) ENSO indices
+set_3=1 # (1=ON,0=OFF) 2D (lat-lon) contour plots
+set_4=1 # (1=ON,0=OFF) MOCs for different regions
+set_5=1 # (1=ON,0=OFF) Zonal mean (lat-depth) plot
+set_6=1 # (1=ON,0=OFF) Equatorial (lon-depth) plots
 
 # ---------------------------------------------------------
 # NINO SST INDICES
@@ -628,8 +628,9 @@ if [ $set_1 -eq 1 ]; then
     $NCL -Q < $DIAG_CODE/plot_time_series_voltr.ncl
     echo "Plotting time series of temp, saln and mmflxd (plot_time_series_ann.ncl)..."
     $NCL -Q < $DIAG_CODE/plot_time_series_ann.ncl
-    echo "Plotting Hovmoeller of temp and saln (plot_hovmoeller.ncl)..."
-    $NCL -Q < $DIAG_CODE/plot_hovmoeller.ncl
+    echo "Plotting Hovmoeller of temp and saln (plot_hovmoeller*.ncl)..."
+    $NCL -Q < $DIAG_CODE/plot_hovmoeller1.ncl
+    $NCL -Q < $DIAG_CODE/plot_hovmoeller2.ncl
     # Convert time series figure to png
     $DIAG_CODE/ps2png.sh set1 $density
     if [ $? -ne 0 ]; then
