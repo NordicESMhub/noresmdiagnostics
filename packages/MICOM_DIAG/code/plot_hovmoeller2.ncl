@@ -92,10 +92,10 @@ do i = 0,nvars-1
    if (vars(i) .eq. "salnlvl") then
       A = get_salnlvl (inptr1)
       xobs=inptr_WOAs->s_an
-      zobs=inptr_WOAt->depth
+      zobs=inptr_WOAs->depth
       nzobs = dimsizes(zobs)
    end if
-  
+
    if (all(A.eq.-999.)) then
       print (vars(i)+" not present in case1 input file.")
       delete (A)
@@ -112,6 +112,10 @@ do i = 0,nvars-1
      delete(xobs)
      xobs = xobs_int
      delete(xobs_int)
+     delete(zobs)
+     delete(nzobs)
+     zobs = z1
+     nzobs = dimsizes(zobs)
    end if
 
    if (nz1.gt.nzobs) then            ; model more levels than obs
@@ -172,6 +176,8 @@ do i = 0,nvars-1
    end if
 
    delete(xobs)
+   delete(zobs)
+   delete(nzobs)
 
    if (compare.eq."OBS") then
       cnplot = new(1,"graphic")

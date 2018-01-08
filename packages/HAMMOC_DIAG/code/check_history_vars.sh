@@ -151,8 +151,8 @@ fi
 
 if [ $file_flag -eq 0 ]; then
     echo "ERROR: could not find the required history files for $casename in $pathdat"
-    echo "*** EXITING THE SCRIPT (with status 0) ***"
-    exit 0
+    echo "*** EXITING THE SCRIPT ***"
+    exit 1
 fi
 
 if [ $var_flag -eq 0 ]; then
