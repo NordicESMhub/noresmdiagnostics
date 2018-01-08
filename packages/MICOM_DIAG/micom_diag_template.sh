@@ -3,7 +3,7 @@
 # MICOM DIAGNOSTICS package
 # Johan Liakka, NERSC, johan.liakka@nersc.no
 # built upon previous work by Detelina Ivanova
-# Last update Jan 2018
+# Last update Dec 2017
 set -e
 #***************************
 #*** USER MODIFY SECTION ***
@@ -475,15 +475,15 @@ do
 	    MON_TS_FILE=${CASENAME}_MON_${FYR_PRNT_TS}-${LYR_PRNT_TS}_sst${NINOidx}_ts.nc
 	    if [ ! -f $CLIMO_TS_DIR/$MON_TS_FILE ]; then
 		echo "sst" > $WKDIR/attributes/required_vars
-		$DIAG_CODE/check_history_vars.sh $CASENAME $FIRST_YR_TS $LAST_YR_TS $PATHDAT ts_mon
+		$DIAG_CODE/check_history_vars.sh $CASENAME $FIRST_YR_CLIMO $LAST_YR_CLIMO $PATHDAT ts_mon
 		# Check for grid information
 		if [ ! -f $WKDIR/attributes/grid_${CASENAME} ] && [ -z $PGRIDPATH ]; then
 		    $DIAG_CODE/determine_grid_type.sh $CASENAME
 		fi
 		if [ -f $WKDIR/attributes/vars_ts_mon_${CASENAME}_hm ]; then
-		    $DIAG_CODE/compute_mon_time_series.sh hm $CASENAME $FIRST_YR_TS $LAST_YR_TS $PATHDAT $CLIMO_TS_DIR $NINOidx
+		    $DIAG_CODE/compute_mon_time_series.sh hm $CASENAME $FIRST_YR_TS $LAST_YR_TS $PATHDAT $CLIMO_TS_DIR $NINOidx $FIRST_YR_CLIMO $LAST_YR_CLIMO
 		elif [ -f $WKDIR/attributes/vars_ts_mon_${CASENAME}_hd ]; then
-		    $DIAG_CODE/compute_mon_time_series.sh hd $CASENAME $FIRST_YR_TS $LAST_YR_TS $PATHDAT $CLIMO_TS_DIR $NINOidx
+		    $DIAG_CODE/compute_mon_time_series.sh hd $CASENAME $FIRST_YR_TS $LAST_YR_TS $PATHDAT $CLIMO_TS_DIR $NINOidx $FIRST_YR_CLIMO $LAST_YR_CLIMO
 		else
 		    echo "WARNING: could not find the sst variable for Nino time series."
 		    echo "-> SKIPPING COMPUTING NINO TIME SERIES"
@@ -618,7 +618,6 @@ if [ $set_1 -eq 1 ]; then
     export INFILE1=$CLIMO_TS_DIR1/${CASENAME1}_ANN_${FYR_PRNT_TS1}-${LYR_PRNT_TS1}_ts.nc
     export CASE1=$CASENAME1
     export FYR1=$FIRST_YR_TS1
-    export RGB_FILE=$DIAG_HOME/rgb/blueyellowred.rgb
     if [ $CNTL == USER ]; then
 	export INFILE2=$CLIMO_TS_DIR2/${CASENAME2}_ANN_${FYR_PRNT_TS2}-${LYR_PRNT_TS2}_ts.nc
 	export CASE2=$CASENAME2
@@ -628,8 +627,9 @@ if [ $set_1 -eq 1 ]; then
     $NCL -Q < $DIAG_CODE/plot_time_series_voltr.ncl
     echo "Plotting time series of temp, saln and mmflxd (plot_time_series_ann.ncl)..."
     $NCL -Q < $DIAG_CODE/plot_time_series_ann.ncl
-    echo "Plotting Hovmoeller of temp and saln (plot_hovmoeller.ncl)..."
-    $NCL -Q < $DIAG_CODE/plot_hovmoeller.ncl
+    echo "Plotting Hovmoeller of temp and saln (plot_hovmoeller*.ncl)..."
+    $NCL -Q < $DIAG_CODE/plot_hovmoeller1.ncl
+    $NCL -Q < $DIAG_CODE/plot_hovmoeller2.ncl
     # Convert time series figure to png
     $DIAG_CODE/ps2png.sh set1 $density
     if [ $? -ne 0 ]; then
