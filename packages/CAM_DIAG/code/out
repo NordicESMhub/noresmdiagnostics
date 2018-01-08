@@ -1,0 +1,58 @@
+nohup: ignoring input
+-----------------------------------
+diag_run
+Version: 171117
+ma. 20. nov. 09:30:50 +0100 2017
+-----------------------------------
+-CHANGING DIAGNOSTICS DIRECTORY to /scratch/johiak/noresm_diagnostics2/CAM_DIAG in amwg_template.csh
+-CHANGING INPUT DIR 1 to /projects/NS2345K/noresm/cases in amwg_template.csh
+-CHANGING publish_html_root in amwg_template.csh
+-CHANGING TEST CASE to N1850_f19_tn11_230815 in amwg_template.csh
+-CHANGING CNTL TO OBS in amwg_template.csh
+-CHANGING FIRST YR IN TEST CASE TO 21 in amwg_template.csh
+-CHANGING NUMBER OF YEARS IN TEST CASE to 30 in amwg_template.csh
+CAM DIAGNOSTICS SUCCESSFULLY CONFIGURED in /scratch/johiak/noresm_diagnostics2/CAM_DIAG
+----------------------------------
+RUNNING amwg_template.csh ...
+----------------------------------
+ 
+***************************************************
+          CCSM AMWG DIAGNOSTIC PACKAGE
+          Script Version: 140207
+          NCARG_ROOT = /opt/ncl64
+          ma. 20. nov. 09:30:50 +0100 2017
+***************************************************
+ 
+ 
+------------------------------
+COMPARISONS WITH OBSERVED DATA
+------------------------------
+DETERMINE ATTRIBUTES FOR HISTORY FILES
+ 
+ATTEMPT TO LOCATE FILE TO DETERMINE HISTORY ATTRIBUTES 
+FOUND /projects/NS2345K/noresm/cases/N1850_f19_tn11_230815/atm/hist/N1850_f19_tn11_230815.cam.h0.0021-01.nc
+FILE IS USED TO DETERMINE HISTORY FILES ATTRIBUTES
+ 
+TEST CASE ATTRIBUTES
+  test_rootname = N1850_f19_tn11_230815.cam.h0.
+  test_grid = Lat/Lon
+  test_res_in =
+  test_res_in =
+ 
+CHECKING /projects/NS2345K/noresm/cases/N1850_f19_tn11_230815/atm/hist
+FOR ALL MONTHLY FILES
+-->ALL N1850_f19_tn11_230815 MONTHLY FILES FOUND
+-->FOUND DECEMBER FILE FROM YEAR 20: USING test_djf=SCD
+ 
+SWIFT: 1
+ 
+-------------------------
+COMPUTING CLIMO FOR test
+-------------------------
+ncclimo:: Command not found.
+-------------------------
+====> 1
+CHECKING FOR TEST CLIMO FILES
+ 
+ 
+ERROR: /scratch/johiak/noresm_diagnostics2/CAM_DIAG/climo/N1850_f19_tn11_230815/N1850_f19_tn11_230815_01_climo.nc NOT FOUND

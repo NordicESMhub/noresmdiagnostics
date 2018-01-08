@@ -1,0 +1,5 @@
+globalMeanNat   WA
+globalMeanNat   WT
+globalMeanNat   ZWT
+globalMeanDay   QCHARGE
+globalMeanNat   FCOV
