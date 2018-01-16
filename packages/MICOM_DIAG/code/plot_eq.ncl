@@ -43,6 +43,7 @@ nz1 = dimsizes(depth1)       ; number vertical levels
 
 ; Define RGB files
 rgb_file  = rgb_dir+"/blueyellowred2.rgb"
+rgb_file3 = rgb_dir+"/blueyellowred3.rgb"
 rgb_filed = rgb_dir+"/bluered2.rgb"
 
 ; CASE 2 MODEL OR OBS
@@ -85,7 +86,7 @@ end if
 ; define variables to plot
 ;************************************************
 ; contours definition (global)
-cntrs_templvl=(/-4,-2,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34/)
+cntrs_templvl=(/-2,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30/)
 dcntrs_templvl=(/-4,-3.5,-3,-2.5,-2,-1.5,-1,-0.5,-0.25,0.25,0.5,1,1.5,2,2.5,3,3.5,4/)
 
 cntrs_salnlvl=(/30.4,30.8,31.2,31.6,32,32.4,32.8,33.2,33.6,34,34.4,34.8,35.2,35.6,36,36.4,36.8,37.2,37.6,38/)
@@ -93,11 +94,6 @@ dcntrs_salnlvl=(/-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0.1,0.2,0.3,0.4,0.
 
 ; model variables
 vars = (/"templvl","salnlvl"/)
-
-; define contour intervals
-cntrs = (/cntrs_templvl,cntrs_salnlvl/)
-
-dcntrs = (/dcntrs_templvl,dcntrs_salnlvl/)
 
 nvars = dimsizes(vars)
 
@@ -134,6 +130,7 @@ end if
  cres@trYReverse = True
  cres@gsnYAxisIrregular2Linear = True
  cmap  = RGBtoCmap(rgb_file)
+ cmap3 = RGBtoCmap(rgb_file3)
  cmapd = RGBtoCmap(rgb_filed)
 ;-------------------------------------------
 ; common resoureces for panel plot
@@ -381,13 +378,18 @@ do i = 0, nvars-1
   min2 = min(data2)
   max2 = max(data2)
 
-  cres@cnFillPalette  = cmap
   cres@lbLabelStride  = 2
   if (vars(i).eq."salnlvl") then
     cres@lbLabelStride  = 4
   end if
   cres@lbOrientation = "Horizontal"
-  cres@cnLevels = cntrs(i,:)
+  if (vars(i).eq."templvl") then
+    cres@cnLevels = cntrs_templvl
+    cres@cnFillPalette  = cmap3
+  else
+    cres@cnLevels = cntrs_salnlvl
+    cres@cnFillPalette  = cmap
+  end if
   cres@trXReverse = False
   cres@lbTitleString = "MIN = "+sprintf("%6.2f",min1)+ \
                      "  MAX = "+sprintf("%6.2f",max1)
@@ -427,7 +429,11 @@ do i = 0, nvars-1
   cres@lbLabelStride = 1
   cres@lbOrientation = "Vertical"
   cres@lbBoxMinorExtentF = 0.18
-  cres@cnLevels = dcntrs(i,:)
+  if (vars(i).eq."templvl") then
+    cres@cnLevels = dcntrs_templvl
+  else
+    cres@cnLevels = dcntrs_salnlvl
+  end if
   cres@cnFillPalette  = cmapd
   cres@lbTitleString = "MIN = "+sprintf("%6.2f",mind)+ \
                        "~C~MAX = "+sprintf("%6.2f",maxd)

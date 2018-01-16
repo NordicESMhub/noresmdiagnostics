@@ -69,9 +69,9 @@ dcon(1,:)=(/-17,-15,-13,-11,-9,-7,-5,-3,-1,1,3,5,7,9,11,13,15,17/)
 dcon(2,:)=(/-17,-15,-13,-11,-9,-7,-5,-3,-1,1,3,5,7,9,11,13,15,17/)
 
 if (compare.eq."OBS") then
-   cnplot = new(1,"graphic")
+   cnplot = new(2,"graphic")
 else
-   cnplot = new(3,"graphic")
+   cnplot = new(6,"graphic")
 end if
 
 ;**********************************************************************
@@ -97,11 +97,8 @@ cres@lbTitleFontHeightF       = 0.02
 cres@lbLabelAutoStride        = False
 cres@lbLabelStride            = 1
 cres@lbOrientation            = "Vertical"
-cres@gsnYAxisIrregular2Linear = False
-cres@trYLog                   = False
 cres@pmLabelBarWidthF         = 0.05
 cres@lbBoxMinorExtentF        = 0.18
-
 cmap  = RGBtoCmap(rgb_file)
 cmapd = RGBtoCmap(rgb_filed)
 ;-------------------------------------------
@@ -169,9 +166,15 @@ do i = 0,nreg1-1
                        "~C~MAX="+sprintf("%6.2f",max1)
    cres@tiMainString = case1+" (yrs "+yrs_ave1+")"
    cres@gsnLeftString = region(i)
-   cres@gsnRightString = A@units
+   cres@gsnRightString = "non-lin y "+A@units
 
+   cres@gsnYAxisIrregular2Linear = False
    cnplot(0) = gsn_csm_contour(wks,A,cres)
+   delete (cres@gsnYAxisIrregular2Linear)
+   cres@gsnYAxisIrregular2Linear = True
+   cres@gsnRightString = "linear y "+A@units
+   cnplot(1) = gsn_csm_contour(wks,A,cres)
+   delete (cres@gsnYAxisIrregular2Linear)
 
    delete (cres@cnFillPalette)
    delete (cres@lbTitleString)
@@ -193,10 +196,16 @@ do i = 0,nreg1-1
                           "~C~MAX="+sprintf("%6.2f",max2)
       cres@tiMainString = case2+" (yrs "+yrs_ave2+")"
       cres@gsnLeftString = region(i)
-      cres@gsnRightString = B@units
+      cres@gsnRightString = "non-lin y "+B@units
       cres@cnFillPalette  = cmap
 
-      cnplot(1) = gsn_csm_contour(wks,B,cres)
+      cres@gsnYAxisIrregular2Linear = False
+      cnplot(2) = gsn_csm_contour(wks,B,cres)
+      delete (cres@gsnYAxisIrregular2Linear)
+      cres@gsnYAxisIrregular2Linear = True
+      cres@gsnRightString = "linear y "+B@units
+      cnplot(3) = gsn_csm_contour(wks,B,cres)
+      delete (cres@gsnYAxisIrregular2Linear)
 
       delete (cres@cnFillPalette)
 
@@ -219,9 +228,16 @@ do i = 0,nreg1-1
                           "~C~MAX="+sprintf("%6.2f",max3)
       cres@tiMainString = case1+"-"+case2
       cres@gsnLeftString = region(i)
-      cres@gsnRightString = C@units
-      cnplot(2) = gsn_csm_contour(wks,C,cres)
-      
+      cres@gsnRightString = "non-lin y "+C@units
+
+      cres@gsnYAxisIrregular2Linear = False
+      cnplot(4) = gsn_csm_contour(wks,C,cres)
+      delete (cres@gsnYAxisIrregular2Linear)
+      cres@gsnYAxisIrregular2Linear = True
+      cres@gsnRightString = "linear y "+C@units
+      cnplot(5) = gsn_csm_contour(wks,C,cres)
+      delete (cres@gsnYAxisIrregular2Linear)
+
       delete (cres@tiMainString)
       delete (cres@lbTitleString)
       delete (cres@cnFillPalette)
@@ -237,9 +253,9 @@ do i = 0,nreg1-1
    delete(A)
 
    if (compare.eq."OBS") then
-      gsn_panel(wks,cnplot,(/1,1/),pan)
+      gsn_panel(wks,cnplot,(/1,2/),pan)
    else
-      gsn_panel(wks,cnplot,(/3,1/),pan)
+      gsn_panel(wks,cnplot,(/3,2/),pan)
    end if
    frame (wks)
 end do

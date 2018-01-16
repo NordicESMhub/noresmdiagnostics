@@ -106,6 +106,15 @@ colormap=blueyellowred
 # SWITCHED_OFF (computes both).
 CLIMO_TIME_SERIES_SWITCH=SWITCHED_OFF
 
+# --------------------------------
+# SCALE OF Y-AXIS (DEPTH) IN PLOTS
+# --------------------------------
+# By default, in plots where y-axis represents depth
+# it is not linear, but  scales with the density of
+# the vertical levels. You can however force it to be linear.
+# Valid option: default, linear
+export PLOT_DEPTH=y_axis_scale
+
 # ---------------------------------------------------------
 # ROOT DIRECTORY TO ALL THE DIAGNOSTICS SCRIPTS
 # ---------------------------------------------------------

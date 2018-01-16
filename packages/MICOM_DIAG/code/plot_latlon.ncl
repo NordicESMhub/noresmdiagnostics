@@ -53,6 +53,7 @@ gw1&lat = lat1
 
 ; Define RGB files
 rgb_file  = rgb_dir+"/blueyellowred2.rgb"
+rgb_file3 = rgb_dir+"/blueyellowred3.rgb"
 rgb_filed = rgb_dir+"/bluered2.rgb"
 
 ; CASE 2 MODEL OR OBS
@@ -103,7 +104,8 @@ end if
 ; define variables to plot
 ;************************************************
 ; contours definition (global)
-cntrs_templvl_top=(/-2,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36/)
+cntrs_templvl_top=(/-2,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30/)
+cntrs_dummy=(/-2,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36/)
 dcntrs_templvl_top=(/-4.5,-4,-3.5,-3,-2.5,-2,-1.5,-1,-0.5,0.5,1,1.5,2,2.5,3,3.5,4,4.5/)
 cntrs_templvl_bot=(/-2,-1.5,-1,-0.5,0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5/)
 dcntrs_templvl_bot=(/-2.7,-2.4,-2.1,-1.8,-1.5,-1.2,-0.9,-0.6,-0.3,0.3,0.6,0.9,1.2,1.5,1.8,2.1,2.4,2.7/)
@@ -126,8 +128,8 @@ vars = (/"mld","templvl0","templvl50","templvl100","templvl250","templvl500",\
 	 "salnlvl1000","salnlvl2000","salnlvl3000","salnlvl4000","sealv"/)
 
 ; define contour intervals
-cntrs = (/cntrs_mld,cntrs_templvl_top,cntrs_templvl_top,cntrs_templvl_top,cntrs_templvl_top,cntrs_templvl_top,\
-          cntrs_templvl_top,cntrs_templvl_bot,cntrs_templvl_bot,cntrs_templvl_bot,\
+cntrs = (/cntrs_mld,cntrs_dummy,cntrs_dummy,cntrs_dummy,cntrs_dummy,cntrs_dummy,\
+          cntrs_dummy,cntrs_templvl_bot,cntrs_templvl_bot,cntrs_templvl_bot,\
           cntrs_salnlvl_top,cntrs_salnlvl_top,cntrs_salnlvl_top,cntrs_salnlvl_top,cntrs_salnlvl_top,\
 	  cntrs_salnlvl_bot,cntrs_salnlvl_bot,cntrs_salnlvl_bot,cntrs_salnlvl_bot,cntrs_sealv/)
 
@@ -185,6 +187,7 @@ res@cnLinesOn = False
 res@cnMissingValFillColor = "gray75"
 res@cnLineLabelsOn = False
 cmap  = RGBtoCmap(rgb_file)
+cmap3 = RGBtoCmap(rgb_file3)
 cmapd = RGBtoCmap(rgb_filed)
 
 ;--------------------------------------------------------------
@@ -749,7 +752,14 @@ do i = 0, nvars-1
     max2 = max(B)
   end if
   res@lbLabelStride = 2
-  res@cnLevels = cntrs(i,:)
+  if (vars(i).eq."templvl0" .or. vars(i).eq."templvl50" .or. vars(i).eq."templvl100" .or. \
+      vars(i).eq."templvl250" .or. vars(i).eq."templvl500" .or. vars(i).eq."templvl1000") then
+     res@cnLevels = cntrs_templvl_top
+     res@cnFillPalette   = cmap3
+  else
+     res@cnLevels = cntrs(i,:)
+     res@cnFillPalette   = cmap
+  end if
   res@lbTitleString = "Min = "+sprintf("%6.2f",min1)+ \
                      " Max = "+sprintf("%6.2f",max1)
 
@@ -761,7 +771,6 @@ do i = 0, nvars-1
   res@gsnLeftString = A@long_name
   res@gsnRightString = A@units
   res@gsnCenterString = "mean= "+sprintf("%6.2f",gblmean_A)
-  res@cnFillPalette   = cmap
 ;  gsn_define_colormap (wks,cmap)
 
   if (all(B.eq.-999.)) then
