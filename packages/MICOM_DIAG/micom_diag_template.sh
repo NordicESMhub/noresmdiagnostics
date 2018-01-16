@@ -5,6 +5,7 @@
 # built upon previous work by Detelina Ivanova
 # Last update Dec 2017
 set -e
+export PATH=/opt/ncl64/bin/:/usr/local/bin:/usr/bin
 #***************************
 #*** USER MODIFY SECTION ***
 #***************************
