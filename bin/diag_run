@@ -853,13 +853,15 @@ do
 	# CHECK IF RUN BY CRON
 	if [ ! -z ${RUN_BY_CRON} ]; then
  	    echo "-RUN BY CRONTAB"
-	    if /usr/bin/grep -q /usr/local/bin $DIAG_FILE
-	    then
-		/usr/bin/sed -i "s+/usr/local/bin+${BIN_DIR}/crontab+g" $DIAG_FILE
-	    else
-		echo "ERROR: modifying for RUN_BY_CRON in $DIAG_FILE failed"
-		echo "*** EXITING THE SCRIPT"
-		exit 1
+	    if [ $MODEL != micom ]; then
+		if /usr/bin/grep -q /usr/local/bin $DIAG_FILE
+		then
+		    /usr/bin/sed -i "s+/usr/local/bin+${BIN_DIR}/crontab+g" $DIAG_FILE
+		else
+		    echo "ERROR: modifying for RUN_BY_CRON in $DIAG_FILE failed"
+		    echo "*** EXITING THE SCRIPT"
+		    exit 1
+		fi
 	    fi
 	fi
 	
