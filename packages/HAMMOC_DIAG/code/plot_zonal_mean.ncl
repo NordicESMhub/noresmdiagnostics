@@ -18,6 +18,7 @@ case1      = getenv("CASE1")
 region     = getenv("REGION")
 rgb_file   = getenv("RGB_FILE")
 rgb_filed  = getenv("RGB_FILE_DIFF")
+plot_depth = getenv("PLOT_DEPTH")
 
 ; CASE 1 Model
 inptr1 = addfile(infile1,"r")
@@ -138,6 +139,11 @@ end if
  cres@cnMissingValFillColor = "gray75"
  cres@trYLog = False
  cres@trYReverse = True
+  if (plot_depth.eq."linear") then
+   cres@gsnYAxisIrregular2Linear = True
+ else
+   cres@gsnYAxisIrregular2Linear = False
+ end if
  cmap  = RGBtoCmap(rgb_file)
  cmapd = RGBtoCmap(rgb_filed)
 ;-------------------------------------------

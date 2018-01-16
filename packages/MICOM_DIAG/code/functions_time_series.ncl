@@ -160,7 +160,7 @@ begin
       else
          xvar = tmp
       end if
-      xvar@long_name = "Temperature"
+      xvar@long_name = "Temp"
       xvar@units = "degC"
       assignFillValue(xvar,xvar)
    else
@@ -179,7 +179,7 @@ begin
       else
          xvar = tmp
       end if
-      xvar@long_name = "Salinity"
+      xvar@long_name = "Saln"
       xvar@units = "g kg-1"
       assignFillValue(xvar,xvar)
    else

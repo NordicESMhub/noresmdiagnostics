@@ -60,7 +60,6 @@ res@lbTitleFontHeightF       = 0.018
 res@lbLabelAutoStride        = False
 res@lbLabelStride            = 1
 res@lbOrientation            = "Vertical"
-res@gsnYAxisIrregular2Linear = False
 res@pmLabelBarWidthF = 0.1
 cmap = RGBtoCmap(rgb_file)
 res@cnFillPalette  = cmap
@@ -69,6 +68,7 @@ res@cnFillPalette  = cmap
 pan                     = True
 pan@gsnMaximize         = True
 pan@gsnPaperOrientation = "portrait"
+pan@txFontHeightF       = 0.018
 pan@gsnFrame            = False
 ;***********************************************************
 
@@ -128,10 +128,10 @@ do i = 0,nvars-1
    end if
 
    if (compare.eq."OBS") then
-      cnplot = new(1,"graphic")
+      cnplot = new(2,"graphic")
       plotname = "set1_ann_"+vars(i)+"1_1model"
    else
-      cnplot = new(2,"graphic")
+      cnplot = new(4,"graphic")
       plotname = "set1_ann_"+vars(i)+"1_2models"
    end if
    
@@ -145,7 +145,14 @@ do i = 0,nvars-1
                        "~C~MAX="+sprintf("%6.2f",max1)
    res@sfXArray := time_new1
    res@tiMainString = case1
+   res@gsnYAxisIrregular2Linear = False
+   res@gsnCenterString = "non-lin y"
    cnplot(0) = gsn_csm_contour(wks,transpose(data1),res)
+   delete (res@gsnYAxisIrregular2Linear)
+   res@gsnYAxisIrregular2Linear = True
+   res@gsnCenterString = "linear y"
+   cnplot(1) = gsn_csm_contour(wks,transpose(data1),res)
+   delete (res@gsnYAxisIrregular2Linear)
 
    delete (res@lbTitleString)
    delete (res@tiMainString)
@@ -161,7 +168,14 @@ do i = 0,nvars-1
                           "~C~MAX="+sprintf("%6.2f",max2)
       res@sfXArray := time_new2
       res@tiMainString = case2
-      cnplot(1) = gsn_csm_contour(wks,transpose(data2),res)
+      res@gsnYAxisIrregular2Linear = False
+      res@gsnCenterString = "non-lin y"
+      cnplot(2) = gsn_csm_contour(wks,transpose(data2),res)
+      delete (res@gsnYAxisIrregular2Linear)
+      res@gsnYAxisIrregular2Linear = True
+      res@gsnCenterString = "linear y"
+      cnplot(3) = gsn_csm_contour(wks,transpose(data2),res)
+      delete (res@gsnYAxisIrregular2Linear)
       delete (res@lbTitleString)
       delete (res@tiMainString)
       delete (res@sfXArray)
@@ -173,9 +187,9 @@ do i = 0,nvars-1
    delete (res@cnLevels)
 
    if (compare.eq."OBS") then
-      gsn_panel(wks,cnplot,(/1,1/),pan)
+      gsn_panel(wks,cnplot,(/1,2/),pan)
    else
-      gsn_panel(wks,cnplot,(/2,1/),pan)
+      gsn_panel(wks,cnplot,(/2,2/),pan)
    end if
    frame (wks)
 end do
