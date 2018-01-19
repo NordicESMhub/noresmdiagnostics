@@ -851,21 +851,6 @@ do
 	    echo "CLIMO_TIME_SERIES_SWITCH = $TYPE_OF_DIAG" >> config.log
 	fi
 
-	# CHECK IF RUN BY CRON
-	if [ ! -z ${RUN_BY_CRON} ]; then
- 	    echo "-RUN BY CRONTAB"
-	    if [ $MODEL != micom ]; then
-		if /usr/bin/grep -q /usr/local/bin $DIAG_FILE
-		then
-		    /usr/bin/sed -i "s+/usr/local/bin+${BIN_DIR}/crontab+g" $DIAG_FILE
-		else
-		    echo "ERROR: modifying for RUN_BY_CRON in $DIAG_FILE failed"
-		    echo "*** EXITING THE SCRIPT"
-		    exit 1
-		fi
-	    fi
-	fi
-	
 	# CHECK IF SCRIPT CAN BE EXECUTED
 	if [ $RUN_DIAG -eq 1 ]; then
 	    final_message="RUNNING ${DIAG_FILE} ..."

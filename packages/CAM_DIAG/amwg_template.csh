@@ -7,7 +7,7 @@
 
 unset echo verbose
 setenv DIAG_VERSION 140207  # version number YYMMDD
-
+setenv PATH /opt/ncl64/bin/:/usr/local/bin:/usr/bin
 
 #******************************************************************
 #  C-shell control script for AMWG Diagnostics Package.           *
