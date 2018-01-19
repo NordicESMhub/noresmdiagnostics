@@ -102,7 +102,7 @@ NINO_INDICES=3,34
 # figures is determined by the density variable.
 publish_html=1 # (1=ON,0=OFF)
 publish_html_root=/path/to/html/directory
-density=85
+density=150
 
 # ---------------------------------------------------------
 # SWITCH BETWEEN CLIMO AND TIME-SERIES COMPUTATION

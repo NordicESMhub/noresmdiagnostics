@@ -2,6 +2,7 @@
 
 # Version lnd_template4.2.25.csh
 
+setenv PATH /opt/ncl64/bin/:/usr/local/bin:/usr/bin
 # NOTE: You MUST use ncl/6.2.0 (e.g., module load ncl/6.2.0)
 
 # NOTE: For running the non-swift version of this script, you MUST use
