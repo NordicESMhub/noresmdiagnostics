@@ -7,6 +7,7 @@
 
 unset echo verbose
 setenv DIAG_VERSION 140207  # version number YYMMDD
+setenv NCARG_ROOT /opt/ncl64
 setenv PATH /opt/ncl64/bin/:/usr/local/bin:/usr/bin
 
 #******************************************************************
