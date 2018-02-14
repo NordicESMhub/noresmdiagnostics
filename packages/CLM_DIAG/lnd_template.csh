@@ -1,7 +1,7 @@
 #!/bin/csh -f
 
 # Version lnd_template4.2.25.csh
-
+setenv NCARG_ROOT /opt/ncl64
 setenv PATH /opt/ncl64/bin/:/usr/local/bin:/usr/bin
 # NOTE: You MUST use ncl/6.2.0 (e.g., module load ncl/6.2.0)
 

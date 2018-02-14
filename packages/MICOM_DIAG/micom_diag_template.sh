@@ -3,8 +3,9 @@
 # MICOM DIAGNOSTICS package
 # Johan Liakka, NERSC, johan.liakka@nersc.no
 # built upon previous work by Detelina Ivanova
-# Last update Dec 2017
+# Last update Feb 2018
 set -e
+export NCARG_ROOT=/opt/ncl64
 export PATH=/opt/ncl64/bin/:/usr/local/bin:/usr/bin
 #***************************
 #*** USER MODIFY SECTION ***

@@ -7,6 +7,7 @@ unset echo verbose
 # - Better performance climatology computation (ncclimo)
 # - Updated web interface for NIRD
 # - NCL updates to version 4.6.0.
+setenv NCARG_ROOT /opt/ncl64
 setenv PATH /opt/ncl64/bin/:/usr/local/bin:/usr/bin
 
 #--------------------------------------------------------------------#
