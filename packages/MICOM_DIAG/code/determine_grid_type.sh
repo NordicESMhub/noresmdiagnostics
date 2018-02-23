@@ -96,10 +96,10 @@ if [ $? -eq 0 ]; then
 	grid_type=tnx2
 	grid_ver=1
    elif [ $gp -eq $gp_g1 ]; then
-	grid_type=g1x
+	grid_type=gx1
 	grid_ver=6
    elif [ $gp -eq $gp_g3 ]; then
-	grid_type=g3x
+	grid_type=gx3
 	grid_ver=7
    else
        echo "ERROR: the horizontal grid does not match any of the predefined grids (tn0.083,tn0.25,tn1,tn2,g1,g3)"

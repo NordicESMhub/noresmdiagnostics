@@ -36,13 +36,13 @@ echo " pathdat  = $pathdat"
 echo " climodir = $climodir"
 echo " "
 
-var_list=`cat $WKDIR/attributes/vars_climo_${casename}_${filetype}`
 first_yr_prnt=`printf "%04d" ${first_yr}`
 last_yr_prnt=`printf "%04d" ${last_yr}`
 ann_avg_file=${climodir}/${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}_climo_${filetype}.nc
 
 # COMPUTE CLIMATOLOGY FROM ANNUAL FILES
 if [ $filetype == hy ]; then
+    var_list=`cat $WKDIR/attributes/vars_climo_ann_${casename}_hy`
     filenames=()
     YR=$first_yr
     while [ $YR -le $last_yr ]
@@ -63,8 +63,28 @@ fi
 
 # COMPUTE CLIMATOLOGY FROM MONTHLY FILES
 if [ $filetype == hm ]; then
+    annual_climo=0
+    monthly_climo=0
+    if [ -f $WKDIR/attributes/vars_climo_ann_${casename}_hm ]; then
+	annual_climo=1
+	var_list_ann=`cat $WKDIR/attributes/vars_climo_ann_${casename}_hm`
+    fi
+    if [ -f $WKDIR/attributes/vars_climo_mon_${casename}_hm ]; then
+	monthly_climo=1
+	var_list_mon=`cat $WKDIR/attributes/vars_climo_mon_${casename}_hm`
+    fi
+    if [ $annual_climo -eq 1 ] && [ $monthly_climo -eq 1 ]; then
+	var_list=`echo ${var_list_ann},${var_list_mon}`
+    elif [ $annual_climo -eq 1 ] && [ $monthly_climo -eq 0 ]; then
+	var_list=${var_list_ann}
+    elif [ $annual_climo -eq 0 ] && [ $monthly_climo -eq 1 ]; then
+	var_list=${var_list_mon}
+    else
+	echo "ERROR: No annual or monthly climo variables present in hm files"
+	exit 1
+    fi
     pid=()
-    mon_avg_files=()
+    mon_tmp_files=()
     for month in 01 02 03 04 05 06 07 08 09 10 11 12
     do
 	echo "Climatological monthly mean of $var_list for month=${month}"
@@ -83,38 +103,60 @@ if [ $filetype == hm ]; then
 	    fi
             let YR++
 	done
-	mon_avg_file=${casename}_${month}_${first_yr_prnt}-${last_yr_prnt}_climo.nc
-	mon_avg_files+=($mon_avg_file)
-	eval $NCRA -O --no_tmp_fl --hdr_pad=10000 -v $var_list -p $pathdat ${filenames[*]} $climodir/$mon_avg_file &
+	mon_tmp_file=${casename}_${month}_${first_yr_prnt}-${last_yr_prnt}_tmp.nc
+	mon_tmp_files+=($mon_tmp_file)
+	eval $NCRA -O --no_tmp_fl --hdr_pad=10000 -v $var_list -p $pathdat ${filenames[*]} $climodir/$mon_tmp_file &
 	pid+=($!)
     done
     for ((m=0;m<=11;m++))
     do
 	wait ${pid[$m]}
         if [ $? -ne 0 ]; then
-            echo "ERROR in computation of climatological monthly mean: $NCRA -O --no_tmp_fl --hdr_pad=10000 -v $var_list -p $pathdat ${filenames[*]} $mon_avg_file"
+            echo "ERROR in computation of climatological monthly mean: $NCRA -O --no_tmp_fl --hdr_pad=10000 -v $var_list -p $pathdat ${filenames[*]} $climodir/$mon_tmp_file"
             echo "*** EXITING THE SCRIPT ***"
             exit 1
 	fi
     done
     wait
     # COMPUTE ANNUAL MEAN
-    echo "Climatological weighted annual mean of $var_list"
-    $NCRA -O -w 31,28,31,30,31,30,31,31,30,31,30,31 --no_tmp_fl --hdr_pad=10000 -p $climodir ${mon_avg_files[*]} $ann_avg_file
-    if [ $? -ne 0 ]; then
-	echo "ERROR in computation of climatological annual mean: $NCRA -O -w 31,28,31,30,31,30,31,31,30,31,30,31 --no_tmp_fl --hdr_pad=10000 -p $climodir ${mon_avg_files[*]} $ann_avg_file"
-	echo "*** EXITING THE SCRIPT ***"
-	exit 1
+    if [ $annual_climo -eq 1 ]; then
+	echo "Climatological weighted annual mean of $var_list_ann"
+	$NCRA -O -w 31,28,31,30,31,30,31,31,30,31,30,31 --no_tmp_fl --hdr_pad=10000 -v $var_list_ann -p $climodir ${mon_tmp_files[*]} $ann_avg_file
+	if [ $? -ne 0 ]; then
+	    echo "ERROR in computation of climatological annual mean: $NCRA -O -w 31,28,31,30,31,30,31,31,30,31,30,31 --no_tmp_fl --hdr_pad=10000 -v $var_list_ann -p $climodir ${mon_tmp_files[*]} $ann_avg_file"
+	    echo "*** EXITING THE SCRIPT ***"
+	    exit 1
+	fi
     fi
-    # MOVE MONTHLY FILE
-    if [ ! -d $climodir/mon_climo ]; then
-	mkdir -p $climodir/mon_climo
+    # CREATE MONTHLY CLIMATOLOGY
+    if [ $monthly_climo -eq 1 ]; then
+	echo "Creating monthly climatology files of ${var_list_mon}..."
+	pid=()
+	for month in 01 02 03 04 05 06 07 08 09 10 11 12
+	do
+	    mon_tmp_file=$climodir/${casename}_${month}_${first_yr_prnt}-${last_yr_prnt}_tmp.nc
+	    mon_avg_file=$climodir/${casename}_${month}_${first_yr_prnt}-${last_yr_prnt}_climo.nc
+	    eval $NCKS -O --no_tmp_fl -v $var_list_mon $mon_tmp_file $mon_avg_file &
+	    pid+=($!)
+	done
+	for ((m=0;m<=11;m++))
+	do
+	    wait ${pid[$m]}
+            if [ $? -ne 0 ]; then
+		echo "ERROR in creating monthly climatology: $NCKS -O --no_tmp_fl -v $var_list_mon $mon_tmp_file $mon_avg_file"
+		echo "*** EXITING THE SCRIPT ***"
+		exit 1
+	    fi
+	done
+	wait
     fi
+    # DELETE TMP MONTHLY FILES
+    echo "Deleting temporary monthly files"
     for month in 01 02 03 04 05 06 07 08 09 10 11 12
     do
-	mv $climodir/${casename}_${month}_${first_yr_prnt}-${last_yr_prnt}_climo.nc $climodir/mon_climo
+	rm $climodir/${casename}_${month}_${first_yr_prnt}-${last_yr_prnt}_tmp.nc
 	if [ $? -ne 0 ]; then
-	    echo "ERROR: could not move $climodir/${casename}_${month}_${first_yr_prnt}-${last_yr_prnt}_climo.nc to $climodir/mon_seas/"
+	    echo "ERROR: could not remove $climodir/${casename}_${month}_${first_yr_prnt}-${last_yr_prnt}_tmp.nc"
 	    exit 1
 	fi
     done
