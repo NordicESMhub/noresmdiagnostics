@@ -10,7 +10,7 @@
 #  $first_yr  first year of the average (four digits)
 #  $last_yr   last year of the average (four digits)
 #  $filedir   directory where the files are located
-#  $mode      climo, ts_ann or ts_mon
+#  $mode      climo_ann or ts_ann
 
 casename=$1
 first_yr=$2
@@ -30,7 +30,7 @@ echo " filedir  = $filedir"
 echo " mode     = $mode"
 echo " "
 
-if [ $mode == climo ]; then
+if [ $mode == climo_ann ]; then
     ann_file_hy=${casename}_ANN_${first_yr}-${last_yr}_climo_hy.nc
     ann_file_hm=${casename}_ANN_${first_yr}-${last_yr}_climo_hm.nc
     ann_file=${casename}_ANN_${first_yr}-${last_yr}_climo.nc
@@ -39,7 +39,7 @@ elif [ $mode == ts_ann ]; then
     ann_file_hm=${casename}_ANN_${first_yr}-${last_yr}_ts_hm.nc
     ann_file=${casename}_ANN_${first_yr}-${last_yr}_ts.nc
 else
-    echo "ERROR: mode must be climo or ts_ann."
+    echo "ERROR: mode must be climo_ann or ts_ann."
     exit 1
 fi
     

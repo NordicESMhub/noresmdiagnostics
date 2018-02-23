@@ -122,18 +122,18 @@ cntrs_sealv=(/-1.9,-1.7,-1.5,-1.3,-1.1,-0.9,-0.7,-0.5,-0.3,-0.1,0.1,0.3,0.5,0.7,
 dcntrs_sealv=(/-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9/)
 
 ; model variables
-vars = (/"mld","templvl0","templvl50","templvl100","templvl250","templvl500",\
+vars = (/"templvl0","templvl50","templvl100","templvl250","templvl500",\
          "templvl1000","templvl2000","templvl3000","templvl4000",\
          "salnlvl0","salnlvl50","salnlvl100","salnlvl250","salnlvl500",\
 	 "salnlvl1000","salnlvl2000","salnlvl3000","salnlvl4000","sealv"/)
 
 ; define contour intervals
-cntrs = (/cntrs_mld,cntrs_dummy,cntrs_dummy,cntrs_dummy,cntrs_dummy,cntrs_dummy,\
+cntrs = (/cntrs_dummy,cntrs_dummy,cntrs_dummy,cntrs_dummy,cntrs_dummy,\
           cntrs_dummy,cntrs_templvl_bot,cntrs_templvl_bot,cntrs_templvl_bot,\
           cntrs_salnlvl_top,cntrs_salnlvl_top,cntrs_salnlvl_top,cntrs_salnlvl_top,cntrs_salnlvl_top,\
 	  cntrs_salnlvl_bot,cntrs_salnlvl_bot,cntrs_salnlvl_bot,cntrs_salnlvl_bot,cntrs_sealv/)
 
-dcntrs = (/dcntrs_mld,dcntrs_templvl_top,dcntrs_templvl_top,dcntrs_templvl_top,dcntrs_templvl_top,dcntrs_templvl_top,\
+dcntrs = (/dcntrs_templvl_top,dcntrs_templvl_top,dcntrs_templvl_top,dcntrs_templvl_top,dcntrs_templvl_top,\
            dcntrs_templvl_top,dcntrs_templvl_bot,dcntrs_templvl_bot,dcntrs_templvl_bot,\
            dcntrs_salnlvl_top,dcntrs_salnlvl_top,dcntrs_salnlvl_top,dcntrs_salnlvl_top,dcntrs_salnlvl_top,\
            dcntrs_salnlvl_bot,dcntrs_salnlvl_bot,dcntrs_salnlvl_bot,dcntrs_salnlvl_bot,dcntrs_sealv/)
@@ -150,7 +150,7 @@ if (compare .eq. "OBS") then
   maxi_vars = (/"mdot"/)
 
   ; observations: list of variables to plot
-  obsvars = (/"mld","t_an0","t_an50","t_an100","t_an250","t_an500",\
+  obsvars = (/"t_an0","t_an50","t_an100","t_an250","t_an500",\
               "t_an1000","t_an2000","t_an3000","t_an4000",\
               "s_an0","s_an50","s_an100","s_an250","s_an500",\
 	      "s_an1000","s_an2000","s_an3000","s_an4000","mdot"/) 
