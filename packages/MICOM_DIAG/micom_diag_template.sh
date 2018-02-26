@@ -4,7 +4,7 @@
 # Johan Liakka, NERSC, johan.liakka@nersc.no
 # built upon previous work by Detelina Ivanova
 # Last update Feb 2018
-set -e
+# set -e
 export NCARG_ROOT=/opt/ncl64
 export PATH=/opt/ncl64/bin/:/usr/local/bin:/usr/bin
 #***************************
@@ -788,81 +788,88 @@ if [ $set_3 -eq 1 ]; then
 	let m++
     done
     # Plot monthly MLD
-    echo "2D monthly MLD plots (plot_mld_monthly.ncl)..."
-    MLD_CLIM_DIR1=$CLIMO_TS_DIR1/MLD
-    if [ -d $MLD_CLIM_DIR1 ]; then
-	rm -rf $MLD_CLIM_DIR1
-    fi
-    mkdir -p $MLD_CLIM_DIR1
-    if [ $CNTL == USER ]; then
-	MLD_CLIM_DIR2=$CLIMO_TS_DIR2/MLD
-	if [ -d $MLD_CLIM_DIR2 ]; then
-	    rm -rf $MLD_CLIM_DIR2
+    # Check if temp, saln and dz are in monthly climotology files
+    TEST_FILE=$CLIMO_TS_DIR1/${CASENAME1}_01_${FYR_PRNT_CLIMO1}-${LYR_PRNT_CLIMO1}_climo_remap.nc
+    $NCKS --quiet -d lon,0 -d lat,0 -d sigma,0 -v temp,saln,dz $TEST_FILE >/dev/null 2>&1
+    if [ $? -eq 0 ]; then
+	echo "2D monthly MLD plots (plot_mld_monthly.ncl)..."
+	MLD_CLIM_DIR1=$CLIMO_TS_DIR1/MLD
+	if [ -d $MLD_CLIM_DIR1 ]; then
+	    rm -rf $MLD_CLIM_DIR1
 	fi
-	mkdir -p $MLD_CLIM_DIR2
-    fi
-    pid=()
-    for month in 01 02 03 04 05 06 07 08 09 10 11 12
-    do
-	export INFILE1=$CLIMO_TS_DIR1/${CASENAME1}_${month}_${FYR_PRNT_CLIMO1}-${LYR_PRNT_CLIMO1}_climo_remap.nc
-	export INFILE2=$DIAG_OBS/MLD/mld_clim_WOCE_${month}.nc
-	export CMONTH=$month
-	export NCOUTPATH1=$MLD_CLIM_DIR1/mld_${FYR_PRNT_CLIMO1}-${LYR_PRNT_CLIMO1}_${month}.nc
+	mkdir -p $MLD_CLIM_DIR1
 	if [ $CNTL == USER ]; then
-	    export INFILE2=$CLIMO_TS_DIR2/${CASENAME2}_${month}_${FYR_PRNT_CLIMO2}-${LYR_PRNT_CLIMO2}_climo_remap.nc
-	    export NCOUTPATH2=$MLD_CLIM_DIR2/mld_${FYR_PRNT_CLIMO2}-${LYR_PRNT_CLIMO2}_${month}.nc
+	    MLD_CLIM_DIR2=$CLIMO_TS_DIR2/MLD
+	    if [ -d $MLD_CLIM_DIR2 ]; then
+		rm -rf $MLD_CLIM_DIR2
+	    fi
+	    mkdir -p $MLD_CLIM_DIR2
 	fi
-	eval $NCL -Q < $DIAG_CODE/plot_mld_monthly.ncl &
-	pid+=($!)
-    done
-    for ((m=0;m<=11;m++))
-    do
-        wait ${pid[$m]}
-        if [ $? -ne 0 ]; then
-            echo "ERROR in computation of monthly MLD: $NCL -Q < $DIAG_CODE/plot_mld_monthly.ncl" 
-            echo "*** EXITING THE SCRIPT ***"
-            exit 1
-        fi
-    done
-    wait
-    # Check if monthly MLD files were created
-    mld_files1=()
-    mld_files2=()
-    for month in 01 02 03 04 05 06 07 08 09 10 11 12
-    do
-	mld_file1=mld_${FYR_PRNT_CLIMO1}-${LYR_PRNT_CLIMO1}_${month}.nc
-	if [ -f $MLD_CLIM_DIR1/$mld_file1 ]; then
-	    mld_files1+=($mld_file1)
-	else
-	    echo "ERROR: cannot find $MLD_CLIM_DIR1/mld_${FYR_PRNT_CLIMO1}-${LYR_PRNT_CLIMO1}_${month}.nc"
-	    echo "*** EXITING THE SCRIPT ***"
-            exit 1
-	fi
-	if [ $CNTL == USER ]; then
-	    mld_file2=mld_${FYR_PRNT_CLIMO2}-${LYR_PRNT_CLIMO2}_${month}.nc
-	    if [ -f $MLD_CLIM_DIR2/$mld_file2 ]; then
-		mld_files2+=($mld_file2)
+	pid=()
+	for month in 01 02 03 04 05 06 07 08 09 10 11 12
+	do
+	    export INFILE1=$CLIMO_TS_DIR1/${CASENAME1}_${month}_${FYR_PRNT_CLIMO1}-${LYR_PRNT_CLIMO1}_climo_remap.nc
+	    export INFILE2=$DIAG_OBS/MLD/mld_clim_WOCE_${month}.nc
+	    export CMONTH=$month
+	    export NCOUTPATH1=$MLD_CLIM_DIR1/mld_${FYR_PRNT_CLIMO1}-${LYR_PRNT_CLIMO1}_${month}.nc
+	    if [ $CNTL == USER ]; then
+		export INFILE2=$CLIMO_TS_DIR2/${CASENAME2}_${month}_${FYR_PRNT_CLIMO2}-${LYR_PRNT_CLIMO2}_climo_remap.nc
+		export NCOUTPATH2=$MLD_CLIM_DIR2/mld_${FYR_PRNT_CLIMO2}-${LYR_PRNT_CLIMO2}_${month}.nc
+	    fi
+	    eval $NCL -Q < $DIAG_CODE/plot_mld_monthly.ncl &
+	    pid+=($!)
+	done
+	for ((m=0;m<=11;m++))
+	do
+            wait ${pid[$m]}
+            if [ $? -ne 0 ]; then
+		echo "ERROR in computation of monthly MLD: $NCL -Q < $DIAG_CODE/plot_mld_monthly.ncl" 
+		echo "*** EXITING THE SCRIPT ***"
+		exit 1
+            fi
+	done
+	wait
+	# Check if monthly MLD files were created
+	mld_files1=()
+	mld_files2=()
+	for month in 01 02 03 04 05 06 07 08 09 10 11 12
+	do
+	    mld_file1=mld_${FYR_PRNT_CLIMO1}-${LYR_PRNT_CLIMO1}_${month}.nc
+	    if [ -f $MLD_CLIM_DIR1/$mld_file1 ]; then
+		mld_files1+=($mld_file1)
 	    else
-		echo "ERROR: cannot find $MLD_CLIM_DIR2/mld_${FYR_PRNT_CLIMO2}-${LYR_PRNT_CLIMO2}_${month}.nc"
+		echo "ERROR: cannot find $MLD_CLIM_DIR1/mld_${FYR_PRNT_CLIMO1}-${LYR_PRNT_CLIMO1}_${month}.nc"
 		echo "*** EXITING THE SCRIPT ***"
 		exit 1
 	    fi
+	    if [ $CNTL == USER ]; then
+		mld_file2=mld_${FYR_PRNT_CLIMO2}-${LYR_PRNT_CLIMO2}_${month}.nc
+		if [ -f $MLD_CLIM_DIR2/$mld_file2 ]; then
+		    mld_files2+=($mld_file2)
+		else
+		    echo "ERROR: cannot find $MLD_CLIM_DIR2/mld_${FYR_PRNT_CLIMO2}-${LYR_PRNT_CLIMO2}_${month}.nc"
+		    echo "*** EXITING THE SCRIPT ***"
+		    exit 1
+		fi
+	    fi
+	done
+	# Calculate annual mean MLD
+	mld_ann_file1=$MLD_CLIM_DIR1/mld_${FYR_PRNT_CLIMO1}-${LYR_PRNT_CLIMO1}_ANN.nc
+	$NCRA -O -w 31,28,31,30,31,30,31,31,30,31,30,31 --no_tmp_fl --hdr_pad=10000 -v mld -p $MLD_CLIM_DIR1 ${mld_files1[*]} $mld_ann_file1
+	if [ $CNTL == USER ]; then
+	    mld_ann_file2=$MLD_CLIM_DIR2/mld_${FYR_PRNT_CLIMO2}-${LYR_PRNT_CLIMO2}_ANN.nc
+	    $NCRA -O -w 31,28,31,30,31,30,31,31,30,31,30,31 --no_tmp_fl --hdr_pad=10000 -v mld -p $MLD_CLIM_DIR2 ${mld_files2[*]} $mld_ann_file2
 	fi
-    done
-    # Calculate annual mean MLD
-    mld_ann_file1=$MLD_CLIM_DIR1/mld_${FYR_PRNT_CLIMO1}-${LYR_PRNT_CLIMO1}_ANN.nc
-    $NCRA -O -w 31,28,31,30,31,30,31,31,30,31,30,31 --no_tmp_fl --hdr_pad=10000 -v mld -p $MLD_CLIM_DIR1 ${mld_files1[*]} $mld_ann_file1
-    if [ $CNTL == USER ]; then
-	mld_ann_file2=$MLD_CLIM_DIR2/mld_${FYR_PRNT_CLIMO2}-${LYR_PRNT_CLIMO2}_ANN.nc
-	$NCRA -O -w 31,28,31,30,31,30,31,31,30,31,30,31 --no_tmp_fl --hdr_pad=10000 -v mld -p $MLD_CLIM_DIR2 ${mld_files2[*]} $mld_ann_file2
+	echo "2D annual-mean MLD plot (plot_mld_annual.ncl)..."
+	export INFILE1=$mld_ann_file1
+	export INFILE2=$DIAG_OBS/MLD/mld_clim_WOCE_ANN.nc
+	if [ $CNTL == USER ]; then
+	    export INFILE2=$mld_ann_file2
+	fi
+	$NCL -Q < $DIAG_CODE/plot_mld_annual.ncl
+    else
+	echo "Variables temp, saln or dz not found in ${TEST_FILE}: SKIPPING MLD PLOTS"
     fi
-    echo "2D annual-mean MLD plot (plot_mld_annual.ncl)..."
-    export INFILE1=$mld_ann_file1
-    export INFILE2=$DIAG_OBS/MLD/mld_clim_WOCE_ANN.nc
-    if [ $CNTL == USER ]; then
-	export INFILE2=$mld_ann_file2
-    fi
-    $NCL -Q < $DIAG_CODE/plot_mld_annual.ncl
     # Convert time series figure to png
     $DIAG_CODE/ps2png.sh set3 $density
     if [ $? -ne 0 ]; then
