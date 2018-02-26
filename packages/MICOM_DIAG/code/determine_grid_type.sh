@@ -36,6 +36,7 @@ nmiss_tn025v4=682843
 nmiss_tn1v1=51715
 nmiss_tn1v1_lgm=60417
 nmiss_tn1v1_mis3=60675
+nmiss_tn1v1_mis3g=60674
 nmiss_tn1v1_plio=52387
 nmiss_tn1v2=51775
 nmiss_tn1v3=51828
@@ -80,6 +81,8 @@ if [ $? -eq 0 ]; then
             grid_ver=1_lgm
 	elif [ $nmiss -eq $nmiss_tn1v1_mis3 ]; then
             grid_ver=1_mis3
+	elif [ $nmiss -eq $nmiss_tn1v1_mis3g ]; then
+            grid_ver=1_mis3g
 	elif [ $nmiss -eq $nmiss_tn1v1_plio ]; then
             grid_ver=1_PlioMIP2
 	else
