@@ -159,7 +159,8 @@ foreach $case (@caseList) 			# Case loop (caseid1 + caseid2)
 	  }
 	  if ($set_2 || $set_9) {
 	      if ($runtype eq "model1-model2") {
-		  $meansFlag = 1;
+		  #		  $meansFlag = 1;
+		  $meansFlag = 0;
 		  $t = "means";
 		  &initialFileCheck($t) if !$overWriteMeans;
 	      }
