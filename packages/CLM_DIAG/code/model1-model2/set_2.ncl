@@ -96,19 +96,21 @@ begin
      print("Processing season " + seasons(n))
      in1  = addfile(ptmpdir+"/"+prefix(0)+"/"+prefix(0)+"_"+seasons(n)+"_climo.nc","r")        ; used for first 3 plots
      in2  = addfile(ptmpdir+"/"+prefix(1)+"/"+prefix(1)+"_"+seasons(n)+"_climo.nc","r")        ; used for first 3 plots
-     in11 = addfile(ptmpdir+"/"+prefix(0)+"/"+prefix(0)+"_"+seasons(n)+"_means.nc","r")
-     in22 = addfile(ptmpdir+"/"+prefix(1)+"/"+prefix(1)+"_"+seasons(n)+"_means.nc","r")
+;     in11 = addfile(ptmpdir+"/"+prefix(0)+"/"+prefix(0)+"_"+seasons(n)+"_means.nc","r")
+;     in22 = addfile(ptmpdir+"/"+prefix(1)+"/"+prefix(1)+"_"+seasons(n)+"_means.nc","r")
     ; get degrees of freedom for t test
-     if (isatt(in11,"num_yrs_averaged")) then
-        dof_1 = in11@num_yrs_averaged
-     else
-        dof_1 = getfilevardimsizes(in11, "time")
-     end if
-     if (isatt(in22,"num_yrs_averaged")) then
-        dof_2 = in22@num_yrs_averaged
-     else
-        dof_2 = getfilevardimsizes(in22, "time")
-     end if
+;     if (isatt(in11,"num_yrs_averaged")) then
+;        dof_1 = in11@num_yrs_averaged
+;     else
+;        dof_1 = getfilevardimsizes(in11, "time")
+;     end if
+;     if (isatt(in22,"num_yrs_averaged")) then
+;        dof_2 = in22@num_yrs_averaged
+;     else
+;        dof_2 = getfilevardimsizes(in22, "time")
+;     end if
+     dof_1 = 10
+     dof_2 = 10
 ; open observation files
      if (obs_res .eq. "T85") then
         ptr_wm = addfile(obsdata+"/T85_WILLMOTT_"+seasons(n)+"_climo.nc","r") ; temp and precip
@@ -242,10 +244,12 @@ begin
            end if
            if (c13Flag(i) .eq. "C13_") then
               x1  = derive_del13C(vars(i),in1, scale_type(i),0,2)
-              x11 = derive_del13C(vars(i),in11,scale_type(i),0,2)
+              x11 = new((/dof_1,nlat1,nlon1/),float) ; derive_del13C(vars(i),in11,scale_type(i),0,2)
+	      x11(:,:,:) = 0.0
            else
               x1  = in1 ->$filevar$
-              x11 = in11->$filevar$
+              x11 = new((/dof_1,nlat1,nlon1/),float) ; in11->$filevar$
+     	      x11(:,:,:) = 0.0
               plot_check_1  = True
               plot_check_11 = True
               delete(filevar)
@@ -253,7 +257,8 @@ begin
         else
            if (info@derivedVariable .eq. True) then
               x1  = derive_land(vars(i),in1)
-              x11 = derive_land(vars(i),in11)
+              x11 = new((/dof_1,nlat1,nlon1/),float) ; derive_land(vars(i),in11)
+      	      x11(:,:,:) = 0.0
            else
               print("variable "+ vars(i)+ " is not a defined variable.")
               plot_check_1  = False
@@ -278,10 +283,12 @@ begin
            end if
            if (c13Flag(i) .eq. "C13_") then
               x2  = derive_del13C(vars(i),in2, scale_type(i),0,2)
-              x22 = derive_del13C(vars(i),in22,scale_type(i),0,2)
+              x22 = new((/dof_2,nlat2,nlon2/),float) ; derive_del13C(vars(i),in22,scale_type(i),0,2)
+	      x22(:,:,:) = 0.0
            else
               x2  = in2 ->$filevar$
-              x22 = in22->$filevar$
+              x22 = new((/dof_2,nlat2,nlon2/),float) ; in22->$filevar$
+	      x22(:,:,:) = 0.0
               plot_check_2  = True
               plot_check_22 = True
               delete(filevar)
@@ -289,7 +296,8 @@ begin
         else
            if (info@derivedVariable .eq. True) then
               x2  = derive_land(vars(i),in2)
-              x22 = derive_land(vars(i),in22)
+              x22 = new((/dof_2,nlat2,nlon2/),float) ; derive_land(vars(i),in22)
+	      x22(:,:,:) = 0.0
            else
               print("variable "+ vars(i)+ " is not a defined variable.")
               plot_check_2  = False
@@ -569,16 +577,16 @@ begin
                  x3_interp = x3
               end if
 ;               different plots for observations
-;             plot = new(9,graphic)
+;             plot = new(6,graphic)
            else
 ;               x1_interp = x1        ; fix, per Keith Oleson
-;             plot = new(4,graphic)
+;             plot = new(3,graphic)
            end if            ; end observations
 
            if (obsFlag .eq. 1 .and. plotObs .eq. 1) then
-              plot = new(9,graphic)
+              plot = new(6,graphic)
            else
-              plot = new(4,graphic)
+              plot = new(3,graphic)
            end if
 
            if (x1@units .eq. "K") then
@@ -868,7 +876,7 @@ begin
                  delete(diff)
                  delete(mindiff)
                  delete(maxdiff)
-                 ctr = ctr+2
+                 ctr = ctr+1
               end if
 
 ;               Case 1 - Case 2
@@ -1057,7 +1065,7 @@ begin
                     res@tiMainOffsetYF = -.0075
                  end if
 
-                 plot(ctr) = gsn_csm_contour_map(wks, pfinal,res) ; will be sig test
+;                 plot(ctr) = gsn_csm_contour_map(wks, pfinal,res) ; will be sig test
                  delete([/res,pfinal,p1d,d131d,d231d,diff13,diff23/])
                  ctr = ctr+1
               end if
@@ -1117,11 +1125,11 @@ begin
               end if
               res@tiMainOffsetYF = 0
 
-              plot(ctr) = gsn_csm_contour_map(wks,prob,res) ; will be sig test
+;              plot(ctr) = gsn_csm_contour_map(wks,prob,res) ; will be sig test
               delete(res)
       
               if (obsFlag .eq. 1 .and. plotObs .eq. 1) then   ; panel plot
-                 nrows = 3
+                 nrows = 2
                  ncols = 3
               else
                  nrows = 2
@@ -1321,8 +1329,8 @@ begin
                     res@mpDataSetName     = fname
                  end if
 
-                 var_variance_1 = dim_variance_n_Wrap(x11_interp(:,:nlev1-1,:,:),0)
-                 var_variance_2 = dim_variance_n_Wrap(x22_interp(:,:nlev2-1,:,:),0)
+                 var_variance_1 = dim_variance_n_Wrap(x11_interp(:,:,:),0)
+                 var_variance_2 = dim_variance_n_Wrap(x22_interp(:,:,:),0)
 
                  if (any(var_variance_1 .le. 0)) then      ;set variances < 0 to missing so don't divide by zero 
                     var_variance_1 = mask(var_variance_1,(var_variance_1 .gt. 0),True)
@@ -1332,7 +1340,7 @@ begin
                  end if
           
                  prob = var_avg_1_intp ; trick to maintain meta data
-                 prob = ttest(var_avg_1_intp,var_variance_1,dof_1,var_avg_2_intp,var_variance_2,dof_2,True,False)
+;                 prob = ttest(var_avg_1_intp,var_variance_1,dof_1,var_avg_2_intp,var_variance_2,dof_2,True,False)
           
                  res@cnLevelSelectionMode =  "ExplicitLevels"
                  res@cnLevels             = sig_lvl  ; user defined sig level to view
@@ -1357,7 +1365,7 @@ begin
                  res@gsnCenterString        = " "
                  res@gsnRightString       = " "
                  res@gsnLeftString      = "Cells are significant at " + sig_lvl +" level"
-                 plot(3) = gsn_csm_contour_map(wks,prob(k,:,:),res) ; will be sig test
+;                 plot(3) = gsn_csm_contour_map(wks,prob(k,:,:),res) ; will be sig test
                  delete(res)
                  pres@txString = seasons(n)+" "+vars(i)+" Level " + k+" ("+useUnits+")" ; "
                  gsn_panel(wks,plot,(/2,2/),pres)           ; draw panel plot
