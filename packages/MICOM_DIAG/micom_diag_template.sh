@@ -239,7 +239,7 @@ fi
 required_vars_climo="depth_bnds,sealv,templvl,salnlvl,mmflxd,region,temp,saln,dz,sst,sss,mhflx,msflx"
 required_vars_climo_ann="depth_bnds,sealv,templvl,salnlvl,mmflxd,region,mhflx,msflx"
 required_vars_climo_mon="temp,saln,dz,sst,sss"
-required_vars_ts_ann="depth_bnds,time,section,voltr,temp,saln,templvl,salnlvl,mmflxd,region,dp"
+required_vars_ts_ann="depth_bnds,time,section,mmflxd,voltr,temp,saln,templvl,salnlvl,region,dp"
 
 # Check which sets should be plotted based on CLIMO_TIME_SERIES_SWITCH
 if [ $CLIMO_TIME_SERIES_SWITCH == ONLY_CLIMO ]; then
