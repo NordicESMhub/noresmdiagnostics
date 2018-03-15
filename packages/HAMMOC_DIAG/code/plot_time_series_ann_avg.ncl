@@ -23,16 +23,26 @@ if (compare.eq."USER") then
    ncases  = 2
 end if
 
-vars   = (/"o2","si","po4","no3","dissic","co2fxn","pp"/)
+vars   = (/"o2","si","po4","no3","dissic"/)
 nvars  = dimsizes(vars)
 
 if (compare.eq."OBS") then
-  plotname = "set1_ann_1model"
+  plotname = "set1_ann_avg_1model"
 else
-  plotname = "set1_ann_2models"
+  plotname = "set1_ann_avg_2models"
 end if
 wks  = gsn_open_wks("ps",wkdir+"/"+plotname) ; send graphics to PS file
 plot = new(nvars,graphic)                        ; create a plot array
+
+res                     = True
+res@gsnDraw             = False            ; don't draw
+res@gsnFrame            = False            ; don't advance frame
+res@tiMainFont          = "Helvetica"
+res@tiMainFontHeightF   = 0.03
+res@txFontHeightF       = 0.023
+res@tiXAxisFontHeightF  = 0.02
+res@tiYAxisFontHeightF  = 0.02
+res@tiXAxisString       = "Years"
 
 do i = 0, nvars-1
 
@@ -136,23 +146,9 @@ do i = 0, nvars-1
    eyr  = fyr+ntimes_tot-1
    pyrs = fspan(fyr,eyr,ntimes_tot)
 
-   res                     = True
-   res@gsnDraw             = False            ; don't draw
-   res@gsnFrame            = False            ; don't advance frame
-   res@tiYAxisString       = A@long_name+" ["+A@units+"]"
-   res@tiXAxisString       = "Years"
-   if (compare.eq."OBS") then
-      res@tiMainString     = case1
-      res@tiMainPosition   = "Center"
-   else
-      res@gsnLeftString = case1
-      res@gsnLeftStringFontColor = "blue"
-      res@gsnRightString = case2
-      res@gsnRightStringFontColor = "red"
-   end if
-
-   res@tiXAxisFontHeightF  = 0.02
-   res@tiYAxisFontHeightF  = 0.02
+   res@tiYAxisString       = A@units
+   res@tiMainString        = A@long_name
+   
 ;   res@tiMainFontHeightF   = 0.02
    res@trXMinF             = min(pyrs)
    res@trXMaxF             = max(pyrs)
@@ -180,7 +176,20 @@ pan = True
 pan@gsnMaximize = True
 pan@gsnPaperOrientation = "portrait"
 pan@gsnFrame = False
-gsn_panel(wks,(/plot/),(/4,2/),pan)
+pan@gsnPanelXWhiteSpacePercent = 3
+gsn_panel(wks,(/plot/),(/2,3/),pan)
+
+; Draw a text string at the bottom
+txres               = True
+txres@txFontHeightF = 0.018
+txres@txFontColor   = "blue"
+txres@txJust        = "centerright"
+gsn_text_ndc(wks,case1,0.99,0.14,txres)
+if (compare.eq."USER") then
+   txres@txFontColor   = "red"
+   gsn_text_ndc(wks,case2,0.99,0.1,txres)
+end if
+
 
 frame(wks)
 delete (wks)

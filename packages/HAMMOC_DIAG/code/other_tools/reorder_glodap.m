@@ -3,13 +3,13 @@ close all
 
 fillv = -999;
 
-infile   = strcat('/projects/NS2345K/noresm_diagnostics_dev/packages/HAMMOC_DIAG/obs_data/GLODAPv2/GLODAPv2.2016b.TCO2.nc');
-outfile  = strcat('/projects/NS2345K/noresm_diagnostics_dev/packages/HAMMOC_DIAG/obs_data/GLODAPv2/GLODAPv2.2016b.TCO2_reordered.nc');
+infile   = strcat('/projects/NS2345K/noresm_diagnostics_dev/packages/HAMMOC_DIAG/obs_data/GLODAPv2/GLODAPv2.2016b.TAlk.nc');
+outfile  = strcat('/projects/NS2345K/noresm_diagnostics_dev/packages/HAMMOC_DIAG/obs_data/GLODAPv2/GLODAPv2.2016b.TAlk_reordered2.nc');
 
 lon     = ncread(infile,'lon');
 lat     = ncread(infile,'lat');
 depth   = ncread(infile,'Depth');
-xvar_in = ncread(infile,'TCO2');
+xvar_in = ncread(infile,'TAlk');
 
 nlon = length(lon); nlat = length(lat); nz = length(depth);
 
@@ -43,9 +43,9 @@ netcdf.putAtt(ncid,depth_varid,'units','m');
 netcdf.putAtt(ncid,depth_varid,'positive','down');
 netcdf.putAtt(ncid,depth_varid,'long_name','Depth below the surface');
 
-var_varid=netcdf.defVar(ncid,'TCO2','NC_FLOAT',[x_dimid y_dimid z_dimid]);
+var_varid=netcdf.defVar(ncid,'TAlk','NC_FLOAT',[x_dimid y_dimid z_dimid]);
 netcdf.putAtt(ncid,var_varid,'units','micro-mol kg-1');
-netcdf.putAtt(ncid,var_varid,'long_name','moles of dissolved inorganic carbon per unit mass in seawater');
+netcdf.putAtt(ncid,var_varid,'long_name','seawater alkalinity expressed as mole equivalent per unit mass');
 netcdf.putAtt(ncid,var_varid,'missing_value',fillv);
 netcdf.endDef(ncid);
 
@@ -55,3 +55,4 @@ netcdf.putVar(ncid,depth_varid,single(depth));
 netcdf.putVar(ncid,var_varid,single(xvar_out));
 
 netcdf.close(ncid);
+

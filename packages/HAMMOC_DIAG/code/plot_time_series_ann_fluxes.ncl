@@ -16,53 +16,34 @@ ncases = 1
 fyr    = stringtointeger(fyr1)
 
 if (compare.eq."USER") then
-   infile2 = getenv("INFILE2")
-   case2   = getenv("CASE2")
-   fyr2    = getenv("FYR2")
-   inptr2  = addfile(infile2,"r")
-   ncases  = 2
+  infile2 = getenv("INFILE2")
+  case2   = getenv("CASE2")
+  fyr2    = getenv("FYR2")
+  inptr2  = addfile(infile2,"r")
+  ncases  = 2
 end if
 
-vars   = (/"o2","si","po4","no3","dissic","co2fxn","pp"/)
+vars   = (/"co2fxn","pp","epc100","epcalc100"/)
 nvars  = dimsizes(vars)
 
 if (compare.eq."OBS") then
-  plotname = "set1_ann_1model"
+  plotname = "set1_ann_flx_1model"
 else
-  plotname = "set1_ann_2models"
+  plotname = "set1_ann_flx_2models"
 end if
 wks  = gsn_open_wks("ps",wkdir+"/"+plotname) ; send graphics to PS file
 plot = new(nvars,graphic)                        ; create a plot array
 
+res                     = True
+res@gsnDraw             = False            ; don't draw
+res@gsnFrame            = False            ; don't advance frame
+res@tiMainFont          = "Helvetica"
+res@txFontHeightF       = 0.023
+res@tiXAxisFontHeightF  = 0.02
+res@tiYAxisFontHeightF  = 0.02
+res@tiXAxisString       = "Years"
+
 do i = 0, nvars-1
-
-   if (vars(i).eq."o2") then
-      A = get_o2 (inptr1)
-   end if
-
-   if (vars(i).eq."si") then
-      A = get_si (inptr1)
-   end if
-
-   if (vars(i).eq."po4") then
-      A = get_po4 (inptr1)
-   end if
-   
-   if (vars(i).eq."no3") then
-      A = get_no3 (inptr1)
-   end if
-
-   if (vars(i).eq."dissic") then
-      A = get_dissic (inptr1)
-   end if
-
-   if (vars(i).eq."co2fxd") then
-      A = get_co2fxd (inptr1)
-   end if
-
-   if (vars(i).eq."co2fxu") then
-      A = get_co2fxu (inptr1)
-   end if
 
    if (vars(i).eq."co2fxn") then
       A = get_co2fxn (inptr1)
@@ -70,6 +51,14 @@ do i = 0, nvars-1
 
    if (vars(i).eq."pp") then
       A = get_pp (inptr1)
+   end if
+
+   if (vars(i).eq."epc100") then
+      A = get_epc (inptr1)
+   end if
+
+   if (vars(i).eq."epcalc100") then
+      A = get_epcalc (inptr1)
    end if
    
    if (all(A.eq.-999.)) then
@@ -83,40 +72,20 @@ do i = 0, nvars-1
 
    if (compare.eq."USER") then
 
-      if (vars(i).eq."o2") then
-         B = get_o2 (inptr2)
-      end if
-
-      if (vars(i).eq."si") then
-         B = get_si (inptr2)
-      end if
-
-      if (vars(i).eq."po4") then
-         B = get_po4 (inptr2)
-      end if
-   
-      if (vars(i).eq."no3") then
-         B = get_no3 (inptr2)
-      end if
-
-      if (vars(i).eq."dissic") then
-         B = get_dissic (inptr2)
-      end if
-
-;      if (vars(i).eq."co2fxd") then
-;         B = get_co2fxd (inptr2)
-;      end if
-
-;      if (vars(i).eq."co2fxu") then
-;         B = get_co2fxu (inptr2)
-;      end if
-
       if (vars(i).eq."co2fxn") then
          B = get_co2fxn (inptr2)
       end if
 
       if (vars(i).eq."pp") then
          B = get_pp (inptr2)
+      end if
+
+      if (vars(i).eq."epc100") then
+         B = get_epc (inptr2)
+      end if
+
+      if (vars(i).eq."epcalc100") then
+         B = get_epcalc (inptr2)
       end if
    
       if (all(B.eq.-999.)) then
@@ -136,23 +105,10 @@ do i = 0, nvars-1
    eyr  = fyr+ntimes_tot-1
    pyrs = fspan(fyr,eyr,ntimes_tot)
 
-   res                     = True
-   res@gsnDraw             = False            ; don't draw
-   res@gsnFrame            = False            ; don't advance frame
-   res@tiYAxisString       = A@long_name+" ["+A@units+"]"
-   res@tiXAxisString       = "Years"
-   if (compare.eq."OBS") then
-      res@tiMainString     = case1
-      res@tiMainPosition   = "Center"
-   else
-      res@gsnLeftString = case1
-      res@gsnLeftStringFontColor = "blue"
-      res@gsnRightString = case2
-      res@gsnRightStringFontColor = "red"
-   end if
+   res@tiYAxisString       = A@units
+   res@tiMainString        = A@long_name
+   res@tiMainFontHeightF   = 0.025
 
-   res@tiXAxisFontHeightF  = 0.02
-   res@tiYAxisFontHeightF  = 0.02
 ;   res@tiMainFontHeightF   = 0.02
    res@trXMinF             = min(pyrs)
    res@trXMaxF             = max(pyrs)
@@ -180,7 +136,21 @@ pan = True
 pan@gsnMaximize = True
 pan@gsnPaperOrientation = "portrait"
 pan@gsnFrame = False
-gsn_panel(wks,(/plot/),(/4,2/),pan)
+pan@gsnPanelXWhiteSpacePercent = 3
+pan@gsnPanelBottom     = 0.08
+gsn_panel(wks,(/plot/),(/2,2/),pan)
+
+; Draw a text string at the bottom
+txres               = True
+txres@txFontHeightF = 0.018
+txres@txFontColor   = "blue"
+txres@txJust        = "centerright"
+gsn_text_ndc(wks,case1,0.99,0.06,txres)
+if (compare.eq."USER") then
+   txres@txFontColor   = "red"
+   gsn_text_ndc(wks,case2,0.99,0.02,txres)
+end if
+
 
 frame(wks)
 delete (wks)
