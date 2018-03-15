@@ -25,7 +25,7 @@ else
     echo "<TD><I>Global fluxes</I>" >> $WEBDIR/index.html
 fi
 if [ -f $WEBDIR/set1/set1_ann_avg_${cinfo}.png ]; then
-    echo "<TD><a href='set1/set1_ann_${cinfo}.png'>Global averages</a>" >> $WEBDIR/index.html
+    echo "<TD><a href='set1/set1_ann_avg_${cinfo}.png'>Global averages</a>" >> $WEBDIR/index.html
 else
     echo "<TD><I>Global averages</I>" >> $WEBDIR/index.html
 fi
