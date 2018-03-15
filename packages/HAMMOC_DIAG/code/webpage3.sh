@@ -99,4 +99,20 @@ else
     echo "<TD><I>Indian</I>" >> $WEBDIR/index.html
     echo "<TD><I>Southern</I>" >> $WEBDIR/index.html
 fi
+echo "<TR>" >> $WEBDIR/index.html
+echo "<TD>Alkalinity (talklvl)" >> $WEBDIR/index.html
+if ls $WEBDIR/set3/set3_ann_talklvl_*_${cinfo}.png >/dev/null 2>&1
+then
+    echo "<TD><a href='set3/set3_ann_talklvl_glb_${cinfo}.png'>Global</a>" >> $WEBDIR/index.html
+    echo "<TD><a href='set3/set3_ann_talklvl_atl_${cinfo}.png'>Atlantic</a>" >> $WEBDIR/index.html
+    echo "<TD><a href='set3/set3_ann_talklvl_pac_${cinfo}.png'>Pacific</a>" >> $WEBDIR/index.html
+    echo "<TD><a href='set3/set3_ann_talklvl_ind_${cinfo}.png'>Indian</a>" >> $WEBDIR/index.html
+    echo "<TD><a href='set3/set3_ann_talklvl_so_${cinfo}.png'>Southern</a>" >> $WEBDIR/index.html
+else
+    echo "<TD><I>Global</I>" >> $WEBDIR/index.html
+    echo "<TD><I>Atlantic</I>" >> $WEBDIR/index.html
+    echo "<TD><I>Pacific</I>" >> $WEBDIR/index.html
+    echo "<TD><I>Indian</I>" >> $WEBDIR/index.html
+    echo "<TD><I>Southern</I>" >> $WEBDIR/index.html
+fi
 echo '</TABLE>' >> $WEBDIR/index.html

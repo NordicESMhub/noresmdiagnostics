@@ -178,6 +178,42 @@ do
 	    done
 	    wait
 	fi
+	# Export production
+	if [ $var == epc100 ]; then
+	    echo "Total $var (yrs ${YR_start}-${YR_end})"
+            iproc=1
+            while [ $iproc -le $nyrs ]
+	    do
+		let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
+		yr_prnt=`printf "%04d" ${YR}`
+		infile=${casename}_ANN_${yr_prnt}.nc
+		outfile_tmp=${var}_${casename}_ANN_${yr_prnt}_tmp.nc
+     		outfile=${var}_${casename}_ANN_${yr_prnt}.nc
+		$NCAP2 -O -s 'epc100_area=epc100*parea' $WKDIR/$infile $WKDIR/$outfile_tmp
+		$NCAP2 -O -s 'epc100_tot=epc100_area.total($x,$y)*12.011*86400.0*365.0*1.0e-15' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
+                $NCKS --no_tmp_fl -O -v epc100_tot $WKDIR/$outfile_tmp $WKDIR/$outfile
+		rm -f $WKDIR/$outfile_tmp
+		let iproc++
+	    done
+	fi
+	# Export CaCO3
+	if [ $var == epcalc100 ]; then
+	    echo "Total $var (yrs ${YR_start}-${YR_end})"
+            iproc=1
+            while [ $iproc -le $nyrs ]
+	    do
+		let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
+		yr_prnt=`printf "%04d" ${YR}`
+		infile=${casename}_ANN_${yr_prnt}.nc
+		outfile_tmp=${var}_${casename}_ANN_${yr_prnt}_tmp.nc
+     		outfile=${var}_${casename}_ANN_${yr_prnt}.nc
+		$NCAP2 -O -s 'epcalc100_area=epcalc100*parea' $WKDIR/$infile $WKDIR/$outfile_tmp
+		$NCAP2 -O -s 'epcalc100_tot=epcalc100_area.total($x,$y)*100.08*86400.0*365.0*1.0e-15' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
+                $NCKS --no_tmp_fl -O -v epcalc100_tot $WKDIR/$outfile_tmp $WKDIR/$outfile
+		rm -f $WKDIR/$outfile_tmp
+		let iproc++
+	    done
+	fi
 	# Total downward co2 flux
 	if [ $var == co2fxd ]; then
 	    echo "Total $var (yrs ${YR_start}-${YR_end})"

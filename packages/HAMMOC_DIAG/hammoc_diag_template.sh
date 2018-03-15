@@ -35,8 +35,8 @@ PATHDAT1=$pathdat_root1/$CASENAME1/ocn/hist
 # SELECT TYPE OF CONTROL CASE
 # NOTE: CNTL=USER IS NOT YET SUPPORTED
 # ---------------------------------------------------------
-CNTL=OBS    # compare case1 to observations (model-obs diagnostics)
-#CNTL=USER   # compare case1 to another experiment case2 (model-model diagnostics)
+#CNTL=OBS    # compare case1 to observations (model-obs diagnostics)
+CNTL=USER   # compare case1 to another experiment case2 (model-model diagnostics)
 
 # ---------------------------------------------------------
 # CNTL CASENAME AND YEARS TO BE AVERAGED (CASE2)
@@ -93,7 +93,7 @@ set_3=1 # (1=ON,0=OFF) Zonal mean (lat-depth) plot
 # (difference fields are always plotted with blue-white-red)
 publish_html=1 # (1=ON,0=OFF)
 publish_html_root=/projects/NS2345K/www/noresm_diagnostics_dev2
-density=85
+density=150
 # Available colormap options:
 #  default = purple-brown palette provided by Marco Van Hulten
 #  blueyellowred = color map from MICOM diagnostics
@@ -105,15 +105,6 @@ colormap=blueyellowred
 # Valid options: ONLY_CLIMO, ONLY_TIME_SERIES  AND
 # SWITCHED_OFF (computes both).
 CLIMO_TIME_SERIES_SWITCH=SWITCHED_OFF
-
-# --------------------------------
-# SCALE OF Y-AXIS (DEPTH) IN PLOTS
-# --------------------------------
-# By default, in plots where y-axis represents depth
-# it is not linear, but  scales with the density of
-# the vertical levels. You can however force it to be linear.
-# Valid option: default, linear
-export PLOT_DEPTH=y_axis_scale
 
 # ---------------------------------------------------------
 # ROOT DIRECTORY TO ALL THE DIAGNOSTICS SCRIPTS
@@ -237,9 +228,9 @@ if [ $CNTL == USER ]; then
 fi
 
 # Set required variables for climatology and time series
-required_vars_climo="depth_bnds,o2lvl,silvl,po4lvl,no3lvl,dissiclvl"
-required_vars_climo_zm="o2lvl,silvl,po4lvl,no3lvl,dissiclvl"
-required_vars_ts_ann="o2,si,po4,no3,dissic,co2fxd,co2fxu,pp,pddpo"
+required_vars_climo="depth_bnds,o2lvl,silvl,po4lvl,no3lvl,dissiclvl,talklvl,pp,pddpo,epc100,pco2,co2fxd,co2fxu"
+required_vars_climo_zm="o2lvl,silvl,po4lvl,no3lvl,dissiclvl,talklvl"
+required_vars_ts_ann="o2,si,po4,no3,dissic,co2fxd,co2fxu,epc100,epcalc100,pp,pddpo"
 
 # Check which sets should be plotted based on CLIMO_TIME_SERIES_SWITCH
 if [ $CLIMO_TIME_SERIES_SWITCH == ONLY_CLIMO ]; then
@@ -387,10 +378,12 @@ do
 	    fi
 	    # Concancate files if necessary
 	    $DIAG_CODE/concancate_files.sh $CASENAME $FYR_PRNT_CLIMO $LYR_PRNT_CLIMO $CLIMO_TS_DIR climo
+	    $DIAG_CODE/compute_climo_means.sh $CASENAME $ANN_AVG_FILE $CLIMO_TS_DIR
 	else
 	    echo "$CLIMO_TS_DIR/$ANN_AVG_FILE already exists."
 	    echo "-> SKIPPING COMPUTING CLIMATOLOGY"
 	fi
+
 	# ---------------------------------
 	# Remapping climatology
 	# ---------------------------------
@@ -552,8 +545,10 @@ if [ $set_1 -eq 1 ]; then
 	export CASE2=$CASENAME2
 	export FYR2=$FIRST_YR_TS2
     fi
-    echo "Plotting time series (plot_time_series_ann.ncl)..."
-    $NCL -Q < $DIAG_CODE/plot_time_series_ann.ncl
+    echo "Plotting global avg time series (plot_time_series_ann_avg.ncl)..."
+    $NCL -Q < $DIAG_CODE/plot_time_series_ann_avg.ncl
+    echo "Plotting global flx time series (plot_time_series_ann_fluxes.ncl)..."
+    $NCL -Q < $DIAG_CODE/plot_time_series_ann_fluxes.ncl
     # Convert time series figure to png
     $DIAG_CODE/ps2png.sh set1 $density
     if [ $? -ne 0 ]; then
@@ -589,13 +584,15 @@ if [ $set_2 -eq 1 ]; then
 	export LYR2=$LAST_YR_CLIMO2
 	export INFILE2=$CLIMO_TS_DIR2/${CASENAME2}_ANN_${FYR_PRNT_CLIMO2}-${LYR_PRNT_CLIMO2}_climo_remap.nc
     fi
+    echo "2D contour plots on different depth (plot_latlon_z.ncl)..."
+    $NCL -Q < $DIAG_CODE/plot_latlon_z.ncl
     echo "2D contour plots (plot_latlon.ncl)..."
     $NCL -Q < $DIAG_CODE/plot_latlon.ncl
     # Convert time series figure to png
     $DIAG_CODE/ps2png.sh set2 $density
     if [ $? -ne 0 ]; then
-	"ERROR occurred in ps2png.sh (set2)"
-	"*** EXITING THE SCRIPT ***"
+	echo "ERROR occurred in ps2png.sh (set2)"
+	echo "*** EXITING THE SCRIPT ***"
 	exit 1
     fi
     $DIAG_CODE/webpage2.sh
@@ -631,8 +628,8 @@ if [ $set_3 -eq 1 ]; then
     
     $DIAG_CODE/ps2png.sh set3 $density
     if [ $? -ne 0 ]; then
-	"ERROR occurred in ps2png.sh (set3)"
-	"*** EXITING THE SCRIPT ***"
+	echo "ERROR occurred in ps2png.sh (set3)"
+	echo "*** EXITING THE SCRIPT ***"
 	exit 1
     fi
     $DIAG_CODE/webpage3.sh

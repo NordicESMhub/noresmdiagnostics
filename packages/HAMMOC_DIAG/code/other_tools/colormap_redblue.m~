@@ -1,5 +1,0 @@
-clear all
-close all
-
-% Create a nice 19 color red-blue (9 red, 9 blue, 1 white) colorbap
-green = 0:25:200

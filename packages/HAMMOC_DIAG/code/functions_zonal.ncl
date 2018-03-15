@@ -102,3 +102,21 @@ begin
    return (xvar)
 end
 
+function get_talk (inptr:file)
+begin
+   if (isfilevar(inptr,"talklvl")) then
+      tmp = inptr->talklvl
+      if (typeof(tmp).eq."double") then
+         xvar = dble2flt(tmp)
+      else
+         xvar = tmp
+      end if
+      xvar@long_name = "TAlk"
+      xvar@units = "mol m-3"
+      assignFillValue(xvar,xvar)
+   else
+      print("get_talk: no talklvl variable present")
+      xvar = -999.0
+   end if
+   return (xvar)
+end

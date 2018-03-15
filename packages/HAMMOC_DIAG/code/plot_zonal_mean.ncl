@@ -2,10 +2,9 @@
 ; plot_zonal_mean.ncl
 ; Mark Stevens Sept 2001
 ; Rich Neale Jan 2008
-; Johan Liakka Dec 2017: Update for MICOM
+; Johan Liakka Mar 2018: Update for HAMMOC
 ;********************************************************
 load "$DIAG_CODE/functions_zonal.ncl"
-
 begin
 
 compare    = getenv("COMPARE")
@@ -18,7 +17,6 @@ case1      = getenv("CASE1")
 region     = getenv("REGION")
 rgb_file   = getenv("RGB_FILE")
 rgb_filed  = getenv("RGB_FILE_DIFF")
-plot_depth = getenv("PLOT_DEPTH")
 
 ; CASE 1 Model
 inptr1 = addfile(infile1,"r")
@@ -42,15 +40,17 @@ nz1 = dimsizes(depth1)       ; number vertical levels
 
 ; Define RGB files
 ; rgb_file  = rgb_dir+"/blueyellowred2.rgb"
+; rgb_file3 = rgb_dir+"/blueyellowred3.rgb"
 ; rgb_filed = rgb_dir+"/bluered2.rgb"
 
 ; CASE 2 MODEL OR OBS
 if (compare .eq. "OBS") then
-  ptr_woa13o = addfile(infile2+"/WOA13/woa13_all_o00_01_zm_"+region+".nc","r")
-  ptr_woa13i = addfile(infile2+"/WOA13/woa13_all_i00_01_zm_"+region+".nc","r")
-  ptr_woa13p = addfile(infile2+"/WOA13/woa13_all_p00_01_zm_"+region+".nc","r")
-  ptr_woa13n = addfile(infile2+"/WOA13/woa13_all_n00_01_zm_"+region+".nc","r")
-  ptr_glodap = addfile(infile2+"/GLODAPv2/GLODAPv2.2016b.TCO2_reordered_zm_"+region+".nc","r")
+  ptr_woa13o  = addfile(infile2+"/WOA13/woa13_all_o00_01_zm_"+region+".nc","r")
+  ptr_woa13i  = addfile(infile2+"/WOA13/woa13_all_i00_01_zm_"+region+".nc","r")
+  ptr_woa13p  = addfile(infile2+"/WOA13/woa13_all_p00_01_zm_"+region+".nc","r")
+  ptr_woa13n  = addfile(infile2+"/WOA13/woa13_all_n00_01_zm_"+region+".nc","r")
+  ptr_glodap  = addfile(infile2+"/GLODAPv2/GLODAPv2.2016b.TCO2_reordered_zm_"+region+".nc","r")
+  ptr_glodap2 = addfile(infile2+"/GLODAPv2/GLODAPv2.2016b.TAlk_reordered_zm_"+region+".nc","r")
 else
   inptr2   = addfile(infile2,"r")
   case2    = getenv("CASE2")
@@ -94,31 +94,35 @@ dcntrs_no3=(/-4.5,-4.0,-3.5,-3.0,-2.5,-2.0,-1.5,-1.0,-0.5,0.5,1.0,1.5,2.0,2.5,3.
 cntrs_dissic=(/1.86,1.9,1.94,1.98,2.02,2.06,2.1,2.14,2.18,2.22,2.26,2.3,2.34,2.38,2.42,2.46,2.5,2.54,2.58,2.62/)
 dcntrs_dissic=(/-0.09,-0.08,-0.07,-0.06,-0.05,-0.04,-0.03,-0.02,-0.01,0.01,0.02,0.03,0.04,0.05,0.06,0.07,0.08,0.09/)
 
+cntrs_talklvl=(/2.2,2.22,2.24,2.26,2.28,2.3,2.32,2.34,2.36,2.38,2.4,2.42,2.44,2.46,2.48,2.5,2.52,2.54,2.56,2.58/)
+dcntrs_talklvl=(/-0.09,-0.08,-0.07,-0.06,-0.05,-0.04,-0.03,-0.02,-0.01,0.01,0.02,0.03,0.04,0.05,0.06,0.07,0.08,0.09/)
+
 ; model variables
-vars = (/"o2lvl","silvl","po4lvl","no3lvl","dissiclvl"/)
+vars = (/"o2lvl","silvl","po4lvl","no3lvl","dissiclvl","talklvl"/)
 
 ; define contour intervals
-cntrs = (/cntrs_o2,cntrs_si,cntrs_po4,cntrs_no3,cntrs_dissic/)
-dcntrs = (/dcntrs_o2,dcntrs_si,dcntrs_po4,dcntrs_no3,dcntrs_dissic/)
+cntrs = (/cntrs_o2,cntrs_si,cntrs_po4,cntrs_no3,cntrs_dissic,cntrs_talklvl/)
+dcntrs = (/dcntrs_o2,dcntrs_si,dcntrs_po4,dcntrs_no3,dcntrs_dissic,dcntrs_talklvl/)
 
 nvars = dimsizes(vars)
 
-; model-to-obs comparisons 
+; model-to-obs comparisons
 
 if (compare .eq. "OBS") then
 
-  woa13o_vars = (/"o_an"/)
-  woa13i_vars = (/"i_an"/)
-  woa13p_vars = (/"p_an"/)
-  woa13n_vars = (/"n_an"/)
-  glodap_vars = (/"TCO2"/)
+  woa13o_vars  = (/"o_an"/)
+  woa13i_vars  = (/"i_an"/)
+  woa13p_vars  = (/"p_an"/)
+  woa13n_vars  = (/"n_an"/)
+  glodap_vars  = (/"TCO2"/)
+  glodap_vars2 = (/"TAlk"/)
 
   ; observations: list of variables to plot
-  obsvars = (/"o_an","i_an","p_an","n_an","TCO2"/) 
+  obsvars = (/"o_an","i_an","p_an","n_an","TCO2","TAlk"/)
 end if
 ;-------------------------------------------------------------
 ; common resources for global contour plots 
- cnplot = new(3,"graphic")
+ cnplot = new(6,"graphic")
  cres                        = True
  cres@gsnDraw                = False
  cres@gsnFrame               = False
@@ -126,7 +130,6 @@ end if
  cres@tiYAxisString          = "Depth (m)"
  cres@txFontHeightF = 0.023
  cres@cnLevelSelectionMode = "ExplicitLevels"
- ; cres@cnLevelSelectionMode = "AutomaticLevels"
  cres@cnFillOn             = True
  cres@cnLinesOn            = False
  cres@cnLineLabelsOn       = False
@@ -137,13 +140,7 @@ end if
  cres@lbLabelFontHeightF = 0.018
  cres@lbTitleFontHeightF = 0.02
  cres@cnMissingValFillColor = "gray75"
- cres@trYLog = False
  cres@trYReverse = True
-  if (plot_depth.eq."linear") then
-   cres@gsnYAxisIrregular2Linear = True
- else
-   cres@gsnYAxisIrregular2Linear = False
- end if
  cmap  = RGBtoCmap(rgb_file)
  cmapd = RGBtoCmap(rgb_filed)
 ;-------------------------------------------
@@ -154,7 +151,6 @@ end if
  pan@txFontHeightF = 0.018
  pan@gsnFrame = False
 ;***********************************************************
-
 
 do i = 0, nvars-1
   ;print("==================")
@@ -183,6 +179,10 @@ do i = 0, nvars-1
     A = get_dissic(inptr1)
   end if
 
+  if (vars(i) .eq. "talklvl") then
+    A = get_talk (inptr1)
+  end if
+
   if (all(A.eq.-999.)) then
     print (vars(i)+" not present in case1 input file.")
     delete(A)
@@ -198,8 +198,6 @@ do i = 0, nvars-1
  ;-------------
   if (compare .eq. "OBS") then            ; CASE 2 IS OBS DATA
    
-   ;print("====="+ obsvars(i))   
-
    if (any(obsvars(i) .eq. woa13o_vars)) then
      inptr2 = ptr_woa13o
      case2 = "WOA13"
@@ -225,9 +223,14 @@ do i = 0, nvars-1
      case2 = "GLODAPv2"
    end if
 
+   if (any(obsvars(i) .eq. glodap_vars2)) then
+     inptr2 = ptr_glodap2
+     case2 = "GLODAPv2"
+   end if
+
 ;  get latitudes and depth
    lat2 = inptr2->lat
-   nlat2 = dimsizes(lat2) 
+   nlat2 = dimsizes(lat2)
    depth2 = inptr2->depth
    nz2 = dimsizes(depth2)
 
@@ -290,6 +293,18 @@ do i = 0, nvars-1
      end if
    end if
 
+   if (vars(i) .eq. "talklvl") then
+     if (isfilevar(inptr2,"TAlk")) then
+       B = inptr2->TAlk
+       B = (/B*0.001025/)
+       B@long_name = "Alkalinity"
+       B@units = "mol m-3"
+       assignFillValue(B,B)
+     else
+       B = -999.
+     end if
+   end if
+
  ;-------------
  ; Control case (if model to model comparison)
  ;-------------
@@ -316,6 +331,10 @@ do i = 0, nvars-1
       B = get_dissic(inptr2)
     end if
 
+    if (vars(i) .eq. "talklvl") then
+      B = get_talk (inptr2)
+    end if
+
   end if
 
   if (all(B.eq.-999.)) then
@@ -324,7 +343,6 @@ do i = 0, nvars-1
     delete(B)
     continue       ; procede to next variable in do loop
   end if
-
 
 ; -------------
 ; Interpolation
@@ -376,11 +394,19 @@ do i = 0, nvars-1
     delete(A_int)
   end if
 
+;  printVarSummary(A)
+;  print(dimsizes(B))
+;  print(dimsizes(data2))
+
   data1 = A(0,:,:,0)
-  if (compare.eq."OBS" .and. vars(i).eq."dissiclvl") then
+  if (vars(i).eq."dissiclvl" .and. compare.eq."OBS") then
     data2 = B(:,:,0)
   else
-    data2 = B(0,:,:,0)
+    if (vars(i).eq."talklvl" .and. compare.eq."OBS") then
+      data2 = B(:,:,0)
+    else
+      data2 = B(0,:,:,0)
+    end if
   end if
   delete(A)
   delete(B)
@@ -408,20 +434,24 @@ do i = 0, nvars-1
   min2 = min(data2)
   max2 = max(data2)
 
-  cres@cnFillPalette  = cmap
   cres@lbLabelStride  = 2
-  if (vars(i).eq."silvl" .or. vars(i).eq."no3lvl" .or. vars(i).eq."dissiclvl") then
-    cres@lbLabelStride  = 4
-  end if
-  cres@lbOrientation = "Horizontal"
+  cres@lbOrientation = "Vertical"
   cres@cnLevels = cntrs(i,:)
+  cres@cnFillPalette  = cmap
   cres@trXReverse = False
   cres@lbTitleString = "MIN = "+sprintf("%6.2f",min1)+ \
-                     "  MAX = "+sprintf("%6.2f",max1)
+                       "~C~MAX = "+sprintf("%6.2f",max1)
 
   cres@tiMainString = case1+" (yrs "+yrs_ave1+")"
   
+  cres@gsnYAxisIrregular2Linear = False
+  cres@gsnCenterString = "non-lin y"
   cnplot(0) = gsn_csm_contour(wks,data1,cres)
+  delete (cres@gsnYAxisIrregular2Linear)
+  cres@gsnYAxisIrregular2Linear = True
+  cres@gsnCenterString = "linear y"
+  cnplot(1) = gsn_csm_contour(wks,data1,cres)
+  delete (cres@gsnYAxisIrregular2Linear)
   delete (cres@lbTitleString)
   delete (cres@tiMainString)
 
@@ -431,9 +461,16 @@ do i = 0, nvars-1
      cres@tiMainString = case2
   end if
   cres@lbTitleString = "MIN = "+sprintf("%6.2f",min2)+ \
-                     "  MAX = "+sprintf("%6.2f",max2)
+                       "~C~MAX = "+sprintf("%6.2f",max2)
 
-  cnplot(1) = gsn_csm_contour(wks,data2,cres)
+  cres@gsnYAxisIrregular2Linear = False
+  cres@gsnCenterString = "non-lin y"
+  cnplot(2) = gsn_csm_contour(wks,data2,cres)
+  delete (cres@gsnYAxisIrregular2Linear)
+  cres@gsnYAxisIrregular2Linear = True
+  cres@gsnCenterString = "linear y"
+  cnplot(3) = gsn_csm_contour(wks,data2,cres)
+  delete (cres@gsnYAxisIrregular2Linear)
   delete (cres@cnLevels)
   delete (cres@lbLabelStride)
   delete (cres@lbOrientation)
@@ -459,7 +496,14 @@ do i = 0, nvars-1
   cres@lbTitleString = "MIN = "+sprintf("%6.2f",mind)+ \
                        "~C~MAX = "+sprintf("%6.2f",maxd)
 
-  cnplot(2) = gsn_csm_contour(wks,data3,cres)    ; contour plot
+  cres@gsnYAxisIrregular2Linear = False
+  cres@gsnCenterString = "non-lin y"
+  cnplot(4) = gsn_csm_contour(wks,data3,cres)
+  delete (cres@gsnYAxisIrregular2Linear)
+  cres@gsnYAxisIrregular2Linear = True
+  cres@gsnCenterString = "linear y"
+  cnplot(5) = gsn_csm_contour(wks,data3,cres)
+  delete (cres@gsnYAxisIrregular2Linear)
   delete (cres@lbTitleString)
   delete (cres@lbOrientation)
   delete (cres@lbLabelStride)
@@ -467,7 +511,17 @@ do i = 0, nvars-1
   delete (cres@cnLevels)
   delete (cres@cnFillPalette)
 
-  gsn_panel(wks,cnplot,(/2,2/),pan)         ; panel plot
+  gsn_panel(wks,cnplot,(/3,2/),pan)         ; panel plot
+
+;  txres               = True
+;  txres@txFontHeightF = 0.012
+
+;  txres@txFont        = "Helvetica"
+;  txres@txJust        = "CenterLeft"
+;  gsn_text_ndc(wks,"Non linear y-axis",0.15,0.03,txres)
+;  txres@txJust        = "CenterRight"
+;  gsn_text_ndc(wks,"Linear y-axis",0.82,0.03,txres) 
+
   frame (wks)
 
   delete (data1)

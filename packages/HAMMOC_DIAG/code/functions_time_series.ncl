@@ -180,7 +180,45 @@ begin
       xvar@units = "Pg yr-1"
       assignFillValue(xvar,xvar)
    else
-      print("get_co2fxu: no pp_tot variable present")
+      print("get_pp: no pp_tot variable present")
+      xvar = -999.0
+   end if
+   return (xvar)
+end
+
+function get_epc (inptr:file) 
+begin
+   if (isfilevar(inptr,"epc100_tot")) then
+      tmp = inptr->epc100_tot
+      if (typeof(tmp).eq."double") then
+         xvar = dble2flt(tmp)
+      else
+         xvar = tmp
+      end if
+      xvar@long_name = "total export production"
+      xvar@units = "Pg yr-1"
+      assignFillValue(xvar,xvar)
+   else
+      print("get_epc: no epc100_tot variable present")
+      xvar = -999.0
+   end if
+   return (xvar)
+end
+
+function get_epcalc (inptr:file) 
+begin
+   if (isfilevar(inptr,"epcalc100_tot")) then
+      tmp = inptr->epcalc100_tot
+      if (typeof(tmp).eq."double") then
+         xvar = dble2flt(tmp)
+      else
+         xvar = tmp
+      end if
+      xvar@long_name = "total export CaCO3"
+      xvar@units = "Pg yr-1"
+      assignFillValue(xvar,xvar)
+   else
+      print("get_epcalc: no epcalc100_tot variable present")
       xvar = -999.0
    end if
    return (xvar)

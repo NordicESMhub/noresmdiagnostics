@@ -736,8 +736,8 @@ if [ $set_2 -eq 1 ]; then
     # Convert time series figure to png
     $DIAG_CODE/ps2png.sh set2 $density
     if [ $? -ne 0 ]; then
-	"ERROR occurred in ps2png.sh (set2)"
-	"*** EXITING THE SCRIPT ***"
+	echo "ERROR occurred in ps2png.sh (set2)"
+	echo "*** EXITING THE SCRIPT ***"
 	exit 1
     fi
     $DIAG_CODE/webpage2.sh
@@ -873,8 +873,8 @@ if [ $set_3 -eq 1 ]; then
     # Convert time series figure to png
     $DIAG_CODE/ps2png.sh set3 $density
     if [ $? -ne 0 ]; then
-	"ERROR occurred in ps2png.sh (set3)"
-	"*** EXITING THE SCRIPT ***"
+	echo "ERROR occurred in ps2png.sh (set3)"
+	echo "*** EXITING THE SCRIPT ***"
 	exit 1
     fi
     $DIAG_CODE/webpage3.sh
@@ -903,8 +903,8 @@ if [ $set_4 -eq 1 ]; then
     # Convert time series figure to png
     $DIAG_CODE/ps2png.sh set4 $density
     if [ $? -ne 0 ]; then
-	"ERROR occurred in ps2png.sh (set4)"
-	"*** EXITING THE SCRIPT ***"
+	echo "ERROR occurred in ps2png.sh (set4)"
+	echo "*** EXITING THE SCRIPT ***"
 	exit 1
     fi
     $DIAG_CODE/webpage4.sh
@@ -971,8 +971,8 @@ if [ $set_6 -eq 1 ]; then
     # Convert time series figure to png
     $DIAG_CODE/ps2png.sh set6 $density
     if [ $? -ne 0 ]; then
-	"ERROR occurred in ps2png.sh (set6)"
-	"*** EXITING THE SCRIPT ***"
+	echo "ERROR occurred in ps2png.sh (set6)"
+	echo "*** EXITING THE SCRIPT ***"
 	exit 1
     fi
     $DIAG_CODE/webpage6.sh
@@ -1001,8 +1001,8 @@ if [ $set_7 -eq 1 ]; then
     # Convert time series figure to png
     $DIAG_CODE/ps2png.sh set7 $density
     if [ $? -ne 0 ]; then
-	"ERROR occurred in ps2png.sh (set7)"
-	"*** EXITING THE SCRIPT ***"
+	echo "ERROR occurred in ps2png.sh (set7)"
+	echo "*** EXITING THE SCRIPT ***"
 	exit 1
     fi
     $DIAG_CODE/webpage7.sh

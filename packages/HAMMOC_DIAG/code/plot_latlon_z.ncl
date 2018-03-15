@@ -2,7 +2,7 @@
 ; plot_latlon.ncl
 ; Mark Stevens Sept 2001
 ; Rich Neale Jan 2008
-; Johan Liakka Mar 2018: Update for HAMMOC
+; Johan Liakka Dec 2017: Update for HAMMOC
 ;********************************************************
 load "$DIAG_CODE/functions_latlon.ncl"
 ;********************************************************
@@ -37,6 +37,14 @@ else
 end if
 delete(tmp)
 nlon1 = dimsizes(lon1)       ; number of longitudes
+tmp = inptr1->depth          ; depth
+if (typeof(tmp).eq."double") then
+  depth1 = dble2flt(tmp)
+else
+  depth1 = tmp
+end if
+delete(tmp)
+nz1 = dimsizes(depth1)       ; number vertical levels
 ; Calculate gw
 gw1temp = latRegWgt(lat1,"double",0)
 gw1 = gw1temp
@@ -48,10 +56,18 @@ gw1&lat = lat1
 ; rgb_file  = rgb_dir+"/blueyellowred2.rgb"
 ; rgb_filed = rgb_dir+"/bluered2.rgb"
 
+; Define depths to plot
+depth_plot = (/0.0,100.0,500.0,1000.0,2000.0,3000.0,4000.0/)
+nz_plot = dimsizes(depth_plot)
+
 ; CASE 2 MODEL OR OBS
 if (compare .eq. "OBS") then
-  ptr_prod = addfile(infile2+"/OcnProd_MODIS/ave.m.clim_annual_2003-2012.nc","r")
-  ptr_eth  = addfile(infile2+"/Landschuetzer_2015/spco2_ETH_ANN_1982-2011.nc","r")
+  ptr_woa13i  = addfile(infile2+"/WOA13/woa13_all_i00_01.nc","r")
+  ptr_woa13n  = addfile(infile2+"/WOA13/woa13_all_n00_01.nc","r")
+  ptr_woa13o  = addfile(infile2+"/WOA13/woa13_all_o00_01.nc","r")
+  ptr_woa13p  = addfile(infile2+"/WOA13/woa13_all_p00_01.nc","r")
+  ptr_glodap  = addfile(infile2+"/GLODAPv2/GLODAPv2.2016b.TCO2_reordered.nc","r")
+  ptr_glodap2 = addfile(infile2+"/GLODAPv2/GLODAPv2.2016b.TAlk_reordered.nc","r")
 else
   inptr2   = addfile(infile2,"r")
   case2    = getenv("CASE2")
@@ -74,6 +90,14 @@ else
   end if
   delete(tmp)
   nlon2 = dimsizes(lon2)       ; number of longitudes
+  tmp = inptr2->depth          ; depth
+  if (typeof(tmp).eq."double") then
+    depth2 = dble2flt(tmp)
+  else
+    depth2 = tmp
+  end if
+  delete(tmp)
+  nz2 = dimsizes(depth2)       ; number vertical levels
   ; Calculate gw
   gw2temp = latRegWgt(lat2,"double",0)
   gw2 = gw2temp
@@ -86,22 +110,31 @@ end if
 ; define variables to plot
 ;************************************************
 ; contours definition (global)
-cntrs_pp=(/3,6,9,12,15,18,21,24,27,30,33,36,39,42,45,48,51,54,57,60/)
-cntrs_epc=(/0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10/)
-cntrs_pco2=(/250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350, 360, 370, 380, 390, 400, 410, 420, 430, 440/)
-cntrs_co2fxn=(/-4.5, -4, -3.5, -3, -2.5, -2, -1.5, -1, -0.5, -0.25, 0.25, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5/)
+cntrs_o2lvl=(/25,50,75,100,125,150,175,200,225,250,275,300,325,350,375,400,425,450,475,500/)
+dcntrs_o2lvl=(/-170,-150,-130,-110,-90,-70,-50,-30,-10,10,30,50,70,90,110,130,150,170/)
 
-dcntrs_pp=(/-17,-15,-13,-11,-9,-7,-5,-3,-1,1,3,5,7,9,11,13,15,17/)
-dcntrs_epc=(/-1.7,-1.5,-1.3,-1.1,-0.9,-0.7,-0.5,-0.3,-0.1,0.1,0.3,0.5,0.7,0.9,1.1,1.3,1.5,1.7/)
-dcntrs_pco2=(/-80, -70, -60, -50, -40, -30, -20, -10, -5, 5, 10, 20, 30, 40, 50, 60, 70, 80/)
-dcntrs_co2fxn=(/-4, -3.5, -3, -2.5, -2, -1.5, -1, -0.5, -0.25, 0.25, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4/)
+cntrs_silvl=(/10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200/)
+dcntrs_silvl=(/-45,-40,-35,-30,-25,-20,-15,-10,-5,5,10,15,20,25,30,35,40,45/)
+
+cntrs_po4lvl=(/0.2,0.4,0.6,0.8,1.0,1.2,1.4,1.6,1.8,2.0,2.2,2.4,2.6,2.8,3.0,3.2,3.4,3.6,3.8,4.0/)
+dcntrs_po4lvl=(/-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,-0.05,0.05,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8/)
+
+cntrs_no3lvl=(/2.5,5.0,7.5,10.0,12.5,15.0,17.5,20.0,22.5,25.0,27.5,30.0,32.5,35.0,37.5,40.0,42.5,45.0,47.5,50.0/)
+dcntrs_no3lvl=(/-17,-15,-13,-11,-9,-7,-5,-3,-1,1,3,5,7,9,11,13,15,17/)
+
+cntrs_dissiclvl=(/1.6,1.65,1.7,1.75,1.8,1.85,1.9,1.95,2,2.05,2.1,2.15,2.2,2.25,2.3,2.35,2.4,2.45,2.5,2.55/)
+dcntrs_dissiclvl=(/-0.17,-0.15,-0.13,-0.11,-0.09,-0.07,-0.05,-0.03,-0.01,0.01,0.03,0.05,0.07,0.09,0.11,0.13,0.15,0.17/)
+
+cntrs_talklvl=(/1.8,1.85,1.9,1.95,2,2.05,2.1,2.15,2.2,2.25,2.3,2.35,2.4,2.45,2.5,2.55,2.6,2.65,2.7,2.75/)
+dcntrs_talklvl=(/-0.17,-0.15,-0.13,-0.11,-0.09,-0.07,-0.05,-0.03,-0.01,0.01,0.03,0.05,0.07,0.09,0.11,0.13,0.15,0.17/)
 
 ; model variables
-vars = (/"pp_tot","epc100","pco2","co2fxn"/)
+vars = (/"o2lvl","silvl","po4lvl","no3lvl","dissiclvl","talklvl"/)
 
 ; define contour intervals
-cntrs = (/cntrs_pp,cntrs_epc,cntrs_pco2,cntrs_co2fxn/)
-dcntrs = (/dcntrs_pp,dcntrs_epc,dcntrs_pco2,dcntrs_co2fxn/)
+cntrs = (/cntrs_o2lvl,cntrs_silvl,cntrs_po4lvl,cntrs_no3lvl,cntrs_dissiclvl,cntrs_talklvl/)
+
+dcntrs = (/dcntrs_o2lvl,dcntrs_silvl,dcntrs_po4lvl,dcntrs_no3lvl,dcntrs_dissiclvl,dcntrs_talklvl/)
 
 nvars = dimsizes(vars)
 
@@ -109,11 +142,15 @@ nvars = dimsizes(vars)
 
 if (compare .eq. "OBS") then
 
-  prod_vars  = (/"pp"/)
-  eth_vars  = (/"spco2","fgco2"/)
+  woa13o_vars  = (/"o_an"/)
+  woa13i_vars  = (/"i_an"/)
+  woa13p_vars  = (/"p_an"/)
+  woa13n_vars  = (/"n_an"/)
+  glodap_vars  = (/"TCO2"/)
+  glodap_vars2 = (/"TAlk"/)
 
   ; observations: list of variables to plot
-  obsvars = (/"pp","dummy","spco2","fgco2"/)
+  obsvars = (/"o_an","i_an","p_an","n_an","TCO2","TAlk"/)
   
 end if
 ;-------------------------------------------------------------
@@ -166,22 +203,32 @@ do i = 0, nvars-1
 ;----------------------------
 ; Test case: CASE 1 MODEL
 ;----------------------------
-    if (vars(i) .eq. "pp_tot") then
-      A = get_pp (inptr1)
+  do iz = 0, nz_plot-1
+  
+    if (vars(i) .eq. "o2lvl") then
+      A = get_o2 (inptr1,depth1,depth_plot(iz))
     end if
 
-    if (vars(i) .eq. "epc100") then
-      A = get_epc (inptr1)
+    if (vars(i) .eq. "silvl") then
+      A = get_si (inptr1,depth1,depth_plot(iz))
     end if
 
-    if (vars(i) .eq. "pco2") then
-      A = get_pco2 (inptr1)
+    if (vars(i) .eq. "po4lvl") then
+      A = get_po4 (inptr1,depth1,depth_plot(iz))
     end if
 
-    if (vars(i) .eq. "co2fxn") then
-      A = get_co2fxn (inptr1)
+    if (vars(i) .eq. "no3lvl") then
+      A = get_no3 (inptr1,depth1,depth_plot(iz))
     end if
 
+    if (vars(i) .eq. "dissiclvl") then
+      A = get_dissic (inptr1,depth1,depth_plot(iz))
+    end if
+
+    if (vars(i) .eq. "talklvl") then
+      A = get_talk (inptr1,depth1,depth_plot(iz))
+    end if
+  
     if (all(A.eq.-999.)) then
       print (vars(i)+" not present in case1 input file.")
       delete(A)
@@ -197,14 +244,34 @@ do i = 0, nvars-1
     ;-------------
     if (compare .eq. "OBS") then            ; CASE 2 IS OBS DATA
    
-      if (any(obsvars(i) .eq. prod_vars)) then
-        inptr2 = ptr_prod
-        case2 = "MODIS"
+      if (any(obsvars(i) .eq. woa13o_vars)) then
+        inptr2 = ptr_woa13o
+        case2 = "WOA13"
       end if
 
-      if (any(obsvars(i) .eq. eth_vars)) then
-        inptr2 = ptr_eth
-        case2 = "Landschuetzer et al. (2015)"
+      if (any(obsvars(i) .eq. woa13i_vars)) then
+        inptr2 = ptr_woa13i
+        case2 = "WOA13"
+      end if
+
+      if (any(obsvars(i) .eq. woa13p_vars)) then
+        inptr2 = ptr_woa13p
+        case2 = "WOA13"
+      end if
+
+      if (any(obsvars(i) .eq. woa13n_vars)) then
+        inptr2 = ptr_woa13n
+        case2 = "WOA13"
+      end if
+
+      if (any(obsvars(i) .eq. glodap_vars)) then
+        inptr2 = ptr_glodap
+        case2 = "GLODAPv2"
+      end if
+
+      if (any(obsvars(i) .eq. glodap_vars2)) then
+        inptr2 = ptr_glodap2
+        case2 = "GLODAPv2"
       end if
 
 ;     get latitudes,longitudes, and weights
@@ -217,27 +284,49 @@ do i = 0, nvars-1
 ;     get the variable
 
       B = -999.
-      if (vars(i) .eq. "pp_tot") then
+      if (vars(i) .eq. "o2lvl") then
         delete(B)
-        B = inptr2->pp(:,:)
-	B = (/B*365*86400/)
-        B@long_name = "PP"
-        B@units = "mol C m-2 yr-1"
+        B = inptr2->o_an(0,{depth_plot(iz)},:,:)
+	B = (/B*44.661/)
+        B@long_name = "Oxygen z"+flt2string(depth_plot(iz))+"m"
+        B@units = "mmol m-3"
       end if
 
-      if (vars(i) .eq. "pco2") then
+      if (vars(i) .eq. "silvl") then
         delete(B)
-        B = inptr2->spco2(:,:)
-        B@long_name = "sea-surface pCO2"
-        B@units = "uatm"
+        B = inptr2->i_an(0,{depth_plot(iz)},:,:)
+        B@long_name = "Silicate z"+flt2string(depth_plot(iz))+"m"
+        B@units = "mmol m-3"
       end if
 
-      if (vars(i) .eq. "co2fxn") then
+      if (vars(i) .eq. "po4lvl") then
         delete(B)
-        B = inptr2->fgco2(:,:)
-	B = (/-B/)
-        B@long_name = "net downward CO2 flux"
-        B@units = "mol C m-2 yr-1"
+        B = inptr2->p_an(0,{depth_plot(iz)},:,:)
+        B@long_name = "Phosphate z"+flt2string(depth_plot(iz))+"m"
+        B@units = "mmol m-3"
+      end if
+
+      if (vars(i) .eq. "no3lvl") then
+        delete(B)
+        B = inptr2->n_an(0,{depth_plot(iz)},:,:)
+        B@long_name = "Nitrate z"+flt2string(depth_plot(iz))+"m"
+        B@units = "mmol m-3"
+      end if
+
+      if (vars(i) .eq. "dissiclvl") then
+        delete(B)
+        B = inptr2->TCO2({depth_plot(iz)},:,:)
+	B = (/B*0.001025/)
+        B@long_name = "DIC z"+flt2string(depth_plot(iz))+"m"
+        B@units = "mol m-3"
+      end if
+
+      if (vars(i) .eq. "talklvl") then
+        delete(B)
+        B = inptr2->TAlk({depth_plot(iz)},:,:)
+	B = (/B*0.001025/)
+        B@long_name = "Alkalinity z"+flt2string(depth_plot(iz))+"m"
+        B@units = "mol m-3"
       end if
 
       if (all(B.eq.-999.)) then
@@ -250,20 +339,28 @@ do i = 0, nvars-1
 
     else                               ; CASE 2 IS MODEL
 
-      if (vars(i) .eq. "pp_tot") then
-        B = get_pp (inptr2)
+      if (vars(i) .eq. "o2lvl") then
+        B = get_o2 (inptr2,depth2,depth_plot(iz))
+      end if
+      
+      if (vars(i) .eq. "silvl") then
+        B = get_si (inptr2,depth2,depth_plot(iz))
       end if
 
-      if (vars(i) .eq. "epc100") then
-        B = get_epc (inptr2)
+      if (vars(i) .eq. "po4lvl") then
+        B = get_po4 (inptr2,depth2,depth_plot(iz))
       end if
 
-      if (vars(i) .eq. "pco2") then
-        B = get_pco2 (inptr2)
+      if (vars(i) .eq. "no3lvl") then
+        B = get_no3 (inptr2,depth2,depth_plot(iz))
       end if
 
-      if (vars(i) .eq. "co2fxn") then
-        B = get_co2fxn (inptr2)
+      if (vars(i) .eq. "dissiclvl") then
+        B = get_dissic (inptr2,depth2,depth_plot(iz))
+      end if
+
+      if (vars(i) .eq. "talklvl") then
+        B = get_talk (inptr2,depth2,depth_plot(iz))
       end if
 
       if (all(B.eq.-999.)) then
@@ -279,9 +376,6 @@ do i = 0, nvars-1
 ; compute RMSE of the two fields after interpolating to the
 ; same grid iff needed, and the mean of the difference of the
 ; interpolated fields
-
-;    printVarSummary(A)
-;    printVarSummary(B)
 
     if (all(B.ne.-999.)) then
       if (nlat1 .eq. nlat2) then            ; same grids
@@ -346,9 +440,9 @@ do i = 0, nvars-1
 
 ;--------------------- Open files for plots ------------------------------
     if (compare .eq. "OBS") then
-      wks = gsn_open_wks("ps",wkdir+"/set2_ann_"+vars(i)+"_1model")
+      wks = gsn_open_wks("ps",wkdir+"/set2_ann_"+vars(i)+"_"+flt2string(depth_plot(iz))+"_1model")
     else
-      wks = gsn_open_wks("ps",wkdir+"/set2_ann_"+vars(i)+"_2models")
+      wks = gsn_open_wks("ps",wkdir+"/set2_ann_"+vars(i)+"_"+flt2string(depth_plot(iz))+"_2models")
     end if
 
     if (compare .eq. "OBS") then
@@ -446,6 +540,7 @@ do i = 0, nvars-1
     end if
     delete(plot)
     frame(wks)
+  end do
 end do        ; variable 
 
 exit
