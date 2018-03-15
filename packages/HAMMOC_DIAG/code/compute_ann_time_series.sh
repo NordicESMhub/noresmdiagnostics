@@ -208,7 +208,7 @@ do
 		outfile_tmp=${var}_${casename}_ANN_${yr_prnt}_tmp.nc
      		outfile=${var}_${casename}_ANN_${yr_prnt}.nc
 		$NCAP2 -O -s 'epcalc100_area=epcalc100*parea' $WKDIR/$infile $WKDIR/$outfile_tmp
-		$NCAP2 -O -s 'epcalc100_tot=epcalc100_area.total($x,$y)*100.08*86400.0*365.0*1.0e-15' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
+		$NCAP2 -O -s 'epcalc100_tot=epcalc100_area.total($x,$y)*12.0*86400.0*365.0*1.0e-15' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
                 $NCKS --no_tmp_fl -O -v epcalc100_tot $WKDIR/$outfile_tmp $WKDIR/$outfile
 		rm -f $WKDIR/$outfile_tmp
 		let iproc++
