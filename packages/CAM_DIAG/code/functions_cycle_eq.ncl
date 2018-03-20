@@ -7,10 +7,10 @@
 month = (/"01","02","03","04","05","06", \
           "07","08","09","10","11","12"/)
 
-function cycle_PRECT_OCEAN (prefix:string)
+function cycle_PRECT_OCEAN (prefix:string,yrs_prnt:string)
 begin
 
-  inptr = addfile(prefix+"_ANN_climo.nc","r")
+  inptr = addfile(prefix+"_ANN_"+yrs_prnt+"_climo.nc","r")
   lon = inptr->lon
   nlon = dimsizes(lon)
   if (isfilevar(inptr,"PRECT")) then
@@ -29,7 +29,7 @@ begin
   prect!1 = "lon"
   prect&lon = lon
   do m = 0, 11
-    inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+    inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
     if (isfilevar(inptr,"PRECT")) then
       prect2 = inptr->PRECT(0,:,:)
       precip = prect2
@@ -89,9 +89,9 @@ begin
 end
 
 undef ("cycle_TAUX_OCEAN")
-function cycle_TAUX_OCEAN (prefix:string)
+function cycle_TAUX_OCEAN (prefix:string,yrs_prnt:string)
 begin
-  inptr = addfile(prefix+"_ANN_climo.nc","r")
+  inptr = addfile(prefix+"_ANN_"+yrs_prnt+"_climo.nc","r")
   if (isfilevar(inptr,"TAUX")) then 
     mean = inptr->TAUX(0,:,:)          ; annual mean
     lon = inptr->lon
@@ -102,7 +102,7 @@ begin
     taux_ocean!1 = "lon"
     taux_ocean&lon = lon
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       tx = inptr->TAUX(0,:,:)
       tx = (/tx-mean/)            ; difference from annual mean
       tmp = tx
@@ -137,9 +137,9 @@ begin
 end
 
 undef("cycle_TAUY_OCEAN")
-function cycle_TAUY_OCEAN (prefix:string)
+function cycle_TAUY_OCEAN (prefix:string,yrs_prnt:string)
 begin
-  inptr = addfile(prefix+"_ANN_climo.nc","r")
+  inptr = addfile(prefix+"_ANN_"+yrs_prnt+"_climo.nc","r")
   if (isfilevar(inptr,"TAUY")) then 
     mean = inptr->TAUY(0,:,:)          ; annual mean
     lon = inptr->lon
@@ -150,7 +150,7 @@ begin
     tauy_ocean!1 = "lon"
     tauy_ocean&lon = lon
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       ty = inptr->TAUY(0,:,:)
       ty = (/ty-mean/)            ; difference from annual mean
       tmp = ty
@@ -185,9 +185,9 @@ begin
 end
 
 undef("cycle_SST")
-function cycle_SST (prefix:string)
+function cycle_SST (prefix:string,yrs_prnt:string)
 begin
-  inptr = addfile(prefix+"_ANN_climo.nc","r")
+  inptr = addfile(prefix+"_ANN_"+yrs_prnt+"_climo.nc","r")
   lon = inptr->lon
   nlon = dimsizes(lon)
   sst = new((/12,nlon/),float)
@@ -198,7 +198,7 @@ begin
   if (isfilevar(inptr,"TS")) then
     mean = inptr->TS(0,:,:)      ; annual mean
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       ts = inptr->TS(0,:,:)     ; (lat,lon) 
       ts = (/ts-mean/)          ; difference from annual mean
       tmp = ts 
@@ -231,9 +231,9 @@ begin
   return (sst)
 end
 
-function cycle_SWCF_OCEAN (prefix:string)
+function cycle_SWCF_OCEAN (prefix:string,yrs_prnt:string)
 begin
-  inptr = addfile(prefix+"_ANN_climo.nc","r")
+  inptr = addfile(prefix+"_ANN_"+yrs_prnt+"_climo.nc","r")
   if (isfilevar(inptr,"SWCF")) then
     lon = inptr->lon
     nlon = dimsizes(lon)
@@ -244,7 +244,7 @@ begin
     swcf!1 = "lon"
     swcf&lon = lon
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       sw = inptr->SWCF(0,:,:)     ; (lat,lon) 
       sw = (/sw-mean/)            ; difference from annual mean
       tmp = sw
@@ -278,9 +278,9 @@ begin
   end if
 end
 
-function cycle_LHFLX_OCEAN (prefix:string)
+function cycle_LHFLX_OCEAN (prefix:string,yrs_prnt:string)
 begin
-  inptr = addfile(prefix+"_ANN_climo.nc","r")
+  inptr = addfile(prefix+"_ANN_"+yrs_prnt+"_climo.nc","r")
   lon = inptr->lon
   nlon = dimsizes(lon)
   mean = inptr->QFLX(0,:,:)      ; annual mean
@@ -291,7 +291,7 @@ begin
   lhflx!1 = "lon"
   lhflx&lon = lon
   do m = 0, 11
-    inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+    inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
     lh = inptr->QFLX(0,:,:)     ; (lat,lon) 
     lh = (/lh*2.501e6/)
     lh = (/lh-mean/)            ; difference from annual mean

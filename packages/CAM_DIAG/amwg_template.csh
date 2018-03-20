@@ -903,23 +903,25 @@ endif
 # Do some safety checks
 #----------------------------------------------------------------
 
-if ($test_in == $cntl_in) then
-  echo ERROR: THE CLIMO PATHS ARE IDENTICAL FOR TEST AND CNTL
-  echo EROOR: test_path_climo and cntl_path_climo SHOULD BE DIFFERENT
-  echo ERROR: test_path_climo   $test_in 
-  echo ERROR: cntl_path_climo   $cntl_in 
-  exit 1 ##++ hannay  =>want to change script to allow to compare two 2 time-periods of the same run
-endif   
+#if ($test_in == $cntl_in) then
+#  echo ERROR: THE CLIMO PATHS ARE IDENTICAL FOR TEST AND CNTL
+#  echo EROOR: test_path_climo and cntl_path_climo SHOULD BE DIFFERENT
+#  echo ERROR: test_path_climo   $test_in 
+#  echo ERROR: cntl_path_climo   $cntl_in 
+#  exit 1 ##++ hannay  =>want to change script to allow to compare two 2 time-periods of the same run
+#endif   
 if ($CNTL == USER) then    
   if ($test_casename == $cntl_casename) then
-    echo WARNING: THE TEST AND CNTL AND CASENAME NAMES ARE IDENTICAL
+    echo "WARNING: THE TEST AND CNTL AND CASENAME NAMES ARE IDENTICAL"
+    echo "->SWITCHING OFF TIME SERIES COMPUTATIONS"
+    set tset_1 = 1
     ##exit  ## ++ hannay  =>want to change script to allow to compare two 2 time-periods of the same run
   endif
-  if ($test_path_history == $cntl_path_history) then
-    echo ERROR: THE TEST PATH AND CNTL PATH ARE IDENTICAL
-    echo THEY MUST BE DIFFERENT TO RECEIVE HPSS DOWNLOADS!
-    exit 1  
-  endif
+#  if ($test_path_history == $cntl_path_history) then
+#    echo ERROR: THE TEST PATH AND CNTL PATH ARE IDENTICAL
+#    echo THEY MUST BE DIFFERENT TO RECEIVE HPSS DOWNLOADS!
+#    exit 1  
+#  endif
 endif   
 
 #*****************************************************************
@@ -928,7 +930,17 @@ endif
 
 ## Hannay: Later on, we want to add: 'physics' attribute 
 
-echo DETERMINE ATTRIBUTES FOR HISTORY FILES 
+@ test_last_yr = $test_first_yr + $test_nyrs - 1
+set test_first_yr_prnt = `printf "%04d" ${test_first_yr}`
+set test_last_yr_prnt = `printf "%04d" ${test_last_yr}`
+
+if ($CNTL == USER) then
+   @ cntl_last_yr = $cntl_first_yr + $cntl_nyrs - 1
+   set cntl_first_yr_prnt = `printf "%04d" ${cntl_first_yr}`
+   set cntl_last_yr_prnt = `printf "%04d" ${cntl_last_yr}`
+endif
+
+echo "DETERMINE ATTRIBUTES FOR HISTORY FILES"
 echo ' '
 
 if ($test_filetype == "monthly_history") then
@@ -946,7 +958,8 @@ $DIAG_CODE/determine_output_attributes.csh   test  \
 					     $test_compute_climo \
                                              $test_filetype \
                                              $test_keyFile \
-					     $climo_required
+					     $climo_required \
+					     $test_last_yr
 
 if ($status > 0) then
    echo "*** CRASH IN determine_output_attributes.csh (test)"  
@@ -983,7 +996,8 @@ if ($CNTL == USER) then
 						 $cntl_compute_climo \
 						 $cntl_filetype \
 						 $cntl_keyFile \
-						 $climo_required
+						 $climo_required \
+						 $cntl_last_yr
 						 
     if ($status > 0) then
        echo "*** CRASH IN determine_output_attributes.csh (cntl)"
@@ -1265,7 +1279,7 @@ if ($climo_required == 0) then
 
     foreach mth ($climo_months)
     
-	set climo_file=${test_path_climo}/${test_casename}_${mth}_climo.nc
+	set climo_file=${test_path_climo}/${test_casename}_${mth}_${test_first_yr_prnt}-${test_last_yr_prnt}_climo.nc
 	if (! -e $climo_file) then    
 	    echo ' '
 	    echo ERROR: $climo_file  NOT FOUND
@@ -1289,7 +1303,7 @@ if ($climo_required == 0) then
 
 	foreach mth ($climo_months)
 	
-	    set climo_file=${cntl_path_climo}/${cntl_casename}_${mth}_climo.nc
+	    set climo_file=${cntl_path_climo}/${cntl_casename}_${mth}_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_climo.nc
 	    if (! -e $climo_file) then    
 		echo ' '
 		echo ERROR: $climo_file  NOT FOUND
@@ -1408,38 +1422,38 @@ endif
 
 foreach mth  (ANN DJF MAM JJA SON 01 02 03 04 05 06 07 08 09 10 11 12)
 
-  set file=${test_path_diag}/${test_casename}_${mth}_plotvars.nc
+  set file=${test_path_diag}/${test_casename}_${mth}_${test_first_yr_prnt}-${test_last_yr_prnt}_plotvars.nc
   if (-e ${file}) then
     \rm -f ${file}
   endif
 
   if ($CNTL != OBS) then
-    set file=${test_path_diag}/${cntl_casename}_${mth}_plotvars.nc
+    set file=${test_path_diag}/${cntl_casename}_${mth}_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_plotvars.nc
     if (-e ${file} ) then
       \rm -f ${file}  
     endif
   endif
 
-  set file=${test_path_diag}/${test_casename}_plotvars.nc
+  set file=${test_path_diag}/${test_casename}_${test_first_yr_prnt}-${test_last_yr_prnt}_plotvars.nc
   if (-e ${file}) then
     \rm -f ${file}
   endif
   
   if ($CNTL != OBS) then
-    set file=${test_path_diag}/${cntl_casename}_plotvars.nc
+    set file=${test_path_diag}/${cntl_casename}_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_plotvars.nc
     if (-e ${file} ) then
       \rm -f ${file}  
     endif
   endif
 
   if ($significance == 0) then 
-    set file=${test_path_diag}/${test_casename}_${mth}_variance.nc
+    set file=${test_path_diag}/${test_casename}_${mth}_${test_first_yr_prnt}-${test_last_yr_prnt}_variance.nc
     if (-e ${file}) then
 	\rm -f ${file}
     endif
     
     if ($CNTL != OBS) then
-	set file=${test_path_diag}/${cntl_casename}_${mth}_variance.nc
+	set file=${test_path_diag}/${cntl_casename}_${mth}_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_variance.nc
 	if (-e ${file} ) then
 	\rm -f ${file}  
 	endif
@@ -1467,7 +1481,7 @@ if ($web_pages == 0) then
     endif
   endif
   if ($p_type != ps) then
-    echo ERROR: WEBPAGES ARE ONLY MADE FOR POSTSCRIPT PLOT TYPE
+    echo "ERROR: WEBPAGES ARE ONLY MADE FOR POSTSCRIPT PLOT TYPE"
     exit 1
   endif
   @ test_end = $test_first_yr + $test_nyrs - 1
@@ -1498,13 +1512,13 @@ if ($all_sets == 0 || $set_1 == 0) then
 
     foreach name ($plots)
 	setenv SEASON $name 
-	setenv TEST_INPUT    ${test_path_climo}/${test_casename}_${SEASON}_climo.nc
-	setenv TEST_PLOTVARS ${test_path_diag}/${test_casename}_${SEASON}_plotvars.nc
+	setenv TEST_INPUT    ${test_path_climo}/${test_casename}_${SEASON}_${test_first_yr_prnt}-${test_last_yr_prnt}_climo.nc
+	setenv TEST_PLOTVARS ${test_path_diag}/${test_casename}_${SEASON}_${test_first_yr_prnt}-${test_last_yr_prnt}_plotvars.nc
 	if ($CNTL == OBS) then 
 	    setenv CNTL_INPUT $OBS_DATA
 	else
-	    setenv CNTL_INPUT    ${cntl_path_climo}/${cntl_casename}_${SEASON}_climo.nc
-	    setenv CNTL_PLOTVARS ${test_path_diag}/${cntl_casename}_${SEASON}_plotvars.nc
+	    setenv CNTL_INPUT    ${cntl_path_climo}/${cntl_casename}_${SEASON}_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_climo.nc
+	    setenv CNTL_PLOTVARS ${test_path_diag}/${cntl_casename}_${SEASON}_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_plotvars.nc
 	endif
 	if (-e $TEST_PLOTVARS) then
 	    setenv NCDF_MODE write
@@ -1530,13 +1544,13 @@ endif
 if ($all_sets == 0 || $set_2 == 0) then
     echo " "
     echo SET 2 ANNUAL IMPLIED TRANSPORTS
-    setenv TEST_INPUT ${test_path_climo}/${test_casename}_ANN_climo.nc
-    setenv TEST_PLOTVARS ${test_path_diag}/${test_casename}_ANN_plotvars.nc
+    setenv TEST_INPUT ${test_path_climo}/${test_casename}_ANN_${test_first_yr_prnt}-${test_last_yr_prnt}_climo.nc
+    setenv TEST_PLOTVARS ${test_path_diag}/${test_casename}_ANN_${test_first_yr_prnt}-${test_last_yr_prnt}_plotvars.nc
     if ($CNTL == OBS) then
 	setenv CNTL_INPUT $OBS_DATA
     else
-	setenv CNTL_INPUT ${cntl_path_climo}/${cntl_casename}_ANN_climo.nc
-	setenv CNTL_PLOTVARS ${test_path_diag}/${cntl_casename}_ANN_plotvars.nc
+	setenv CNTL_INPUT ${cntl_path_climo}/${cntl_casename}_ANN_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_climo.nc
+	setenv CNTL_PLOTVARS ${test_path_diag}/${cntl_casename}_ANN_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_plotvars.nc
     endif
     if (-e $TEST_PLOTVARS) then
 	setenv NCDF_MODE write
@@ -1570,13 +1584,13 @@ if ($all_sets == 0 || $set_3 == 0) then
 
     foreach name ($plots)
 	setenv SEASON $name
-	setenv TEST_INPUT ${test_path_climo}/${test_casename}_${SEASON}_climo.nc  
-	setenv TEST_PLOTVARS ${test_path_diag}/${test_casename}_${SEASON}_plotvars.nc
+	setenv TEST_INPUT ${test_path_climo}/${test_casename}_${SEASON}_${test_first_yr_prnt}-${test_last_yr_prnt}_climo.nc  
+	setenv TEST_PLOTVARS ${test_path_diag}/${test_casename}_${SEASON}_${test_first_yr_prnt}-${test_last_yr_prnt}_plotvars.nc
 	if ($CNTL == OBS) then
 	    setenv CNTL_INPUT $OBS_DATA 
 	else
-	    setenv CNTL_INPUT ${cntl_path_climo}/${cntl_casename}_${SEASON}_climo.nc    
-	    setenv CNTL_PLOTVARS ${test_path_diag}/${cntl_casename}_${SEASON}_plotvars.nc
+	    setenv CNTL_INPUT ${cntl_path_climo}/${cntl_casename}_${SEASON}_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_climo.nc    
+	    setenv CNTL_PLOTVARS ${test_path_diag}/${cntl_casename}_${SEASON}_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_plotvars.nc
 	endif 
 	if (-e $TEST_PLOTVARS) then
 	    setenv NCDF_MODE write
@@ -1606,13 +1620,13 @@ echo SET 4 VERTICAL CONTOUR PLOTS
 
 foreach name ($plots)
   setenv SEASON $name 
-  setenv TEST_INPUT ${test_path_climo}/${test_casename}_${SEASON}_climo.nc
-  setenv TEST_PLOTVARS ${test_path_diag}/${test_casename}_${SEASON}_plotvars.nc
+  setenv TEST_INPUT ${test_path_climo}/${test_casename}_${SEASON}_${test_first_yr_prnt}-${test_last_yr_prnt}_climo.nc
+  setenv TEST_PLOTVARS ${test_path_diag}/${test_casename}_${SEASON}_${test_first_yr_prnt}-${test_last_yr_prnt}_plotvars.nc
   if ($CNTL == OBS) then
     setenv CNTL_INPUT $OBS_DATA
   else
-    setenv CNTL_INPUT ${cntl_path_climo}/${cntl_casename}_${SEASON}_climo.nc
-    setenv CNTL_PLOTVARS ${test_path_diag}/${cntl_casename}_${SEASON}_plotvars.nc
+    setenv CNTL_INPUT ${cntl_path_climo}/${cntl_casename}_${SEASON}_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_climo.nc
+    setenv CNTL_PLOTVARS ${test_path_diag}/${cntl_casename}_${SEASON}_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_plotvars.nc
   endif
   if (-e $TEST_PLOTVARS) then
     setenv NCDF_MODE write
@@ -1642,13 +1656,13 @@ if ($all_sets == 0 || $set_4a == 0) then
     
     foreach name ($plots)
 	setenv SEASON $name 
-	setenv TEST_INPUT ${test_path_climo}/${test_casename}_${SEASON}_climo.nc
-	setenv TEST_PLOTVARS ${test_path_diag}/${test_casename}_${SEASON}_plotvars.nc
+	setenv TEST_INPUT ${test_path_climo}/${test_casename}_${SEASON}_${test_first_yr_prnt}-${test_last_yr_prnt}_climo.nc
+	setenv TEST_PLOTVARS ${test_path_diag}/${test_casename}_${SEASON}_${test_first_yr_prnt}-${test_last_yr_prnt}_plotvars.nc
 	if ($CNTL == OBS) then
 	    setenv CNTL_INPUT $OBS_DATA
 	else
-	    setenv CNTL_INPUT ${cntl_path_climo}/${cntl_casename}_${SEASON}_climo.nc
-	    setenv CNTL_PLOTVARS ${test_path_diag}/${cntl_casename}_${SEASON}_plotvars.nc
+	    setenv CNTL_INPUT ${cntl_path_climo}/${cntl_casename}_${SEASON}_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_climo.nc
+	    setenv CNTL_PLOTVARS ${test_path_diag}/${cntl_casename}_${SEASON}_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_plotvars.nc
 	endif
 	if (-e $TEST_PLOTVARS) then
 	    setenv NCDF_MODE write
@@ -1677,7 +1691,7 @@ if ($all_sets == 0 || $set_5 == 0) then
 
     if ($paleo == 0) then
 	echo ' '
-	setenv MODELFILE ${test_path_climo}/${test_casename}_ANN_climo.nc
+	setenv MODELFILE ${test_path_climo}/${test_casename}_ANN_${test_first_yr_prnt}-${test_last_yr_prnt}_climo.nc
 	setenv LANDMASK $land_mask1
 	if (-e ${test_path_climo}/${test_casename}.lines && -e ${test_path_climo}/${test_casename}.names) then
 	    echo TEST CASE COASTLINE DATA FOUND
@@ -1693,7 +1707,7 @@ if ($all_sets == 0 || $set_5 == 0) then
 	endif
 	if ($CNTL == USER) then
 	    echo ' '
-	    setenv MODELFILE ${cntl_path_climo}/${cntl_casename}_ANN_climo.nc
+	    setenv MODELFILE ${cntl_path_climo}/${cntl_casename}_ANN_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_climo.nc
 	    setenv LANDMASK $land_mask2
 	    if (-e ${cntl_path_climo}/${cntl_casename}.lines && -e ${cntl_path_climo}/${cntl_casename}.names) then
 		echo CNTL CASE COASTLINE DATA FOUND
@@ -1709,13 +1723,13 @@ if ($all_sets == 0 || $set_5 == 0) then
 
     foreach name ($plots)
 	setenv SEASON $name 
-	setenv TEST_INPUT ${test_path_climo}/${test_casename}_${SEASON}_climo.nc
-	setenv TEST_PLOTVARS ${test_path_diag}/${test_casename}_${SEASON}_plotvars.nc
+	setenv TEST_INPUT ${test_path_climo}/${test_casename}_${SEASON}_${test_first_yr_prnt}-${test_last_yr_prnt}_climo.nc
+	setenv TEST_PLOTVARS ${test_path_diag}/${test_casename}_${SEASON}_${test_first_yr_prnt}-${test_last_yr_prnt}_plotvars.nc
 	if ($CNTL == OBS) then
 	    setenv CNTL_INPUT $OBS_DATA
 	else
-	    setenv CNTL_INPUT ${cntl_path_climo}/${cntl_casename}_${SEASON}_climo.nc
-	    setenv CNTL_PLOTVARS ${test_path_diag}/${cntl_casename}_${SEASON}_plotvars.nc
+	    setenv CNTL_INPUT ${cntl_path_climo}/${cntl_casename}_${SEASON}_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_climo.nc
+	    setenv CNTL_PLOTVARS ${test_path_diag}/${cntl_casename}_${SEASON}_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_plotvars.nc
 	endif
 	if (-e $TEST_PLOTVARS) then
 	    setenv NCDF_MODE write
@@ -1723,10 +1737,10 @@ if ($all_sets == 0 || $set_5 == 0) then
 	    setenv NCDF_MODE create
 	endif   
 	if ($significance == 0) then
-	    setenv TEST_MEANS    ${test_path_climo}/${test_casename}_${SEASON}_means.nc
-	    setenv TEST_VARIANCE ${test_path_diag}/${test_casename}_${SEASON}_variance.nc
-	    setenv CNTL_MEANS    ${cntl_path_climo}/${cntl_casename}_${SEASON}_means.nc
-	    setenv CNTL_VARIANCE ${test_path_diag}/${cntl_casename}_${SEASON}_variance.nc
+	    setenv TEST_MEANS    ${test_path_climo}/${test_casename}_${SEASON}_${test_first_yr_prnt}-${test_last_yr_prnt}_means.nc
+	    setenv TEST_VARIANCE ${test_path_diag}/${test_casename}_${SEASON}_${test_first_yr_prnt}-${test_last_yr_prnt}_variance.nc
+	    setenv CNTL_MEANS    ${cntl_path_climo}/${cntl_casename}_${SEASON}_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_means.nc
+	    setenv CNTL_VARIANCE ${test_path_diag}/${cntl_casename}_${SEASON}_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_variance.nc
 	    if (-e $TEST_VARIANCE) then
 		setenv VAR_MODE write
 	    else
@@ -1768,7 +1782,7 @@ echo SET 6 LAT/LONG VECTOR PLOTS
 
 if ($paleo == 0) then
   echo ' '
-  setenv MODELFILE ${test_path_climo}/${test_casename}_ANN_climo.nc
+  setenv MODELFILE ${test_path_climo}/${test_casename}_ANN_${test_first_yr_prnt}-${test_last_yr_prnt}_climo.nc
   setenv LANDMASK $land_mask1
   if (-e ${test_path_climo}/${test_casename}.lines && -e ${test_path_climo}/${test_casename}.names) then
     echo TEST CASE COASTLINE DATA FOUND
@@ -1781,7 +1795,7 @@ if ($paleo == 0) then
   setenv PALEOCOAST1 $PALEODATA
   if ($CNTL == USER) then
     echo ' '
-    setenv MODELFILE ${cntl_path_climo}/${cntl_casename}_ANN_climo.nc
+    setenv MODELFILE ${cntl_path_climo}/${cntl_casename}_ANN_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_climo.nc
     setenv LANDMASK $land_mask2
     if (-e ${cntl_path_climo}/${cntl_casename}.lines && -e ${cntl_path_climo}/${cntl_casename}.names) then
       echo CNTL CASE COASTLINE DATA FOUND
@@ -1797,13 +1811,13 @@ endif
 
 foreach name ($plots)
   setenv SEASON $name 
-  setenv TEST_INPUT ${test_path_climo}/${test_casename}_${SEASON}_climo.nc
-  setenv TEST_PLOTVARS ${test_path_diag}/${test_casename}_${SEASON}_plotvars.nc
+  setenv TEST_INPUT ${test_path_climo}/${test_casename}_${SEASON}_${test_first_yr_prnt}-${test_last_yr_prnt}_climo.nc
+  setenv TEST_PLOTVARS ${test_path_diag}/${test_casename}_${SEASON}_${test_first_yr_prnt}-${test_last_yr_prnt}_plotvars.nc
   if ($CNTL == OBS) then
     setenv CNTL_INPUT $OBS_DATA
   else
-    setenv CNTL_INPUT ${cntl_path_climo}/${cntl_casename}_${SEASON}_climo.nc
-    setenv CNTL_PLOTVARS ${test_path_diag}/${cntl_casename}_${SEASON}_plotvars.nc
+    setenv CNTL_INPUT ${cntl_path_climo}/${cntl_casename}_${SEASON}_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_climo.nc
+    setenv CNTL_PLOTVARS ${test_path_diag}/${cntl_casename}_${SEASON}_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_plotvars.nc
   endif
   if (-e $TEST_PLOTVARS) then
     setenv NCDF_MODE write
@@ -1833,7 +1847,7 @@ echo SET 7 POLAR CONTOUR AND VECTOR PLOTS
 
 if ($paleo == 0) then
   echo ' '
-  setenv MODELFILE ${test_path_climo}/${test_casename}_ANN_climo.nc
+  setenv MODELFILE ${test_path_climo}/${test_casename}_ANN_${test_first_yr_prnt}-${test_last_yr_prnt}_climo.nc
   setenv LANDMASK $land_mask1
   if (-e ${test_path_climo}/${test_casename}.lines && -e ${test_path_climo}/${test_casename}.names) then
     echo TEST CASE COASTLINE DATA FOUND
@@ -1846,7 +1860,7 @@ if ($paleo == 0) then
   setenv PALEOCOAST1 $PALEODATA
   if ($CNTL == USER) then
     echo ' '
-    setenv MODELFILE ${cntl_path_climo}/${cntl_casename}_ANN_climo.nc
+    setenv MODELFILE ${cntl_path_climo}/${cntl_casename}_ANN_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_climo.nc
     setenv LANDMASK $land_mask2
     if (-e ${cntl_path_climo}/${cntl_casename}.lines && -e ${cntl_path_climo}/${cntl_casename}.names) then
       echo CNTL CASE COASTLINE DATA FOUND
@@ -1862,13 +1876,13 @@ endif
 
 foreach name ($plots)
   setenv SEASON $name 
-  setenv TEST_INPUT ${test_path_climo}/${test_casename}_${SEASON}_climo.nc
-  setenv TEST_PLOTVARS ${test_path_diag}/${test_casename}_${SEASON}_plotvars.nc
+  setenv TEST_INPUT ${test_path_climo}/${test_casename}_${SEASON}_${test_first_yr_prnt}-${test_last_yr_prnt}_climo.nc
+  setenv TEST_PLOTVARS ${test_path_diag}/${test_casename}_${SEASON}_${test_first_yr_prnt}-${test_last_yr_prnt}_plotvars.nc
   if ($CNTL == OBS) then
     setenv CNTL_INPUT $OBS_DATA
   else
-    setenv CNTL_INPUT ${cntl_path_climo}/${cntl_casename}_${SEASON}_climo.nc
-    setenv CNTL_PLOTVARS ${test_path_diag}/${cntl_casename}_${SEASON}_plotvars.nc
+    setenv CNTL_INPUT ${cntl_path_climo}/${cntl_casename}_${SEASON}_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_climo.nc
+    setenv CNTL_PLOTVARS ${test_path_diag}/${cntl_casename}_${SEASON}_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_plotvars.nc
   endif
   if (-e $TEST_PLOTVARS) then
     setenv NCDF_MODE write
@@ -1876,10 +1890,10 @@ foreach name ($plots)
     setenv NCDF_MODE create
   endif   
   if ($significance == 0) then
-    setenv TEST_MEANS    ${test_path_climo}/${test_casename}_${SEASON}_means.nc
-    setenv TEST_VARIANCE ${test_path_diag}/${test_casename}_${SEASON}_variance.nc
-    setenv CNTL_MEANS    ${cntl_path_climo}/${cntl_casename}_${SEASON}_means.nc
-    setenv CNTL_VARIANCE ${test_path_diag}/${cntl_casename}_${SEASON}_variance.nc
+    setenv TEST_MEANS    ${test_path_climo}/${test_casename}_${SEASON}_${test_first_yr_prnt}-${test_last_yr_prnt}_means.nc
+    setenv TEST_VARIANCE ${test_path_diag}/${test_casename}_${SEASON}_${test_first_yr_prnt}-${test_last_yr_prnt}_variance.nc
+    setenv CNTL_MEANS    ${cntl_path_climo}/${cntl_casename}_${SEASON}_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_means.nc
+    setenv CNTL_VARIANCE ${test_path_diag}/${cntl_casename}_${SEASON}_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_variance.nc
     if (-e $TEST_VARIANCE) then
       setenv VAR_MODE write
     else
@@ -1916,12 +1930,14 @@ if ($all_sets == 0 || $set_8 == 0) then
 echo " "
 echo SET 8 ANNUAL CYCLE PLOTS 
 setenv TEST_INPUT ${test_path_climo}/${test_casename}    # path/casename
-setenv TEST_PLOTVARS ${test_path_diag}/${test_casename}_MONTHS_plotvars.nc
+setenv TEST_PLOTVARS ${test_path_diag}/${test_casename}_MONTHS_${test_first_yr_prnt}-${test_last_yr_prnt}_plotvars.nc
+setenv TEST_YRS_PRNT ${test_first_yr_prnt}-${test_last_yr_prnt}
 if ($CNTL == OBS) then
   setenv CNTL_INPUT $OBS_DATA
 else
   setenv CNTL_INPUT $cntl_in       # path/casename
-  setenv CNTL_PLOTVARS ${test_path_diag}/${cntl_casename}_MONTHS_plotvars.nc
+  setenv CNTL_PLOTVARS ${test_path_diag}/${cntl_casename}_MONTHS_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_plotvars.nc
+  setenv CNTL_YRS_PRNT ${cntl_first_yr_prnt}-${cntl_last_yr_prnt}
 endif
 if (-e $TEST_PLOTVARS) then
   setenv NCDF_MODE write
@@ -1940,7 +1956,7 @@ if ($all_sets == 0 || $set_9 == 0) then
 echo ' '
 echo SET 9 DJF-JJA CONTOUR PLOTS
 if ($paleo == 0) then
-  setenv MODELFILE ${test_path_climo}/${test_casename}_ANN_climo.nc
+  setenv MODELFILE ${test_path_climo}/${test_casename}_ANN_${test_first_yr_prnt}-${test_last_yr_prnt}_climo.nc
   setenv LANDMASK $land_mask1
   if (-e ${test_path_climo}/${test_casename}.lines && -e ${test_path_climo}/${test_casename}.names) then
     echo TEST CASE COASTLINE DATA FOUND
@@ -1956,7 +1972,7 @@ if ($paleo == 0) then
   setenv PALEOCOAST1 $PALEODATA
   if ($CNTL == USER) then
     echo ' '
-    setenv MODELFILE ${cntl_path_climo}/${cntl_casename}_ANN_climo.nc
+    setenv MODELFILE ${cntl_path_climo}/${cntl_casename}_ANN_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_climo.nc
     setenv LANDMASK $land_mask2
     if (-e ${cntl_path_climo}/${cntl_casename}.lines && -e ${cntl_path_climo}/${cntl_casename}.names) then
       echo CNTL CASE COASTLINE DATA FOUND
@@ -1973,18 +1989,20 @@ endif
 echo MAKING PLOTS
 setenv TEST_INPUT    ${test_path_climo}/${test_casename}
 setenv TEST_PLOTVARS ${test_path_diag}/${test_casename}
+setenv TEST_YRS_PRNT ${test_first_yr_prnt}-${test_last_yr_prnt}
 if ($CNTL == OBS) then
   setenv CNTL_INPUT $OBS_DATA
 else
   setenv CNTL_INPUT    ${cntl_path_climo}/${cntl_casename}
   setenv CNTL_PLOTVARS ${test_path_diag}/${cntl_casename}
+  setenv CNTL_YRS_PRNT ${cntl_first_yr_prnt}-${cntl_last_yr_prnt}
 endif
-if (-e ${test_path_diag}/${test_casename}_DJF_plotvars.nc) then
+if (-e ${test_path_diag}/${test_casename}_DJF_${test_first_yr_prnt}-${test_last_yr_prnt}_plotvars.nc) then
   setenv NCDF_DJF_MODE write
 else
   setenv NCDF_DJF_MODE create
 endif   
-if (-e ${test_path_diag}/${test_casename}_JJA_plotvars.nc) then
+if (-e ${test_path_diag}/${test_casename}_JJA_${test_first_yr_prnt}-${test_last_yr_prnt}_plotvars.nc) then
   setenv NCDF_JJA_MODE write
 else
   setenv NCDF_JJA_MODE create
@@ -2003,13 +2021,15 @@ echo " "
 echo SET 10 ANNUAL CYCLE LINE PLOTS 
 setenv TEST_INPUT    ${test_path_climo}/${test_casename}        # path/casename
 setenv TEST_PLOTVARS ${test_path_diag}/${test_casename}
+setenv TEST_YRS_PRNT ${test_first_yr_prnt}-${test_last_yr_prnt}
 if ($CNTL == OBS) then
   setenv CNTL_INPUT $OBS_DATA        # path
 else
   setenv CNTL_INPUT    ${cntl_path_climo}/${cntl_casename}
   setenv CNTL_PLOTVARS ${test_path_diag}/${cntl_casename}
+  setenv CNTL_YRS_PRNT ${cntl_first_yr_prnt}-${cntl_last_yr_prnt}
 endif
-if (-e ${test_path_diag}/${test_casename}_01_plotvars.nc) then
+if (-e ${test_path_diag}/${test_casename}_01_${test_first_yr_prnt}-${test_last_yr_prnt}_plotvars.nc) then
   setenv NCDF_MODE write
 else
   setenv NCDF_MODE create
@@ -2029,23 +2049,25 @@ if ($plot_ANN_climo == 0 && $plot_DJF_climo == 0 && $plot_JJA_climo == 0) then
   echo SET 11 SWCF/LWCF SCATTER PLOTS 
   setenv TEST_INPUT    ${test_path_climo}/${test_casename}
   setenv TEST_PLOTVARS ${test_path_diag}/${test_casename}
+  setenv TEST_YRS_PRNT ${test_first_yr_prnt}-${test_last_yr_prnt}
   if ($CNTL == OBS) then
     setenv CNTL_INPUT $OBS_DATA
   else
     setenv CNTL_INPUT    ${cntl_path_climo}/${cntl_casename}
     setenv CNTL_PLOTVARS ${test_path_diag}/${cntl_casename}
+    setenv CNTL_YRS_PRNT ${cntl_first_yr_prnt}-${cntl_last_yr_prnt}
   endif
-  if (-e ${test_path_diag}/${test_casename}_ANN_plotvars.nc) then
+  if (-e ${test_path_diag}/${test_casename}_ANN_${test_first_yr_prnt}-${test_last_yr_prnt}_plotvars.nc) then
     setenv NCDF_ANN_MODE write
   else
     setenv NCDF_ANN_MODE create
   endif
-  if (-e ${test_path_diag}/${test_casename}_DJF_plotvars.nc) then
+  if (-e ${test_path_diag}/${test_casename}_DJF_${test_first_yr_prnt}-${test_last_yr_prnt}_plotvars.nc) then
     setenv NCDF_DJF_MODE write
   else
     setenv NCDF_DJF_MODE create
   endif
-  if (-e ${test_path_diag}/${test_casename}_JJA_plotvars.nc) then
+  if (-e ${test_path_diag}/${test_casename}_JJA_${test_first_yr_prnt}-${test_last_yr_prnt}_plotvars.nc) then
     setenv NCDF_JJA_MODE write
   else
     setenv NCDF_JJA_MODE create
@@ -2058,7 +2080,7 @@ endif
 
 echo " "
 if ($plot_MON_climo == 0) then
-  echo SET 11 EQUATORIAL ANNUAL CYCLE
+  echo "SET 11 EQUATORIAL ANNUAL CYCLE"
   $NCL < $DIAG_CODE/plot_cycle_eq.ncl
 else
   echo "WARNING: plot_MON_climo must be turned on (=0)"
@@ -2077,10 +2099,12 @@ if ($all_sets == 0 || $set_12 == 0) then
 echo ' '
 echo SET 12 VERTICAL PROFILES
 setenv TEST_CASE ${test_path_climo}/${test_casename}
+setenv TEST_YRS_PRNT ${test_first_yr_prnt}-${test_last_yr_prnt}
 if ($CNTL == OBS) then     
   setenv STD_CASE NONE 
 else
   setenv STD_CASE $cntl_in
+  setenv CNTL_YRS_PRNT ${cntl_first_yr_prnt}-${cntl_last_yr_prnt}
 endif
 
 if (-e ${test_path_diag}/station_ids) then
@@ -2278,14 +2302,14 @@ if ( $set_13_flag == 1 ) then
 else
   foreach name ($plots)   # do any or all of ANN,DJF,JJA
     setenv SEASON $name 
-    setenv TEST_INPUT    ${test_path_climo}/${test_casename}_${SEASON}_climo.nc
-    setenv TEST_PLOTVARS ${test_path_diag}/${test_casename}_${SEASON}_plotvars.nc
+    setenv TEST_INPUT    ${test_path_climo}/${test_casename}_${SEASON}_${test_first_yr_prnt}-${test_last_yr_prnt}_climo.nc
+    setenv TEST_PLOTVARS ${test_path_diag}/${test_casename}_${SEASON}_${test_first_yr_prnt}-${test_last_yr_prnt}_plotvars.nc
     if ($CNTL == OBS) then
       setenv CNTL_INPUT $OBS_DATA
       setenv CNTL_PLOTVARS $OBS_DATA
     else
-      setenv CNTL_INPUT    ${cntl_path_climo}/${cntl_casename}_${SEASON}_climo.nc
-      setenv CNTL_PLOTVARS ${test_path_diag}/${cntl_casename}_${SEASON}_plotvars.nc
+      setenv CNTL_INPUT    ${cntl_path_climo}/${cntl_casename}_${SEASON}_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_climo.nc
+      setenv CNTL_PLOTVARS ${test_path_diag}/${cntl_casename}_${SEASON}_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_plotvars.nc
     endif
     if (-e $TEST_PLOTVARS) then
       setenv NCDF_MODE write
@@ -2309,15 +2333,17 @@ endif
 
 if ($all_sets == 0 || $set_14 == 0) then
 setenv TEST_INPUT ${test_path_climo}/${test_casename}
+setenv TEST_YRS_PRNT ${test_first_yr_prnt}-${test_last_yr_prnt}
 if ($CNTL != OBS) then 
     setenv CNTL_INPUT ${cntl_path_climo}/${cntl_casename}
+    setenv CNTL_YRS_PRNT ${cntl_first_yr_prnt}-${cntl_last_yr_prnt}
 else
     setenv CNTL_INPUT $OBS_DATA
 endif
 
 if ($plot_MON_climo == 0) then
   echo ' '
-  echo SET 14 TAYLOR DIAGRAM PLOTS
+  echo "SET 14 TAYLOR DIAGRAM PLOTS"
   echo ' '
   $NCL < $DIAG_CODE/plot_taylor.ncl
 else
@@ -2337,12 +2363,14 @@ endif
 if ($all_sets == 0 || $set_15 == 0) then
 
     setenv TEST_INPUT    ${test_path_climo}/${test_casename}
-    setenv TEST_PLOTVARS ${test_path_diag}/${test_casename}_plotvars.nc
+    setenv TEST_PLOTVARS ${test_path_diag}/${test_casename}_${test_first_yr_prnt}-${test_last_yr_prnt}_plotvars.nc
+    setenv TEST_YRS_PRNT ${test_first_yr_prnt}-${test_last_yr_prnt}
     if ($CNTL == OBS) then
 	setenv CNTL_INPUT $OBS_DATA
     else
 	setenv CNTL_INPUT    ${cntl_path_climo}/${cntl_casename}
-	setenv CNTL_PLOTVARS ${test_path_diag}/${cntl_casename}_plotvars.nc
+	setenv CNTL_PLOTVARS ${test_path_diag}/${cntl_casename}_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_plotvars.nc
+	setenv CNTL_YRS_PRNT ${cntl_first_yr_prnt}-${cntl_last_yr_prnt}
     endif
     if (-e $TEST_PLOTVARS) then
 	setenv NCDF_MODE write
@@ -2351,7 +2379,7 @@ if ($all_sets == 0 || $set_15 == 0) then
     endif   
     if ($plot_MON_climo == 0) then
 	echo ' '
-	echo SET 15 ANNUAL CYCLE SELECT SITES PLOTS
+	echo "SET 15 ANNUAL CYCLE SELECT SITES PLOTS"
 	echo ' '
 	$NCL < $DIAG_CODE/plot_ac_select_sites.ncl
 	else

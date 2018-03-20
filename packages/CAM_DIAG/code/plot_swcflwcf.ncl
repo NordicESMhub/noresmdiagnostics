@@ -21,9 +21,11 @@ ncdf_djf_mode = getenv("NCDF_DJF_MODE")
 ncdf_jja_mode = getenv("NCDF_JJA_MODE")
 infile1    = getenv("TEST_INPUT")     ; case1 input path/prefix 
 outfile1   = getenv("TEST_PLOTVARS")  ; case1 output path/prefix 
-infile2    = getenv("CNTL_INPUT")     ; case2 input path/prefix 
+infile2    = getenv("CNTL_INPUT")     ; case2 input path/prefix
+yrs_prnt1  = getenv("TEST_YRS_PRNT")
 if (compare .ne. "OBS") then
-  outfile2   = getenv("CNTL_PLOTVARS") ; case2 output path/prefix 
+  outfile2   = getenv("CNTL_PLOTVARS") ; case2 output path/prefix
+  yrs_prnt2  = getenv("CNTL_YRS_PRNT")
 end if
 
 ;------------------------------------------------------------------
@@ -72,7 +74,7 @@ end if
 
 ;-------------------------------------------------------------------------
 ; CASE 1 MODEL
-inptr1 = addfile(infile1+"_ANN_climo.nc","r")
+inptr1 = addfile(infile1+"_ANN_"+yrs_prnt1+"_climo.nc","r")
 if (case_names .eq. "True") then
   case1 = getenv("CASE1")
 else
@@ -82,9 +84,9 @@ if (isatt(inptr1,"yrs_averaged")) then
   yrs_ave1 = inptr1@yrs_averaged
 end if
 if (ncdf_ann_mode .eq. "write") then
-  outptr1 = addfile(outfile1+"_ANN_plotvars.nc","w")
+  outptr1 = addfile(outfile1+"_ANN_"+yrs_prnt1+"_plotvars.nc","w")
 else
-  outptr1 = addfile(outfile1+"_ANN_plotvars.nc","c")
+  outptr1 = addfile(outfile1+"_ANN_"+yrs_prnt1+"_plotvars.nc","c")
 end if
 if (isfilevar(inptr1,"LWCF") .and. compare.eq."OBS") then
   lwcf1 = get_LWCFTOA (inptr1,outptr1)
@@ -111,11 +113,11 @@ if (compare .eq. "OBS") then
   plot3(0) = gsn_csm_xy (wks3,x,y,res)
 end if
 
-inptr1 = addfile(infile1+"_DJF_climo.nc","r")
+inptr1 = addfile(infile1+"_DJF_"+yrs_prnt1+"_climo.nc","r")
 if (ncdf_djf_mode .eq. "write") then
-  outptr1 = addfile(outfile1+"_DJF_plotvars.nc","w")
+  outptr1 = addfile(outfile1+"_DJF_"+yrs_prnt1+"_plotvars.nc","w")
 else
-  outptr1 = addfile(outfile1+"_DJF_plotvars.nc","c")
+  outptr1 = addfile(outfile1+"_DJF_"+yrs_prnt1+"_plotvars.nc","c")
 end if
 if (isfilevar(inptr1,"LWCF") .and. compare.eq."OBS") then
   lwcf1 = get_LWCFTOA (inptr1,outptr1)
@@ -134,11 +136,11 @@ if (compare .eq. "OBS") then
   plot3(2) = gsn_csm_xy (wks3,x,y,res)
 end if
 
-inptr1 = addfile(infile1+"_JJA_climo.nc","r")
+inptr1 = addfile(infile1+"_JJA_"+yrs_prnt1+"_climo.nc","r")
 if (ncdf_jja_mode .eq. "write") then
-  outptr1 = addfile(outfile1+"_JJA_plotvars.nc","w")
+  outptr1 = addfile(outfile1+"_JJA_"+yrs_prnt1+"_plotvars.nc","w")
 else
-  outptr1 = addfile(outfile1+"_JJA_plotvars.nc","c")
+  outptr1 = addfile(outfile1+"_JJA_"+yrs_prnt1+"_plotvars.nc","c")
 end if
 if (isfilevar(inptr1,"LWCF") .and. compare.eq."OBS") then
   lwcf1 = get_LWCFTOA (inptr1,outptr1)
@@ -170,7 +172,7 @@ delete (res@tiYAxisString)
 
 ; CASE 2 IS MODEL
 if (compare .ne. "OBS") then
-  inptr2 = addfile(infile2+"_ANN_climo.nc","r")
+  inptr2 = addfile(infile2+"_ANN_"+yrs_prnt2+"_climo.nc","r")
   landfrac = inptr2->LANDFRAC
   if (case_names .eq. "True") then
     case2 = getenv("CASE2")
@@ -181,9 +183,9 @@ if (compare .ne. "OBS") then
     yrs_ave2 = inptr2@yrs_averaged
   end if
   if (ncdf_ann_mode .eq. "write") then
-    outptr2 = addfile(outfile2+"_ANN_plotvars.nc","w")
+    outptr2 = addfile(outfile2+"_ANN_"+yrs_prnt2+"_plotvars.nc","w")
   else
-    outptr2 = addfile(outfile2+"_ANN_plotvars.nc","c")
+    outptr2 = addfile(outfile2+"_ANN_"+yrs_prnt2+"_plotvars.nc","c")
   end if
   if (isfilevar(inptr2,"LWCF") .and. compare.eq."OBS") then
     lwcf2 = get_LWCFTOA (inptr2,outptr2)
@@ -204,11 +206,11 @@ if (compare .ne. "OBS") then
   y!0 = "swcf"
   plot(1) = gsn_csm_xy (wks,x,y,res)
 
-  inptr2 = addfile(infile2+"_DJF_climo.nc","r")
+  inptr2 = addfile(infile2+"_DJF_"+yrs_prnt2+"_climo.nc","r")
   if (ncdf_djf_mode .eq. "write") then
-    outptr2 = addfile(outfile2+"_DJF_plotvars.nc","w")
+    outptr2 = addfile(outfile2+"_DJF_"+yrs_prnt2+"_plotvars.nc","w")
   else
-    outptr2 = addfile(outfile2+"_DJF_plotvars.nc","c")
+    outptr2 = addfile(outfile2+"_DJF_"+yrs_prnt2+"_plotvars.nc","c")
   end if
   if (isfilevar(inptr2,"LWCF") .and. compare.eq."OBS") then
     lwcf2 = get_LWCFTOA (inptr2,outptr2)
@@ -222,11 +224,11 @@ if (compare .ne. "OBS") then
   x = ndtooned(lwcf2({minlat:maxlat},{minlon:maxlon}))
   plot(3) = gsn_csm_xy (wks,x,y,res)
 
-  inptr2 = addfile(infile2+"_JJA_climo.nc","r")
+  inptr2 = addfile(infile2+"_JJA_"+yrs_prnt2+"_climo.nc","r")
   if (ncdf_jja_mode .eq. "write") then
-    outptr2 = addfile(outfile2+"_JJA_plotvars.nc","w")
+    outptr2 = addfile(outfile2+"_JJA_"+yrs_prnt2+"_plotvars.nc","w")
   else
-    outptr2 = addfile(outfile2+"_JJA_plotvars.nc","c")
+    outptr2 = addfile(outfile2+"_JJA_"+yrs_prnt2+"_plotvars.nc","c")
   end if
   if (isfilevar(inptr2,"LWCF") .and. compare.eq."OBS") then
     lwcf2 = get_LWCFTOA (inptr2,outptr2)

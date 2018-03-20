@@ -18,10 +18,14 @@ begin
  time_stamp = getenv("TIMESTAMP")
  case_names = getenv("CASENAMES")
  infile1    = getenv("TEST_INPUT")     ; case1 input path/prefix 
- infile2    = getenv("CNTL_INPUT")     ; case2 input path/prefix 
+ infile2    = getenv("CNTL_INPUT")     ; case2 input path/prefix
+ yrs_prnt1  = getenv("TEST_YRS_PRNT")
+ if (compare.ne."OBS") then
+   yrs_prnt2 = getenv("CNTL_YRS_PRNT")
+ end if
 
 ; CASE 1 MODEL 
- inptr1 = addfile(infile1+"_ANN_climo.nc","r")  
+ inptr1 = addfile(infile1+"_ANN_"+yrs_prnt1+"_climo.nc","r")  
  if (case_names .eq. "True") then
    case1 = getenv("CASE1")
  else
@@ -34,7 +38,7 @@ begin
 
 ; CASE 2 IS MODEL
  if (compare.ne."OBS") then    
-   inptr2 = addfile(infile2+"_ANN_climo.nc","r")  
+   inptr2 = addfile(infile2+"_ANN_"+yrs_prnt2+"_climo.nc","r")  
    if (case_names .eq. "True") then
      case2 = getenv("CASE2")
    else
@@ -139,22 +143,22 @@ begin
 ;  CASE 1 IS MODEL
 
    if (vars(i).eq."LHFLX_OCEAN") then
-     A = cycle_LHFLX_OCEAN (infile1)
+     A = cycle_LHFLX_OCEAN (infile1,yrs_prnt1)
    end if
    if (vars(i).eq."PRECT_OCEAN") then
-     A = cycle_PRECT_OCEAN (infile1)
+     A = cycle_PRECT_OCEAN (infile1,yrs_prnt1)
    end if
    if (vars(i).eq."SST") then
-     A = cycle_SST (infile1)
+     A = cycle_SST (infile1,yrs_prnt1)
    end if
    if (vars(i).eq."SWCF_OCEAN") then
-     A = cycle_SWCF_OCEAN (infile1)
+     A = cycle_SWCF_OCEAN (infile1,yrs_prnt1)
    end if
    if (vars(i).eq."TAUX_OCEAN") then
-     A = cycle_TAUX_OCEAN (infile1)
+     A = cycle_TAUX_OCEAN (infile1,yrs_prnt1)
    end if
    if (vars(i).eq."TAUY_OCEAN") then
-     A = cycle_TAUY_OCEAN (infile1)
+     A = cycle_TAUY_OCEAN (infile1,yrs_prnt1)
    end if
 
    if (all(A.eq.-999.)) then
@@ -205,22 +209,22 @@ begin
 ;  model-to-model comparison
 
      if (vars(i).eq."LHFLX_OCEAN") then
-       B = cycle_LHFLX_OCEAN (infile2)
+       B = cycle_LHFLX_OCEAN (infile2,yrs_prnt2)
      end if
      if (vars(i).eq."PRECT_OCEAN") then
-       B = cycle_PRECT_OCEAN (infile2)
+       B = cycle_PRECT_OCEAN (infile2,yrs_prnt2)
      end if
      if (vars(i).eq."SST") then
-       B = cycle_SST (infile2)
+       B = cycle_SST (infile2,yrs_prnt2)
      end if
      if (vars(i).eq."SWCF_OCEAN") then
-       B = cycle_SWCF_OCEAN (infile2)
+       B = cycle_SWCF_OCEAN (infile2,yrs_prnt2)
      end if
      if (vars(i).eq."TAUX_OCEAN") then
-       B = cycle_TAUX_OCEAN (infile2)
+       B = cycle_TAUX_OCEAN (infile2,yrs_prnt2)
      end if
      if (vars(i).eq."TAUY_OCEAN") then
-       B = cycle_TAUY_OCEAN (infile2)
+       B = cycle_TAUY_OCEAN (infile2,yrs_prnt2)
      end if
    end if
 

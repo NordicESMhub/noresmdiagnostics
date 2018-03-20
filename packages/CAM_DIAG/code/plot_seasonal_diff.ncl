@@ -24,8 +24,10 @@ begin
  infile1    = getenv("TEST_INPUT")     ; case1 input filename
  outfile1   = getenv("TEST_PLOTVARS")  ; case1 output filename
  infile2    = getenv("CNTL_INPUT")     ; case2 input filename
+ yrs_prnt1  = getenv("TEST_YRS_PRNT")
  if (compare .ne. "OBS") then
-   outfile2 = getenv("CNTL_PLOTVARS")  ; case2 output filename
+   outfile2  = getenv("CNTL_PLOTVARS")  ; case2 output filename
+   yrs_prnt2 = getenv("CNTL_YRS_PRNT")
  end if
  if (paleo .eq. "True") then
    PALEO = True
@@ -38,17 +40,17 @@ begin
  end if
 
 ; CASE 1 MODEL
- inptr1_djf = addfile(infile1+"_DJF_climo.nc","r")
- inptr1_jja = addfile(infile1+"_JJA_climo.nc","r")
+ inptr1_djf = addfile(infile1+"_DJF_"+yrs_prnt1+"_climo.nc","r")
+ inptr1_jja = addfile(infile1+"_JJA_"+yrs_prnt1+"_climo.nc","r")
  if (ncdf_djf_mode .eq. "write") then
-   outptr1_djf = addfile(outfile1+"_DJF_plotvars.nc","w")
+   outptr1_djf = addfile(outfile1+"_DJF_"+yrs_prnt1+"_plotvars.nc","w")
  else
-   outptr1_djf = addfile(outfile1+"_DJF_plotvars.nc","c")
+   outptr1_djf = addfile(outfile1+"_DJF_"+yrs_prnt1+"_plotvars.nc","c")
  end if
  if (ncdf_jja_mode .eq. "write") then
-   outptr1_jja = addfile(outfile1+"_JJA_plotvars.nc","w")
+   outptr1_jja = addfile(outfile1+"_JJA_"+yrs_prnt1+"_plotvars.nc","w")
  else
-   outptr1_jja = addfile(outfile1+"_JJA_plotvars.nc","c")
+   outptr1_jja = addfile(outfile1+"_JJA_"+yrs_prnt1+"_plotvars.nc","c")
  end if
  if (case_names .eq. "True") then
    case1 = getenv("CASE1")
@@ -91,17 +93,17 @@ begin
    jja_xa = addfile(infile2+"/XIEARKIN_JJA_climo.nc","r")
  else
 ;  CASE 2 IS MODEL
-   inptr2_djf = addfile(infile2+"_DJF_climo.nc","r")
-   inptr2_jja = addfile(infile2+"_JJA_climo.nc","r")
+   inptr2_djf = addfile(infile2+"_DJF_"+yrs_prnt2+"_climo.nc","r")
+   inptr2_jja = addfile(infile2+"_JJA_"+yrs_prnt2+"_climo.nc","r")
    if (ncdf_djf_mode .eq. "write") then
-     outptr2_djf = addfile(outfile2+"_DJF_plotvars.nc","w")
+     outptr2_djf = addfile(outfile2+"_DJF_"+yrs_prnt2+"_plotvars.nc","w")
    else
-     outptr2_djf = addfile(outfile2+"_DJF_plotvars.nc","c")
+     outptr2_djf = addfile(outfile2+"_DJF_"+yrs_prnt2+"_plotvars.nc","c")
    end if
    if (ncdf_jja_mode .eq. "write") then
-     outptr2_jja = addfile(outfile2+"_JJA_plotvars.nc","w")
+     outptr2_jja = addfile(outfile2+"_JJA_"+yrs_prnt2+"_plotvars.nc","w")
    else
-     outptr2_jja = addfile(outfile2+"_JJA_plotvars.nc","c")
+     outptr2_jja = addfile(outfile2+"_JJA_"+yrs_prnt2+"_plotvars.nc","c")
    end if
    if (case_names .eq. "True") then
      case2 = getenv("CASE2")

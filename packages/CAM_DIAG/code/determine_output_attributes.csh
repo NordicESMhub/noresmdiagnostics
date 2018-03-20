@@ -16,7 +16,7 @@ unset echo verbose
 # $compute_climo   # compute_climo is (0=ON,1=OFF) 
 
 
-if ($#argv != 10) then
+if ($#argv != 11) then
   echo "Usage: determine_output_attributes.csh: needs 10 arguments "
   exit 1
 endif
@@ -31,6 +31,7 @@ set compute_climo = $7
 set file_type = $8
 set ts_filename = $9
 set climo_req = $10
+@ last_year = $11
 
 ##
 ## Make a directory that contains the attributes 
@@ -60,7 +61,9 @@ if (! -e ${fullpath_filename} || -z ${fullpath_filename} ) then
 endif
 
 if ($compute_climo == 1 && $climo_req == 0) then
-   set filename           = ${casename}_01_climo.nc
+   set first_yr_prnt = `printf "%04d" ${first_year}`
+   set last_yr_prnt  = `printf "%04d" ${last_year}`
+   set filename           = ${casename}_01_${first_yr_prnt}-${last_yr_prnt}_climo.nc
    set fullpath_filename  = ${path_climo}/${filename} 
 endif
 

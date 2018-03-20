@@ -40,8 +40,10 @@ load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/gsn_csm.ncl"
   outfile1   = getenv("TEST_PLOTVARS")  ; case1 output filename
   infile2    = getenv("CNTL_INPUT")     ; case2 input filename
   cam_base   = getenv("TAYLOR_BASECASE")
+  yrs_prnt1  = getenv("TEST_YRS_PRNT")
   if (compare .ne. "OBS") then
-    outfile2 = getenv("CNTL_PLOTVARS")  ; case2 output filename
+    outfile2  = getenv("CNTL_PLOTVARS")  ; case2 output filename
+    yrs_prnt2 = getenv("CNTL_YRS_PRNT")
   end if
 
 ;----------------------------------------------
@@ -84,7 +86,7 @@ end if
 ; CASE 1 is model (test)
 
   
-  inflist1   = systemfunc("ls -1 "+infile1+"_{01,02,03,04,05,06,07,08,09,10,11,12}_climo.nc")
+  inflist1   = systemfunc("ls -1 "+infile1+"_{01,02,03,04,05,06,07,08,09,10,11,12}_"+yrs_prnt1+"_climo.nc")
   inptr1 = addfile(inflist1(0), "r")           ; note the "s" of addfiless
     
   if (case_names .eq. "True") then
@@ -100,7 +102,7 @@ end if
 ; COMPARE to another model.
 
   if (compare .ne. "OBS") then
-    inflist2  = systemfunc("ls -1 "+infile2+"_{01,02,03,04,05,06,07,08,09,10,11,12}_climo.nc")
+    inflist2  = systemfunc("ls -1 "+infile2+"_{01,02,03,04,05,06,07,08,09,10,11,12}_"+yrs_prnt2+"_climo.nc")
     inptr2    = addfile(inflist2(0), "r")           ; note the "s" of addfiless
    
     if (case_names .eq. "True") then

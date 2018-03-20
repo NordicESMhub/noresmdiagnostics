@@ -2,6 +2,8 @@
 ; plot_ann_cycle.ncl
 ; Mark Stevens Sept 2001
 ; set 8
+; Update Johan Liakka, March 2018:
+; Time stamp on climo files
 ;**************************************************
 load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/gsn_code.ncl"  
 load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/gsn_csm.ncl"  
@@ -21,13 +23,15 @@ begin
  ncdf_mode  = getenv("NCDF_MODE")
  infile1    = getenv("TEST_INPUT")     ; case1 input prefix 
  outfile1   = getenv("TEST_PLOTVARS")  ; case1 output filename
- infile2    = getenv("CNTL_INPUT")     ; case2 input prefix 
+ infile2    = getenv("CNTL_INPUT")     ; case2 input prefix
+ yrs_prnt1  = getenv("TEST_YRS_PRNT")
  if (compare .ne. "OBS") then
-   outfile2 = getenv("CNTL_PLOTVARS")  ; case2 output filename
+   outfile2  = getenv("CNTL_PLOTVARS")  ; case2 output filename
+   yrs_prnt2 = getenv("CNTL_YRS_PRNT")
  end if
 
 ; CASE 1 MODEL 
- inptr1 = addfile(infile1+"_01_climo.nc","r")  
+ inptr1 = addfile(infile1+"_01_"+yrs_prnt1+"_climo.nc","r")  
  lat1 = inptr1->lat
  nlat1 = dimsizes(lat1)
  if (case_names .eq. "True") then
@@ -44,7 +48,6 @@ begin
  else
    outptr1 = addfile(outfile1,"c")
  end if
-
 ; CASE 2 IS OBS
 if (compare.eq."OBS") then    
   month = (/"01","02","03","04","05","06","07","08","09","10","11","12"/)   
@@ -82,7 +85,7 @@ if (compare.eq."OBS") then
    end do
  else    
 ;  CASE 2 IS MODEL
-   inptr2 = addfile(infile2+"_01_climo.nc","r")  
+   inptr2 = addfile(infile2+"_01_"+yrs_prnt2+"_climo.nc","r")  
    lat2 = inptr2->lat
    nlat2 = dimsizes(lat2)
    if (case_names .eq. "True") then
@@ -420,142 +423,142 @@ if (compare.eq."OBS") then
  do i = 0, nvars-1
 
    if (vars(i).eq."FLNT") then
-     A = cycle_FLNT (infile1,outptr1)
+     A = cycle_FLNT (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."FLUT") then
-     A = cycle_FLUT (infile1,outptr1)
+     A = cycle_FLUT (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."PRECT") then
-     A = cycle_PRECT (infile1,outptr1)
+     A = cycle_PRECT (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."PREH2O") then
-     A = cycle_PREH2O (infile1,outptr1)
+     A = cycle_PREH2O (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."SOLIN") then
-     A = cycle_SOLIN (infile1,outptr1)
+     A = cycle_SOLIN (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."TAUX_OCEAN") then
-     A = cycle_TAUX_OCEAN (infile1,outptr1)
+     A = cycle_TAUX_OCEAN (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."U_200") then
-     A = cycle_U_200 (infile1,outptr1)
+     A = cycle_U_200 (infile1,outptr1,yrs_prnt1)
    end if
 ;  BRH additions for COSP
 ;  ISCCP diagnostics
    if (vars(i).eq."CLDTOT_ISCCPCOSP") then
-     A = cycle_CLDTOT_ISCCPCOSP (infile1,outptr1)
+     A = cycle_CLDTOT_ISCCPCOSP (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."CLDLOW_ISCCPCOSP") then
-     A = cycle_CLDLOW_ISCCPCOSP (infile1,outptr1)
+     A = cycle_CLDLOW_ISCCPCOSP (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."CLDMED_ISCCPCOSP") then
-     A = cycle_CLDMED_ISCCPCOSP (infile1,outptr1)
+     A = cycle_CLDMED_ISCCPCOSP (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."CLDHGH_ISCCPCOSP") then
-     A = cycle_CLDHGH_ISCCPCOSP (infile1,outptr1)
+     A = cycle_CLDHGH_ISCCPCOSP (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."CLDTHICK_ISCCPCOSP") then
-     A = cycle_CLDTHICK_ISCCPCOSP (infile1,outptr1)
+     A = cycle_CLDTHICK_ISCCPCOSP (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."MEANPTOP_ISCCPCOSP") then
-     A = cycle_MEANPTOP_ISCCPCOSP (infile1,outptr1)
+     A = cycle_MEANPTOP_ISCCPCOSP (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."MEANTTOP_ISCCPCOSP") then
-     A = cycle_MEANTTOP_ISCCPCOSP (infile1,outptr1)
+     A = cycle_MEANTTOP_ISCCPCOSP (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."MEANCLDALB_ISCCPCOSP") then
-     A = cycle_MEANCLDALB_ISCCPCOSP (infile1,outptr1)
+     A = cycle_MEANCLDALB_ISCCPCOSP (infile1,outptr1,yrs_prnt1)
    end if
 ;  MISR diagnostics
    if (vars(i).eq."CLDTOT_MISR") then
-     A = cycle_CLDTOT_MISR (infile1,outptr1)
+     A = cycle_CLDTOT_MISR (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."CLDLOW_MISR") then
-     A = cycle_CLDLOW_MISR (infile1,outptr1)
+     A = cycle_CLDLOW_MISR (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."CLDMED_MISR") then
-     A = cycle_CLDMED_MISR (infile1,outptr1)
+     A = cycle_CLDMED_MISR (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."CLDHGH_MISR") then
-     A = cycle_CLDHGH_MISR (infile1,outptr1)
+     A = cycle_CLDHGH_MISR (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."CLDTHICK_MISR") then
-     A = cycle_CLDTHICK_MISR (infile1,outptr1)
+     A = cycle_CLDTHICK_MISR (infile1,outptr1,yrs_prnt1)
    end if
 ;  MODIS diagnostics
    if (vars(i).eq."CLDTOT_MODIS") then
-     A = cycle_CLDTOT_MODIS (infile1,outptr1)
+     A = cycle_CLDTOT_MODIS (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."CLDLOW_MODIS") then
-     A = cycle_CLDLOW_MODIS (infile1,outptr1)
+     A = cycle_CLDLOW_MODIS (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."CLDMED_MODIS") then
-     A = cycle_CLDMED_MODIS (infile1,outptr1)
+     A = cycle_CLDMED_MODIS (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."CLDHGH_MODIS") then
-     A = cycle_CLDHGH_MODIS (infile1,outptr1)
+     A = cycle_CLDHGH_MODIS (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."CLDTHICK_MODIS") then
-     A = cycle_CLDTHICK_MODIS (infile1,outptr1)
+     A = cycle_CLDTHICK_MODIS (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."CLWMODIS") then
-     A = cycle_CLWMODIS (infile1,outptr1)
+     A = cycle_CLWMODIS (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."CLIMODIS") then
-     A = cycle_CLIMODIS (infile1,outptr1)
+     A = cycle_CLIMODIS (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."LWPMODIS") then
-     A = cycle_LWPMODIS (infile1,outptr1)
+     A = cycle_LWPMODIS (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."IWPMODIS") then
-     A = cycle_IWPMODIS (infile1,outptr1)
+     A = cycle_IWPMODIS (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."REFFCLWMODIS") then
-     A = cycle_REFFCLWMODIS (infile1,outptr1)
+     A = cycle_REFFCLWMODIS (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."REFFCLIMODIS") then
-     A = cycle_REFFCLIMODIS (infile1,outptr1)
+     A = cycle_REFFCLIMODIS (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."TAUWLOGMODIS") then
-     A = cycle_TAUWLOGMODIS (infile1,outptr1)
+     A = cycle_TAUWLOGMODIS (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."TAUILOGMODIS") then
-     A = cycle_TAUILOGMODIS (infile1,outptr1)
+     A = cycle_TAUILOGMODIS (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."TAUTLOGMODIS") then
-     A = cycle_TAUTLOGMODIS (infile1,outptr1)
+     A = cycle_TAUTLOGMODIS (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."TAUWMODIS") then
-     A = cycle_TAUWMODIS (infile1,outptr1)
+     A = cycle_TAUWMODIS (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."TAUIMODIS") then
-     A = cycle_TAUIMODIS (infile1,outptr1)
+     A = cycle_TAUIMODIS (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."TAUTMODIS") then
-     A = cycle_TAUTMODIS (infile1,outptr1)
+     A = cycle_TAUTMODIS (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."PCTMODIS") then
-     A = cycle_PCTMODIS (infile1,outptr1)
+     A = cycle_PCTMODIS (infile1,outptr1,yrs_prnt1)
    end if
 ;  CALIPSO diagnostics
    if (vars(i).eq."CLDTOT_CAL") then
-     A = cycle_CLDTOT_CAL (infile1,outptr1)
+     A = cycle_CLDTOT_CAL (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."CLDLOW_CAL") then
-     A = cycle_CLDLOW_CAL (infile1,outptr1)
+     A = cycle_CLDLOW_CAL (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."CLDMED_CAL") then
-     A = cycle_CLDMED_CAL (infile1,outptr1)
+     A = cycle_CLDMED_CAL (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."CLDHGH_CAL") then
-     A = cycle_CLDHGH_CAL (infile1,outptr1)
+     A = cycle_CLDHGH_CAL (infile1,outptr1,yrs_prnt1)
    end if
 ;  CLOUDSAT diagnostics
    if (vars(i).eq."CLDTOT_CS2") then
-     A = cycle_CLDTOT_CS2 (infile1,outptr1)
+     A = cycle_CLDTOT_CS2 (infile1,outptr1,yrs_prnt1)
    end if
    if (vars(i).eq."CLDTOT_CS") then
-     A = cycle_CLDTOT_CS (infile1,outptr1)
+     A = cycle_CLDTOT_CS (infile1,outptr1,yrs_prnt1)
    end if
 ;  end BRH additions
 
@@ -669,142 +672,142 @@ if (compare.eq."OBS") then
 ;  model-to-model comparison
 
      if (vars(i).eq."FLNT") then
-       B = cycle_FLNT (infile2,outptr2)
+       B = cycle_FLNT (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."FLUT") then
-       B = cycle_FLUT (infile2,outptr2)
+       B = cycle_FLUT (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."PRECT") then
-       B = cycle_PRECT (infile2,outptr2)
+       B = cycle_PRECT (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."PREH2O") then
-       B = cycle_PREH2O (infile2,outptr2)
+       B = cycle_PREH2O (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."SOLIN") then
-       B = cycle_SOLIN (infile2,outptr2)
+       B = cycle_SOLIN (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."TAUX_OCEAN") then
-       B = cycle_TAUX_OCEAN (infile2,outptr2)
+       B = cycle_TAUX_OCEAN (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."U_200") then
-       B = cycle_U_200 (infile2,outptr2)
+       B = cycle_U_200 (infile2,outptr2,yrs_prnt2)
      end if
 ;    BRH additions for COSP
 ;    ISCCP diagnostics
      if (vars(i).eq."CLDTOT_ISCCPCOSP") then
-       B = cycle_CLDTOT_ISCCPCOSP (infile2,outptr2)
+       B = cycle_CLDTOT_ISCCPCOSP (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."CLDLOW_ISCCPCOSP") then
-       B = cycle_CLDLOW_ISCCPCOSP (infile2,outptr2)
+       B = cycle_CLDLOW_ISCCPCOSP (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."CLDMED_ISCCPCOSP") then
-       B = cycle_CLDMED_ISCCPCOSP (infile2,outptr2)
+       B = cycle_CLDMED_ISCCPCOSP (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."CLDHGH_ISCCPCOSP") then
-       B = cycle_CLDHGH_ISCCPCOSP (infile2,outptr2)
+       B = cycle_CLDHGH_ISCCPCOSP (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."CLDTHICK_ISCCPCOSP") then
-       B = cycle_CLDTHICK_ISCCPCOSP (infile2,outptr2)
+       B = cycle_CLDTHICK_ISCCPCOSP (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."MEANPTOP_ISCCPCOSP") then
-       B = cycle_MEANPTOP_ISCCPCOSP (infile2,outptr2)
+       B = cycle_MEANPTOP_ISCCPCOSP (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."MEANTTOP_ISCCPCOSP") then
-       B = cycle_MEANTTOP_ISCCPCOSP (infile2,outptr2)
+       B = cycle_MEANTTOP_ISCCPCOSP (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."MEANCLDALB_ISCCPCOSP") then
-       B = cycle_MEANCLDALB_ISCCPCOSP (infile2,outptr2)
+       B = cycle_MEANCLDALB_ISCCPCOSP (infile2,outptr2,yrs_prnt2)
      end if
 ;    MISR diagnostics
      if (vars(i).eq."CLDTOT_MISR") then
-       B = cycle_CLDTOT_MISR (infile2,outptr2)
+       B = cycle_CLDTOT_MISR (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."CLDLOW_MISR") then
-       B = cycle_CLDLOW_MISR (infile2,outptr2)
+       B = cycle_CLDLOW_MISR (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."CLDMED_MISR") then
-       B = cycle_CLDMED_MISR (infile2,outptr2)
+       B = cycle_CLDMED_MISR (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."CLDHGH_MISR") then
-       B = cycle_CLDHGH_MISR (infile2,outptr2)
+       B = cycle_CLDHGH_MISR (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."CLDTHICK_MISR") then
-       B = cycle_CLDTHICK_MISR (infile2,outptr2)
+       B = cycle_CLDTHICK_MISR (infile2,outptr2,yrs_prnt2)
      end if
 ;    MODIS diagnostics
      if (vars(i).eq."CLDTOT_MODIS") then
-       B = cycle_CLDTOT_MODIS (infile2,outptr2)
+       B = cycle_CLDTOT_MODIS (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."CLDLOW_MODIS") then
-       B = cycle_CLDLOW_MODIS (infile2,outptr2)
+       B = cycle_CLDLOW_MODIS (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."CLDMED_MODIS") then
-       B = cycle_CLDMED_MODIS (infile2,outptr2)
+       B = cycle_CLDMED_MODIS (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."CLDHGH_MODIS") then
-       B = cycle_CLDHGH_MODIS (infile2,outptr2)
+       B = cycle_CLDHGH_MODIS (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."CLDTHICK_MODIS") then
-       B = cycle_CLDTHICK_MODIS (infile2,outptr2)
+       B = cycle_CLDTHICK_MODIS (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."CLWMODIS") then
-       B = cycle_CLWMODIS (infile2,outptr2)
+       B = cycle_CLWMODIS (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."CLIMODIS") then
-       B = cycle_CLIMODIS (infile2,outptr2)
+       B = cycle_CLIMODIS (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."LWPMODIS") then
-       B = cycle_LWPMODIS (infile2,outptr2)
+       B = cycle_LWPMODIS (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."IWPMODIS") then
-       B = cycle_IWPMODIS (infile2,outptr2)
+       B = cycle_IWPMODIS (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."REFFCLWMODIS") then
-       B = cycle_REFFCLWMODIS (infile2,outptr2)
+       B = cycle_REFFCLWMODIS (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."REFFCLIMODIS") then
-       B = cycle_REFFCLIMODIS (infile2,outptr2)
+       B = cycle_REFFCLIMODIS (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."TAUWLOGMODIS") then
-       B = cycle_TAUWLOGMODIS (infile2,outptr2)
+       B = cycle_TAUWLOGMODIS (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."TAUILOGMODIS") then
-       B = cycle_TAUILOGMODIS (infile2,outptr2)
+       B = cycle_TAUILOGMODIS (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."TAUTLOGMODIS") then
-       B = cycle_TAUTLOGMODIS (infile2,outptr2)
+       B = cycle_TAUTLOGMODIS (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."TAUWMODIS") then
-       B = cycle_TAUWMODIS (infile2,outptr2)
+       B = cycle_TAUWMODIS (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."TAUIMODIS") then
-       B = cycle_TAUIMODIS (infile2,outptr2)
+       B = cycle_TAUIMODIS (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."TAUTMODIS") then
-       B = cycle_TAUTMODIS (infile2,outptr2)
+       B = cycle_TAUTMODIS (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."PCTMODIS") then
-       B = cycle_PCTMODIS (infile2,outptr2)
+       B = cycle_PCTMODIS (infile2,outptr2,yrs_prnt2)
      end if
 ;    CALIPSO diagnostics
      if (vars(i).eq."CLDTOT_CAL") then
-       B = cycle_CLDTOT_CAL (infile2,outptr2)
+       B = cycle_CLDTOT_CAL (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."CLDLOW_CAL") then
-       B = cycle_CLDLOW_CAL (infile2,outptr2)
+       B = cycle_CLDLOW_CAL (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."CLDMED_CAL") then
-       B = cycle_CLDMED_CAL (infile2,outptr2)
+       B = cycle_CLDMED_CAL (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."CLDHGH_CAL") then
-       B = cycle_CLDHGH_CAL (infile2,outptr2)
+       B = cycle_CLDHGH_CAL (infile2,outptr2,yrs_prnt2)
      end if
 ;    CLOUDSAT diagnostics
      if (vars(i).eq."CLDTOT_CS2") then
-       B = cycle_CLDTOT_CS2 (infile2,outptr2)
+       B = cycle_CLDTOT_CS2 (infile2,outptr2,yrs_prnt2)
      end if
      if (vars(i).eq."CLDTOT_CS") then
-       B = cycle_CLDTOT_CS (infile2,outptr2)
+       B = cycle_CLDTOT_CS (infile2,outptr2,yrs_prnt2)
      end if
 ;    end BRH additions
    end if

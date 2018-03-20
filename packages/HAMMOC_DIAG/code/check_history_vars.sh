@@ -1,16 +1,16 @@
 #!/bin/bash
 #
-# HAMMOC DIAGNOSTICS package: check_history_vars.sh
+# MICOM DIAGNOSTICS package: check_history_vars.sh
 # PURPOSE: checks if the history files exist, and which variables are present.
 # Johan Liakka, NERSC, johan.liakka@nersc.no
-# Last updated: Jan 2018
+# Last updated: Feb 2018
 
 # Input arguments:
 #  $casename  name of experiment
 #  $first_yr  first year of the average
 #  $last_yr   last year of the average
 #  $pathdat   directory where the history files are located
-#  $mode      climo, ts_ann or ts_mon
+#  $mode      climo_ann, climo_mon, ts_ann or ts_mon
 
 casename=$1
 first_yr=$2
@@ -33,9 +33,12 @@ echo " "
 file_flag=0
 var_flag=0
 filetypes="hbgcy hbgcm"
+if [ $mode == ts_mon ] || [ $mode == climo_mon ]; then
+    filetypes="hbgcm"
+fi
 
-# Look for co2fxd (used to determine grid type and version)
-if [ ! -f $WKDIR/attributes/co2fxd_file_${casename} ]; then
+# Look for sst (used to determine grid type and version)
+if [ ! -f $WKDIR/attributes/sst_file_${casename} ]; then
     for filetype in $filetypes
     do
 	if [ $filetype == hbgcy ]; then
@@ -61,7 +64,7 @@ do
     check_vars=1
     # Check if all history files are present
     if [ $filetype == hbgcy ]; then
-	echo "Searching for $filetype history files between yrs ${first_yr} and ${last_yr}..."
+	echo "Searching for hbgcy history files between yrs ${first_yr} and ${last_yr}..."
 	let "iyr = $first_yr"
 	while [ $iyr -le $last_yr ]
 	do
@@ -94,7 +97,7 @@ do
 	echo "FOUND ALL $filetype history files"
 	req_varsc=`cat $WKDIR/attributes/required_vars`
 	echo "Searching for $filetype variables: $req_varsc"
-	req_vars=`cat $WKDIR/attributes/required_vars | sed 's/,/ /g'`
+	req_vars=`echo $req_varsc | sed 's/,/ /g'`
 	first_find=1
 	find_any=0
 	remaining_any=0
@@ -136,16 +139,22 @@ do
     fi
 done
 
-if [ $mode == climo ]; then
-    if [ -f $WKDIR/attributes/vars_climo_${casename}_hbgcy ] && [ -f $WKDIR/attributes/vars_climo_${casename}_hbgcm ]; then
-	var_list_hy=`cat $WKDIR/attributes/vars_climo_${casename}_hbgcy`
-	var_list_hm=`cat $WKDIR/attributes/vars_climo_${casename}_hbgcm`
+if [ $mode == climo_ann ]; then
+    if [ -f $WKDIR/attributes/vars_${mode}_${casename}_hbgcy ] && [ -f $WKDIR/attributes/vars_${mode}_${casename}_hbgcm ]; then
+	var_list_hy=`cat $WKDIR/attributes/vars_climo_ann_${casename}_hbgcy`
+	var_list_hm=`cat $WKDIR/attributes/vars_climo_ann_${casename}_hbgcm`
 	var_list_tot="${var_list_hy},${var_list_hm}"
-	echo $var_list_tot > $WKDIR/attributes/vars_climo_${casename}
+	echo $var_list_tot > $WKDIR/attributes/vars_${mode}_${casename}
     elif [ ! -f $WKDIR/attributes/vars_${mode}_${casename}_hbgcy ] && [ -f $WKDIR/attributes/vars_${mode}_${casename}_hbgcm ]; then
-	cp $WKDIR/attributes/vars_climo_${casename}_hbgcm $WKDIR/attributes/vars_climo_${casename}
+	cp $WKDIR/attributes/vars_${mode}_${casename}_hbgcm $WKDIR/attributes/vars_${mode}_${casename}
     elif [ -f $WKDIR/attributes/vars_${mode}_${casename}_hbgcy ] && [ ! -f $WKDIR/attributes/vars_${mode}_${casename}_hbgcm ]; then
-	cp $WKDIR/attributes/vars_climo_${casename}_hbgcy $WKDIR/attributes/vars_climo_${casename}
+	cp $WKDIR/attributes/vars_${mode}_${casename}_hbgcy $WKDIR/attributes/vars_${mode}_${casename}
+    fi
+fi
+
+if [ $mode == climo_mon ]; then
+    if [ -f $WKDIR/attributes/vars_${mode}_${casename}_hbgcm ]; then
+	cp $WKDIR/attributes/vars_${mode}_${casename}_hbgcm $WKDIR/attributes/vars_${mode}_${casename}
     fi
 fi
 

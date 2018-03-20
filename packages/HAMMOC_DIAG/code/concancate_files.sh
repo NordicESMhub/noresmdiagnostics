@@ -37,7 +37,7 @@ if [ $mode == climo ]; then
 elif [ $mode == ts_ann ]; then
     ann_file_hy=${casename}_ANN_${first_yr}-${last_yr}_ts_hbgcy.nc
     ann_file_hm=${casename}_ANN_${first_yr}-${last_yr}_ts_hbgcm.nc
-    ann_file=${casename}_ANN_${first_yr}-${last_yr}_ts.nc
+    ann_file=${casename}_ANN_${first_yr}-${last_yr}_ts_ann.nc
 else
     echo "ERROR: mode must be climo or ts_ann."
     exit 1
