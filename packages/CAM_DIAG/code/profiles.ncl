@@ -18,6 +18,10 @@ begin
  plot_type  = getenv("PLOTTYPE")
  time_stamp = getenv("TIMESTAMP")
  case_names = getenv("CASENAMES")
+ yrs_prnt1  = getenv("TEST_YRS_PRNT")
+ if (compcase.ne."NONE") then
+   yrs_prnt2 = getenv("CNTL_YRS_PRNT")
+ end if
 
 ;********************************************************
 ; constants
@@ -97,7 +101,7 @@ nstations = dimsizes(station_ids)
 TropMinP = 225.0   ; mb
 
 ; get some time and spatially independent data from the model files
-file1 = testcase+"_01_climo.nc"
+file1 = testcase+"_01_"+yrs_prnt1+"_climo.nc"
 in1 = addfile(file1,"r")
 if (in1@source .eq. "GFDL") then
   lev1 = in1->lev(::-1)
@@ -124,7 +128,7 @@ delete (file1)
 delete (in1)
 
 if (compcase .ne. "NONE") then       ; more than one model
-  file2 = compcase+"_01_climo.nc"
+  file2 = compcase+"_01_"+yrs_prnt2+"_climo.nc"
   in2 = addfile(file2,"r")
   if (in2@source .eq. "GFDL") then
     lev2 = in2->lev(::-1)
@@ -189,10 +193,10 @@ if (latpt .ge. -87.8638) then ; model can't do South Pole
     plot = new(4,"graphic")
     res@tiXAxisString = var_names(nv)
     do m = 0, 3                 ; loop over months
-      file1 = testcase+"_"+month(m)+"_climo.nc"
+      file1 = testcase+"_"+month(m)+"_"+yrs_prnt1+"_climo.nc"
       in1 = addfile(file1,"r")
       if (compcase.ne."NONE") then
-        file2 = compcase+"_"+month(m)+"_climo.nc"
+        file2 = compcase+"_"+month(m)+"_"+yrs_prnt2+"_climo.nc"
         in2 = addfile(file2,"r")
       end if
 

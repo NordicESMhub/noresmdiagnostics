@@ -21,8 +21,10 @@ wkdir      = getenv("WKDIR")
 infile1    = getenv("TEST_INPUT")     ; case1 input prefix
 outfile1   = getenv("TEST_PLOTVARS")
 infile2    = getenv("CNTL_INPUT")     ; case2 input prefix
+yrs_prnt1  = getenv("TEST_YRS_PRNT")
 if (compare .ne. "OBS") then
   outfile2   = getenv("CNTL_PLOTVARS")
+  yrs_prnt2  = getenv("CNTL_YRS_PRNT")
 end if
 
 month = (/"01","02","03","04","05","06","07","08","09","10","11","12"/)
@@ -32,11 +34,11 @@ inptr1 = new(12,file)
 outptr1 = new(12,file)
 
 do m = 0,11 
-  inptr1(m) = addfile(infile1+"_"+month(m)+"_climo.nc","r")
+  inptr1(m) = addfile(infile1+"_"+month(m)+"_"+yrs_prnt1+"_climo.nc","r")
   if (ncdf_mode .eq. "write") then
-    outptr1(m) = addfile(outfile1+"_"+month(m)+"_plotvars.nc","w")
+    outptr1(m) = addfile(outfile1+"_"+month(m)+"_"+yrs_prnt1+"_plotvars.nc","w")
   else
-    outptr1(m) = addfile(outfile1+"_"+month(m)+"_plotvars.nc","c")
+    outptr1(m) = addfile(outfile1+"_"+month(m)+"_"+yrs_prnt1+"_plotvars.nc","c")
   end if 
 end do
 
@@ -113,11 +115,11 @@ else
   inptr2 = new(12,file)
   outptr2 = new(12,file)
   do m = 0,11 
-    inptr2(m) = addfile(infile2+"_"+month(m)+"_climo.nc","r")
+    inptr2(m) = addfile(infile2+"_"+month(m)+"_"+yrs_prnt2+"_climo.nc","r")
     if (ncdf_mode .eq. "write") then
-      outptr2(m) = addfile(outfile2+"_"+month(m)+"_plotvars.nc","w")
+      outptr2(m) = addfile(outfile2+"_"+month(m)+"_"+yrs_prnt2+"_plotvars.nc","w")
     else
-      outptr2(m) = addfile(outfile2+"_"+month(m)+"_plotvars.nc","c")
+      outptr2(m) = addfile(outfile2+"_"+month(m)+"_"+yrs_prnt2+"_plotvars.nc","c")
     end if 
   end do
   inptr = inptr2(0)

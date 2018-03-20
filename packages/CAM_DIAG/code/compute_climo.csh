@@ -77,6 +77,12 @@ if ( $strip_off_vars == 0 ) then
 else
    $ncclimo_dir/ncclimo --clm_md=mth -m $modelname              -a $djf_md -c $casename -s $first_yr -e $yr_end -i $path_history -o $path_climo
 endif
+# Add time stamp
+set first_yr_prnt = `printf "%04d" ${first_yr}`
+set last_yr_prnt = `printf "%04d" ${yr_end}`
+foreach mth ( 01 02 03 04 05 06 07 08 09 10 11 12 DJF MAM JJA SON ANN )
+   mv $path_climo/${casename}_${mth}_climo.nc $path_climo/${casename}_${mth}_${first_yr_prnt}-${last_yr_prnt}_climo.nc
+end
 echo "-------------------------"
 
 #------------------------------------------------------------------------
@@ -127,15 +133,15 @@ if ( $significance == 0 ) then
 
    # Concatenate files
    echo " CONCATENATING DJF FILES ..."
-   /usr/local/bin/ncrcat -O ${path_climo}/tmp_djf_*.nc ${path_climo}/${casename}_DJF_means.nc
+   /usr/local/bin/ncrcat -O ${path_climo}/tmp_djf_*.nc ${path_climo}/${casename}_DJF_${first_yr_prnt}-${last_yr_prnt}_means.nc
    echo " CONCATENATING MAM FILES ..."
-   /usr/local/bin/ncrcat -O ${path_climo}/tmp_mam_*.nc ${path_climo}/${casename}_MAM_means.nc
+   /usr/local/bin/ncrcat -O ${path_climo}/tmp_mam_*.nc ${path_climo}/${casename}_MAM_${first_yr_prnt}-${last_yr_prnt}_means.nc
    echo " CONCATENATING JJA FILES ..."
-   /usr/local/bin/ncrcat -O ${path_climo}/tmp_jja_*.nc ${path_climo}/${casename}_JJA_means.nc
+   /usr/local/bin/ncrcat -O ${path_climo}/tmp_jja_*.nc ${path_climo}/${casename}_JJA_${first_yr_prnt}-${last_yr_prnt}_means.nc
    echo " CONCATENATING SON FILES ..."
-   /usr/local/bin/ncrcat -O ${path_climo}/tmp_son_*.nc ${path_climo}/${casename}_SON_means.nc
+   /usr/local/bin/ncrcat -O ${path_climo}/tmp_son_*.nc ${path_climo}/${casename}_SON_${first_yr_prnt}-${last_yr_prnt}_means.nc
    echo " CONCATENATING ANN FILES ..."
-   /usr/local/bin/ncrcat -O ${path_climo}/tmp_ann_*.nc ${path_climo}/${casename}_ANN_means.nc
+   /usr/local/bin/ncrcat -O ${path_climo}/tmp_ann_*.nc ${path_climo}/${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}_means.nc
 
    # Clean up
    rm -f ${path_climo}/tmp_*.nc

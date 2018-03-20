@@ -22,9 +22,11 @@ begin
  infile1    = getenv("TEST_INPUT")     ; case1 input prefix 
  outfile1   = getenv("TEST_PLOTVARS")  ; case1 output filename
  infile2    = getenv("CNTL_INPUT")     ; case2 input prefix 
+ yrs_prnt1  = getenv("TEST_YRS_PRNT")
 
  if (compare .ne. "OBS") then
    outfile2 = getenv("CNTL_PLOTVARS")  ; case2 output filename
+   yrs_prnt2 = getenv("CNTL_YRS_PRNT")
  else
    infile2 = getenv("OBS_DATA")
  end if
@@ -36,7 +38,7 @@ begin
  nsites = dimsizes(sites)
 
 ; CASE 1 MODEL 
- inptr1 = addfile(infile1+"_01_climo.nc","r")  
+ inptr1 = addfile(infile1+"_01_"+yrs_prnt1+"_climo.nc","r")  
  lat = inptr1->lat
  lon = inptr1->lon
 
@@ -81,7 +83,7 @@ if (compare.eq."OBS") then
    ac_sgp = new(1,file)
    ac_sgp = addfile(opath+"/ARM_annual_cycle_sgp_cmbe_sound_cf_p_f.cdf","r")
 
-   inptr2 = addfile(infile2+"_01_climo.nc","r")  
+   inptr2 = addfile(infile2+"_01_"+yrs_prnt2+"_climo.nc","r")  
 
    if (case_names .eq. "True") then
      case2 = getenv("CASE2")
@@ -203,41 +205,41 @@ if (compare.eq."OBS") then
   do i = 0, nvars-1
 
    if (vars(i).eq."T") then
-     A = cycle_T (infile1,outptr1,latv(isite),lonv(isite),sites(isite))
+     A = cycle_T (infile1,outptr1,latv(isite),lonv(isite),sites(isite),yrs_prnt1) ;
    end if
    if (vars(i).eq."Q") then
-     A = cycle_Q (infile1,outptr1,latv(isite),lonv(isite),sites(isite))
+     A = cycle_Q (infile1,outptr1,latv(isite),lonv(isite),sites(isite),yrs_prnt1) ;
    end if
    if (vars(i).eq."CLOUD") then
-     A = cycle_CLOUD (infile1,outptr1,latv(isite),lonv(isite),sites(isite))
+     A = cycle_CLOUD (infile1,outptr1,latv(isite),lonv(isite),sites(isite),yrs_prnt1) ;
    end if
    if (vars(i).eq."MSE") then
-     A = cycle_MSE (infile1,outptr1,latv(isite),lonv(isite),sites(isite))
+     A = cycle_MSE (infile1,outptr1,latv(isite),lonv(isite),sites(isite),yrs_prnt1) ;
    end if
    if (vars(i).eq."TMQ") then
-     A = cycle_TMQ (infile1,outptr1,latv(isite),lonv(isite),sites(isite))
+     A = cycle_TMQ (infile1,outptr1,latv(isite),lonv(isite),sites(isite),yrs_prnt1) ;
    end if
    if (vars(i).eq."TGCLDLWP") then
-     A = cycle_TGCLDLWP (infile1,outptr1,latv(isite),lonv(isite),sites(isite))
+     A = cycle_TGCLDLWP (infile1,outptr1,latv(isite),lonv(isite),sites(isite),yrs_prnt1) ;
    end if
    if (vars(i).eq."FSDS") then
-     A = cycle_FSDS (infile1,outptr1,latv(isite),lonv(isite),sites(isite))
+     A = cycle_FSDS (infile1,outptr1,latv(isite),lonv(isite),sites(isite),yrs_prnt1) ;
    end if
    if (vars(i).eq."FLDS") then
-     A = cycle_FLDS (infile1,outptr1,latv(isite),lonv(isite),sites(isite))
+     A = cycle_FLDS (infile1,outptr1,latv(isite),lonv(isite),sites(isite),yrs_prnt1) ;
    end if
    if (vars(i).eq."CLDTOT") then
-     A = cycle_CLDTOT (infile1,outptr1,latv(isite),lonv(isite),sites(isite))
+     A = cycle_CLDTOT (infile1,outptr1,latv(isite),lonv(isite),sites(isite),yrs_prnt1) ;
    end if
    if(sites(isite).eq."SGP")then
     if (vars(i).eq."PRECT") then
-      A = cycle_PRECT_PT (infile1,outptr1,latv(isite),lonv(isite),sites(isite))
+      A = cycle_PRECT_PT (infile1,outptr1,latv(isite),lonv(isite),sites(isite),yrs_prnt1)
     end if
     if (vars(i).eq."LHFLX") then
-      A = cycle_LHFLX (infile1,outptr1,latv(isite),lonv(isite),sites(isite))
+      A = cycle_LHFLX (infile1,outptr1,latv(isite),lonv(isite),sites(isite),yrs_prnt1) ;
     end if
     if (vars(i).eq."SHFLX") then
-      A = cycle_SHFLX (infile1,outptr1,latv(isite),lonv(isite),sites(isite))
+      A = cycle_SHFLX (infile1,outptr1,latv(isite),lonv(isite),sites(isite),yrs_prnt1) ;
     end if
    end if
 
@@ -345,42 +347,42 @@ if (compare.eq."OBS") then
         delete(tmpin)
        
     if (vars(i).eq."T") then
-      B = cycle_T (infile2,outptr2,latv(isite),lonv(isite),sites(isite))
+      B = cycle_T (infile2,outptr2,latv(isite),lonv(isite),sites(isite),yrs_prnt2)
     end if
     if (vars(i).eq."Q") then
-      B = cycle_Q (infile2,outptr2,latv(isite),lonv(isite),sites(isite))
+      B = cycle_Q (infile2,outptr2,latv(isite),lonv(isite),sites(isite),yrs_prnt2)
     end if
     if (vars(i).eq."CLOUD") then
-      B = cycle_CLOUD (infile2,outptr2,latv(isite),lonv(isite),sites(isite))
+      B = cycle_CLOUD (infile2,outptr2,latv(isite),lonv(isite),sites(isite),yrs_prnt2)
     end if
     if (vars(i).eq."MSE") then
-      B = cycle_MSE (infile2,outptr2,latv(isite),lonv(isite),sites(isite))
+      B = cycle_MSE (infile2,outptr2,latv(isite),lonv(isite),sites(isite),yrs_prnt2)
     end if
 
     if (vars(i).eq."TMQ") then
-      B = cycle_TMQ (infile2,outptr2,latv(isite),lonv(isite),sites(isite))
+      B = cycle_TMQ (infile2,outptr2,latv(isite),lonv(isite),sites(isite),yrs_prnt2)
     end if
    if (vars(i).eq."TGCLDLWP") then
-     B = cycle_TGCLDLWP (infile2,outptr2,latv(isite),lonv(isite),sites(isite))
+     B = cycle_TGCLDLWP (infile2,outptr2,latv(isite),lonv(isite),sites(isite),yrs_prnt2)
    end if
    if (vars(i).eq."FSDS") then
-     B = cycle_FSDS (infile2,outptr2,latv(isite),lonv(isite),sites(isite))
+     B = cycle_FSDS (infile2,outptr2,latv(isite),lonv(isite),sites(isite),yrs_prnt2)
    end if
    if (vars(i).eq."FLDS") then
-     B = cycle_FLDS (infile2,outptr2,latv(isite),lonv(isite),sites(isite))
+     B = cycle_FLDS (infile2,outptr2,latv(isite),lonv(isite),sites(isite),yrs_prnt2)
    end if
    if (vars(i).eq."CLDTOT") then
-     B = cycle_CLDTOT (infile2,outptr2,latv(isite),lonv(isite),sites(isite))
+     B = cycle_CLDTOT (infile2,outptr2,latv(isite),lonv(isite),sites(isite),yrs_prnt2)
    end if
    if(sites(isite).eq."SGP")then
     if (vars(i).eq."PRECT") then
-      B = cycle_PRECT_PT (infile2,outptr2,latv(isite),lonv(isite),sites(isite))
+      B = cycle_PRECT_PT (infile2,outptr2,latv(isite),lonv(isite),sites(isite),yrs_prnt2)
     end if
     if (vars(i).eq."LHFLX") then
-      B = cycle_LHFLX (infile2,outptr2,latv(isite),lonv(isite),sites(isite))
+      B = cycle_LHFLX (infile2,outptr2,latv(isite),lonv(isite),sites(isite),yrs_prnt2)
     end if
     if (vars(i).eq."SHFLX") then
-      B = cycle_SHFLX (infile2,outptr2,latv(isite),lonv(isite),sites(isite))
+      B = cycle_SHFLX (infile2,outptr2,latv(isite),lonv(isite),sites(isite),yrs_prnt2)
     end if
    end if
 

@@ -8,12 +8,12 @@
 month = (/"01","02","03","04","05","06", \
           "07","08","09","10","11","12"/)
 
-function cycle_FLNT (prefix:string,outptr:file)
+function cycle_FLNT (prefix:string,outptr:file,yrs_prnt:string)
 begin
   if (isfilevar(outptr,"FLNT")) then
     flnt = outptr->FLNT
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     flnt = new((/13,nlat/),float)
@@ -22,7 +22,7 @@ begin
     flnt!1 = "lat"
     flnt&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       tmp = inptr->FLNT(0,:,:)
       if (typeof(tmp).eq."double") then
         data = dble2flt(tmp)
@@ -40,12 +40,12 @@ begin
   return (flnt)
 end
 
-function cycle_FLUT (prefix:string,outptr:file)
+function cycle_FLUT (prefix:string,outptr:file,yrs_prnt:string)
 begin
   if (isfilevar(outptr,"FLUT")) then
     flut = outptr->FLUT
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     if (isfilevar(inptr,"FLUT")) then 
       lat = inptr->lat
       nlat = dimsizes(lat)
@@ -55,7 +55,7 @@ begin
       flut!1 = "lat"
       flut&lat = lat
       do m = 0, 11
-        inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+        inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
         tmp = inptr->FLUT(0,:,:)
         if (typeof(tmp).eq."double") then
           data = dble2flt(tmp)
@@ -76,12 +76,12 @@ begin
   return (flut)
 end
 
-function cycle_SWCF (prefix:string,outptr:file)
+function cycle_SWCF (prefix:string,outptr:file,yrs_prnt:string)
 begin
   if (isfilevar(outptr,"SWCF")) then
     swcf = outptr->SWCF
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     swcf = new((/13,nlat/),float)
@@ -90,7 +90,7 @@ begin
     swcf!1 = "lat"
     swcf&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       tmp = inptr->SWCF(0,:,:)
       if (typeof(tmp).eq."double") then
         data = dble2flt(tmp)
@@ -107,12 +107,12 @@ begin
   return (swcf)
 end
 
-function cycle_PRECT (prefix:string,outptr:file)
+function cycle_PRECT (prefix:string,outptr:file,yrs_prnt:string)
 begin
   if (isfilevar(outptr,"PRECT")) then
     prect = outptr->PRECT
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     prect = new((/13,nlat/),float)
@@ -121,7 +121,7 @@ begin
     prect!1 = "lat"
     prect&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       if (isfilevar(inptr,"PRECT")) then
         prect2 = inptr->PRECT(0,:,:)
         tmp = prect2
@@ -148,7 +148,7 @@ begin
   return (prect)
 end
 
-function cycle_PRECT_PT(prefix:string,outptr:file,latv:float,lonv:float,site:string)
+function cycle_PRECT_PT(prefix:string,outptr:file,latv:float,lonv:float,site:string,yrs_prnt:string)
 begin
 
   VNAME = "PRECT_"+site
@@ -156,7 +156,7 @@ begin
   if (isfilevar(outptr,VNAME)) then
     prect = outptr->$VNAME$
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     prect = new((/13/),float)
@@ -164,7 +164,7 @@ begin
     prect&time = ispan(1,13,1)
 
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       if (isfilevar(inptr,"PRECT")) then
         prect2 = inptr->PRECT(0,{latv},{lonv})
 	tmp = prect2
@@ -192,7 +192,7 @@ begin
 end
 
 
-function cycle_T (prefix:string,outptr:file,latv:float,lonv:float,site:string)
+function cycle_T (prefix:string,outptr:file,latv:float,lonv:float,site:string,yrs_prnt:string)
 begin
 
   VNAME = "T_"+site
@@ -200,7 +200,7 @@ begin
   if (isfilevar(outptr,VNAME)) then
     t = outptr->$VNAME$
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     plev = (/25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350,\
      375, 400, 425, 450, 475, 500, 525, 550, 575, 600, 625, 650, 675, 700,\
      725, 750, 775, 800, 825, 850, 875, 900, 925, 950, 975, 1000/)
@@ -218,7 +218,7 @@ begin
     
 
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       tmp = inptr->T(0,:,:,:)     
       if (typeof(tmp).eq."double") then
         data = dble2flt(tmp)
@@ -246,7 +246,7 @@ begin
   return (t)
 end
 
-function cycle_Q (prefix:string,outptr:file,latv:float,lonv:float,site:string)
+function cycle_Q (prefix:string,outptr:file,latv:float,lonv:float,site:string,yrs_prnt:string)
 begin
 
   VNAME = "Q_"+site
@@ -254,7 +254,7 @@ begin
   if (isfilevar(outptr,VNAME)) then
     q = outptr->$VNAME$
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     plev = (/25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350,\
      375, 400, 425, 450, 475, 500, 525, 550, 575, 600, 625, 650, 675, 700,\
      725, 750, 775, 800, 825, 850, 875, 900, 925, 950, 975, 1000/)
@@ -272,7 +272,7 @@ begin
     
 
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       tmp = inptr->Q(0,:,:,:)     
       if (typeof(tmp).eq."double") then
         data = dble2flt(tmp)
@@ -302,7 +302,7 @@ begin
 end
 
 
-function cycle_CLOUD (prefix:string,outptr:file,latv:float,lonv:float,site:string)
+function cycle_CLOUD (prefix:string,outptr:file,latv:float,lonv:float,site:string,yrs_prnt:string)
 begin
 
   VNAME = "CLOUD_"+site
@@ -310,7 +310,7 @@ begin
   if (isfilevar(outptr,VNAME)) then
     cloud = outptr->$VNAME$
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     plev = (/25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350,\
     375, 400, 425, 450, 475, 500, 525, 550, 575, 600, 625, 650, 675, 700,\
     725, 750, 775, 800, 825, 850, 875, 900, 925, 950, 975, 1000/)
@@ -327,7 +327,7 @@ begin
       cloud&lev = plev
 
       do m = 0, 11
-        inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+        inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
         tmp = inptr->CLOUD(0,:,:,:)
 
         if (typeof(tmp).eq."double") then
@@ -370,7 +370,7 @@ begin
   return (cloud)
 end
 
-function cycle_CLDTOT (prefix:string,outptr:file,latv:float,lonv:float,site:string)
+function cycle_CLDTOT (prefix:string,outptr:file,latv:float,lonv:float,site:string,yrs_prnt:string)
 begin
 
   VNAME = "CLDTOT_"+site
@@ -378,14 +378,14 @@ begin
   if (isfilevar(outptr,VNAME)) then
     cldtot = outptr->$VNAME$
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
 
     cldtot = new((/13/),float)
     cldtot!0 = "time"
     cldtot&time = ispan(1,13,1)
     
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       tmp = inptr->CLDTOT(0,:,:)
 
       if (typeof(tmp).eq."double") then
@@ -416,7 +416,7 @@ begin
   return (cldtot)
 end
 
-function cycle_MSE (prefix:string,outptr:file,latv:float,lonv:float,site:string)
+function cycle_MSE (prefix:string,outptr:file,latv:float,lonv:float,site:string,yrs_prnt:string)
 begin
 
   VNAME = "MSE_"+site
@@ -424,7 +424,7 @@ begin
   if (isfilevar(outptr,VNAME)) then
     mse = outptr->$VNAME$
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     plev = (/25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350,\
      375, 400, 425, 450, 475, 500, 525, 550, 575, 600, 625, 650, 675, 700,\
      725, 750, 775, 800, 825, 850, 875, 900, 925, 950, 975, 1000/)
@@ -446,7 +446,7 @@ begin
 
 
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       tmp_q = inptr->Q(0,:,:,:)     
       tmp_t = inptr->T(0,:,:,:)     
       tmp_z3 = inptr->Z3(0,:,:,:)     
@@ -480,7 +480,7 @@ begin
   return (mse)
 end
 
-function cycle_TMQ (prefix:string,outptr:file,latv:float,lonv:float,site:string)
+function cycle_TMQ (prefix:string,outptr:file,latv:float,lonv:float,site:string,yrs_prnt:string)
 begin
 
   VNAME = "TMQ_"+site
@@ -489,7 +489,7 @@ begin
     tmq = outptr->$VNAME$
     print("bajs")
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
 
     if (isfilevar(inptr,"TMQ")) then
       tmq = new((/13/),float)
@@ -497,7 +497,7 @@ begin
       tmq&time = ispan(1,13,1)
 
       do m = 0, 11
-        inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+        inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
         tmp = inptr->TMQ(0,:,:)     
 
         if (typeof(tmp).eq."double") then
@@ -522,7 +522,7 @@ begin
   return (tmq)
 end
 
-function cycle_TGCLDLWP (prefix:string,outptr:file,latv:float,lonv:float,site:string)
+function cycle_TGCLDLWP (prefix:string,outptr:file,latv:float,lonv:float,site:string,yrs_prnt:string)
 begin
 
   VNAME = "TGCLDLWP_"+site
@@ -530,7 +530,7 @@ begin
   if (isfilevar(outptr,VNAME)) then
     tgcldlwp = outptr->$VNAME$
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
 
     if (isfilevar(inptr,"TGCLDLWP")) then
       tgcldlwp = new((/13/),float)
@@ -538,7 +538,7 @@ begin
       tgcldlwp&time = ispan(1,13,1)
     
       do m = 0, 11
-        inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+        inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
         tmp = inptr->TGCLDLWP(0,:,:)     
         tmp =       tmp * 1000.  ;+++ ceh: change to kg/kg to g/kg
         if (typeof(tmp).eq."double") then
@@ -564,7 +564,7 @@ begin
 end
 
 
-function cycle_LHFLX (prefix:string,outptr:file,latv:float,lonv:float,site:string)
+function cycle_LHFLX (prefix:string,outptr:file,latv:float,lonv:float,site:string,yrs_prnt:string)
 begin
 
   VNAME = "LHFLX_"+site
@@ -572,14 +572,14 @@ begin
   if (isfilevar(outptr,VNAME)) then
     lhflx = outptr->$VNAME$
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
 
     lhflx = new((/13/),float)
     lhflx!0 = "time"
     lhflx&time = ispan(1,13,1)
     
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       tmp = inptr->LHFLX(0,:,:)     
 
       if (typeof(tmp).eq."double") then
@@ -601,7 +601,7 @@ begin
 end
 
 
-function cycle_SHFLX (prefix:string,outptr:file,latv:float,lonv:float,site:string)
+function cycle_SHFLX (prefix:string,outptr:file,latv:float,lonv:float,site:string,yrs_prnt:string)
 begin
 
   VNAME = "SHFLX_"+site
@@ -609,14 +609,14 @@ begin
   if (isfilevar(outptr,VNAME)) then
     shflx = outptr->$VNAME$
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
 
     shflx = new((/13/),float)
     shflx!0 = "time"
     shflx&time = ispan(1,13,1)
     
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       tmp = inptr->SHFLX(0,:,:)     
 
       if (typeof(tmp).eq."double") then
@@ -638,7 +638,7 @@ begin
 end
 
 
-function cycle_FSDS (prefix:string,outptr:file,latv:float,lonv:float,site:string)
+function cycle_FSDS (prefix:string,outptr:file,latv:float,lonv:float,site:string,yrs_prnt:string)
 begin
 
   VNAME = "FSDS_"+site
@@ -646,14 +646,14 @@ begin
   if (isfilevar(outptr,VNAME)) then
     fsds = outptr->$VNAME$
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
 
     fsds = new((/13/),float)
     fsds!0 = "time"
     fsds&time = ispan(1,13,1)
     
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       tmp = inptr->FSDS(0,:,:)     
 
       if (typeof(tmp).eq."double") then
@@ -676,7 +676,7 @@ end
 
 
 
-function cycle_FLDS (prefix:string,outptr:file,latv:float,lonv:float,site:string)
+function cycle_FLDS (prefix:string,outptr:file,latv:float,lonv:float,site:string,yrs_prnt:string)
 begin
 
   VNAME = "FLDS_"+site
@@ -687,14 +687,14 @@ begin
   if (isfilevar(outptr,VNAME)) then
     flds = outptr->$VNAME$
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
 
     flds = new((/13/),float)
     flds!0 = "time"
     flds&time = ispan(1,13,1)
     
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       tmp_flns = inptr->FLNS(0,:,:)     
       tmp_ts = inptr->TS(0,:,:)     
       tmp = tmp_flns
@@ -725,12 +725,12 @@ end
 
 
 
-function cycle_PREH2O (prefix:string,outptr:file)
+function cycle_PREH2O (prefix:string,outptr:file,yrs_prnt:string)
 begin
   if (isfilevar(outptr,"PREH2O")) then
     preh2o = outptr->PREH2O
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     preh2o = new((/13,nlat/),float)
@@ -740,7 +740,7 @@ begin
     preh2o&lat = lat
     if (isfilevar(inptr,"TMQ") .or. isfilevar(inptr,"MQ")) then
       do m = 0, 11
-        inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+        inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
         if (isfilevar(inptr,"TMQ")) then
           tmp = inptr->TMQ(0,:,:)
         else
@@ -768,12 +768,12 @@ begin
   return (preh2o)
 end
 
-function cycle_SOLIN (prefix:string,outptr:file)
+function cycle_SOLIN (prefix:string,outptr:file,yrs_prnt:string)
 begin
   if (isfilevar(outptr,"SOLIN")) then
     solin = outptr->SOLIN
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     if (isfilevar(inptr,"SOLIN")) then
       lat = inptr->lat
       nlat = dimsizes(lat)
@@ -783,7 +783,7 @@ begin
       solin!1 = "lat"
       solin&lat = lat
       do m = 0, 11
-        inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+        inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
         tmp = inptr->SOLIN(0,:,:)
         if (typeof(tmp).eq."double") then
           data = dble2flt(tmp)
@@ -804,12 +804,12 @@ begin
   return (solin)
 end
 
-function cycle_SST (prefix:string,outptr:file)
+function cycle_SST (prefix:string,outptr:file,yrs_prnt:string)
 begin
   if (isfilevar(outptr,"SST")) then
     sst = outptr->SST
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     sst = new((/13,nlat/),float)
@@ -819,7 +819,7 @@ begin
     sst&lat = lat
     if (isfilevar(inptr,"TS")) then 
       do m = 0, 11
-        inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+        inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
         ts = inptr->TS(0,:,:)
         ts = (/ts-273.15/)
         tmp = ts
@@ -854,12 +854,12 @@ begin
   return (sst)
 end
 
-function cycle_TAUX_OCEAN (prefix:string,outptr:file)
+function cycle_TAUX_OCEAN (prefix:string,outptr:file,yrs_prnt:string)
 begin
   if (isfilevar(outptr,"TAUX_OCEAN")) then
     taux_ocean = outptr->TAUX_OCEAN
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     if (isfilevar(inptr,"TAUX")) then 
       lat = inptr->lat
       nlat = dimsizes(lat)
@@ -869,7 +869,7 @@ begin
       taux_ocean!1 = "lat"
       taux_ocean&lat = lat
       do m = 0, 11
-        inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+        inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
         tx = inptr->TAUX(0,:,:)
         tmp = tx
         if (isfilevar(inptr,"ORO")) then
@@ -905,12 +905,12 @@ begin
   return (taux_ocean)
 end
 
-function cycle_TAUY_OCEAN (prefix:string,outptr:file)
+function cycle_TAUY_OCEAN (prefix:string,outptr:file,yrs_prnt:string)
 begin
   if (isfilevar(outptr,"TAUY_OCEAN")) then
     tauy_ocean = outptr->TAUY_OCEAN
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     if (isfilevar(inptr,"TAUY")) then 
       lat = inptr->lat
       nlat = dimsizes(lat)
@@ -920,7 +920,7 @@ begin
       tauy_ocean!1 = "lat"
       tauy_ocean&lat = lat
       do m = 0, 11
-        inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+        inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
         ty = inptr->TAUY(0,:,:)
         tmp = ty
         if (isfilevar(inptr,"ORO")) then
@@ -956,12 +956,12 @@ begin
   return (tauy_ocean)
 end
 
-function cycle_U_200 (prefix:string,outptr:file)
+function cycle_U_200 (prefix:string,outptr:file,yrs_prnt:string)
 begin
   if (isfilevar(outptr,"U_200")) then
      u_200 = outptr->U_200
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     if (inptr@source .ne. "GFDL") then
       hyam = inptr->hyam
       hybm = inptr->hybm
@@ -974,7 +974,7 @@ begin
     u_200!1 = "lat"
     u_200&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       if (inptr@source .eq. "GFDL") then
         u = inptr->U(0,9,:,:)             ; 200mb
         u_200(m,:) = (/dim_avg(u)/)
@@ -1003,13 +1003,13 @@ end
 load "$DIAG_CODE/functions_surfaces.ncl"
 
 ; ISCCP diagnostics
-function cycle_CLDTOT_ISCCPCOSP (prefix:string,outptr:file)
+function cycle_CLDTOT_ISCCPCOSP (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"CLDTOT_ISCCPCOSP")) then
     var = outptr->CLDTOT_ISCCPCOSP
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -1018,7 +1018,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_CLDTOT_ISCCPCOSP(inptr,outptrDummy)
@@ -1039,13 +1039,13 @@ begin
   return (var)
 end
 
-function cycle_CLDLOW_ISCCPCOSP (prefix:string,outptr:file)
+function cycle_CLDLOW_ISCCPCOSP (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"CLDLOW_ISCCPCOSP")) then
     var = outptr->CLDLOW_ISCCPCOSP
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -1054,7 +1054,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_CLDLOW_ISCCPCOSP(inptr,outptrDummy)
@@ -1075,13 +1075,13 @@ begin
   return (var)
 end
 
-function cycle_CLDMED_ISCCPCOSP (prefix:string,outptr:file)
+function cycle_CLDMED_ISCCPCOSP (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"CLDMED_ISCCPCOSP")) then
     var = outptr->CLDMED_ISCCPCOSP
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -1090,7 +1090,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_CLDMED_ISCCPCOSP(inptr,outptrDummy)
@@ -1111,13 +1111,13 @@ begin
   return (var)
 end
 
-function cycle_CLDHGH_ISCCPCOSP (prefix:string,outptr:file)
+function cycle_CLDHGH_ISCCPCOSP (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"CLDHGH_ISCCPCOSP")) then
     var = outptr->CLDHGH_ISCCPCOSP
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -1126,7 +1126,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_CLDHGH_ISCCPCOSP(inptr,outptrDummy)
@@ -1147,13 +1147,13 @@ begin
   return (var)
 end
 
-function cycle_CLDTHICK_ISCCPCOSP (prefix:string,outptr:file)
+function cycle_CLDTHICK_ISCCPCOSP (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"CLDTHICK_ISCCPCOSP")) then
     var = outptr->CLDTHICK_ISCCPCOSP
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -1162,7 +1162,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_CLDTHICK_ISCCPCOSP(inptr,outptrDummy)
@@ -1183,13 +1183,13 @@ begin
   return (var)
 end
 
-function cycle_MEANCLDALB_ISCCPCOSP (prefix:string,outptr:file)
+function cycle_MEANCLDALB_ISCCPCOSP (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"MEANCLDALB_ISCCPCOSP")) then
     var = outptr->MEANCLDALB_ISCCPCOSP
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -1198,7 +1198,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_MEANCLDALB_ISCCPCOSP(inptr,outptrDummy)
@@ -1219,13 +1219,13 @@ begin
   return (var)
 end
 
-function cycle_MEANPTOP_ISCCPCOSP (prefix:string,outptr:file)
+function cycle_MEANPTOP_ISCCPCOSP (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"MEANPTOP_ISCCPCOSP")) then
     var = outptr->MEANPTOP_ISCCPCOSP
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -1234,7 +1234,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_MEANPTOP_ISCCPCOSP(inptr,outptrDummy)
@@ -1255,13 +1255,13 @@ begin
   return (var)
 end
 
-function cycle_MEANTTOP_ISCCPCOSP (prefix:string,outptr:file)
+function cycle_MEANTTOP_ISCCPCOSP (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"MEANTTOP_ISCCPCOSP")) then
     var = outptr->MEANTTOP_ISCCPCOSP
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -1270,7 +1270,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_MEANTTOP_ISCCPCOSP(inptr,outptrDummy)
@@ -1292,13 +1292,13 @@ begin
 end
 
 ; MISR diagnostics
-function cycle_CLDTOT_MISR (prefix:string,outptr:file)
+function cycle_CLDTOT_MISR (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"CLDTOT_MISR")) then
     var = outptr->CLDTOT_MISR
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -1307,7 +1307,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_CLDTOT_MISR(inptr,outptrDummy)
@@ -1328,13 +1328,13 @@ begin
   return (var)
 end
 
-function cycle_CLDLOW_MISR (prefix:string,outptr:file)
+function cycle_CLDLOW_MISR (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"CLDLOW_MISR")) then
     var = outptr->CLDLOW_MISR
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -1343,7 +1343,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_CLDLOW_MISR(inptr,outptrDummy)
@@ -1364,13 +1364,13 @@ begin
   return (var)
 end
 
-function cycle_CLDMED_MISR (prefix:string,outptr:file)
+function cycle_CLDMED_MISR (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"CLDMED_MISR")) then
     var = outptr->CLDMED_MISR
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -1379,7 +1379,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_CLDMED_MISR(inptr,outptrDummy)
@@ -1400,13 +1400,13 @@ begin
   return (var)
 end
 
-function cycle_CLDHGH_MISR (prefix:string,outptr:file)
+function cycle_CLDHGH_MISR (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"CLDHGH_MISR")) then
     var = outptr->CLDHGH_MISR
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -1415,7 +1415,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_CLDHGH_MISR(inptr,outptrDummy)
@@ -1436,13 +1436,13 @@ begin
   return (var)
 end
 
-function cycle_CLDTHICK_MISR (prefix:string,outptr:file)
+function cycle_CLDTHICK_MISR (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"CLDTHICK_MISR")) then
     var = outptr->CLDTHICK_MISR
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -1451,7 +1451,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_CLDTHICK_MISR(inptr,outptrDummy)
@@ -1473,13 +1473,13 @@ begin
 end
 
 ; MODIS diagnostics
-function cycle_CLDTOT_MODIS (prefix:string,outptr:file)
+function cycle_CLDTOT_MODIS (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"CLDTOT_MODIS")) then
     var = outptr->CLDTOT_MODIS
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -1488,7 +1488,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_CLDTOT_MODIS(inptr,outptrDummy)
@@ -1509,13 +1509,13 @@ begin
   return (var)
 end
 
-function cycle_CLDLOW_MODIS (prefix:string,outptr:file)
+function cycle_CLDLOW_MODIS (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"CLDLOW_MODIS")) then
     var = outptr->CLDLOW_MODIS
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -1524,7 +1524,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_CLDLOW_MODIS(inptr,outptrDummy)
@@ -1545,13 +1545,13 @@ begin
   return (var)
 end
 
-function cycle_CLDMED_MODIS (prefix:string,outptr:file)
+function cycle_CLDMED_MODIS (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"CLDMED_MODIS")) then
     var = outptr->CLDMED_MODIS
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -1560,7 +1560,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_CLDMED_MODIS(inptr,outptrDummy)
@@ -1581,13 +1581,13 @@ begin
   return (var)
 end
 
-function cycle_CLDHGH_MODIS (prefix:string,outptr:file)
+function cycle_CLDHGH_MODIS (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"CLDHGH_MODIS")) then
     var = outptr->CLDHGH_MODIS
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -1596,7 +1596,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_CLDHGH_MODIS(inptr,outptrDummy)
@@ -1617,13 +1617,13 @@ begin
   return (var)
 end
 
-function cycle_CLDTHICK_MODIS (prefix:string,outptr:file)
+function cycle_CLDTHICK_MODIS (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"CLDTHICK_MODIS")) then
     var = outptr->CLDTHICK_MODIS
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -1632,7 +1632,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_CLDTHICK_MODIS(inptr,outptrDummy)
@@ -1653,13 +1653,13 @@ begin
   return (var)
 end
 
-function cycle_CLWMODIS (prefix:string,outptr:file)
+function cycle_CLWMODIS (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"CLWMODIS")) then
     var = outptr->CLWMODIS
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -1668,7 +1668,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_CLWMODIS(inptr,outptrDummy)
@@ -1689,13 +1689,13 @@ begin
   return (var)
 end
 
-function cycle_CLIMODIS (prefix:string,outptr:file)
+function cycle_CLIMODIS (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"CLIMODIS")) then
     var = outptr->CLIMODIS
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -1704,7 +1704,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_CLIMODIS(inptr,outptrDummy)
@@ -1725,13 +1725,13 @@ begin
   return (var)
 end
 
-function cycle_LWPMODIS (prefix:string,outptr:file)
+function cycle_LWPMODIS (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"LWPMODIS")) then
     var = outptr->LWPMODIS
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -1740,7 +1740,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_LWPMODIS(inptr,outptrDummy)
@@ -1761,13 +1761,13 @@ begin
   return (var)
 end
 
-function cycle_IWPMODIS (prefix:string,outptr:file)
+function cycle_IWPMODIS (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"IWPMODIS")) then
     var = outptr->IWPMODIS
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -1776,7 +1776,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_IWPMODIS(inptr,outptrDummy)
@@ -1797,13 +1797,13 @@ begin
   return (var)
 end
 
-function cycle_REFFCLWMODIS (prefix:string,outptr:file)
+function cycle_REFFCLWMODIS (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"REFFCLWMODIS")) then
     var = outptr->REFFCLWMODIS
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -1812,7 +1812,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_REFFCLWMODIS(inptr,outptrDummy)
@@ -1833,13 +1833,13 @@ begin
   return (var)
 end
 
-function cycle_REFFCLIMODIS (prefix:string,outptr:file)
+function cycle_REFFCLIMODIS (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"REFFCLIMODIS")) then
     var = outptr->REFFCLIMODIS
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -1848,7 +1848,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_REFFCLIMODIS(inptr,outptrDummy)
@@ -1869,13 +1869,13 @@ begin
   return (var)
 end
 
-function cycle_TAUTLOGMODIS (prefix:string,outptr:file)
+function cycle_TAUTLOGMODIS (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"TAUTLOGMODIS")) then
     var = outptr->TAUTLOGMODIS
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -1884,7 +1884,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_TAUTLOGMODIS(inptr,outptrDummy)
@@ -1905,13 +1905,13 @@ begin
   return (var)
 end
 
-function cycle_TAUWLOGMODIS (prefix:string,outptr:file)
+function cycle_TAUWLOGMODIS (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"TAUWLOGMODIS")) then
     var = outptr->TAUWLOGMODIS
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -1920,7 +1920,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_TAUWLOGMODIS(inptr,outptrDummy)
@@ -1941,13 +1941,13 @@ begin
   return (var)
 end
 
-function cycle_TAUILOGMODIS (prefix:string,outptr:file)
+function cycle_TAUILOGMODIS (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"TAUILOGMODIS")) then
     var = outptr->TAUILOGMODIS
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -1956,7 +1956,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_TAUILOGMODIS(inptr,outptrDummy)
@@ -1977,13 +1977,13 @@ begin
   return (var)
 end
 
-function cycle_TAUIMODIS (prefix:string,outptr:file)
+function cycle_TAUIMODIS (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"TAUIMODIS")) then
     var = outptr->TAUIMODIS
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -1992,7 +1992,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_TAUIMODIS(inptr,outptrDummy)
@@ -2013,13 +2013,13 @@ begin
   return (var)
 end
 
-function cycle_TAUWMODIS (prefix:string,outptr:file)
+function cycle_TAUWMODIS (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"TAUWMODIS")) then
     var = outptr->TAUWMODIS
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -2028,7 +2028,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_TAUWMODIS(inptr,outptrDummy)
@@ -2049,13 +2049,13 @@ begin
   return (var)
 end
 
-function cycle_TAUTMODIS (prefix:string,outptr:file)
+function cycle_TAUTMODIS (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"TAUTMODIS")) then
     var = outptr->TAUTMODIS
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -2064,7 +2064,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_TAUTMODIS(inptr,outptrDummy)
@@ -2085,13 +2085,13 @@ begin
   return (var)
 end
 
-function cycle_PCTMODIS (prefix:string,outptr:file)
+function cycle_PCTMODIS (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"PCTMODIS")) then
     var = outptr->PCTMODIS
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -2100,7 +2100,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_PCTMODIS(inptr,outptrDummy)
@@ -2122,13 +2122,13 @@ begin
 end
 
 ; CALIPSO diagnostics
-function cycle_CLDTOT_CAL (prefix:string,outptr:file)
+function cycle_CLDTOT_CAL (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"CLDTOT_CAL")) then
     var = outptr->CLDTOT_CAL
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -2137,7 +2137,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_CLDTOT_CAL(inptr,outptrDummy)
@@ -2158,13 +2158,13 @@ begin
   return (var)
 end
 
-function cycle_CLDLOW_CAL (prefix:string,outptr:file)
+function cycle_CLDLOW_CAL (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"CLDLOW_CAL")) then
     var = outptr->CLDLOW_CAL
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -2173,7 +2173,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_CLDLOW_CAL(inptr,outptrDummy)
@@ -2194,13 +2194,13 @@ begin
   return (var)
 end
 
-function cycle_CLDMED_CAL (prefix:string,outptr:file)
+function cycle_CLDMED_CAL (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"CLDMED_CAL")) then
     var = outptr->CLDMED_CAL
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -2209,7 +2209,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_CLDMED_CAL(inptr,outptrDummy)
@@ -2230,13 +2230,13 @@ begin
   return (var)
 end
 
-function cycle_CLDHGH_CAL (prefix:string,outptr:file)
+function cycle_CLDHGH_CAL (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"CLDHGH_CAL")) then
     var = outptr->CLDHGH_CAL
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -2245,7 +2245,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_CLDHGH_CAL(inptr,outptrDummy)
@@ -2267,13 +2267,13 @@ begin
 end
 
 ; CLOUDSAT diagnostics
-function cycle_CLDTOT_CS2 (prefix:string,outptr:file)
+function cycle_CLDTOT_CS2 (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"CLDTOT_CS2")) then
     var = outptr->CLDTOT_CS2
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -2282,7 +2282,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_CLDTOT_CS2(inptr,outptrDummy)
@@ -2303,13 +2303,13 @@ begin
   return (var)
 end
 
-function cycle_CLDTOT_CS (prefix:string,outptr:file)
+function cycle_CLDTOT_CS (prefix:string,outptr:file,yrs_prnt:string)
 local var,inptr,lat,m,outptrDummy,data
 begin
   if (isfilevar(outptr,"CLDTOT_CS")) then
     var = outptr->CLDTOT_CS
   else
-    inptr = addfile(prefix+"_01_climo.nc","r")
+    inptr = addfile(prefix+"_01_"+yrs_prnt+"_climo.nc","r")
     lat = inptr->lat
     nlat = dimsizes(lat)
     var = new((/13,nlat/),float)
@@ -2318,7 +2318,7 @@ begin
     var!1 = "lat"
     var&lat = lat
     do m = 0, 11
-      inptr = addfile(prefix+"_"+month(m)+"_climo.nc","r")
+      inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       system("rm -f dummy.nc")
       outptrDummy = addfile("dummy.nc","c")
       data = get_CLDTOT_CS(inptr,outptrDummy)
