@@ -35,8 +35,8 @@ PATHDAT1=$pathdat_root1/$CASENAME1/ocn/hist
 # SELECT TYPE OF CONTROL CASE
 # NOTE: CNTL=USER IS NOT YET SUPPORTED
 # ---------------------------------------------------------
-#CNTL=OBS    # compare case1 to observations (model-obs diagnostics)
-CNTL=USER   # compare case1 to another experiment case2 (model-model diagnostics)
+CNTL=OBS    # compare case1 to observations (model-obs diagnostics)
+#CNTL=USER   # compare case1 to another experiment case2 (model-model diagnostics)
 
 # ---------------------------------------------------------
 # CNTL CASENAME AND YEARS TO BE AVERAGED (CASE2)
@@ -66,8 +66,8 @@ DIAG_ROOT=/projects/NS2345K/noresm_diagnostics_dev/out/$USER/HAMMOC_DIAG
 # SELECT SETS (1-3)
 # ---------------------------------------------------------
 set_1=1 # (1=ON,0=OFF) Annual time series plots
-set_2=1 # (1=ON,0=OFF) 2D (lat-lon) contour plots
-set_3=1 # (1=ON,0=OFF) Zonal mean (lat-depth) plot
+set_2=0 # (1=ON,0=OFF) 2D (lat-lon) contour plots
+set_3=0 # (1=ON,0=OFF) Zonal mean (lat-depth) plot
 
 # ---------------------------------------------------------
 # SELECT GRID FILE (OPTIONAL)
@@ -230,7 +230,9 @@ fi
 # Set required variables for climatology and time series
 required_vars_climo="depth_bnds,o2lvl,silvl,po4lvl,no3lvl,dissiclvl,talklvl,pp,pddpo,epc100,pco2,co2fxd,co2fxu"
 required_vars_climo_zm="o2lvl,silvl,po4lvl,no3lvl,dissiclvl,talklvl"
-required_vars_ts_ann="o2,si,po4,no3,dissic,co2fxd,co2fxu,epc100,epcalc100,pp,pddpo"
+required_vars_ts_ann="co2fxd,co2fxu,epc100,epcalc100"
+required_vars_ts_mon="o2,si,po4,no3,dissic,pp,pddpo"
+
 
 # Check which sets should be plotted based on CLIMO_TIME_SERIES_SWITCH
 if [ $CLIMO_TIME_SERIES_SWITCH == ONLY_CLIMO ]; then
@@ -239,9 +241,9 @@ elif [ $CLIMO_TIME_SERIES_SWITCH == ONLY_TIME_SERIES ]; then
     set_1=1 ; set_2=0 ; set_3=0
 fi
 compute_climo=0
-compute_time_series_ann=0
+compute_time_series=0
 if [ $set_1 -eq 1 ]; then
-    compute_time_series_ann=1
+    compute_time_series=1
 fi
 if [ $set_2 -eq 1 ] || [ $set_3 -eq 1 ]; then
     compute_climo=1
@@ -415,7 +417,7 @@ do
 	fi
     fi    
 
-    if [ $compute_time_series_ann -eq 1 ]; then
+    if [ $compute_time_series -eq 1 ]; then
 	# ---------------------------------
 	# Compute annual time series
 	# ---------------------------------
@@ -428,24 +430,49 @@ do
 
 	ANN_TS_FILE=${CASENAME}_ANN_${FYR_PRNT_TS}-${LYR_PRNT_TS}_ts.nc
 	# Check if annual time series file already exists
-	if [ ! -f $CLIMO_TS_DIR/$ANN_TS_FILE ]; then	
-	    echo $required_vars_ts_ann > $WKDIR/attributes/required_vars
-	    $DIAG_CODE/check_history_vars.sh $CASENAME $FIRST_YR_TS $LAST_YR_TS $PATHDAT ts_ann
-	    if [ ! -f $WKDIR/attributes/grid_${CASENAME} ] && [ -z $PGRIDPATH ]; then
-		$DIAG_CODE/determine_grid_type.sh $CASENAME
+	if [ ! -f $CLIMO_TS_DIR/$ANN_TS_FILE ]; then
+	    ANN_TS_FILE_ANN=${CASENAME}_ANN_${FYR_PRNT_TS}-${LYR_PRNT_TS}_ts_ann.nc
+	    if [ ! -f $CLIMO_TS_DIR/$ANN_TS_FILE_ANN ]; then
+		echo $required_vars_ts_ann > $WKDIR/attributes/required_vars
+		$DIAG_CODE/check_history_vars.sh $CASENAME $FIRST_YR_TS $LAST_YR_TS $PATHDAT ts_ann
+		if [ ! -f $WKDIR/attributes/grid_${CASENAME} ] && [ -z $PGRIDPATH ]; then
+		    $DIAG_CODE/determine_grid_type.sh $CASENAME
+		fi
+		if [ -f $WKDIR/attributes/vars_ts_ann_${CASENAME}_hbgcy ]; then
+		    $DIAG_CODE/compute_ann_time_series.sh hbgcy $CASENAME $FIRST_YR_TS $LAST_YR_TS $PATHDAT $CLIMO_TS_DIR
+		fi
+		if [ -f $WKDIR/attributes/vars_ts_ann_${CASENAME}_hbgcm ]; then
+		    $DIAG_CODE/compute_ann_time_series.sh hbgcm $CASENAME $FIRST_YR_TS $LAST_YR_TS $PATHDAT $CLIMO_TS_DIR
+		fi
+		if [ ! -f $WKDIR/attributes/vars_ts_ann_${CASENAME}_hbgcy ] && [ ! -f $WKDIR/attributes/vars_ts_ann_${CASENAME}_hbgcm ]; then
+		    echo "WARNING: could not find required variables ($required_vars_ts_ann) for annual time series."
+		    echo "-> SKIPPING COMPUTING ANNUAL TIME SERIES"
+		fi
+		# Concancate files if necessary
+		$DIAG_CODE/concancate_files.sh $CASENAME $FYR_PRNT_TS $LYR_PRNT_TS $CLIMO_TS_DIR ts_ann
+	    else
+		echo "$CLIMO_TS_DIR/$ANN_TS_FILE_ANN already exists."
+		echo "-> SKIPPING COMPUTING ANNUAL TIME SERIES FROM ANNUAL FILES"
 	    fi
-	    if [ -f $WKDIR/attributes/vars_ts_ann_${CASENAME}_hbgcy ]; then
-		$DIAG_CODE/compute_ann_time_series.sh hbgcy $CASENAME $FIRST_YR_TS $LAST_YR_TS $PATHDAT $CLIMO_TS_DIR
+	    ANN_TS_FILE_MON=${CASENAME}_ANN_${FYR_PRNT_TS}-${LYR_PRNT_TS}_ts_mon.nc
+	    if [ ! -f $CLIMO_TS_DIR/$ANN_TS_FILE_MON ]; then
+		echo $required_vars_ts_mon > $WKDIR/attributes/required_vars
+		$DIAG_CODE/check_history_vars.sh $CASENAME $FIRST_YR_TS $LAST_YR_TS $PATHDAT ts_mon
+		if [ ! -f $WKDIR/attributes/grid_${CASENAME} ] && [ -z $PGRIDPATH ]; then
+		    $DIAG_CODE/determine_grid_type.sh $CASENAME
+		fi
+		if [ -f $WKDIR/attributes/vars_ts_mon_${CASENAME}_hbgcm ]; then
+		    $DIAG_CODE/compute_ann_time_series_mon.sh hbgcm $CASENAME $FIRST_YR_TS $LAST_YR_TS $PATHDAT $CLIMO_TS_DIR
+		else
+		    echo "WARNING: could not find required variables ($required_vars_ts_mon) for annual time series."
+		    echo "-> SKIPPING COMPUTING ANNUAL TIME SERIES"
+		fi
+		# Concancate files if necessary
+#		$DIAG_CODE/concancate_files.sh $CASENAME $FYR_PRNT_TS $LYR_PRNT_TS $CLIMO_TS_DIR ts_ann
+	    else
+		echo "$CLIMO_TS_DIR/$ANN_TS_FILE_ANN already exists."
+		echo "-> SKIPPING COMPUTING ANNUAL TIME SERIES FROM ANNUAL FILES"
 	    fi
-	    if [ -f $WKDIR/attributes/vars_ts_ann_${CASENAME}_hbgcm ]; then
-		$DIAG_CODE/compute_ann_time_series.sh hbgcm $CASENAME $FIRST_YR_TS $LAST_YR_TS $PATHDAT $CLIMO_TS_DIR
-	    fi
-	    if [ ! -f $WKDIR/attributes/vars_ts_ann_${CASENAME}_hbgcy ] && [ ! -f $WKDIR/attributes/vars_ts_ann_${CASENAME}_hbgcm ]; then
-		echo "WARNING: could not find required variables ($required_vars_ts_mon) for annual time series."
-		echo "-> SKIPPING COMPUTING ANNUAL TIME SERIES"
-	    fi
-	    # Concancate files if necessary
-	    $DIAG_CODE/concancate_files.sh $CASENAME $FYR_PRNT_TS $LYR_PRNT_TS $CLIMO_TS_DIR ts_ann
 	else
 	    echo "$CLIMO_TS_DIR/$ANN_TS_FILE already exists."
 	    echo "-> SKIPPING COMPUTING ANNUAL TIME SERIES"
@@ -453,6 +480,8 @@ do
     fi
     let i=$i+1
 done
+
+exit
 
 # ---------------------------------------------
 # Check that the climo and ts files are present
