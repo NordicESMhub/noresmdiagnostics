@@ -532,10 +532,20 @@ foreach CASE_TO_READ ($CASES_TO_READ)
           echo "***EXITING THE SCRIPT"
           exit 1
        endif
+       @ prev_yri = $FIRST_YR_AVG - 1
+       set filename_prev_year = ${FILE_HEADER}`printf "%04d" ${prev_yri}`
+       if ( -e ${PATHDAT}/${filename_prev_year}-12.nc ) then
+          set test_djf = SCD # Seasonally Continuous DJF
+	  echo "-->FOUND DECEMBER FILE FROM YEAR ${prev_yri}: USING test_djf=SCD"
+       else
+          set test_djf = SDD # Seasonally Discontinuous DJF
+	  echo "-->NO DECEMBER FILE FROM YEAR ${prev_yri} WAS FOUND: USING test_djf=SDD"
+       endif
+       echo ' '
        echo " ========================================="
        echo " Computing climatology for cont/vect plots"
        echo " ========================================="
-       ${DIAG_HOME}/avg_netcdf.csh $FRST_YR_AVG $END_YR_AVG $VAR_NAME_TYPE[$m]
+       ${DIAG_HOME}/avg_netcdf.csh $FRST_YR_AVG $END_YR_AVG $VAR_NAME_TYPE[$m] $test_djf
     endif
   @ m++
   endif            # End of PLOT_CONT, PLOT_VECT, etc. for averaging

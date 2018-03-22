@@ -10,8 +10,8 @@
 # $last_year last year to be averaged
 # $SEAS_MEAN seasonal mean
 
-if ($#argv != 3) then
-  echo "usage: avg_netcdf.csh $FIRST_YEAR $LAST_YEAR $VAR_NAME_TYPE"
+if ($#argv != 4) then
+  echo "usage: avg_netcdf.csh $FIRST_YEAR $LAST_YEAR $VAR_NAME_TYPE $djf_md"
   exit
 endif
 
@@ -24,13 +24,18 @@ if ($var_name_type == OLD) then
 else
    set modelname = cice
 endif
+set djf_md = scd
+if ( $djf == SDD ) then
+   set djf_md = sdd
+endif
+
 # amj_avg_0011-0050.nc  ASPeCt_monthly_1x1.nc  jas_avg_0011-0050.nc  on_avg_0011-0050.nc   SSMI.ifrac.1979-2000monthlymean.gx1v5.nc
 # ann_avg_0011-0050.nc  fm_avg_0011-0050.nc    jfm_avg_0011-0050.nc  ond_avg_0011-0050.nc
 
 set first_yr_prnt = `printf "%04d" ${first_yr}`
 set last_yr_prnt = `printf "%04d" ${last_yr}`
 
-$ncclimo_dir/ncclimo -m $modelname --clm_md=mth --seasons=amj,ann,fm,jas,jfm,on,ond --no_amwg_links -h h -c $CASE_READ -s $first_yr -e $last_yr -i $PATHDAT -o $PATHJLS
+$ncclimo_dir/ncclimo -m $modelname --clm_md=mth --seasons=amj,ann,fm,jas,jfm,on,ond --no_amwg_links -a $djf_md -h h -c $CASE_READ -s $first_yr -e $last_yr -i $PATHDAT -o $PATHJLS
 if ($status == 0) then
    mv ${PATHJLS}/${CASE_READ}_AMJ_*_climo.nc ${PATHJLS}/amj_avg_${first_yr_prnt}-${last_yr_prnt}.nc
    mv ${PATHJLS}/${CASE_READ}_ANN_*_climo.nc ${PATHJLS}/ann_avg_${first_yr_prnt}-${last_yr_prnt}.nc
