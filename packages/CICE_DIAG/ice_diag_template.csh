@@ -532,7 +532,7 @@ foreach CASE_TO_READ ($CASES_TO_READ)
           echo "***EXITING THE SCRIPT"
           exit 1
        endif
-       @ prev_yri = $FIRST_YR_AVG - 1
+       @ prev_yri = $FRST_YR_AVG - 1
        set filename_prev_year = ${FILE_HEADER}`printf "%04d" ${prev_yri}`
        if ( -e ${PATHDAT}/${filename_prev_year}-12.nc ) then
           set test_djf = SCD # Seasonally Continuous DJF
