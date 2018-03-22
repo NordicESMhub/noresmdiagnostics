@@ -1050,7 +1050,7 @@ if ($test_compute_climo == 0) then
     # the same year (seasonally discontinuous DJF)
     @ prev_yri = $test_first_yr - 1
     set filename_prev_year = ${test_rootname}`printf "%04d" ${prev_yri}`
-    if ( -e ${test_path_history}/${filename_prev_year}-12.nc) then   
+    if ( -e ${test_path_history}/${filename_prev_year}-12.nc ) then   
 	set test_djf = SCD # Seasonally Continuous DJF
         echo "-->FOUND DECEMBER FILE FROM YEAR ${prev_yri}: USING test_djf=SCD"
     else
