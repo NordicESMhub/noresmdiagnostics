@@ -50,7 +50,7 @@ if [ -f $filedir/$ann_file_hy ]; then
       $NCKS -A -o $filedir/$ann_file $filedir/$ann_file_hm
       rm -f $filedir/$ann_file_hm
    else
-      echo "Renaming $ann_file_hy -> $ann_file"
+       echo "Renaming $ann_file_hy -> $ann_file"
    fi
 else
    if [ -f $filedir/$ann_file_hm ]; then

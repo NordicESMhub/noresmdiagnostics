@@ -24,7 +24,7 @@ echo " ann_file = $ann_file"
 echo " climodir = $climodir"
 echo " "
 
-var_list=`cat $WKDIR/attributes/vars_climo_${casename} | sed 's/,/ /g'`
+var_list=`cat $WKDIR/attributes/vars_climo_ann_${casename} | sed 's/,/ /g'`
 
 for var in $var_list
 do

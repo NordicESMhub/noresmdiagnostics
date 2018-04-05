@@ -55,12 +55,20 @@ else
   setenv NCL $NCARG_ROOT/bin/ncl
 endif
 
+#*********************************************
+# create WKDIR (moved from lnd_systems)
+# -JL, Apr 2018
+#*********************************************
+if (! -e {$WKDIR}) then
+  echo \$WKDIR {$WKDIR} does not exist: Creating
+  mkdir $WKDIR
+endif
 
 #**************************************************
 # check for $NCARG_ROOT and make sure user 
 # specified directories exist
 #**************************************************
-$DIAG_SHARED/lnd_systems.csh 
+$DIAG_SHARED/lnd_systems.csh
 echo " "
 echo "***************************************************"
 echo "          CCSM LMWG DIAGNOSTIC PACKAGE"
@@ -176,48 +184,49 @@ if ($regrid_file_type == "HISTORY") then
   setenv regrid_2 0
 endif
 
-if($use_swift == 0) then
-  if ($trends_all_flag == 1) then
-     # Determines the following environmental variables:
-     # trends_first_yr_*, trends_match_yr_* and trends_num_yrs_*
-     # Johan Liakka, (Nov 2017)
-     echo "-----------------------------------------"
-     echo "trends_all_flag=1:"
-     echo "COMPUTE TRENDS OVER THE ENTIRE SIMULATION"
-     echo "-----------------------------------------"
-     set file_prefix = ${case_1_dir}/${caseid_1}.clm2.h0.
-     set first_file = `ls ${file_prefix}* | head -n 1`
-     set last_file  = `ls ${file_prefix}* | tail -n 1`
-     if ("$first_file" == "") then
+if ($use_swift == 0) then
+  if ($set_1 == 1 || $set_6 == 1) then
+    if ($trends_all_flag == 1) then
+      # Determines the following environmental variables:
+      # trends_first_yr_*, trends_match_yr_* and trends_num_yrs_*
+      # Johan Liakka, (Nov 2017)
+      echo "-----------------------------------------"
+      echo "trends_all_flag=1:"
+      echo "COMPUTE TRENDS OVER THE ENTIRE SIMULATION"
+      echo "-----------------------------------------"
+      set file_prefix = ${case_1_dir}/${caseid_1}.clm2.h0.
+      set first_file = `ls ${file_prefix}* | head -n 1`
+      set last_file  = `ls ${file_prefix}* | tail -n 1`
+      if ("$first_file" == "") then
 	echo "ERROR: No history files (${caseid_1}.clm2.h0.*) exist in ${case_1_dir}"
 	echo "***EXITING THE SCRIPT"
 	exit
-     endif
-     set fyr_in_dir_prnt = `echo $first_file | rev | cut -c 7-10 | rev`
-     set fyr_in_dir      = `echo $fyr_in_dir_prnt | sed 's/^0*//'`
-     set lyr_in_dir_prnt = `echo $last_file | rev | cut -c 7-10 | rev`
-     set lyr_in_dir      = `echo $lyr_in_dir_prnt | sed 's/^0*//'`
-     @ nyr_in_dir        = $lyr_in_dir - $fyr_in_dir + 1
-     if ($nyr_in_dir < 2) then
+      endif
+      set fyr_in_dir_prnt = `echo $first_file | rev | cut -c 7-10 | rev`
+      set fyr_in_dir      = `echo $fyr_in_dir_prnt | sed 's/^0*//'`
+      set lyr_in_dir_prnt = `echo $last_file | rev | cut -c 7-10 | rev`
+      set lyr_in_dir      = `echo $lyr_in_dir_prnt | sed 's/^0*//'`
+      @ nyr_in_dir        = $lyr_in_dir - $fyr_in_dir + 1
+      if ($nyr_in_dir < 2) then
 	echo "ERROR: First and last year in ${case_1_dir} are identical: cannot compute trends"
 	echo "***EXITING THE SCRIPT"
 	exit
-     endif
-     setenv trends_first_yr_1   $fyr_in_dir
-     setenv trends_match_yr_1   $fyr_in_dir
-     setenv trends_num_yrs_1    $nyr_in_dir
-     echo " trends_first_yr_1 = $trends_first_yr_1"
-     echo " trends_match_yr_1 = $trends_match_yr_1"
-     echo " trends_num_yr_1   = $trends_num_yrs_1"
-     # For model-model comparison
-     if ($RUNTYPE == model1-model2) then
+      endif
+      setenv trends_first_yr_1   $fyr_in_dir
+      setenv trends_match_yr_1   $fyr_in_dir
+      setenv trends_num_yrs_1    $nyr_in_dir
+      echo " trends_first_yr_1 = $trends_first_yr_1"
+      echo " trends_match_yr_1 = $trends_match_yr_1"
+      echo " trends_num_yr_1   = $trends_num_yrs_1"
+      # For model-model comparison
+      if ($RUNTYPE == model1-model2) then
 	set file_prefix = ${case_2_dir}/${caseid_2}.clm2.h0.
 	set first_file = `ls ${file_prefix}* | head -n 1`
 	set last_file  = `ls ${file_prefix}* | tail -n 1`
 	if ("$first_file" == "") then
-	    echo "ERROR: No history files (${caseid_2}.clm2.h0.*) exist in ${case_2_dir}"
-	    echo "***EXITING THE SCRIPT"
-	    exit
+          echo "ERROR: No history files (${caseid_2}.clm2.h0.*) exist in ${case_2_dir}"
+          echo "***EXITING THE SCRIPT"
+          exit
 	endif
 	set fyr_in_dir_prnt = `echo $first_file | rev | cut -c 7-10 | rev`
 	set fyr_in_dir      = `echo $fyr_in_dir_prnt | sed 's/^0*//'`
@@ -226,9 +235,9 @@ if($use_swift == 0) then
 
 	@ nyr_in_dir        = $lyr_in_dir - $fyr_in_dir + 1
 	if ($nyr_in_dir < 2) then
-	    echo "ERROR: First and last year in ${case_1_dir} are identical: cannot compute trends"
-	    echo "***EXITING THE SCRIPT"
-	    exit
+          echo "ERROR: First and last year in ${case_1_dir} are identical: cannot compute trends"
+          echo "***EXITING THE SCRIPT"
+          exit
 	endif
 	setenv trends_first_yr_2   $fyr_in_dir
 	setenv trends_match_yr_2   $fyr_in_dir
@@ -236,14 +245,15 @@ if($use_swift == 0) then
 	echo " trends_first_yr_2 = $trends_first_yr_2"
 	echo " trends_match_yr_2 = $trends_match_yr_2"
 	echo " trends_num_yr_2   = $trends_num_yrs_2"
-     endif
-  endif
-  $DIAG_SHARED/check_vars.csh
-  setenv var_list_1  `cat $PROCDIR1/var_list.txt`
-  if ($RUNTYPE == model1-model2) then
-     setenv var_list_2  `cat $PROCDIR2/var_list.txt`
-  else
-     setenv var_list_2 dummy
+      endif
+    endif
+    $DIAG_SHARED/check_vars.csh
+    setenv var_list_1  `cat $PROCDIR1/var_list.txt`
+    if ($RUNTYPE == model1-model2) then
+      setenv var_list_2  `cat $PROCDIR2/var_list.txt`
+    else
+      setenv var_list_2 dummy
+    endif
   endif
   $DIAG_SHARED/lnd_preProcDriver.pl
   if (-e $WKDIR/preProc_error_file) then

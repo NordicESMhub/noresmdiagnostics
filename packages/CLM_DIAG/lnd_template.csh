@@ -611,9 +611,11 @@ if (! -e ${filename_atm} || -z ${filename_atm} ) then
    setenv camname1 cam2
 endif
 
-set filename_atm = ${case_2_atm_dir}${caseid_2}.${camname2}.h0.`printf "%04d" ${clim_first_yr_2}`-01.nc
-if (! -e ${filename_atm} || -z ${filename_atm} ) then
-   setenv camname2 cam2
+if ($ModelVsModel == 1) then    
+  set filename_atm = ${case_2_atm_dir}${caseid_2}.${camname2}.h0.`printf "%04d" ${clim_first_yr_2}`-01.nc
+  if (! -e ${filename_atm} || -z ${filename_atm} ) then
+     setenv camname2 cam2
+  endif
 endif
 
 #**************************************************

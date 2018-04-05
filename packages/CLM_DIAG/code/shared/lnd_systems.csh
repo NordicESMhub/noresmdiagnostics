@@ -40,11 +40,25 @@ endif
 if (! -e {$prefix_1_dir}) then
   echo \$prefix_1_dir {$prefix_1_dir} does not exist: Creating
   mkdir $prefix_1_dir
+else  # Update to allow for multiple climo and ts files (Johan Liakka, NERSC, Apr 2018)
+  foreach ftype (ANN_ALL ANN_climo ANN_globalClimo DJF_climo JJA_climo MAM_climo MONS_climo SON_climo)
+    if ( -e ${prefix_1_dir}${caseid_1}_${ftype}.nc ) then
+      @ ii = 1
+      while ( $ii > 0 )
+         if ( ! -e ${prefix_1_dir}${caseid_1}_${ftype}_${ii}.nc ) then
+	    break
+	 else
+	    @ ii++
+	 endif
+      end
+      mv ${prefix_1_dir}${caseid_1}_${ftype}.nc ${prefix_1_dir}${caseid_1}_${ftype}_${ii}.nc
+    endif
+  end
 endif
-if (! -e {$WKDIR}) then
-  echo \$WKDIR {$WKDIR} does not exist: Creating
-  mkdir $WKDIR
-endif
+#if (! -e {$WKDIR}) then
+#  echo \$WKDIR {$WKDIR} does not exist: Creating
+#  mkdir $WKDIR
+#endif
 if (-e {$PROCDIR1}) then
   echo removing \$PROCDIR1 {$PROCDIR1} to avoid wildcard errors
   rm -r $PROCDIR1
@@ -61,6 +75,20 @@ if ($climo_atm_1 == 1 || $trends_atm_1 == 1 || $set_4 == 1 ) then
    if (! -e ${prefix_1_atm_dir}) then
      echo \${prefix_1_atm_dir} ${prefix_1_atm_dir} does not exist: Creating
      mkdir ${prefix_1_atm_dir}
+   else  # Update to allow for multiple climo and ts files (Johan Liakka, NERSC, Apr 2018)
+     foreach ftype (ANN_climo_atm DJF_climo_atm JJA_climo_atm MAM_climo_atm MONS_climo_atm SON_climo_atm)
+       if ( -e ${prefix_1_atm_dir}${caseid_1}_${ftype}.nc ) then
+         @ ii = 1
+         while ( $ii > 0 )
+           if ( ! -e ${prefix_1_atm_dir}${caseid_1}_${ftype}_${ii}.nc ) then
+             break
+           else
+	     @ ii++
+           endif
+         end
+         mv ${prefix_1_atm_dir}${caseid_1}_${ftype}.nc ${prefix_1_atm_dir}${caseid_1}_${ftype}_${ii}.nc
+       endif
+     end
    endif
    if (-e {$PROCDIR_ATM1}) then
      echo removing \$PROCDIR_ATM1 {$PROCDIR_ATM1} to avoid wildcard errors
@@ -96,6 +124,20 @@ if ($RUNTYPE == "model1-model2") then
    if (! -e {$prefix_2_dir}) then
      echo \$prefix_2_dir {$prefix_2_dir} does not exist: Creating
      mkdir $prefix_2_dir
+   else  # Update to allow for multiple climo and ts files (Johan Liakka, NERSC, Apr 2018)
+     foreach ftype (ANN_ALL ANN_climo ANN_globalClimo DJF_climo JJA_climo MAM_climo MONS_climo SON_climo)
+       if ( -e ${prefix_2_dir}${caseid_2}_${ftype}.nc ) then
+         @ ii = 1
+         while ( $ii > 0 )
+           if ( ! -e ${prefix_2_dir}${caseid_2}_${ftype}_${ii}.nc ) then
+	     break
+	   else
+	     @ ii++
+	   endif
+         end
+         mv ${prefix_2_dir}${caseid_2}_${ftype}.nc ${prefix_2_dir}${caseid_2}_${ftype}_${ii}.nc
+       endif
+     end
    endif
    if (-e {$PROCDIR2}) then
      echo removing \$PROCDIR2 {$PROCDIR2} to avoid wildcard errors
@@ -113,6 +155,20 @@ if ($RUNTYPE == "model1-model2") then
        if (! -e {$prefix_2_atm_dir}) then
          echo \$prefix_2_atm_dir {$prefix_2_atm_dir} does not exist: Creating
          mkdir $prefix_2_atm_dir
+       else  # Update to allow for multiple climo and ts files (Johan Liakka, NERSC, Apr 2018)
+         foreach ftype (ANN_climo_atm DJF_climo_atm JJA_climo_atm MAM_climo_atm MONS_climo_atm SON_climo_atm)
+           if ( -e ${prefix_2_atm_dir}${caseid_2}_${ftype}.nc ) then
+             @ ii = 1
+             while ( $ii > 0 )
+               if ( ! -e ${prefix_2_atm_dir}${caseid_2}_${ftype}_${ii}.nc ) then
+                 break
+               else
+	         @ ii++
+               endif
+             end
+             mv ${prefix_2_atm_dir}${caseid_2}_${ftype}.nc ${prefix_2_atm_dir}${caseid_2}_${ftype}_${ii}.nc
+           endif
+         end
        endif
        if (-e {$PROCDIR_ATM2}) then
          echo removing \$PROCDIR_ATM2 {$PROCDIR_ATM2} to avoid wildcard errors

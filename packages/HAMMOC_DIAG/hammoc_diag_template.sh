@@ -65,9 +65,10 @@ DIAG_ROOT=/projects/NS2345K/noresm_diagnostics_dev/out/$USER/HAMMOC_DIAG
 # ---------------------------------------------------------
 # SELECT SETS (1-3)
 # ---------------------------------------------------------
-set_1=1 # (1=ON,0=OFF) Annual time series plots
+set_1=0 # (1=ON,0=OFF) Annual time series plots
 set_2=0 # (1=ON,0=OFF) 2D (lat-lon) contour plots
 set_3=0 # (1=ON,0=OFF) Zonal mean (lat-depth) plot
+set_4=1 # (1=ON,0=OFF) Regionally-averaged monthly climatology plots
 
 # ---------------------------------------------------------
 # SELECT GRID FILE (OPTIONAL)
@@ -228,7 +229,8 @@ if [ $CNTL == USER ]; then
 fi
 
 # Set required variables for climatology and time series
-required_vars_climo="depth_bnds,o2lvl,silvl,po4lvl,no3lvl,dissiclvl,talklvl,pp,pddpo,epc100,pco2,co2fxd,co2fxu"
+required_vars_climo_ann="depth_bnds,o2lvl,silvl,po4lvl,no3lvl,dissiclvl,talklvl,pp_tot,epc100,pco2,co2fxd,co2fxu"
+required_vars_climo_mon="depth_bnds,po4lvl,pp,pddpo,pco2,co2fxd,co2fxu"
 required_vars_climo_zm="o2lvl,silvl,po4lvl,no3lvl,dissiclvl,talklvl"
 required_vars_ts_ann="co2fxd,co2fxu,epc100,epcalc100"
 required_vars_ts_mon="o2,si,po4,no3,dissic,pp,pddpo"
@@ -236,19 +238,19 @@ required_vars_ts_mon="o2,si,po4,no3,dissic,pp,pddpo"
 
 # Check which sets should be plotted based on CLIMO_TIME_SERIES_SWITCH
 if [ $CLIMO_TIME_SERIES_SWITCH == ONLY_CLIMO ]; then
-    set_1=0 ; set_2=1 ; set_3=1
+    set_1=0 ; set_2=1 ; set_3=1 ; set_4=1
 elif [ $CLIMO_TIME_SERIES_SWITCH == ONLY_TIME_SERIES ]; then
-    set_1=1 ; set_2=0 ; set_3=0
+    set_1=1 ; set_2=0 ; set_3=0 ; set_4=0
 fi
 compute_climo=0
 compute_time_series=0
 if [ $set_1 -eq 1 ]; then
     compute_time_series=1
 fi
-if [ $set_2 -eq 1 ] || [ $set_3 -eq 1 ]; then
+if [ $set_2 -eq 1 ] || [ $set_3 -eq 1 ] || [ $set_4 -eq 1 ]; then
     compute_climo=1
 fi
-if [ $set_1 -eq 0 ] && [ $set_2 -eq 0 ] && [ $set_3 -eq 0 ]; then
+if [ $set_1 -eq 0 ] && [ $set_2 -eq 0 ] && [ $set_3 -eq 0 ] && [ $set_4 -eq 0 ]; then
     echo "ERROR: All sets are zero. Please modify."
     echo "*** EXITING THE SCRIPT ***"
     exit 1
@@ -269,6 +271,7 @@ echo "Selected sets:"
 echo "set_1 = $set_1"
 echo "set_2 = $set_2"
 echo "set_3 = $set_3"
+echo "set_4 = $set_4"
 
 # Determine the first and last yr of time series (if TRENDS_ALL=1)
 if [ $TRENDS_ALL -eq 1 ]; then
@@ -353,61 +356,104 @@ do
 
     if [ $compute_climo -eq 1 ]; then
 	# ---------------------------------
+	# Compute monthly climatology
+	# ---------------------------------
+	echo " "
+	echo "****************************************************"
+	echo "COMPUTING MONTHLY CLIMATOLOGY ($CASENAME)"
+	echo "****************************************************"
+	MON_RGR_FILE=${CASENAME}_MON_${FYR_PRNT_CLIMO}-${LYR_PRNT_CLIMO}_climo_remap_ARC.nc
+	# Check if monthly climo file already exists
+	if [ ! -f $CLIMO_TS_DIR/$MON_RGR_FILE ]; then
+	    echo $required_vars_climo_mon > $WKDIR/attributes/required_vars
+	    $DIAG_CODE/check_history_vars.sh $CASENAME $FIRST_YR_CLIMO $LAST_YR_CLIMO $PATHDAT climo_mon
+	    if [ -f $WKDIR/attributes/vars_climo_mon_${CASENAME}_hbgcm ]; then
+		$DIAG_CODE/compute_climo_mon.sh $CASENAME $FIRST_YR_CLIMO $LAST_YR_CLIMO $PATHDAT $CLIMO_TS_DIR
+	    else
+		echo "ERROR: Monthly climatology variables not available in hbgcm files"
+		echo "*** EXITING THE SCRIPT ***"
+		exit 1
+	    fi
+	    # Some extra climo calculations
+	    $DIAG_CODE/compute_climo_means.sh $CASENAME $FIRST_YR_CLIMO $LAST_YR_CLIMO $CLIMO_TS_DIR
+	    echo " "
+	    echo "****************************************************"
+	    echo "REMAPPING MONTHLY CLIMATOLOGY ($CASENAME)"
+	    echo "****************************************************"
+	    # Determine grid type from the climo file
+	    if [ ! -f $WKDIR/attributes/grid_${CASENAME} ] && [ -z $PGRIDPATH ]; then
+		$DIAG_CODE/determine_grid_type.sh $CASENAME
+	    fi
+	    # Add coordinate attributes if necessary
+	    $DIAG_CODE/add_attributes_mon.sh $CASENAME $FYR_PRNT_CLIMO $LYR_PRNT_CLIMO $CLIMO_TS_DIR
+	    # Remap the grid to 1x1 rectangular grid
+	    $DIAG_CODE/remap_climo_mon.sh $CASENAME $FYR_PRNT_CLIMO $LYR_PRNT_CLIMO $CLIMO_TS_DIR
+	    # Merge monthly climo files
+	    $DIAG_CODE/merge_monClim.sh $CASENAME $FYR_PRNT_CLIMO $LYR_PRNT_CLIMO $CLIMO_TS_DIR
+	    # Merge monthly climo files
+	    $DIAG_CODE/regional_mean.sh $CASENAME $FYR_PRNT_CLIMO $LYR_PRNT_CLIMO $CLIMO_TS_DIR
+	else
+	    echo "$CLIMO_TS_DIR/$MON_RGR_FILE already exists."
+	    echo "-> SKIPPING COMPUTING CLIMATOLOGY"
+	fi
+	# ---------------------------------
 	# Compute annual climatology
 	# ---------------------------------
 	# Strategy:
-	# 1. First attempt to compute climatology from the annual-mean history files (hbgcy)
-	# 2. Use the monthly-mean history files (hbgcm) for the remaining variables, or if hy files don't exist
+	# 1. First calculate annual means from recently calculate monthly climatologies
+	# 2. Attempt to compute climatology from the annual-mean history files (hbgcy)
+	# 3. Use the monthly-mean history files (hbgcm) for the remaining variables, or if hy files don't exist
 	echo " "
 	echo "****************************************************"
-	echo "COMPUTING CLIMATOLOGY ($CASENAME)"
+	echo "COMPUTING ANNUAL CLIMATOLOGY ($CASENAME)"
 	echo "****************************************************"
-	ANN_AVG_FILE=${CASENAME}_ANN_${FYR_PRNT_CLIMO}-${LYR_PRNT_CLIMO}_climo.nc
-	# Check if annual climo file already exists
-	if [ ! -f $CLIMO_TS_DIR/$ANN_AVG_FILE ]; then
-	    echo $required_vars_climo > $WKDIR/attributes/required_vars
-	    $DIAG_CODE/check_history_vars.sh $CASENAME $FIRST_YR_CLIMO $LAST_YR_CLIMO $PATHDAT climo
-	    if [ -f $WKDIR/attributes/vars_climo_${CASENAME}_hbgcy ]; then
+	ANN_RGR_FILE=${CASENAME}_ANN_${FYR_PRNT_CLIMO}-${LYR_PRNT_CLIMO}_climo_remap.nc
+	ANN_RGR_FILE_MON2ANN=${CASENAME}_ANN_${FYR_PRNT_CLIMO}-${LYR_PRNT_CLIMO}_climo_remap_mon2ann.nc
+	ANN_RGR_FILE_HIST=${CASENAME}_ANN_${FYR_PRNT_CLIMO}-${LYR_PRNT_CLIMO}_climo_remap_hist.nc
+	if [ ! -f $CLIMO_TS_DIR/$ANN_RGR_FILE ]; then
+	    # Comute annual climo from monthly climo
+	    echo $required_vars_climo_ann > $WKDIR/attributes/required_vars
+	    $DIAG_CODE/compute_climo_mon2ann.sh $CASENAME $FYR_PRNT_CLIMO $LYR_PRNT_CLIMO $CLIMO_TS_DIR default
+	    echo $required_vars_climo_ann > $WKDIR/attributes/required_vars
+	    $DIAG_CODE/compute_climo_mon2ann.sh $CASENAME $FYR_PRNT_CLIMO $LYR_PRNT_CLIMO $CLIMO_TS_DIR remap
+	    # Compute from history files for remaining variables
+	    ANN_AVG_FILE=${CASENAME}_ANN_${FYR_PRNT_CLIMO}-${LYR_PRNT_CLIMO}_climo.nc
+	    ANN_AVG_FILE_MON2ANN=${CASENAME}_ANN_${FYR_PRNT_CLIMO}-${LYR_PRNT_CLIMO}_climo_mon2ann.nc
+	    ANN_AVG_FILE_HIST=${CASENAME}_ANN_${FYR_PRNT_CLIMO}-${LYR_PRNT_CLIMO}_climo_hist.nc
+	    ANN_AVG_FILE_HY=${CASENAME}_ANN_${FYR_PRNT_CLIMO}-${LYR_PRNT_CLIMO}_climo_hbgcy.nc
+	    ANN_AVG_FILE_HM=${CASENAME}_ANN_${FYR_PRNT_CLIMO}-${LYR_PRNT_CLIMO}_climo_hbgcm.nc
+	    $DIAG_CODE/check_history_vars.sh $CASENAME $FIRST_YR_CLIMO $LAST_YR_CLIMO $PATHDAT climo_ann
+	    if [ -f $WKDIR/attributes/vars_climo_ann_${CASENAME}_hbgcy ]; then
 		$DIAG_CODE/compute_climo.sh hbgcy $CASENAME $FIRST_YR_CLIMO $LAST_YR_CLIMO $PATHDAT $CLIMO_TS_DIR
 	    fi
-	    if [ -f $WKDIR/attributes/vars_climo_${CASENAME}_hbgcm ]; then
+	    if [ -f $WKDIR/attributes/vars_climo_ann_${CASENAME}_hbgcm ]; then
 		$DIAG_CODE/compute_climo.sh hbgcm $CASENAME $FIRST_YR_CLIMO $LAST_YR_CLIMO $PATHDAT $CLIMO_TS_DIR
 	    fi
-	    if [ ! -f $WKDIR/attributes/vars_climo_${CASENAME}_hbgcy ] && [ ! -f $WKDIR/attributes/vars_climo_${CASENAME}_hbgcm ]; then
+	    if [ ! -f $WKDIR/attributes/vars_climo_ann_${CASENAME}_hbgcy ] && [ ! -f $WKDIR/attributes/vars_climo_ann_${CASENAME}_hbgcm ]; then
 		echo "ERROR: Annual climatology can only be computed from hbgcy and hbgcm history files"
 		echo "*** EXITING THE SCRIPT ***"
 		exit 1
 	    fi
-	    # Concancate files if necessary
-	    $DIAG_CODE/concancate_files.sh $CASENAME $FYR_PRNT_CLIMO $LYR_PRNT_CLIMO $CLIMO_TS_DIR climo
-	    $DIAG_CODE/compute_climo_means.sh $CASENAME $ANN_AVG_FILE $CLIMO_TS_DIR
-	else
-	    echo "$CLIMO_TS_DIR/$ANN_AVG_FILE already exists."
-	    echo "-> SKIPPING COMPUTING CLIMATOLOGY"
-	fi
-
-	# ---------------------------------
-	# Remapping climatology
-	# ---------------------------------
-	echo " "
-	echo "****************************************************"
-	echo "REMAPPING CLIMATOLOGY ($CASENAME)"
-	echo "****************************************************"
-	ANN_RGR_FILE=${CASENAME}_ANN_${FYR_PRNT_CLIMO}-${LYR_PRNT_CLIMO}_climo_remap.nc
-	if [ ! -f $CLIMO_TS_DIR/$ANN_RGR_FILE ]; then
-	    # Check if sst file is present
-	    if [ ! -f $WKDIR/attributes/co2fxd_file_${CASENAME} ]; then
-		echo $required_vars_climo > $WKDIR/attributes/required_vars
-		$DIAG_CODE/check_history_vars.sh $CASENAME $FIRST_YR_CLIMO $LAST_YR_CLIMO $PATHDAT climo
-	    fi
+	    # Merge files
+	    $DIAG_CODE/merge_files.sh $CLIMO_TS_DIR $ANN_AVG_FILE_HY $ANN_AVG_FILE_HM $ANN_AVG_FILE_HIST
+	    # Remap annual climatology from history files
+	    echo " "
+	    echo "****************************************************"
+	    echo "REMAPPING CLIMATOLOGY ($CASENAME)"
+	    echo "****************************************************"
+	    ANN_RGR_FILE_HIST=${CASENAME}_ANN_${FYR_PRNT_CLIMO}-${LYR_PRNT_CLIMO}_climo_remap_hist.nc
 	    # Determine grid type from the climo file
-	    if [ -z $PGRIDPATH ]; then
+	    if [ ! -f $WKDIR/attributes/grid_${CASENAME} ] && [ -z $PGRIDPATH ]; then
 		$DIAG_CODE/determine_grid_type.sh $CASENAME
 	    fi
 	    # Add coordinate attributes if necessary
-	    $DIAG_CODE/add_attributes.sh $CASENAME $ANN_AVG_FILE $CLIMO_TS_DIR
+	    $DIAG_CODE/add_attributes.sh $CASENAME $ANN_AVG_FILE_HIST $CLIMO_TS_DIR
 	    # Remap the grid to 1x1 rectangular grid
-	    $DIAG_CODE/remap_climo.sh $CASENAME $ANN_AVG_FILE $ANN_RGR_FILE $CLIMO_TS_DIR
+	    $DIAG_CODE/remap_climo.sh $CASENAME $ANN_AVG_FILE_HIST $ANN_RGR_FILE_HIST $CLIMO_TS_DIR
+	    # Merge files
+	    $DIAG_CODE/merge_files.sh $CLIMO_TS_DIR $ANN_AVG_FILE_MON2ANN $ANN_AVG_FILE_HIST $ANN_AVG_FILE
+	    # Merge files
+	    $DIAG_CODE/merge_files.sh $CLIMO_TS_DIR $ANN_RGR_FILE_MON2ANN $ANN_RGR_FILE_HIST $ANN_RGR_FILE
 	    # Compute zonal mean
 	    echo $required_vars_climo_zm > $WKDIR/attributes/required_zm_vars
 	    $DIAG_CODE/zonal_mean.sh $CASENAME $FYR_PRNT_CLIMO $LYR_PRNT_CLIMO $CLIMO_TS_DIR
@@ -415,7 +461,9 @@ do
 	    echo "$CLIMO_TS_DIR/$ANN_RGR_FILE already exists."
 	    echo "-> SKIPPING REMAPPING CLIMATOLOGY"
 	fi
-    fi    
+	# Clean files
+	$DIAG_CODE/clean_climo.sh $CASENAME $FYR_PRNT_CLIMO $LYR_PRNT_CLIMO $CLIMO_TS_DIR
+    fi
 
     if [ $compute_time_series -eq 1 ]; then
 	# ---------------------------------
@@ -432,7 +480,10 @@ do
 	# Check if annual time series file already exists
 	if [ ! -f $CLIMO_TS_DIR/$ANN_TS_FILE ]; then
 	    ANN_TS_FILE_ANN=${CASENAME}_ANN_${FYR_PRNT_TS}-${LYR_PRNT_TS}_ts_ann.nc
+	    ANN_TS_FILE_MON=${CASENAME}_ANN_${FYR_PRNT_TS}-${LYR_PRNT_TS}_ts_mon.nc
 	    if [ ! -f $CLIMO_TS_DIR/$ANN_TS_FILE_ANN ]; then
+		ANN_TS_FILE_ANN_HY=${CASENAME}_ANN_${FYR_PRNT_TS}-${LYR_PRNT_TS}_ts_ann_hbgcy.nc
+		ANN_TS_FILE_ANN_HM=${CASENAME}_ANN_${FYR_PRNT_TS}-${LYR_PRNT_TS}_ts_ann_hbgcm.nc
 		echo $required_vars_ts_ann > $WKDIR/attributes/required_vars
 		$DIAG_CODE/check_history_vars.sh $CASENAME $FIRST_YR_TS $LAST_YR_TS $PATHDAT ts_ann
 		if [ ! -f $WKDIR/attributes/grid_${CASENAME} ] && [ -z $PGRIDPATH ]; then
@@ -444,34 +495,38 @@ do
 		if [ -f $WKDIR/attributes/vars_ts_ann_${CASENAME}_hbgcm ]; then
 		    $DIAG_CODE/compute_ann_time_series.sh hbgcm $CASENAME $FIRST_YR_TS $LAST_YR_TS $PATHDAT $CLIMO_TS_DIR
 		fi
+		# Merge files if necessary
+		$DIAG_CODE/merge_files.sh $CLIMO_TS_DIR $ANN_TS_FILE_ANN_HY $ANN_TS_FILE_ANN_HM $ANN_TS_FILE_ANN
 		if [ ! -f $WKDIR/attributes/vars_ts_ann_${CASENAME}_hbgcy ] && [ ! -f $WKDIR/attributes/vars_ts_ann_${CASENAME}_hbgcm ]; then
 		    echo "WARNING: could not find required variables ($required_vars_ts_ann) for annual time series."
 		    echo "-> SKIPPING COMPUTING ANNUAL TIME SERIES"
 		fi
-		# Concancate files if necessary
-		$DIAG_CODE/concancate_files.sh $CASENAME $FYR_PRNT_TS $LYR_PRNT_TS $CLIMO_TS_DIR ts_ann
 	    else
 		echo "$CLIMO_TS_DIR/$ANN_TS_FILE_ANN already exists."
 		echo "-> SKIPPING COMPUTING ANNUAL TIME SERIES FROM ANNUAL FILES"
 	    fi
-	    ANN_TS_FILE_MON=${CASENAME}_ANN_${FYR_PRNT_TS}-${LYR_PRNT_TS}_ts_mon.nc
 	    if [ ! -f $CLIMO_TS_DIR/$ANN_TS_FILE_MON ]; then
+		ANN_TS_FILE_MON1=${CASENAME}_ANN_${FYR_PRNT_TS}-${LYR_PRNT_TS}_ts_mon_others.nc
+		ANN_TS_FILE_MON2=${CASENAME}_ANN_${FYR_PRNT_TS}-${LYR_PRNT_TS}_ts_mon_pp.nc
 		echo $required_vars_ts_mon > $WKDIR/attributes/required_vars
 		$DIAG_CODE/check_history_vars.sh $CASENAME $FIRST_YR_TS $LAST_YR_TS $PATHDAT ts_mon
 		if [ ! -f $WKDIR/attributes/grid_${CASENAME} ] && [ -z $PGRIDPATH ]; then
 		    $DIAG_CODE/determine_grid_type.sh $CASENAME
 		fi
 		if [ -f $WKDIR/attributes/vars_ts_mon_${CASENAME}_hbgcm ]; then
-		    $DIAG_CODE/compute_ann_time_series_mon.sh hbgcm $CASENAME $FIRST_YR_TS $LAST_YR_TS $PATHDAT $CLIMO_TS_DIR
+		    $DIAG_CODE/compute_ann_time_series_mon.sh $CASENAME $FIRST_YR_TS $LAST_YR_TS $PATHDAT $CLIMO_TS_DIR
+		    $DIAG_CODE/merge_files.sh $CLIMO_TS_DIR $ANN_TS_FILE_MON1 $ANN_TS_FILE_MON2 $ANN_TS_FILE_MON
 		else
 		    echo "WARNING: could not find required variables ($required_vars_ts_mon) for annual time series."
 		    echo "-> SKIPPING COMPUTING ANNUAL TIME SERIES"
 		fi
-		# Concancate files if necessary
-#		$DIAG_CODE/concancate_files.sh $CASENAME $FYR_PRNT_TS $LYR_PRNT_TS $CLIMO_TS_DIR ts_ann
 	    else
 		echo "$CLIMO_TS_DIR/$ANN_TS_FILE_ANN already exists."
 		echo "-> SKIPPING COMPUTING ANNUAL TIME SERIES FROM ANNUAL FILES"
+	    fi
+	    # Merge ts files
+	    if [ -f $CLIMO_TS_DIR/$ANN_TS_FILE_ANN ] || [ -f $CLIMO_TS_DIR/$ANN_TS_FILE_MON ]; then
+		$DIAG_CODE/merge_files.sh $CLIMO_TS_DIR $ANN_TS_FILE_ANN $ANN_TS_FILE_MON $ANN_TS_FILE
 	    fi
 	else
 	    echo "$CLIMO_TS_DIR/$ANN_TS_FILE already exists."
@@ -480,8 +535,6 @@ do
     fi
     let i=$i+1
 done
-
-exit
 
 # ---------------------------------------------
 # Check that the climo and ts files are present
@@ -522,6 +575,18 @@ elif [ $set_3 -eq 1 ] && [ -f $CLIMO_TS_DIR1/$ZM_FILE1 ]; then
 	set_3=0
     fi
 fi
+# set_4: REG_FILE: assumes that all reg files exist if "ARC" is present
+REG_FILE1=${CASENAME1}_MON_${FYR_PRNT_CLIMO1}-${LYR_PRNT_CLIMO1}_climo_remap_ARC.nc
+if [ $set_4 -eq 1 ] && [ ! -f $CLIMO_TS_DIR1/$REG_FILE1 ]; then
+    echo "$CLIMO_TS_DIR1/$REG_FILE1 not found: skipping set_4"
+    set_4=0
+elif [ $set_4 -eq 1 ] && [ -f $CLIMO_TS_DIR1/$REG_FILE1 ]; then
+    REG_FILE2=${CASENAME2}_MON_${FYR_PRNT_CLIMO2}-${LYR_PRNT_CLIMO2}_climo_remap_ARC.nc
+    if [ $CNTL == USER ] && [ ! -f $CLIMO_TS_DIR2/$REG_FILE2 ]; then
+	echo "$CLIMO_TS_DIR2/$REG_FILE2 not found: skipping set_4"
+	set_4=0
+    fi
+fi
 
 # ---------------------------------
 # Create the web interface
@@ -535,6 +600,7 @@ fi
 mkdir -p $WEBDIR/set1
 mkdir -p $WEBDIR/set2
 mkdir -p $WEBDIR/set3
+mkdir -p $WEBDIR/set4
 cp $DIAG_HTML/index.html $WEBDIR
 cdate=`date`
 sed -i "s/test_run/$CASENAME1/g" $WEBDIR/index.html
@@ -662,6 +728,41 @@ if [ $set_3 -eq 1 ]; then
 	exit 1
     fi
     $DIAG_CODE/webpage3.sh
+fi
+# ------------------------------------------------
+# set 4: Regionally averaged monthly climatologies
+# ------------------------------------------------
+if [ $set_4 -eq 1 ]; then
+    echo " "
+    echo "****************************************************"
+    echo "SET 4: REGIONAL/MONTHLY AVERAGES"
+    echo "****************************************************"
+    export COMPARE=$CNTL
+    export CASE1=$CASENAME1
+    export FYR1=$FIRST_YR_CLIMO1
+    export LYR1=$LAST_YR_CLIMO1
+    export FYR_PRNT1=$FYR_PRNT_CLIMO1
+    export LYR_PRNT1=$LYR_PRNT_CLIMO1
+    export CLIMODIR1=$CLIMO_TS_DIR1
+    export CLIMODIR2=$DIAG_OBS
+    if [ $CNTL == USER ]; then
+	export CASE2=$CASENAME2
+	export FYR2=$FIRST_YR_CLIMO2
+	export LYR2=$LAST_YR_CLIMO2
+	export FYR_PRNT2=$FYR_PRNT_CLIMO2
+	export LYR_PRNT2=$LYR_PRNT_CLIMO2
+	export CLIMODIR2=$CLIMO_TS_DIR2
+    fi
+    echo "Regionally averaged monthly climatology plots (plot_reg_mon.ncl)..."
+    $NCL -Q < $DIAG_CODE/plot_reg_mon.ncl
+    
+    $DIAG_CODE/ps2png.sh set4 $density
+    if [ $? -ne 0 ]; then
+	echo "ERROR occurred in ps2png.sh (set4)"
+	echo "*** EXITING THE SCRIPT ***"
+	exit 1
+    fi
+    $DIAG_CODE/webpage4.sh
 fi
 
 # Making tar file
