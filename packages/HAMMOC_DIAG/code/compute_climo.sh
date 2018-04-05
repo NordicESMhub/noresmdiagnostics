@@ -35,7 +35,7 @@ echo " pathdat  = $pathdat"
 echo " climodir = $climodir"
 echo " "
 
-var_list=`cat $WKDIR/attributes/vars_climo_${casename}_${filetype}`
+var_list=`cat $WKDIR/attributes/vars_climo_ann_${casename}_${filetype}`
 first_yr_prnt=`printf "%04d" ${first_yr}`
 last_yr_prnt=`printf "%04d" ${last_yr}`
 ann_avg_file=${climodir}/${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}_climo_${filetype}.nc
@@ -105,15 +105,15 @@ if [ $filetype == hbgcm ]; then
 	echo "*** EXITING THE SCRIPT ***"
 	exit 1
     fi
-    # MOVE MONTHLY FILE
+    # REMOVE MONTHLY FILES
     if [ ! -d $climodir/mon_climo ]; then
 	mkdir -p $climodir/mon_climo
     fi
     for month in 01 02 03 04 05 06 07 08 09 10 11 12
     do
-	mv $climodir/${casename}_${month}_${first_yr_prnt}-${last_yr_prnt}_climo.nc $climodir/mon_climo
+	rm -f $climodir/${casename}_${month}_${first_yr_prnt}-${last_yr_prnt}_climo.nc
 	if [ $? -ne 0 ]; then
-	    echo "ERROR: could not move $climodir/${casename}_${month}_${first_yr_prnt}-${last_yr_prnt}_climo.nc to $climodir/mon_seas/"
+	    echo "ERROR: could not remove $climodir/${casename}_${month}_${first_yr_prnt}-${last_yr_prnt}_climo.nc"
 	    exit 1
 	fi
     done

@@ -482,6 +482,9 @@ begin
               else
                  expFlag = False
               end if
+	      if (vars(i).eq."SNOWDP") then
+	         expFlag = True
+	      end if
               res = True
               res = set2Res(res)
               if (colormap.eq.1) then

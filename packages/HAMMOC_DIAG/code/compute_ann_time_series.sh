@@ -41,7 +41,7 @@ echo " "
 var_list=`cat $WKDIR/attributes/vars_ts_ann_${casename}_${filetype}`
 first_yr_prnt=`printf "%04d" ${first_yr}`
 last_yr_prnt=`printf "%04d" ${last_yr}`
-ann_ts_file=${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}_ts_${filetype}.nc
+ann_ts_file=${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}_ts_ann_${filetype}.nc
 
 # Calculate number of chunks and the residual
 nproc=10

@@ -48,7 +48,7 @@ if [ $? -ne 0 ]; then
 fi
 # Use cdo for remapping (courtesy of Yanchun He)
 echo "Remapping $climodir/$infile to a regular 1x1 grid"
-$CDO -s remapbil,global_1 $climodir/$infile $climodir/$outfile
+$CDO -s remapbil,global_1 $climodir/$infile $climodir/$outfile >/dev/null 2>&1
 if [ $? -ne 0 ]; then
     echo "ERROR in remapping: $CDO -s remapbil,global_1 $climodir/climo_tmp.nc $rgrdir/$outfile"
     exit 1
