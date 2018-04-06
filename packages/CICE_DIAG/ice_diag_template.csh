@@ -715,7 +715,10 @@ if ($TO_DIFF == 1) then
   setenv PREV_YR_AVG_FRST $FRST_YR_AVG
   setenv PREV_YR_AVG_LAST $END_YR_AVG
 
-  set TAR_FILE  = yrs${FRST_YR_AVG}to${END_YR_AVG}-${CASE_TO_DIFF}
+  set TAR_FILE  = yrs${NEW_YR_AVG_FRST}to${NEW_YR_AVG_LAST}-${CASE_TO_DIFF}
+  if ($CASE_TO_CONT == $CASE_TO_DIFF) then
+     set TAR_FILE = yrs${NEW_YR_AVG_FRST}to${NEW_YR_AVG_LAST}-yrs${PREV_YR_AVG_FRST}to${PREV_YR_AVG_LAST}
+  endif
   setenv WKDIR  ${PLOT_ROOT}/${TAR_FILE}/
   if !(-d ${WKDIR}maps) mkdir -p ${WKDIR}maps
   if !(-d ${WKDIR}obs) mkdir -p ${WKDIR}obs
