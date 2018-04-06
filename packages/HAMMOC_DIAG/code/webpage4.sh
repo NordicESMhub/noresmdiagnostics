@@ -18,7 +18,7 @@ fi
 
 echo "<br>" >> $WEBDIR/index.html
 echo "<TABLE width='700'>" >> $WEBDIR/index.html
-echo "<TH colspan='3'>Ragionally-averaged monthly climatologies" >> $WEBDIR/index.html
+echo "<TH colspan='3'>Regionally-averaged monthly climatologies [<a href='regions.png'>regions</a>]" >> $WEBDIR/index.html
 echo "<TR>" >> $WEBDIR/index.html
 if [ -f $WEBDIR/set4/set4_pp_tot_${cinfo}.png ]; then
     echo "<TD><a href='set4/set4_pp_tot_${cinfo}.png'>Column-integrated PP (pp)</a>" >> $WEBDIR/index.html

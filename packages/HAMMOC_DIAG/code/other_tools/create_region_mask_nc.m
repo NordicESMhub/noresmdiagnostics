@@ -64,10 +64,16 @@ for ilon = 1:nlon
 end
 end
 
-%figure;
-%contourf(lon,lat,transpose(mask_regions)); colorbar
+figure;
+contourf(lon,lat,transpose(mask_regions));
+xlabel('Longitude');
+ylabel('Latitude');
+title('Regions');
+set(gcf,'PaperPositionMode','auto');
+print('regions','-dpng','-r150');
 
-%return
+
+return
 
 outdir = '/projects/NS2345K/noresm_diagnostics_dev/packages/HAMMOC_DIAG/grid_files';
 

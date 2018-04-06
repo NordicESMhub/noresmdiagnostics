@@ -2,7 +2,7 @@
 #
 # HAMMOC DIAGNOSTICS package
 # Johan Liakka, NERSC, johan.liakka@nersc.no
-# Last update Jan 2018
+# Last update Apr 2018
 set -e
 #***************************
 #*** USER MODIFY SECTION ***
@@ -12,8 +12,8 @@ time_start_script=`date +%s`
 # TEST CASENAME AND YEARS TO BE AVERAGED (CASE1)
 # ---------------------------------------------------------
 CASENAME1=N1850OCBDRD_f09_tn14
-FIRST_YR_CLIMO1=21
-NYRS_CLIMO1=30
+FIRST_YR_CLIMO1=41
+NYRS_CLIMO1=10
 
 # ---------------------------------------------------------
 # TIME SERIES SETTING FOR TEST CASE (CASE1)
@@ -35,15 +35,15 @@ PATHDAT1=$pathdat_root1/$CASENAME1/ocn/hist
 # SELECT TYPE OF CONTROL CASE
 # NOTE: CNTL=USER IS NOT YET SUPPORTED
 # ---------------------------------------------------------
-CNTL=OBS    # compare case1 to observations (model-obs diagnostics)
-#CNTL=USER   # compare case1 to another experiment case2 (model-model diagnostics)
+#CNTL=OBS    # compare case1 to observations (model-obs diagnostics)
+CNTL=USER   # compare case1 to another experiment case2 (model-model diagnostics)
 
 # ---------------------------------------------------------
 # CNTL CASENAME AND YEARS TO BE AVERAGED (CASE2)
 # ---------------------------------------------------------
-CASENAME2=N1850OCDMS_Test_01
-FIRST_YR_CLIMO2=10
-NYRS_CLIMO2=20
+CASENAME2=N1850OCBDRD_f09_tn14
+FIRST_YR_CLIMO2=31
+NYRS_CLIMO2=10
 
 # ---------------------------------------------------------
 # TIME SERIES SETTING FOR CNTL CASE (CASE2)
@@ -65,9 +65,9 @@ DIAG_ROOT=/projects/NS2345K/noresm_diagnostics_dev/out/$USER/HAMMOC_DIAG
 # ---------------------------------------------------------
 # SELECT SETS (1-3)
 # ---------------------------------------------------------
-set_1=0 # (1=ON,0=OFF) Annual time series plots
-set_2=0 # (1=ON,0=OFF) 2D (lat-lon) contour plots
-set_3=0 # (1=ON,0=OFF) Zonal mean (lat-depth) plot
+set_1=1 # (1=ON,0=OFF) Annual time series plots
+set_2=1 # (1=ON,0=OFF) 2D (lat-lon) contour plots
+set_3=1 # (1=ON,0=OFF) Zonal mean (lat-depth) plot
 set_4=1 # (1=ON,0=OFF) Regionally-averaged monthly climatology plots
 
 # ---------------------------------------------------------
@@ -230,7 +230,7 @@ fi
 
 # Set required variables for climatology and time series
 required_vars_climo_ann="depth_bnds,o2lvl,silvl,po4lvl,no3lvl,dissiclvl,talklvl,pp_tot,epc100,pco2,co2fxd,co2fxu"
-required_vars_climo_mon="depth_bnds,po4lvl,pp,pddpo,pco2,co2fxd,co2fxu"
+required_vars_climo_mon="depth_bnds,pp,pddpo,pco2,co2fxd,co2fxu"
 required_vars_climo_zm="o2lvl,silvl,po4lvl,no3lvl,dissiclvl,talklvl"
 required_vars_ts_ann="co2fxd,co2fxu,epc100,epcalc100"
 required_vars_ts_mon="o2,si,po4,no3,dissic,pp,pddpo"
@@ -765,6 +765,7 @@ if [ $set_4 -eq 1 ]; then
 	echo "*** EXITING THE SCRIPT ***"
 	exit 1
     fi
+    cp $DIAG_HTML/regions.png $WEBDIR
     $DIAG_CODE/webpage4.sh
 fi
 

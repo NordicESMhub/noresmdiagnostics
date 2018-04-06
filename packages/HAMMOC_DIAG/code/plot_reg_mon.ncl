@@ -23,12 +23,12 @@ if (compare.eq."USER") then
   case2      = getenv("CASE2")
   fyr2       = getenv("FYR2")
   lyr2       = getenv("LYR2")
-  fyr_prnt2  = getenv("FYR_PRNT1")
+  fyr_prnt2  = getenv("FYR_PRNT2")
   lyr_prnt2  = getenv("LYR_PRNT2")
 end if
 
 ; model variables
-vars = (/"pco2","co2fxn","pp_tot","po4lvl"/)
+vars = (/"pco2","co2fxn","pp_tot"/)
 regions  = (/"ARC","NATL","NPAC","TATL","TPAC","IND","MSO","HSO"/)
 reg_long = (/"Arctic","North Atlantic","North Pacific","Tropical Atlantic","Tropical Pacific","Indian ocean","Southern ocean (mid-lat)","Southern ocean (high-lat)"/)
 
@@ -52,13 +52,19 @@ res                     = True
 res@gsnDraw             = False            ; don't draw
 res@gsnFrame            = False            ; don't advance frame
 res@tiMainFont          = "Helvetica"
-res@tiMainFontHeightF   = 0.03
+res@tiMainFontHeightF   = 0.033
 res@txFontHeightF       = 0.023
-res@tiXAxisFontHeightF  = 0.02
-res@tiYAxisFontHeightF  = 0.02
+res@tiXAxisFontHeightF  = 0.025
+res@tiYAxisFontHeightF  = 0.025
 res@tiXAxisString       = "Month"
 res@trXMinF             = 1
 res@trXMaxF             = 12
+res@tmXBLabelFontHeightF = 0.025
+res@tmYLLabelFontHeightF = 0.025
+res@tmXBFormat           = "f"
+res@tmYLFormat           = "f"
+;res@tmXBMode            = ""
+;res@tmXBValues          = (/1,2,3,4,5,6,7,8,9,10,11,12/)
 
 ;--------------------------------------------------------------
 ; common resources for panel plots
@@ -66,8 +72,8 @@ pan = True
 pan@gsnMaximize = True
 pan@gsnFrame = False
 pan@gsnPaperOrientation = "portrait"
-pan@gsnPanelYWhiteSpacePercent = 3
-pan@gsnPanelXWhiteSpacePercent = 3
+pan@gsnPanelYWhiteSpacePercent = 5
+pan@gsnPanelXWhiteSpacePercent = 5
 
 ;--------------------------------------------------------------
 
@@ -234,10 +240,10 @@ do i = 0, nvars-1
     txres@txFontHeightF = 0.013
     txres@txFontColor   = "blue"
     txres@txJust        = "centerright"
-    gsn_text_ndc(wks,case1,0.99,0.2,txres)
+    gsn_text_ndc(wks,case1,0.99,0.22,txres)
     if (plot_switch_B.eq.0) then
       txres@txFontColor   = "red"
-      gsn_text_ndc(wks,case2,0.99,0.17,txres)
+      gsn_text_ndc(wks,case2,0.99,0.19,txres)
     end if
     frame(wks)
     delete (wks)
