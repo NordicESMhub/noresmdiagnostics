@@ -650,6 +650,9 @@ fi
 # Create the web interface
 # ---------------------------------
 WEBFOLDER=yrs${FIRST_YR_CLIMO1}to${LAST_YR_CLIMO1}-$CASENAME2
+if [ $CNTL == USER ] && [ $CASENAME1 == $CASENAME2 ]; then
+    WEBFOLDER=yrs${FIRST_YR_CLIMO1}to${LAST_YR_CLIMO1}-yrs${FIRST_YR_CLIMO2}to${LAST_YR_CLIMO2}
+fi
 TARFILE=${WEBFOLDER}.tar
 export WEBDIR=$WKDIR/$WEBFOLDER
 if [ -d $WEBDIR ]; then

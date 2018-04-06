@@ -1386,10 +1386,10 @@ endif
 if ($set_1 == 1 && $set_2 == 1 && $set_3 == 1 && $set_4 == 1 && $set_4a == 1 && \
     $set_5 == 1 && $set_6 == 1 && $set_7 == 1 && $set_8 == 1 && \
     $set_9 == 1 && $set_10 == 1 && $set_11 == 1 && $set_12 &&  \
-    $set_13 == 1 && $set_14 == 1 && $set_15 == 1 && $set_16 == 1 &&\
+    $set_13 == 1 && $set_14 == 1 && $set_15 == 1 && $set_16 == 1 && \
     $tset_1 == 1 && \
     $wset_1 == 1 && \
-    $cset_1 == 1 && $cset_2 == 1 && $cset_3 == 1 && $cset_4 == 1 && $cset_5 == 1 && $cset_6 == 1 &&  $cset_7 == 1 &&\
+    $cset_1 == 1 && $cset_2 == 1 && $cset_3 == 1 && $cset_4 == 1 && $cset_5 == 1 && $cset_6 == 1 &&  $cset_7 == 1 && \
     $all_sets == 1 && $all_waccm_sets == 1 && $all_chem_sets == 1) then
   echo ' '
   echo "NO DIAGNOSTIC SETS SELECTED (1-13)" 
@@ -1492,8 +1492,12 @@ if ($web_pages == 0) then
     $HTML_HOME/setup_obs $test_casename $image $time_series_obs
     cd $test_path_diag
     set tarfile = yrs${test_first_yr}to${test_end}-obs.tar
-  else          # model-to-model 
+  else          # model-to-model
+    @ cntl_end = $cntl_first_yr + $cntl_nyrs - 1
     setenv WEBDIR ${test_path_diag}/yrs${test_first_yr}to${test_end}-${cntl_casename}
+    if ($test_casename == $cntl_casename) then
+       setenv WEBDIR ${test_path_diag}/yrs${test_first_yr}to${test_end}-yrs${cntl_first_yr}to${cntl_end}
+    endif
     if (! -e $WEBDIR) mkdir $WEBDIR
     cd $WEBDIR
     $HTML_HOME/setup_2models $test_casename $cntl_casename $image
