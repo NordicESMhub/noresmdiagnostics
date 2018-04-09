@@ -30,7 +30,10 @@ end if
 ; model variables
 vars = (/"pco2","co2fxn","pp_tot"/)
 regions  = (/"ARC","NATL","NPAC","TATL","TPAC","IND","MSO","HSO"/)
-reg_long = (/"Arctic","North Atlantic","North Pacific","Tropical Atlantic","Tropical Pacific","Indian ocean","Southern ocean (mid-lat)","Southern ocean (high-lat)"/)
+reg_long = (/"Arctic","North Atlantic","North Pacific","Tropical Atlantic","Tropical Pacific","Indian ocean","Southern ocean","Southern ocean"/)
+
+latbs = (/"(>66~F34~0~F~N)","(18~F34~0~F~N-66~F34~0~F~N)","(18~F34~0~F~N-66~F34~0~F~N)","(18~F34~0~F~S-18~F34~0~F~N)", \
+          "(18~F34~0~F~S-18~F34~0~F~N)","(18~F34~0~F~S-25~F34~0~F~N)","(18~F34~0~F~S-58~F34~0~F~S)","(>58~F34~0~F~S)"/)
 
 nvars = dimsizes(vars)
 nreg  = dimsizes(regions)
@@ -56,15 +59,15 @@ res@tiMainFontHeightF   = 0.033
 res@txFontHeightF       = 0.023
 res@tiXAxisFontHeightF  = 0.025
 res@tiYAxisFontHeightF  = 0.025
-res@tiXAxisString       = "Month"
+;res@tiXAxisString       = "Month"
 res@trXMinF             = 1
 res@trXMaxF             = 12
+res@tmXBMode = "Explicit"
+res@tmXBValues = ispan(1,12,1)
+res@tmXBLabels=(/"J","F","M","A","M","J","J","A","S","O","N","D"/)
 res@tmXBLabelFontHeightF = 0.025
 res@tmYLLabelFontHeightF = 0.025
-res@tmXBFormat           = "f"
 res@tmYLFormat           = "f"
-;res@tmXBMode            = ""
-;res@tmXBValues          = (/1,2,3,4,5,6,7,8,9,10,11,12/)
 
 ;--------------------------------------------------------------
 ; common resources for panel plots
@@ -155,6 +158,18 @@ do i = 0, nvars-1
 	  assignFillValue(B,B)
         end if
 
+        if (vars(i).eq."pp_tot") then
+          infile2 = climodir2+"/OcnProd_MODIS/ave.m.clim_MON_2003-2012_"+creg+".nc"
+          inptr2  = addfile(infile2,"r")
+          if (isfilevar(inptr2,"pp")) then
+	    delete(B)
+            B       = inptr2->pp(:,0,0)
+            B       = (/B*365*86400/)
+	    case2="MODIS (2003-2012)"
+	  end if
+	  assignFillValue(B,B)
+        end if
+
         if (vars(i).eq."po4lvl") then
           infile2 = climodir2+"/WOA13/woa13_all_pMON_01_"+creg+".nc"
           inptr2  = addfile(infile2,"r")
@@ -204,7 +219,7 @@ do i = 0, nvars-1
 
     if (plot_switch_A.eq.0) then
       res@tiYAxisString       = A@long_name+" ["+A@units+"]"
-      res@tiMainString        = reg_long(ireg)
+      res@tiMainString        = reg_long(ireg)+" "+latbs(ireg)
 
       if (plot_switch_B.eq.1) then
         res@xyLineThicknesses = (/2/)

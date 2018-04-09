@@ -3,7 +3,7 @@
 # Written by Johan Liakka (latest update is the version number)
 # johan.liakka@nersc.no
 
-VERSION=3.1
+VERSION=4.0
 BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 ETC_DIR=$ROOT_DIR/etc
@@ -45,11 +45,12 @@ if [ $# -eq 0 ]; then
     echo "Command-line options:"
     echo "-m, --model=MODEL                             Specify the diagnostics package (REQUIRED)."
     echo "                                              Valid arguments:"
-    echo "                                                cam   : atmospheric package (AMWG)"
-    echo "                                                clm   : land package (LMWG)"
-    echo "                                                cice  : sea-ice package"
-    echo "                                                micom : ocean package"
-    echo "                                                all   : configure all available packages."
+    echo "                                                cam    : atmospheric package (AMWG)"
+    echo "                                                clm    : land package (LMWG)"
+    echo "                                                cice   : sea-ice package"
+    echo "                                                micom  : ocean package"
+    echo "                                                hamocc : geo-bio-chemistry package"
+    echo "                                                all    : configure all available packages."
     echo "-c, -c1, --case=CASE1, --case1=CASE1          Test case simulation (OPTIONAL)."
     echo "-s, -s1, --start_yr=SYR1, --start_yr1=SYR1    Start year of test case climatology (OPTIONAL)."
     echo "-e, -e1, --end_yr=EYR1, --end_yr1=EYR1        End year of test case climatology (OPTIONAL)."
@@ -76,6 +77,7 @@ if [ $# -eq 0 ]; then
     echo "${THIS_SCRIPT_NAME} -m clm -c N1850_f19_tn11_exp1 -s 21 -e 50 -i /input/directory1 -c2 N1850_f19_tn11_exp2 -s2 21 -e2 50 -i2 /input/directory2 # model1-model2 diagnostics for CLM with user-specified history file directories"
     echo "${THIS_SCRIPT_NAME} -m clm -c N1850_f19_tn11_exp1 -s 21 -e 50 -t climo # model-obs climatology diagnostics (no time series) for CLM:"
     echo "${THIS_SCRIPT_NAME} -m cam -o /my/dir # install CAM diagnostics in /my/dir with minimal configuration."
+    echo "${THIS_SCRIPT_NAME} -m micom,hamocc -c N1850OC_f19_tn11_exp1 -s 21 -e 50 # model-obs diagnostics for micom and hamocc."
     echo " "
     exit 0
 else
@@ -300,40 +302,43 @@ CAM_DIAG_DIR=${ROOT_DIR}/packages/CAM_DIAG
 CLM_DIAG_DIR=${ROOT_DIR}/packages/CLM_DIAG
 CICE_DIAG_DIR=${ROOT_DIR}/packages/CICE_DIAG
 MICOM_DIAG_DIR=${ROOT_DIR}/packages/MICOM_DIAG
+HAMOCC_DIAG_DIR=${ROOT_DIR}/packages/HAMOCC_DIAG
 CAM_DIAG_FILE=amwg_template.csh
 CLM_DIAG_FILE=lnd_template.csh
 CICE_DIAG_FILE=ice_diag_template.csh
 MICOM_DIAG_FILE=micom_diag_template.sh
+HAMOCC_DIAG_FILE=hamocc_diag_template.sh
 CAM_FILE_OUT=amwg_${dateYYYYMMDD}_${dateHHMMSS}.csh
 CLM_FILE_OUT=lnd_${dateYYYYMMDD}_${dateHHMMSS}.csh
 CICE_FILE_OUT=ice_diag_${dateYYYYMMDD}_${dateHHMMSS}.csh
 MICOM_FILE_OUT=micom_diag_${dateYYYYMMDD}_${dateHHMMSS}.sh
+HAMOCC_FILE_OUT=hamocc_diag_${dateYYYYMMDD}_${dateHHMMSS}.sh
 
-MODELS=(cam clm cice micom)
-MODELS_CAPS=(CAM CLM CICE MICOM)
-DIAG_DIRS=($CAM_DIAG_DIR $CLM_DIAG_DIR $CICE_DIAG_DIR $MICOM_DIAG_DIR)
-DIAG_FILES=($CAM_DIAG_FILE $CLM_DIAG_FILE $CICE_DIAG_FILE $MICOM_DIAG_FILE)
-DIAG_FILES_OUT=($CAM_FILE_OUT $CLM_FILE_OUT $CICE_FILE_OUT $MICOM_FILE_OUT)
-TEST_CASE_NAMES=(test_casename caseid_1 CASE_TO_CONT CASENAME1)
-TEST_FIRST_YR_NAMES=(test_first_yr clim_first_yr_1 FIRST_YR_CLIMO1 FIRST_YR_CLIMO1)
-TEST_NYRS_NAMES=(test_nyrs clim_num_yrs_1 NYRS_CLIMO1 NYRS_CLIMO1)
-DIAG_DIR_NAMES=(diag_dir PTMPDIR SCRIPT_HOME DIAG_ROOT)
-CNTL_NAMES=(CNTL CNTL CNTL CNTL)
-CNTL_CASE_NAMES=(cntl_casename caseid_2 CASE_TO_DIFF CASENAME2)
-CNTL_FIRST_YR_NAMES=(cntl_first_yr clim_first_yr_2 FIRST_YR_CLIMO2 FIRST_YR_CLIMO2)
-CNTL_NYRS_NAMES=(cntl_nyrs clim_num_yrs_2 NYRS_CLIMO2 NYRS_CLIMO2)
-WEB_DIR_NAMES=(publish_html_root publish_html_root publish_html_root publish_html_root)
-INPUT_DIR_NAMES1=(test_path_history_root SOURCE_1 DATA_ROOT1 pathdat_root1)
-INPUT_DIR_NAMES2=(cntl_path_history_root SOURCE_2 DATA_ROOT2 pathdat_root2)
-DIAG_RUNTIMES=(null null null null)
+MODELS=(cam clm cice micom hamocc)
+MODELS_CAPS=(CAM CLM CICE MICOM HAMOCC)
+DIAG_DIRS=($CAM_DIAG_DIR $CLM_DIAG_DIR $CICE_DIAG_DIR $MICOM_DIAG_DIR $HAMOCC_DIAG_DIR)
+DIAG_FILES=($CAM_DIAG_FILE $CLM_DIAG_FILE $CICE_DIAG_FILE $MICOM_DIAG_FILE $HAMOCC_DIAG_FILE)
+DIAG_FILES_OUT=($CAM_FILE_OUT $CLM_FILE_OUT $CICE_FILE_OUT $MICOM_FILE_OUT $HAMOCC_FILE_OUT)
+TEST_CASE_NAMES=(test_casename caseid_1 CASE_TO_CONT CASENAME1 CASENAME1)
+TEST_FIRST_YR_NAMES=(test_first_yr clim_first_yr_1 FIRST_YR_CLIMO1 FIRST_YR_CLIMO1 FIRST_YR_CLIMO1)
+TEST_NYRS_NAMES=(test_nyrs clim_num_yrs_1 NYRS_CLIMO1 NYRS_CLIMO1 NYRS_CLIMO1)
+DIAG_DIR_NAMES=(diag_dir PTMPDIR SCRIPT_HOME DIAG_ROOT DIAG_ROOT)
+CNTL_NAMES=(CNTL CNTL CNTL CNTL CNTL)
+CNTL_CASE_NAMES=(cntl_casename caseid_2 CASE_TO_DIFF CASENAME2 CASENAME2)
+CNTL_FIRST_YR_NAMES=(cntl_first_yr clim_first_yr_2 FIRST_YR_CLIMO2 FIRST_YR_CLIMO2 FIRST_YR_CLIMO2)
+CNTL_NYRS_NAMES=(cntl_nyrs clim_num_yrs_2 NYRS_CLIMO2 NYRS_CLIMO2 NYRS_CLIMO2)
+WEB_DIR_NAMES=(publish_html_root publish_html_root publish_html_root publish_html_root publish_html_root)
+INPUT_DIR_NAMES1=(test_path_history_root SOURCE_1 DATA_ROOT1 pathdat_root1 pathdat_root1)
+INPUT_DIR_NAMES2=(cntl_path_history_root SOURCE_2 DATA_ROOT2 pathdat_root2 pathdat_root2)
+DIAG_RUNTIMES=(null null null null null)
 runtime_s_tot=0
 
 # DETERMINE WHICH PACKAGE TO RUN
 if [ "$USER_MODEL" == "all" ]; then
-    RUN_MODELS=(1 1 1 1)
+    RUN_MODELS=(1 1 1 1 1)
 else
     USER_MODEL_SPACE=`echo $USER_MODEL | sed 's/,/ /g'`
-    RUN_MODELS=(0 0 0 0)
+    RUN_MODELS=(0 0 0 0 0)
     for model in $USER_MODEL_SPACE
     do
 	if [ "$model" == "cam" ] || [ "$model" == "cam2" ]; then
@@ -344,6 +349,8 @@ else
 	    let RUN_MODELS[2]=${RUN_MODELS[2]}+1
 	elif [ "$model" == "micom" ]; then
 	    let RUN_MODELS[3]=${RUN_MODELS[3]}+1
+	elif [ "$model" == "hamocc" ]; then
+	    let RUN_MODELS[4]=${RUN_MODELS[4]}+1
 	fi
     done
 fi
@@ -363,7 +370,7 @@ do
 done
 
 if [ $all_zeros -eq 1 ]; then
-    echo "ERROR: please specify a model (-m cam,clm,cice,micom or -m all):"
+    echo "ERROR: please specify a model (-m cam,clm,cice,micom,hamocc or -m all):"
     echo "*** EXITING THE SCRIPT"
     exit 1
 fi
