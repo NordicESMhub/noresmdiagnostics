@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# HAMMOC DIAGNOSTICS package: zonal_mean_obs.sh (not used in the diagnostics)
+# HAMOCC DIAGNOSTICS package: zonal_mean_obs.sh (not used in the diagnostics)
 # PURPOSE: computes the zonal mean of different basins of 1x1 obs data
 # Johan Liakka, NERSC, johan.liakka@nersc.no
 # Last update Dec 2017                                                                                                                                                                                     
@@ -13,13 +13,13 @@ echo "-----------------------"
 CDO=`which cdo`
 # Zonal mean variables
 #var=i
-datadir=/projects/NS2345K/noresm_diagnostics_dev/packages/HAMMOC_DIAG/obs_data/GLODAPv2
+datadir=/projects/NS2345K/noresm_diagnostics_dev/packages/HAMOCC_DIAG/obs_data/GLODAPv2
 #infile=$datadir/woa13_all_${var}00_01.nc
 infile=$datadir/GLODAPv2.2016b.TAlk_reordered.nc
 
 for region in glb pac atl ind so
 do
-    maskfile=/projects/NS2345K/noresm_diagnostics_dev/packages/HAMMOC_DIAG/grid_files/region_mask_1x1_${region}.nc
+    maskfile=/projects/NS2345K/noresm_diagnostics_dev/packages/HAMOCC_DIAG/grid_files/region_mask_1x1_${region}.nc
 #    outfile=$datadir/woa13_all_${var}00_01_zm_${region}.nc
     outfile=$datadir/GLODAPv2.2016b.TAlk_reordered_zm_${region}.nc
 #    tmpfile=$datadir/woa13_all_${var}00_tmp.nc

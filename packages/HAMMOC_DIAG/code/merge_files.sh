@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# HAMMOC DIAGNOSTICS package: merge_files.sh
+# HAMOCC DIAGNOSTICS package: merge_files.sh
 # PURPOSE: Merge two netcdf files from the same directory.
 # If only one of the files exist, it will be renamed to the target file
 # Johan Liakka, NERSC, johan.liakka@nersc.no

@@ -2,7 +2,7 @@
 
 script_start=`date +%s`
 #
-# MICOM DIAGNOSTICS package: compute_ann_time_series.sh
+# HAMOCC DIAGNOSTICS package: compute_ann_time_series.sh
 # PURPOSE: computes annual time series from annual or monthly history files
 # Johan Liakka, NERSC, johan.liakka@nersc.no
 # Last update Dec 2017

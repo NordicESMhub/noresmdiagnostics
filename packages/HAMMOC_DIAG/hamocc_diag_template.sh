@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# HAMMOC DIAGNOSTICS package
+# HAMOCC DIAGNOSTICS package
 # Johan Liakka, NERSC, johan.liakka@nersc.no
 # Last update Apr 2018
 set -e
@@ -60,7 +60,7 @@ PATHDAT2=$pathdat_root2/$CASENAME2/ocn/hist
 # ---------------------------------------------------------
 # SELECT DIRECTORY WHERE THE DIAGNOSTICS ARE TO BE COMPUTED
 # ---------------------------------------------------------
-DIAG_ROOT=/projects/NS2345K/noresm_diagnostics_dev/out/$USER/HAMMOC_DIAG
+DIAG_ROOT=/projects/NS2345K/noresm_diagnostics_dev/out/$USER/HAMOCC_DIAG
 
 # ---------------------------------------------------------
 # SELECT SETS (1-3)
@@ -113,7 +113,7 @@ CLIMO_TIME_SERIES_SWITCH=SWITCHED_OFF
 # Do not change this unless you copy the whole diagnostics
 # package (including all grid files and observational data)
 # to another directory.
-export DIAG_HOME=/projects/NS2345K/noresm_diagnostics_dev/packages/HAMMOC_DIAG
+export DIAG_HOME=/projects/NS2345K/noresm_diagnostics_dev/packages/HAMOCC_DIAG
 
 #**********************************
 #*** END OF USER MODIFY SECTION ***
@@ -258,7 +258,7 @@ fi
 
 echo " "
 echo "****************************************************"
-echo "          HAMMOC DIAGNOSTICS PACKAGE"
+echo "          HAMOCC DIAGNOSTICS PACKAGE"
 echo "          NCARG_ROOT = "$NCARG_ROOT
 echo "          CDO        = "$CDO
 echo "          "`date`
@@ -781,7 +781,7 @@ if [ $? -eq 0 ] && [ $publish_html -eq 1 ]; then
     if [ -z $publish_html_root ]; then
 	publish_html_root=${web_server_path}/noresm_diagnostics
     fi
-    publish_html_path=$publish_html_root/$CASENAME1/HAMMOC_DIAG
+    publish_html_path=$publish_html_root/$CASENAME1/HAMOCC_DIAG
     if [ ! -d $publish_html_path ]; then
 	mkdir -p $publish_html_path
     fi

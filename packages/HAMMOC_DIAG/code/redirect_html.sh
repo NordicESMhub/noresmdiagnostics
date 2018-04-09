@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# MICOM DIAGNOSTICS package: redirect_html.sh
+# HAMOCC DIAGNOSTICS package: redirect_html.sh
 # PURPOSE: creates a file with redirects to index.html directly from $publish_html_path
 # Johan Liakka, NERSC, johan.liakka@nersc.no
 # Last update Dec 2017                                                                                                                                                                                     

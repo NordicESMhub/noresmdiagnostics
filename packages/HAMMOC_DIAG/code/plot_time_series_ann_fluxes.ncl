@@ -1,4 +1,4 @@
-; NCL script (MICOM diagnostics package)
+; NCL script (HAMOCC diagnostics package)
 ; plot_ann_time_series.ncl
 ; Johan Liakka, Dec 2017
 load "$DIAG_CODE/functions_time_series.ncl"

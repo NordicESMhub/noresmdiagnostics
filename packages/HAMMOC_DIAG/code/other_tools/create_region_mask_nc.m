@@ -75,7 +75,7 @@ print('regions','-dpng','-r150');
 
 return
 
-outdir = '/projects/NS2345K/noresm_diagnostics_dev/packages/HAMMOC_DIAG/grid_files';
+outdir = '/projects/NS2345K/noresm_diagnostics_dev/packages/HAMOCC_DIAG/grid_files';
 
 reg_name = {'ARC','NATL','NPAC','TATL','TPAC','IND','MSO','HSO'};
 nreg = 8;

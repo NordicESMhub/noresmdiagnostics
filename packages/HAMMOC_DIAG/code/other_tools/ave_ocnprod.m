@@ -3,7 +3,7 @@ close all
 
 fillv = -999;
 
-obsdir = '/projects/NS2345K/noresm_diagnostics_dev/packages/HAMMOC_DIAG/obs_data/OcnProd_MODIS/';
+obsdir = '/projects/NS2345K/noresm_diagnostics_dev/packages/HAMOCC_DIAG/obs_data/OcnProd_MODIS/';
 
 infile1  = strcat(obsdir,'cbpm.m.clim_annual_2003-2012.nc');
 infile2  = strcat(obsdir,'eppley.m.clim_annual_2003-2012.nc');

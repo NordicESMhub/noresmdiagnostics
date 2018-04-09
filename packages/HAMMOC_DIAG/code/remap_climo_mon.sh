@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# HAMMOC DIAGNOSTICS package: remap_climo_mon.sh
+# HAMOCC DIAGNOSTICS package: remap_climo_mon.sh
 # PURPOSE: remap the climatology file to a rectangular 1x1 grid
 # Johan Liakka, NERSC, johan.liakka@nersc.no
 # Last update Jan 2018

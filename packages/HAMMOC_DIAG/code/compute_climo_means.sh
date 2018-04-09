@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# HAMMOC DIAGNOSTICS package: compute_climo_means.sh
+# HAMOCC DIAGNOSTICS package: compute_climo_means.sh
 # PURPOSE: computes averages from the mon climo files.
 # Johan Liakka, NERSC, johan.liakka@nersc.no
 # Last update Mar 2018

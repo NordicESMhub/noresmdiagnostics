@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# HAMMOC DIAGNOSTICS package: clean_climo.sh
+# HAMOCC DIAGNOSTICS package: clean_climo.sh
 # PURPOSE: deletes files from the climo directory that are not needed
 # Johan Liakka, NERSC, johan.liakka@nersc.no
 # Last update Mar 2018

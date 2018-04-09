@@ -2,7 +2,7 @@
 ; plot_reg_mon.ncl
 ; Mark Stevens Sept 2001
 ; Rich Neale Jan 2008
-; Johan Liakka Mar 2018: Update for HAMMOC
+; Johan Liakka Mar 2018: Update for HAMOCC
 ;********************************************************
 load "$DIAG_CODE/functions_cycle.ncl"
 ;********************************************************

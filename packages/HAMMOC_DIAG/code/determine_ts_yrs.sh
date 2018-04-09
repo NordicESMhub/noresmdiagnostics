@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# HAMMOC DIAGNOSTICS package: determine_ts_yrs.sh
+# HAMOCC DIAGNOSTICS package: determine_ts_yrs.sh
 # PURPOSE: determine first and last years of time series (only if TRENDS_ALL=1)
 # Johan Liakka, NERSC, johan.liakka@nersc.no
 # Last update Jan 2018

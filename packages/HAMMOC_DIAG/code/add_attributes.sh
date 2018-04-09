@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# HAMMOC DIAGNOSTICS package: add_attributes.sh
+# HAMOCC DIAGNOSTICS package: add_attributes.sh
 # PURPOSE: Add coordinate attributes to variables if necessary
 # Johan Liakka, NERSC, johan.liakka@nersc.no
 # Last update Jan 2018

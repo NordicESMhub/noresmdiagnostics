@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# HAMMOC DIAGNOSTICS package: regional_mean.sh
+# HAMOCC DIAGNOSTICS package: regional_mean.sh
 # PURPOSE: computes the regional mean of different basins using CDO
 # Johan Liakka, NERSC, johan.liakka@nersc.no
 # Last update Mar 2018 

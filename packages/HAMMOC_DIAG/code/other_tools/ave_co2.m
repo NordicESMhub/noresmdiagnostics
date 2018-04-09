@@ -3,7 +3,7 @@ close all
 
 fillv = -999;
 
-obsdir = '/projects/NS2345K/noresm_diagnostics_dev/packages/HAMMOC_DIAG/obs_data/Landschuetzer_2015/';
+obsdir = '/projects/NS2345K/noresm_diagnostics_dev/packages/HAMOCC_DIAG/obs_data/Landschuetzer_2015/';
 
 infile  = strcat(obsdir,'spco2_ETH_SOM-FFN_CDIAC_ETH30yr.nc');
 

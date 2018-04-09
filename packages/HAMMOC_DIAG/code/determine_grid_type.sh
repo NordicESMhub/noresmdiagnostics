@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# HAMMOC DIAGNOSTICS package: determine_grid_type.sh
+# HAMOCC DIAGNOSTICS package: determine_grid_type.sh
 # PURPOSE: Determine grid type, size and version
 # Johan Liakka, NERSC, johan.liakka@nersc.no
 # Last update Jan 2018

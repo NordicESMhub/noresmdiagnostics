@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# MICOM DIAGNOSTICS package: ps2png.sh
+# HAMOCC DIAGNOSTICS package: ps2png.sh
 # PURPOSE: convert ps figs to png
 # Johan Liakka, NERSC, johan.liakka@nersc.no
 # Last update Dec 2017

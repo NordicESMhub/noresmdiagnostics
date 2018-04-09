@@ -2,7 +2,7 @@
 ; plot_latlon.ncl
 ; Mark Stevens Sept 2001
 ; Rich Neale Jan 2008
-; Johan Liakka Dec 2017: Update for HAMMOC
+; Johan Liakka Dec 2017: Update for HAMOCC
 ;********************************************************
 load "$DIAG_CODE/functions_latlon.ncl"
 ;********************************************************

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# HAMMOC DIAGNOSTICS package: merge_monClim.sh
+# HAMOCC DIAGNOSTICS package: merge_monClim.sh
 # PURPOSE: Merge monthly climatology files to one file
 # Johan Liakka, NERSC, johan.liakka@nersc.no
 # Last update Mar 2018

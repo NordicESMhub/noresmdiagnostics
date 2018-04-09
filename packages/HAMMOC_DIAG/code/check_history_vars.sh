@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# MICOM DIAGNOSTICS package: check_history_vars.sh
+# HAMOCC DIAGNOSTICS package: check_history_vars.sh
 # PURPOSE: checks if the history files exist, and which variables are present.
 # Johan Liakka, NERSC, johan.liakka@nersc.no
 # Last updated: Feb 2018

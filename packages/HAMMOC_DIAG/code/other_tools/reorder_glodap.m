@@ -3,8 +3,8 @@ close all
 
 fillv = -999;
 
-infile   = strcat('/projects/NS2345K/noresm_diagnostics_dev/packages/HAMMOC_DIAG/obs_data/GLODAPv2/GLODAPv2.2016b.TAlk.nc');
-outfile  = strcat('/projects/NS2345K/noresm_diagnostics_dev/packages/HAMMOC_DIAG/obs_data/GLODAPv2/GLODAPv2.2016b.TAlk_reordered2.nc');
+infile   = strcat('/projects/NS2345K/noresm_diagnostics_dev/packages/HAMOCC_DIAG/obs_data/GLODAPv2/GLODAPv2.2016b.TAlk.nc');
+outfile  = strcat('/projects/NS2345K/noresm_diagnostics_dev/packages/HAMOCC_DIAG/obs_data/GLODAPv2/GLODAPv2.2016b.TAlk_reordered2.nc');
 
 lon     = ncread(infile,'lon');
 lat     = ncread(infile,'lat');

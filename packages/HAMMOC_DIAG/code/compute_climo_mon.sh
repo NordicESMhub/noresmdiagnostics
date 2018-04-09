@@ -2,7 +2,7 @@
 
 script_start=`date +%s`
 #
-# HAMMOC DIAGNOSTICS package: compute_climo_mon.sh
+# HAMOCC DIAGNOSTICS package: compute_climo_mon.sh
 # PURPOSE: computes climatology from annual or monthly history files
 # Johan Liakka, NERSC, johan.liakka@nersc.no
 # Last update Mar 2018

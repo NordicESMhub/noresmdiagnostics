@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# HAMMOC DIAGNOSTICS package: zonal_mean.sh
+# HAMOCC DIAGNOSTICS package: zonal_mean.sh
 # PURPOSE: computes the zonal mean of different basins using CDO
 # Johan Liakka, NERSC, johan.liakka@nersc.no
 # Last update Jan 2018 

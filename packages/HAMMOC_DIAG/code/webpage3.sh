@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# HAMMOC DIAGNOSTICS package: webpage3.sh
+# HAMOCC DIAGNOSTICS package: webpage3.sh
 # PURPOSE: modifies the html for set 3 depending on existing plots
 # Johan Liakka, NERSC, johan.liakka@nersc.no
 # Last update Dec 2017

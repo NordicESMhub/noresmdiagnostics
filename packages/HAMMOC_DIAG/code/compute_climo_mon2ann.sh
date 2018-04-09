@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# HAMMOC DIAGNOSTICS package: compute_climo_mon2ann.sh
+# HAMOCC DIAGNOSTICS package: compute_climo_mon2ann.sh
 # PURPOSE: computes annual climatology from monthly climatology files
 # Johan Liakka, NERSC, johan.liakka@nersc.no
 # Last update Mar 2018
