@@ -45,7 +45,7 @@ gw1!0 = "lat"
 gw1&lat = lat1
 
 ; Define RGB files
-; rgb_file  = rgb_dir+"/blueyellowred2.rgb"
+rgb_file_co2fxn  = "/projects/NS2345K/noresm_diagnostics_dev/packages/HAMOCC_DIAG/rgb/bluered3.rgb"
 ; rgb_filed = rgb_dir+"/bluered2.rgb"
 
 ; CASE 2 MODEL OR OBS
@@ -147,7 +147,6 @@ res@cnFillOn = True
 res@cnLinesOn = False
 res@cnMissingValFillColor = "gray75"
 res@cnLineLabelsOn = False
-cmap  = RGBtoCmap(rgb_file)
 cmapd = RGBtoCmap(rgb_filed)
 
 ;--------------------------------------------------------------
@@ -199,7 +198,7 @@ do i = 0, nvars-1
    
       if (any(obsvars(i) .eq. prod_vars)) then
         inptr2 = ptr_prod
-        case2 = "MODIS"
+        case2 = "MODIS (2003-2012)"
       end if
 
       if (any(obsvars(i) .eq. eth_vars)) then
@@ -359,13 +358,22 @@ do i = 0, nvars-1
       delete(nlon2)
     end if
 ;------------------------- GLOBAL CE PLOTS ------------------------
+    if (vars(i).eq."co2fxn") then
+      cmap  = RGBtoCmap(rgb_file_co2fxn)
+    else
+      cmap  = RGBtoCmap(rgb_file)
+    end if
     min1 = min(A)
     max1 = max(A)
     if (all(B.ne.-999.)) then
       min2 = min(B)
       max2 = max(B)
     end if
-    res@lbLabelStride = 2
+    if (vars(i).eq."co2fxn") then
+      res@lbLabelStride = 1
+    else
+      res@lbLabelStride = 2
+    end if
     res@cnLevels = cntrs(i,:)
     res@lbTitleString = "Min = "+sprintf("%6.2f",min1)+ \
                      " Max = "+sprintf("%6.2f",max1)

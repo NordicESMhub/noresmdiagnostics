@@ -17,7 +17,7 @@ if [ $COMPARE == USER ]; then
 fi
 
 echo "<br>" >> $WEBDIR/index.html
-echo "<TABLE width='700'>" >> $WEBDIR/index.html
+echo "<TABLE width='650'>" >> $WEBDIR/index.html
 echo "<TH colspan='3'>Regionally-averaged monthly climatologies [<a href='regions.png'>regions</a>]" >> $WEBDIR/index.html
 echo "<TR>" >> $WEBDIR/index.html
 if [ -f $WEBDIR/set4/set4_pp_tot_${cinfo}.png ]; then

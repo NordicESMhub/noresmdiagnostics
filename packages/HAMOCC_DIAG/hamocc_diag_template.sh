@@ -3,7 +3,9 @@
 # HAMOCC DIAGNOSTICS package
 # Johan Liakka, NERSC, johan.liakka@nersc.no
 # Last update Apr 2018
-set -e
+#set -e
+export NCARG_ROOT=/opt/ncl64
+export PATH=/opt/ncl64/bin/:/usr/local/bin:/usr/bin
 #***************************
 #*** USER MODIFY SECTION ***
 #***************************
@@ -11,9 +13,9 @@ time_start_script=`date +%s`
 # ---------------------------------------------------------
 # TEST CASENAME AND YEARS TO BE AVERAGED (CASE1)
 # ---------------------------------------------------------
-CASENAME1=N1850OCBDRD_f09_tn14
-FIRST_YR_CLIMO1=41
-NYRS_CLIMO1=10
+CASENAME1=your_test_simulation
+FIRST_YR_CLIMO1=fyr_of_test
+NYRS_CLIMO1=nyr_of_test
 
 # ---------------------------------------------------------
 # TIME SERIES SETTING FOR TEST CASE (CASE1)
@@ -28,22 +30,23 @@ LAST_YR_TS1=0
 # ---------------------------------------------------------
 # ROOT DIRECTORY FOR HISTORY FILES (CASE1)
 # ---------------------------------------------------------
-pathdat_root1=/projects/NS2345K/noresm/cases
+pathdat_root1=/path/to/test_case/history
 PATHDAT1=$pathdat_root1/$CASENAME1/ocn/hist
 
 # ---------------------------------------------------------
 # SELECT TYPE OF CONTROL CASE
 # NOTE: CNTL=USER IS NOT YET SUPPORTED
 # ---------------------------------------------------------
+CNTL=type_of_control_case
 #CNTL=OBS    # compare case1 to observations (model-obs diagnostics)
-CNTL=USER   # compare case1 to another experiment case2 (model-model diagnostics)
+#CNTL=USER   # compare case1 to another experiment case2 (model-model diagnostics)
 
 # ---------------------------------------------------------
 # CNTL CASENAME AND YEARS TO BE AVERAGED (CASE2)
 # ---------------------------------------------------------
-CASENAME2=N1850OCBDRD_f09_tn14
-FIRST_YR_CLIMO2=31
-NYRS_CLIMO2=10
+CASENAME2=your_cntl_simulation
+FIRST_YR_CLIMO2=fyr_of_cntl
+NYRS_CLIMO2=nyr_of_cntl
 
 # ---------------------------------------------------------
 # TIME SERIES SETTING FOR CNTL CASE (CASE2)
@@ -54,13 +57,13 @@ LAST_YR_TS2=0
 # ---------------------------------------------------------
 # ROOT DIRECTORY FOR HISTORY FILES (CASE2)
 # ---------------------------------------------------------
-pathdat_root2=/projects/NS2345K/noresm/cases
+pathdat_root2=/path/to/cntl_case/history
 PATHDAT2=$pathdat_root2/$CASENAME2/ocn/hist
 
 # ---------------------------------------------------------
 # SELECT DIRECTORY WHERE THE DIAGNOSTICS ARE TO BE COMPUTED
 # ---------------------------------------------------------
-DIAG_ROOT=/projects/NS2345K/noresm_diagnostics_dev/out/$USER/HAMOCC_DIAG
+DIAG_ROOT=/path/to/your/diagnostics
 
 # ---------------------------------------------------------
 # SELECT SETS (1-3)
@@ -93,7 +96,7 @@ set_4=1 # (1=ON,0=OFF) Regionally-averaged monthly climatology plots
 # also choose the colormap for the full fields
 # (difference fields are always plotted with blue-white-red)
 publish_html=1 # (1=ON,0=OFF)
-publish_html_root=/projects/NS2345K/www/noresm_diagnostics_dev2
+publish_html_root=/path/to/html/directory
 density=150
 # Available colormap options:
 #  default = purple-brown palette provided by Marco Van Hulten
@@ -113,7 +116,7 @@ CLIMO_TIME_SERIES_SWITCH=SWITCHED_OFF
 # Do not change this unless you copy the whole diagnostics
 # package (including all grid files and observational data)
 # to another directory.
-export DIAG_HOME=/projects/NS2345K/noresm_diagnostics_dev/packages/HAMOCC_DIAG
+export DIAG_HOME=/path/to/code/and/data
 
 #**********************************
 #*** END OF USER MODIFY SECTION ***

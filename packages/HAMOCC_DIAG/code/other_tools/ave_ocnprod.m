@@ -5,10 +5,14 @@ fillv = -999;
 
 obsdir = '/projects/NS2345K/noresm_diagnostics_dev/packages/HAMOCC_DIAG/obs_data/OcnProd_MODIS/';
 
-infile1  = strcat(obsdir,'cbpm.m.clim_annual_2003-2012.nc');
-infile2  = strcat(obsdir,'eppley.m.clim_annual_2003-2012.nc');
-infile3  = strcat(obsdir,'vgpm.m.clim_annual_2003-2012.nc');
-outfile  = strcat(obsdir,'ave.m.clim_annual_2003-2012_2.nc');
+time_ave = {'annual'};
+nfiles = length(time_ave);
+
+for ifile = 1:nfiles
+infile1  = strcat(obsdir,'cbpm.m.clim_',time_ave{ifile},'_2003-2012.nc');
+infile2  = strcat(obsdir,'eppley.m.clim_',time_ave{ifile},'_2003-2012.nc');
+infile3  = strcat(obsdir,'vgpm.m.clim_',time_ave{ifile},'_2003-2012.nc');
+outfile  = strcat(obsdir,'ave.m.clim_',time_ave{ifile},'_2003-2012_2.nc');
 
 lon      = ncread(infile1,'lon');
 lat_tmp  = ncread(infile1,'lat');
@@ -56,3 +60,4 @@ netcdf.putVar(ncid,lon_varid,single(lon));
 netcdf.putVar(ncid,var_varid,single(xvar_out));
 
 netcdf.close(ncid);
+end
