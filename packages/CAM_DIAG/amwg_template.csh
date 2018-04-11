@@ -1359,6 +1359,10 @@ if ($tset_1 == 0) then
       set fyr_in_dir      = `echo $fyr_in_dir_prnt | sed 's/^0*//'`
       set lyr_in_dir_prnt = `echo $last_file | rev | cut -c 7-10 | rev`
       set lyr_in_dir      = `echo $lyr_in_dir_prnt | sed 's/^0*//'`
+      if (! -e ${file_prefix}${lyr_in_dir_prnt}-12.nc) then
+         @ lyr_in_dir = $lyr_in_dir - 1
+	 set lyr_in_dir_prnt = `printf "%04d" ${fyr_in_dir}`
+      endif
       if ($fyr_in_dir == $lyr_in_dir) then
          echo "ERROR: First and last year in ${CASE_TO_READ} are identical: cannot compute trends"
          echo "***EXITING THE SCRIPT"

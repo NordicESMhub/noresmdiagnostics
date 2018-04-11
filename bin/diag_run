@@ -49,7 +49,7 @@ if [ $# -eq 0 ]; then
     echo "                                                clm    : land package (LMWG)"
     echo "                                                cice   : sea-ice package"
     echo "                                                micom  : ocean package"
-    echo "                                                hamocc : geo-bio-chemistry package"
+    echo "                                                hamocc : biogeochemistry package"
     echo "                                                all    : configure all available packages."
     echo "-c, -c1, --case=CASE1, --case1=CASE1          Test case simulation (OPTIONAL)."
     echo "-s, -s1, --start_yr=SYR1, --start_yr1=SYR1    Start year of test case climatology (OPTIONAL)."

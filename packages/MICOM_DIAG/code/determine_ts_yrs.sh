@@ -42,8 +42,9 @@ if [ -z $first_file ]; then
         lyr_prnt_ts=`echo $last_file | rev | cut -c 7-10 | rev`
         last_yr_ts=`echo $lyr_prnt_ts | sed 's/^0*//'`
         # Check that last file is a december file (for a full year)
-        if [ "$last_file" != "$PATHDAT/${file_head}${LYR_PRNT_TS}-12.nc" ]; then
-            let "LAST_YR_TS = $LAST_YR_TS - 1"
+        if [ ! -f $pathdat/${file_head}${lyr_prnt_ts}-12.nc ]; then
+            let "last_yr_ts = $last_yr_ts - 1"
+            lyr_prnt_ts=`printf "%04d" ${last_yr_ts}`
         fi
         if [ $first_yr_ts -eq $last_yr_ts ]; then
             echo "ERROR: first and last year in $casename are identical: cannot compute trends"

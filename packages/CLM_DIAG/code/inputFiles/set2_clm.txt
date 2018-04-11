@@ -32,7 +32,7 @@ globalMeanNat0  TLAI
 globalMeanNat0  TSAI
 globalMeanNat0  LAISUN
 globalMeanNat0  LAISHA
-globalMeanNat0  BTRAN
+globalMeanNat0  BTRAN2
 globalMeanNat0  H2OSNO
 globalMeanNat0  H2OCAN
 globalMeanNat0  SNOWLIQ
