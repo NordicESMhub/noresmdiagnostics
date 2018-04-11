@@ -13,7 +13,7 @@ globalMeanNat0  REL_HUM
 globalMeanNat0  SPEC_HUM_2M
 globalMeanNat0  SPEC_HUM
 globalMeanDay0  SNOW
-globalMeanNat0  BTRAN
+globalMeanNat0  BTRAN2
 globalMeanDay0  CANOPY_EVAPORATION
 globalMeanDay0  DRAINAGE
 globalMeanDay0  ET

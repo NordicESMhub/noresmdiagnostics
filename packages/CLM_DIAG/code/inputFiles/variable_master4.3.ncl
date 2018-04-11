@@ -4882,7 +4882,7 @@ if (varName .eq. "LITTERC_HR") then
     return(info)
   end if
 
-  if (varName .eq. "BTRAN") then
+  if (varName .eq. "BTRAN2") then
     info@flux=False
     info@longName="transpiration beta factor"
     info@nativeUnits = "unitless"

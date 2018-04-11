@@ -9,7 +9,7 @@ globalMeanNat   TLAI
 globalMeanNat   TSAI
 globalMeanNat   LAISUN
 globalMeanNat   LAISHA
-globalMeanNat   BTRAN
+globalMeanNat   BTRAN2
 globalMeanDay   QINFL
 globalMeanDay   QOVER
 globalMeanDay   QRGWL

@@ -5,5 +5,5 @@ globalMeanNat   FCTR
 globalMeanNat   FCEV
 globalMeanNat   FGEV
 globalMeanNat   FGR
-globalMeanNat   BTRAN
+globalMeanNat   BTRAN2
 globalMeanNat   EVAPFRAC

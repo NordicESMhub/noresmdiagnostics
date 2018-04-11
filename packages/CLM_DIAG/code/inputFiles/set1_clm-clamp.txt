@@ -8,7 +8,7 @@ globalMeanNat   SPEC_HUM_2M
 globalMeanNat   SPEC_HUM
 globalMeanDay   RAIN
 globalMeanDay   SNOW
-globalMeanNat   BTRAN
+globalMeanNat   BTRAN2
 globalMeanDay   CANOPY_EVAPORATION
 globalMeanDay   DRAINAGE
 globalMeanDay   ET
