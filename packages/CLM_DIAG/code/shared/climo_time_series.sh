@@ -98,6 +98,19 @@ if [ $c_climo_clm -eq 1 ]; then
     else
 	echo "CLIMATOLOGY FILES ALREADY EXIST: SKIPPING $model CLIMATOLOGY COMPUTATION."
     fi
+    ## Create symbolic links
+    if [ -L $climo_ts_dir/${casename}_MONS_climo.nc ]; then
+        rm $climo_ts_dir/${casename}_MONS_climo.nc
+    fi
+    ln -s $climo_ts_dir/${casename}_MON_${fyr_prnt_climo}-${lyr_prnt_climo}_climo.nc $climo_ts_dir/${casename}_MONS_climo.nc
+    for seas in ANN DJF MAM JJA SON
+    do
+	outfile=$climo_ts_dir/${casename}_${seas}_${fyr_prnt_climo}-${lyr_prnt_climo}_climo.nc
+        if [ -L $climo_ts_dir/${casename}_${seas}_climo.nc ]; then
+	    rm $climo_ts_dir/${casename}_${seas}_climo.nc
+        fi
+	ln -s $outfile $climo_ts_dir/${casename}_${seas}_climo.nc
+    done
 fi
 
 ## Compute CAM climo
@@ -134,6 +147,19 @@ if [ $c_climo_cam -eq 1 ]; then
     else
 	echo "CLIMATOLOGY FILES ALREADY EXIST: SKIPPING $model CLIMATOLOGY COMPUTATION."
     fi
+    # Create symbolic links
+    if [ -L $climo_ts_dir/${casename}_MONS_climo_atm.nc ]; then
+        rm $climo_ts_dir/${casename}_MONS_climo_atm.nc
+    fi
+    ln -s $climo_ts_dir/${casename}_MON_${fyr_prnt_climo}-${lyr_prnt_climo}_climo.nc $climo_ts_dir/${casename}_MONS_climo_atm.nc
+    for seas in ANN DJF MAM JJA SON
+    do
+	outfile=$climo_ts_dir/${casename}_${seas}_${fyr_prnt_climo}-${lyr_prnt_climo}_climo.nc
+	if [ -L $climo_ts_dir/${casename}_${seas}_climo_atm.nc ]; then
+	    rm $climo_ts_dir/${casename}_${seas}_climo_atm.nc
+	fi
+	ln -s $outfile $climo_ts_dir/${casename}_${seas}_climo_atm.nc
+    done
 fi
 
 if [ $c_ts -eq 1 ]; then
@@ -185,5 +211,9 @@ if [ $c_ts -eq 1 ]; then
     let "nyrs_ts = $lyr_ts - fyr_ts + 1"
     echo $fyr_ts > $procdir/fyr_ts
     echo $nyrs_ts > $procdir/nyrs_ts
+    if [ -L $climo_ts_dir/${casename}_ANN_ALL.nc ]; then
+        rm $climo_ts_dir/${casename}_ANN_ALL.nc
+    fi
+    ln -s $climo_ts_dir/${casename}_ANN_${fyr_prnt_ts}-${lyr_prnt_ts}_ts.nc $climo_ts_dir/${casename}_ANN_ALL.nc
 fi
 

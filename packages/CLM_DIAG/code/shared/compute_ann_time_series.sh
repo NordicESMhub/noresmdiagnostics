@@ -137,14 +137,7 @@ if [ -f $tsdir/$first_file ]; then
     rm $tsdir/${casename}_ANN_*_tmp.nc
 
     $NCATTED -O -a yrs_averaged,global,c,c,"1" $tsdir/${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}_ts.nc
-    # Create symbolic link for NCL
-    if [ -L $tsdir/${casename}_ANN_ALL.nc ]; then
-	rm $tsdir/${casename}_ANN_ALL.nc
-    fi
-    ln -s $tsdir/${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}_ts.nc $tsdir/${casename}_ANN_ALL.nc
 fi
-
-
 
 script_end=`date +%s`
 runtime_s=`expr ${script_end} - ${script_start}`

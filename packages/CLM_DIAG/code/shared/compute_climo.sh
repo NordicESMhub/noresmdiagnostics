@@ -94,19 +94,6 @@ if [ $? -ne 0 ]; then
 fi
 $NCATTED -O -a yrs_averaged,global,c,c,"${first_yr}-${last_yr}" $climodir/${casename}_MON_${first_yr_prnt}-${last_yr_prnt}_climo.nc
 
-# Create symbolic link for NCL
-if [ $model == clm2 ]; then
-    if [ -L $climodir/${casename}_MONS_climo.nc ]; then
-	rm $climodir/${casename}_MONS_climo.nc
-    fi
-    ln -s $climodir/${casename}_MON_${first_yr_prnt}-${last_yr_prnt}_climo.nc $climodir/${casename}_MONS_climo.nc
-else
-    if [ -L $climodir/${casename}_MONS_climo_atm.nc ]; then
-	rm $climodir/${casename}_MONS_climo_atm.nc
-    fi
-    ln -s $climodir/${casename}_MON_${first_yr_prnt}-${last_yr_prnt}_climo.nc $climodir/${casename}_MONS_climo_atm.nc
-fi    
-
 # Delete monthly files
 echo "Deleting monthy files."
 for mon in 01 02 03 04 05 06 07 08 09 10 11 12
@@ -144,18 +131,6 @@ do
     fi
     mv $infile $outfile
     $NCATTED -O -a yrs_averaged,global,c,c,"${first_yr}-${last_yr}" $outfile
-    # Create symbolic link for NCL
-    if [ $model == clm2 ]; then
-	if [ -L $climodir/${casename}_${seas}_climo.nc ]; then
-	    rm $climodir/${casename}_${seas}_climo.nc
-	fi
-	ln -s $outfile $climodir/${casename}_${seas}_climo.nc
-    else
-	if [ -L $climodir/${casename}_${seas}_climo_atm.nc ]; then
-	    rm $climodir/${casename}_${seas}_climo_atm.nc
-	fi
-	ln -s $outfile $climodir/${casename}_${seas}_climo_atm.nc
-    fi
 done
        
 script_end=`date +%s`

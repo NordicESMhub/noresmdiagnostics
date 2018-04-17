@@ -3,7 +3,7 @@
 # Written by Johan Liakka (latest update is the version number)
 # johan.liakka@nersc.no
 
-VERSION=4.0
+VERSION=4.1
 BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 ETC_DIR=$ROOT_DIR/etc
@@ -24,6 +24,7 @@ HISTORY_PATH1=/projects/NS2345K/noresm/cases
 HISTORY_PATH2=/projects/NS2345K/noresm/cases
 RUN_DIAG=1
 TYPE_OF_DIAG=both
+RUN_ATM_CLM=1
 
 ## Welcome message
 echo "-------------------------------------------------"
@@ -68,6 +69,7 @@ if [ $# -eq 0 ]; then
     echo "                                              Default is to run both. Note that the time series are computed over the entire simulation."
     echo "-w, --web-dir=DIR                             Specify the directory where the html should be published (OPTIONAL)."
     echo "                                              Default is --web-dir=$WEB_PATH"
+    echo "--no-atm                                      Run CLM diagnostics without CAM data. Must be used for offline CLM simulations."
     echo " "
     echo "Examples:"
     echo "${THIS_SCRIPT_NAME} -m all -c N1850_f19_tn11_exp1 -s 21 -e 50 # model-obs diagnostics of N1850_f19_tn11_exp1 for all (available) components."
@@ -75,9 +77,11 @@ if [ $# -eq 0 ]; then
     echo "${THIS_SCRIPT_NAME} -m micom -c N1850_f19_tn11_exp1 -s 21 -e 50 # model-obs diagnostics for MICOM"
     echo "${THIS_SCRIPT_NAME} -m cice -c N1850_f19_tn11_exp1 -s 21 -e 50 -p # configure (but do not run) model-obs diagnostics for CICE."
     echo "${THIS_SCRIPT_NAME} -m clm -c N1850_f19_tn11_exp1 -s 21 -e 50 -i /input/directory1 -c2 N1850_f19_tn11_exp2 -s2 21 -e2 50 -i2 /input/directory2 # model1-model2 diagnostics for CLM with user-specified history file directories"
-    echo "${THIS_SCRIPT_NAME} -m clm -c N1850_f19_tn11_exp1 -s 21 -e 50 -t climo # model-obs climatology diagnostics (no time series) for CLM:"
+    echo "${THIS_SCRIPT_NAME} -m micom -c N1850_f19_tn11_exp1 -s 21 -e 50 -t climo # model-obs climatology diagnostics (no time series) for MICOM:"
     echo "${THIS_SCRIPT_NAME} -m cam -o /my/dir # install CAM diagnostics in /my/dir with minimal configuration."
-    echo "${THIS_SCRIPT_NAME} -m micom,hamocc -c N1850OC_f19_tn11_exp1 -s 21 -e 50 # model-obs diagnostics for micom and hamocc."
+    echo "${THIS_SCRIPT_NAME} -m micom,hamocc -c N1850OC_f19_tn11_exp1 -s 21 -e 50 # model-obs diagnostics for MICOM and HAMOCC."
+    echo "${THIS_SCRIPT_NAME} -m clm -c N1850_f19_tn11_clmexp1 -t time_series --no-atm # model-obs time-series diagnostics for an offline (uncoupled) CLM simulation."
+    echo "${THIS_SCRIPT_NAME} -m hamocc -c N1850OC_f19_tn11_exp1 -s 31 -e 100 -c2 N1850OC_f19_tn11_exp2 -t time_series # model1-model2 time-series diagnostics for HAMOCC."
     echo " "
     exit 0
 else
@@ -219,6 +223,10 @@ else
 		USER_MODEL=`echo $1 | sed -e 's/^[^=]*=//g'`
                 shift
                 ;;
+	    --no-atm)
+		RUN_ATM_CLM=0
+		shift
+                ;;
 	    -p|--passive-mode)
 		RUN_DIAG=0
 		final_message="RUNNING IN PASSIVE MODE: EXITING"
@@ -293,6 +301,12 @@ if [ $TYPE_OF_DIAG != both ] && [ $TYPE_OF_DIAG != climo ] && [ $TYPE_OF_DIAG !=
     exit 1
 fi
 
+if [ $TYPE_OF_DIAG == time_series ] && [ $CASE1 == $CASE2 ]; then
+    echo "ERROR: --type=${TYPE_OF_DIAG} cannot be used if case1=case2."
+    echo "*** EXITING THE SCRIPT"
+    exit 1
+fi
+
 # CREATE DATE_STAMP
 dateYYYYMMDD=`date +%y%m%d`
 dateHHMMSS=`date +%H%M%S`
@@ -353,6 +367,10 @@ else
 	    let RUN_MODELS[4]=${RUN_MODELS[4]}+1
 	fi
     done
+fi
+
+if [ $RUN_ATM_CLM -eq 0 ] && [ ${RUN_MODELS[1]} -eq 0 ]; then
+    echo "IGNORING flag --no-atm: can only be in combination with -m clm,all"
 fi
 
 # SECURITY CHECKS
@@ -427,13 +445,21 @@ do
             echo "*** EXITING THE SCRIPT"
 	    exit 1
 	fi
-	cp $ETC_DIR/required_vars_${MODEL_CAPS} $DIAG_PATH/$MODEL_DIAG_CAPS/required_vars
-	if [ $? -ne 0 ]; then
-	    echo "ERROR: copying $ETC_DIR/required_vars_${MODEL_CAPS} failed"
-            echo "*** EXITING THE SCRIPT"
-	    exit 1
+	if [ $TYPE_OF_DIAG == time_series ]; then
+	    cp $ETC_DIR/required_vars_${MODEL_CAPS}_ts $DIAG_PATH/$MODEL_DIAG_CAPS/required_vars
+	    if [ $? -ne 0 ]; then
+		echo "ERROR: copying $ETC_DIR/required_vars_${MODEL_CAPS}_ts failed"
+		echo "*** EXITING THE SCRIPT"
+		exit 1
+	    fi
+	else
+	    cp $ETC_DIR/required_vars_${MODEL_CAPS} $DIAG_PATH/$MODEL_DIAG_CAPS/required_vars
+	    if [ $? -ne 0 ]; then
+		echo "ERROR: copying $ETC_DIR/required_vars_${MODEL_CAPS} failed"
+		echo "*** EXITING THE SCRIPT"
+		exit 1
+	    fi
 	fi
-
 	# ENTER THE DIAGNOSTICS DIRECTORY
 	cd $DIAG_PATH/$MODEL_DIAG_CAPS
 	if [ $? -ne 0 ]; then
@@ -649,21 +675,23 @@ do
 		    echo "*** EXITING THE SCRIPT"
 		    exit 1
 		fi
-		if /usr/bin/grep -q $CNTL_FIRST_YR_NAME required_vars
-		then
-		    /usr/bin/sed -i "/${CNTL_FIRST_YR_NAME}/d" required_vars
-		else
-		    echo "ERROR: deleting ${CNTL_FIRST_YR_NAME} from required_vars failed"
-		    echo "*** EXITING THE SCRIPT"
-		    exit 1
-		fi
-		if /usr/bin/grep -q $CNTL_NYRS_NAME required_vars
-		then
-		    /usr/bin/sed -i "/${CNTL_NYRS_NAME}/d" required_vars
-		else
-		    echo "ERROR: deleting ${CNTL_NYRS_NAME} from required_vars failed"
-		    echo "*** EXITING THE SCRIPT"
-		    exit 1
+		if [ $TYPE_OF_DIAG != time_series ]; then
+		    if /usr/bin/grep -q $CNTL_FIRST_YR_NAME required_vars
+		    then
+			/usr/bin/sed -i "/${CNTL_FIRST_YR_NAME}/d" required_vars
+		    else
+			echo "ERROR: deleting ${CNTL_FIRST_YR_NAME} from required_vars failed"
+			echo "*** EXITING THE SCRIPT"
+			exit 1
+		    fi
+		    if /usr/bin/grep -q $CNTL_NYRS_NAME required_vars
+		    then
+			/usr/bin/sed -i "/${CNTL_NYRS_NAME}/d" required_vars
+		    else
+			echo "ERROR: deleting ${CNTL_NYRS_NAME} from required_vars failed"
+			echo "*** EXITING THE SCRIPT"
+			exit 1
+		    fi
 		fi
 		if /usr/bin/grep -q $INPUT_DIR_NAME2 required_vars
 		then
@@ -858,17 +886,50 @@ do
 	    echo "CLIMO_TIME_SERIES_SWITCH = $TYPE_OF_DIAG" >> config.log
 	fi
 
+	# CHANGE ATMOSPHERIC DIAGNOSTICS IN CLM
+	if [ $MODEL == clm ]; then
+	    if [ $RUN_ATM_CLM -eq 0 ]; then
+		echo "-REMOVING ATM DIAGNOSTICS FROM CLM"
+		if /usr/bin/grep -q ATM_DIAG $DIAG_FILE
+		then
+    		    /usr/bin/sed -i "s/ATM_DIAG/0/g" $DIAG_FILE
+		else
+		    echo "ERROR: modifying $DIAG_PATH/$MODEL_DIAG_CAPS/$DIAG_FILE with new RUN_ATM_CLM failed"
+		    echo "*** EXITING THE SCRIPT"
+		    exit 1
+		fi
+	    else
+		if /usr/bin/grep -q ATM_DIAG $DIAG_FILE
+		then
+    		    /usr/bin/sed -i "s/ATM_DIAG/1/g" $DIAG_FILE
+		else
+		    echo "ERROR: modifying $DIAG_PATH/$MODEL_DIAG_CAPS/$DIAG_FILE with new RUN_ATM_CLM failed"
+		    echo "*** EXITING THE SCRIPT"
+		    exit 1
+		fi
+	    fi
+	    echo "# ATM DIAGNOSTICS:" >> config.log
+	    echo "set_4 = ${RUN_ATM_CLM}" >> config.log
+	fi
+	    
 	# CHECK IF SCRIPT CAN BE EXECUTED
 	if [ $RUN_DIAG -eq 1 ]; then
 	    final_message="RUNNING ${DIAG_FILE} ..."
-	    if [ $CASE1 == none ] || [ $SYR1 -lt 0 ] || [ $EYR1 -lt 0 ]; then
-		RUN_DIAG=0
-		final_message="${DIAG_FILE} IS NOT RUNNING: NOT ALL REQUIRED VARIABLES HAVE BEEN CONFIGURED (see ${DIAG_PATH}/${MODEL_DIAG_CAPS}/config.log)."
+	    if [ $TYPE_OF_DIAG == time_series ]; then
+		if [ $CASE1 == none ]; then
+		    RUN_DIAG=0
+		    final_message="${DIAG_FILE} IS NOT RUNNING: NOT ALL REQUIRED VARIABLES HAVE BEEN CONFIGURED (see ${DIAG_PATH}/${MODEL_DIAG_CAPS}/config.log)."
+		fi
 	    else
-		if [ $CASE2 != none ]; then
-		    if [ $SYR2 -lt 0 ] || [ $EYR2 -lt 0 ]; then
-			RUN_DIAG=0
-			final_message="${DIAG_FILE} IS NOT RUNNING: NOT ALL REQUIRED VARIABLES HAVE BEEN CONFIGURED (see ${DIAG_PATH}/${MODEL_DIAG_CAPS}/config.log)."
+		if [ $CASE1 == none ] || [ $SYR1 -lt 0 ] || [ $EYR1 -lt 0 ]; then
+		    RUN_DIAG=0
+		    final_message="${DIAG_FILE} IS NOT RUNNING: NOT ALL REQUIRED VARIABLES HAVE BEEN CONFIGURED (see ${DIAG_PATH}/${MODEL_DIAG_CAPS}/config.log)."
+		else
+		    if [ $CASE2 != none ]; then
+			if [ $SYR2 -lt 0 ] || [ $EYR2 -lt 0 ]; then
+			    RUN_DIAG=0
+			    final_message="${DIAG_FILE} IS NOT RUNNING: NOT ALL REQUIRED VARIABLES HAVE BEEN CONFIGURED (see ${DIAG_PATH}/${MODEL_DIAG_CAPS}/config.log)."
+			fi
 		    fi
 		fi
 	    fi

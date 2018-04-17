@@ -244,6 +244,8 @@ if [ $CLIMO_TIME_SERIES_SWITCH == ONLY_CLIMO ]; then
     set_1=0 ; set_2=1 ; set_3=1 ; set_4=1
 elif [ $CLIMO_TIME_SERIES_SWITCH == ONLY_TIME_SERIES ]; then
     set_1=1 ; set_2=0 ; set_3=0 ; set_4=0
+    FIRST_YR_CLIMO1=0 ; NYRS_CLIMO1=0
+    FIRST_YR_CLIMO2=0 ; NYRS_CLIMO2=0
 fi
 compute_climo=0
 compute_time_series=0
@@ -594,9 +596,17 @@ fi
 # ---------------------------------
 # Create the web interface
 # ---------------------------------
-WEBFOLDER=yrs${FIRST_YR_CLIMO1}to${LAST_YR_CLIMO1}-$CASENAME2
-if [ $CNTL == USER ] && [ $CASENAME1 == $CASENAME2 ]; then
-    WEBFOLDER=yrs${FIRST_YR_CLIMO1}to${LAST_YR_CLIMO1}-yrs${FIRST_YR_CLIMO2}to${LAST_YR_CLIMO2}
+if [ $CLIMO_TIME_SERIES_SWITCH == ONLY_TIME_SERIES ]; then
+    if [ $CNTL == OBS ]; then
+        WEBFOLDER=ts${FIRST_YR_TS1}to${LAST_YR_TS1}
+    else
+        WEBFOLDER=ts${FIRST_YR_TS1}to${LAST_YR_TS1}-$CASENAME2
+    fi
+else
+    WEBFOLDER=yrs${FIRST_YR_CLIMO1}to${LAST_YR_CLIMO1}-$CASENAME2
+    if [ $CNTL == USER ] && [ $CASENAME1 == $CASENAME2 ]; then
+	WEBFOLDER=yrs${FIRST_YR_CLIMO1}to${LAST_YR_CLIMO1}-yrs${FIRST_YR_CLIMO2}to${LAST_YR_CLIMO2}
+    fi
 fi
 TARFILE=${WEBFOLDER}.tar
 export WEBDIR=$WKDIR/$WEBFOLDER

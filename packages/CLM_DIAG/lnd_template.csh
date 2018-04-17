@@ -226,16 +226,16 @@ endif
 # If trends_all_flag=1, trends will be computed over the entire simulation
 # -JL, Nov 2017
 #**************************************************
-setenv trends_all_flag             1      # (1=ON,0=OFF)
+setenv trends_all_flag      1      # (1=ON,0=OFF)
 #**************************************************
 # 9b: The following setting are  necessary only if trends_all_flag=0
 # -JL, Nov 2017
 #**************************************************
-setenv trends_first_yr_1           1      # YYYY (must be >= 1)
-setenv trends_num_yrs_1          100      # number of yrs (must be >= 2)
+setenv trends_first_yr_1      0      # YYYY (must be >= 1)
+setenv trends_num_yrs_1       0      # number of yrs (must be >= 2)
 if ($ModelVsModel == 1) then
-  setenv trends_first_yr_2         1      # YYYY (must be >= 1)
-  setenv trends_num_yrs_2        100      # number of yrs (must be >= 2)
+  setenv trends_first_yr_2    0      # YYYY (must be >= 1)
+  setenv trends_num_yrs_2     0      # number of yrs (must be >= 2)
 endif
 # Check if climo/time-series switch has been used by diag_run
 # -JL, Nov 2017
@@ -295,7 +295,7 @@ setenv set_1      1   # (1=ON,0=OFF)  ANNUAL TRENDS					(default=1)
 setenv set_2      1   # (1=ON,0=OFF)  CE CONTOUR PLOTS					(default=1)
 setenv set_3      1   # (1=ON,0=OFF)  REGIONAL MONTHLY 2M-TEMP,PRECIP,			(default=1)
                       # RUNOFF,RADIATIVE AND TURBULENT FLUXES
-setenv set_4      1   # (1=ON,0=OFF)  VERTICAL PROFILES					(default=1)
+setenv set_4      ATM_DIAG   # (1=ON,0=OFF)  VERTICAL PROFILES					(default=1)
 setenv set_5      1   # (1=ON,0=OFF)  ANNUAL MEANS OF REGIONAL HYDROLOGIC		(default=1)
                       # CYCLE AND GLOBAL QUANTITIES
 setenv set_6      1   # (1=ON,0=OFF)  ANNUAL TRENDS FOR REGIONS				(default=1)
@@ -506,6 +506,13 @@ else if ($ModelVsModel == 1) then
    set runtype 	= model1-model2	# two model comparison
 endif
 
+if ($CLIMO_TIME_SERIES_SWITCH == ONLY_TIME_SERIES) then
+  setenv clim_first_yr_1 0
+  setenv clim_num_yrs_1 0
+  setenv clim_first_yr_2 0
+  setenv clim_num_yrs_2 0
+endif
+
 @ end_yr_tmp = $clim_first_yr_1 + $clim_num_yrs_1 - 1
 setenv PLOTTYPE         $p_type                                                 # current version: postscript
 setenv RUNTYPE          $runtype						# creates directory name
@@ -602,25 +609,6 @@ if ($set_9 == 1) then
    setenv set_9      0
 endif
    
-# Check if "cam" or "cam2" (JL, Oct 2017)
-setenv camname1 cam
-setenv camname2 cam
-
-set filename_atm = ${case_1_atm_dir}${caseid_1}.${camname1}.h0.`printf "%04d" ${clim_first_yr_1}`-01.nc
-if (! -e ${filename_atm} || -z ${filename_atm} ) then
-   setenv camname1 cam2
-endif
-
-if ($ModelVsModel == 1) then    
-  set filename_atm = ${case_2_atm_dir}${caseid_2}.${camname2}.h0.`printf "%04d" ${clim_first_yr_2}`-01.nc
-  if (! -e ${filename_atm} || -z ${filename_atm} ) then
-     setenv camname2 cam2
-  endif
-endif
-
-# Required variables
-setenv required_vars_climo "TSA,RAIN,SNOW,FSR,FSDS,FSA,FIRA,FCTR,FCEV,FGEV,QOVER,QDRAI,QRGWL,SNOWDP,FPSN,FSH,FSH_V,FSH_G,TV,TG,TSNOW,SABV,SABG,FIRE,FGR,FSM,TAUX,TAUY,ELAI,ESAI,TLAI,TSAI,LAISUN,LAISHA,BTRAN2,H2OSNO,H2OCAN,SNOWLIQ,SNOWICE,QINFL,QINTR,QDRIP,QSNOMELT,QSOIL,QVEGE,QVEGT,ERRSOI,ERRSEB,FSNO,ERRSOL,ERRH2O,TBOT,TLAKE,WIND,THBOT,QBOT,ZBOT,FLDS,FSDSNDLN,FSDSNI,FSDSVD,FSDSVDLN,FSDSVI,FSDSND,FSRND,FSRNDLN,FSRNI,FSRVD,FSRVDLN,FSRVI,Q2M,TREFMNAV,TREFMXAV,SOILLIQ,SOILICE,H2OSOI,TSOI,WA,WT,ZWT,QCHARGE,FCOV,PCO2,NEE,GPP,NPP,AR,HR,NEP,ER,SUPPLEMENT_TO_SMINN,SMINN_LEACHED,COL_FIRE_CLOSS,COL_FIRE_NLOSS,PFT_FIRE_CLOSS,PFT_FIRE_NLOSS,FIRESEASONL,FIRE_PROB,ANN_FAREA_BURNED,MEAN_FIRE_PROB,PBOT"
-
 #**************************************************
 # RUN THE PACKAGE ....
 #**************************************************
