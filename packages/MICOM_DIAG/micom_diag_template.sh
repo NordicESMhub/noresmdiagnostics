@@ -246,6 +246,8 @@ if [ $CLIMO_TIME_SERIES_SWITCH == ONLY_CLIMO ]; then
     set_1=0 ; set_2=0 ; set_3=1 ; set_4=1 ; set_5=1 ; set_6=1 ; set_7=1
 elif [ $CLIMO_TIME_SERIES_SWITCH == ONLY_TIME_SERIES ]; then
     set_1=1 ; set_2=1 ; set_3=0 ; set_4=0 ; set_5=0 ; set_6=0 ; set_7=0
+    FIRST_YR_CLIMO1=0 ; NYRS_CLIMO1=0
+    FIRST_YR_CLIMO2=0 ; NYRS_CLIMO2=0
 fi
 compute_climo=0
 compute_time_series_ann=0
@@ -520,15 +522,15 @@ do
 	    MON_TS_FILE=${CASENAME}_MON_${FYR_PRNT_TS}-${LYR_PRNT_TS}_sst${NINOidx}_ts.nc
 	    if [ ! -f $CLIMO_TS_DIR/$MON_TS_FILE ]; then
 		echo "sst" > $WKDIR/attributes/required_vars
-		$DIAG_CODE/check_history_vars.sh $CASENAME $FIRST_YR_CLIMO $LAST_YR_CLIMO $PATHDAT ts_mon
+		$DIAG_CODE/check_history_vars.sh $CASENAME $FIRST_YR_TS $LAST_YR_TS $PATHDAT ts_mon
 		# Check for grid information
 		if [ ! -f $WKDIR/attributes/grid_${CASENAME} ] && [ -z $PGRIDPATH ]; then
 		    $DIAG_CODE/determine_grid_type.sh $CASENAME
 		fi
 		if [ -f $WKDIR/attributes/vars_ts_mon_${CASENAME}_hm ]; then
-		    $DIAG_CODE/compute_mon_time_series.sh hm $CASENAME $FIRST_YR_TS $LAST_YR_TS $PATHDAT $CLIMO_TS_DIR $NINOidx $FIRST_YR_CLIMO $LAST_YR_CLIMO
+		    $DIAG_CODE/compute_mon_time_series.sh hm $CASENAME $FIRST_YR_TS $LAST_YR_TS $PATHDAT $CLIMO_TS_DIR $NINOidx
 		elif [ -f $WKDIR/attributes/vars_ts_mon_${CASENAME}_hd ]; then
-		    $DIAG_CODE/compute_mon_time_series.sh hd $CASENAME $FIRST_YR_TS $LAST_YR_TS $PATHDAT $CLIMO_TS_DIR $NINOidx $FIRST_YR_CLIMO $LAST_YR_CLIMO
+		    $DIAG_CODE/compute_mon_time_series.sh hd $CASENAME $FIRST_YR_TS $LAST_YR_TS $PATHDAT $CLIMO_TS_DIR $NINOidx
 		else
 		    echo "WARNING: could not find the sst variable for Nino time series."
 		    echo "-> SKIPPING COMPUTING NINO TIME SERIES"
@@ -649,9 +651,17 @@ fi
 # ---------------------------------
 # Create the web interface
 # ---------------------------------
-WEBFOLDER=yrs${FIRST_YR_CLIMO1}to${LAST_YR_CLIMO1}-$CASENAME2
-if [ $CNTL == USER ] && [ $CASENAME1 == $CASENAME2 ]; then
-    WEBFOLDER=yrs${FIRST_YR_CLIMO1}to${LAST_YR_CLIMO1}-yrs${FIRST_YR_CLIMO2}to${LAST_YR_CLIMO2}
+if [ $CLIMO_TIME_SERIES_SWITCH == ONLY_TIME_SERIES ]; then
+    if [ $CNTL == OBS ]; then
+	WEBFOLDER=ts${FIRST_YR_TS1}to${LAST_YR_TS1}
+    else
+	WEBFOLDER=ts${FIRST_YR_TS1}to${LAST_YR_TS1}-$CASENAME2
+    fi
+else
+    WEBFOLDER=yrs${FIRST_YR_CLIMO1}to${LAST_YR_CLIMO1}-$CASENAME2
+    if [ $CNTL == USER ] && [ $CASENAME1 == $CASENAME2 ]; then
+	WEBFOLDER=yrs${FIRST_YR_CLIMO1}to${LAST_YR_CLIMO1}-yrs${FIRST_YR_CLIMO2}to${LAST_YR_CLIMO2}
+    fi
 fi
 TARFILE=${WEBFOLDER}.tar
 export WEBDIR=$WKDIR/$WEBFOLDER
@@ -723,15 +733,25 @@ if [ $set_2 -eq 1 ]; then
     export CASE1=$CASENAME1
     export FYR_TS1=$FYR_PRNT_TS1
     export LYR_TS1=$LYR_PRNT_TS1
-    export FYR_CLIMO1=$FIRST_YR_CLIMO1
-    export LYR_CLIMO1=$LAST_YR_CLIMO1
+    if [ $CLIMO_TIME_SERIES_SWITCH == ONLY_TIME_SERIES ]; then
+	export FYR_CLIMO1=$FIRST_YR_TS1
+	export LYR_CLIMO1=$LAST_YR_TS1
+    else
+	export FYR_CLIMO1=$FIRST_YR_CLIMO1
+	export LYR_CLIMO1=$LAST_YR_CLIMO1
+    fi
     export DATADIR1=$CLIMO_TS_DIR1
     if [ $CNTL == USER ]; then
 	export CASE2=$CASENAME2
 	export FYR_TS2=$FYR_PRNT_TS2
 	export LYR_TS2=$LYR_PRNT_TS2
-	export FYR_CLIMO2=$FIRST_YR_CLIMO2
-	export LYR_CLIMO2=$LAST_YR_CLIMO2
+	if [ $CLIMO_TIME_SERIES_SWITCH == ONLY_TIME_SERIES ]; then
+	    export FYR_CLIMO2=$FIRST_YR_TS2
+	    export LYR_CLIMO2=$LAST_YR_TS2
+	else
+	    export FYR_CLIMO2=$FIRST_YR_CLIMO2
+	    export LYR_CLIMO2=$LAST_YR_CLIMO2
+	fi
         export DATADIR2=$CLIMO_TS_DIR2
     fi
     echo "Plotting NINO SST index (plot_nino.ncl)..."

@@ -657,6 +657,8 @@ endif
 set climo_required = 0
 if ($CLIMO_TIME_SERIES_SWITCH == ONLY_TIME_SERIES) then
    set tset_1 = 0
+   set test_compute_climo = 1
+   set cntl_compute_climo = 1
    set all_sets = 1
    set set_1  = 1 ; set set_2  = 1 ; set set_3  = 1 ; set set_4  = 1
    set set_5  = 1 ; set set_6  = 1 ; set set_7  = 1 ; set set_8  = 1
@@ -927,59 +929,58 @@ endif
 #*****************************************************************
 # Determine attributes of history files
 #*****************************************************************
+## Hannay: Later on, we want to add: 'physics' attribute
+if ($CLIMO_TIME_SERIES_SWITCH != ONLY_TIME_SERIES) then
+  @ test_last_yr = $test_first_yr + $test_nyrs - 1
+  set test_first_yr_prnt = `printf "%04d" ${test_first_yr}`
+  set test_last_yr_prnt = `printf "%04d" ${test_last_yr}`
 
-## Hannay: Later on, we want to add: 'physics' attribute 
+  if ($CNTL == USER) then
+    @ cntl_last_yr = $cntl_first_yr + $cntl_nyrs - 1
+    set cntl_first_yr_prnt = `printf "%04d" ${cntl_first_yr}`
+    set cntl_last_yr_prnt = `printf "%04d" ${cntl_last_yr}`
+  endif
+  
+  echo "DETERMINE ATTRIBUTES FOR HISTORY FILES"
+  echo ' '
 
-@ test_last_yr = $test_first_yr + $test_nyrs - 1
-set test_first_yr_prnt = `printf "%04d" ${test_first_yr}`
-set test_last_yr_prnt = `printf "%04d" ${test_last_yr}`
+  if ($test_filetype == "monthly_history") then
+    set test_keyFile = "null"
+  else
+    set test_keyFile = `ls ${test_path_history}/${test_casename}*.nc | head -n 1`
+  endif
 
-if ($CNTL == USER) then
-   @ cntl_last_yr = $cntl_first_yr + $cntl_nyrs - 1
-   set cntl_first_yr_prnt = `printf "%04d" ${cntl_first_yr}`
-   set cntl_last_yr_prnt = `printf "%04d" ${cntl_last_yr}`
-endif
+  $DIAG_CODE/determine_output_attributes.csh   test  \
+                      		               $test_casename \
+					       $test_path_history \
+					       $test_path_climo \
+					       $test_path_diag \
+					       $test_first_yr \
+					       $test_compute_climo \
+                                               $test_filetype \
+                                               $test_keyFile \
+					       $climo_required \
+					       $test_last_yr
 
-echo "DETERMINE ATTRIBUTES FOR HISTORY FILES"
-echo ' '
-
-if ($test_filetype == "monthly_history") then
-  set test_keyFile = "null"
-else
-  set test_keyFile = `ls ${test_path_history}/${test_casename}*.nc | head -n 1`
-endif
-
-$DIAG_CODE/determine_output_attributes.csh   test  \
-					     $test_casename \
-					     $test_path_history \
-					     $test_path_climo \
-					     $test_path_diag \
-					     $test_first_yr \
-					     $test_compute_climo \
-                                             $test_filetype \
-                                             $test_keyFile \
-					     $climo_required \
-					     $test_last_yr
-
-if ($status > 0) then
-   echo "*** CRASH IN determine_output_attributes.csh (test)"  
-   echo "*** EXITING THE SCRIPT"
-   exit 1
-endif
+  if ($status > 0) then
+    echo "*** CRASH IN determine_output_attributes.csh (test)"  
+    echo "*** EXITING THE SCRIPT"
+    exit 1
+  endif
     
-set test_rootname  = `cat $test_path_diag/attributes/test_rootname`
-set test_grid      = `cat $test_path_diag/attributes/test_grid`
-set test_res_in    = `cat $test_path_diag/attributes/test_res`
-set test_var_list  = `cat $test_path_diag/attributes/test_var_list`
+  set test_rootname  = `cat $test_path_diag/attributes/test_rootname`
+  set test_grid      = `cat $test_path_diag/attributes/test_grid`
+  set test_res_in    = `cat $test_path_diag/attributes/test_res`
+  set test_var_list  = `cat $test_path_diag/attributes/test_var_list`
 
-echo ' '
-echo 'TEST CASE ATTRIBUTES'
-echo '  test_rootname' =  $test_rootname
-echo '  test_grid' = $test_grid
-echo '  test_res_in' = $test_res_in
-echo '  test_res_in' = $test_res_in
+  echo ' '
+  echo 'TEST CASE ATTRIBUTES'
+  echo '  test_rootname' =  $test_rootname
+  echo '  test_grid' = $test_grid
+  echo '  test_res_in' = $test_res_in
+  echo '  test_res_in' = $test_res_in
 
-if ($CNTL == USER) then  
+  if ($CNTL == USER) then  
 
     if ($cntl_filetype == "monthly_history") then
       set cntl_keyFile = "null"
@@ -1015,12 +1016,12 @@ if ($CNTL == USER) then
     echo '  cntl_rootname' =  $cntl_rootname
     echo '  cntl_grid' = $cntl_grid
     echo '  cntl_res_in' = $cntl_res_in
-else
+  else
     set cntl_rootname  = " " 
     set cntl_grid      = " " 
     set cntl_res_in    = " " 
     set cntl_var_list  = " " 
-endif
+  endif
 
 #*************************************************************************
 # If computing climatological means, check if all monthly file are present 
@@ -1030,108 +1031,107 @@ endif
 # Test case
 #-----------
 
-if ($test_compute_climo == 0) then
-  if ($test_filetype == "monthly_history") then
-    # We check the monthly files are present
-    $DIAG_CODE/check_history_present.csh  MONTHLY \
-				          $test_path_history \
-				          $test_first_yr \
-				          $test_nyrs \
-				          $test_rootname \
-				          $test_casename  
+  if ($test_compute_climo == 0) then
+    if ($test_filetype == "monthly_history") then
+      # We check the monthly files are present
+      $DIAG_CODE/check_history_present.csh  MONTHLY \
+				            $test_path_history \
+				            $test_first_yr \
+				            $test_nyrs \
+				            $test_rootname \
+				            $test_casename  
 
-    if ($status > 0) then
-       echo "*** CRASH IN check_history_present.csh (test)"
-       echo "*** EXITING THE SCRIPT"
-       exit 1
-    endif
+      if ($status > 0) then
+        echo "*** CRASH IN check_history_present.csh (test)"
+        echo "*** EXITING THE SCRIPT"
+        exit 1
+      endif
     
-    # For DJF determine if we use December from previous year or from
-    # the same year (seasonally discontinuous DJF)
-    @ prev_yri = $test_first_yr - 1
-    set filename_prev_year = ${test_rootname}`printf "%04d" ${prev_yri}`
-    if ( -e ${test_path_history}/${filename_prev_year}-12.nc ) then   
+      # For DJF determine if we use December from previous year or from
+      # the same year (seasonally discontinuous DJF)
+      @ prev_yri = $test_first_yr - 1
+      set filename_prev_year = ${test_rootname}`printf "%04d" ${prev_yri}`
+      if ( -e ${test_path_history}/${filename_prev_year}-12.nc ) then   
 	set test_djf = SCD # Seasonally Continuous DJF
         echo "-->FOUND DECEMBER FILE FROM YEAR ${prev_yri}: USING test_djf=SCD"
-    else
+      else
 	set test_djf = SDD # Seasonally Discontinuous DJF
         echo "-->NO DECEMBER FILE FROM YEAR ${prev_yri} WAS FOUND: USING test_djf=SDD"
+      endif
+      echo ' '
+    else
+      @ test_end = $test_first_yr + $test_nyrs - 1
+      $DIAG_CODE/check_timeSeries.pl $test_path_history \
+                                     $test_rootname \
+                                     $test_first_yr \
+                                     $test_end \
+                                     $test_path_climo \
+                                     $strip_off_vars \
+                                     $test_var_list \
+                                     test_file_list.txt
+      if ($status > 0) then
+        echo "*** Test case: not all CAM output files were found."  
+        echo "*** Check that the casename and year ranges are correct."
+        echo "*** Exiting the script."
+        exit 1
+      endif
+      set test_djf = `head -n 1 $test_path_climo/DJF.txt`
     endif
-    echo ' '
-  else
-    @ test_end = $test_first_yr + $test_nyrs - 1
-    $DIAG_CODE/check_timeSeries.pl $test_path_history \
-                                   $test_rootname \
-                                   $test_first_yr \
-                                   $test_end \
-                                   $test_path_climo \
-                                   $strip_off_vars \
-                                   $test_var_list \
-                                   test_file_list.txt
-    if ($status > 0) then
-      echo "*** Test case: not all CAM output files were found."  
-      echo "*** Check that the casename and year ranges are correct."
-      echo "*** Exiting the script."
-      exit 1
-    endif
-
-    set test_djf = `head -n 1 $test_path_climo/DJF.txt`
   endif
-endif
 
 #-----------
 # Control
 #-----------
 
-if ($CNTL == USER && $cntl_compute_climo == 0) then
+  if ($CNTL == USER && $cntl_compute_climo == 0) then
 
-  if ($cntl_filetype == "monthly_history") then
-    # We check the monthly files are present
-    $DIAG_CODE/check_history_present.csh  MONTHLY \
-				          $cntl_path_history \
-				          $cntl_first_yr \
-				          $cntl_nyrs \
-				          $cntl_rootname \
-				          $cntl_casename  
+    if ($cntl_filetype == "monthly_history") then
+      # We check the monthly files are present
+      $DIAG_CODE/check_history_present.csh  MONTHLY \
+ 				            $cntl_path_history \
+				            $cntl_first_yr \
+				            $cntl_nyrs \
+				            $cntl_rootname \
+				            $cntl_casename  
 
-    if ($status > 0) then
-       echo "*** CRASH IN check_history_present.csh (cntl)"
-       echo "*** EXITING THE SCRIPT"
-       exit 1
-    endif
+      if ($status > 0) then
+        echo "*** CRASH IN check_history_present.csh (cntl)"
+        echo "*** EXITING THE SCRIPT"
+        exit 1
+      endif
     
-    # For DJF determine if we use December from previous year or from
-    # the same year (seasonally discontinuous DJF)
-    @ prev_yri = $cntl_first_yr - 1
-    set filename_prev_year = ${cntl_rootname}`printf "%04d" ${prev_yri}`
-    if ( -e ${cntl_path_history}/${filename_prev_year}-12.nc) then   
-	set cntl_djf = SCD # Seasonally Continuous DJF
+      # For DJF determine if we use December from previous year or from
+      # the same year (seasonally discontinuous DJF)
+      @ prev_yri = $cntl_first_yr - 1
+      set filename_prev_year = ${cntl_rootname}`printf "%04d" ${prev_yri}`
+      if ( -e ${cntl_path_history}/${filename_prev_year}-12.nc) then   
+        set cntl_djf = SCD # Seasonally Continuous DJF
         echo "-->FOUND DECEMBER FILE FROM YEAR ${prev_yri}: USING cntl_djf=SCD"
-    else
-	set cntl_djf = SDD # Seasonally Discontinuous DJF
+      else
+ 	set cntl_djf = SDD # Seasonally Discontinuous DJF
         echo "-->NO DECEMBER FILE FROM YEAR ${prev_yri} WAS FOUND: USING cntl_djf=SDD"
+      endif
+      echo ' '
+    else
+      @ cntl_end = $cntl_first_yr + $cntl_nyrs - 1
+      $DIAG_CODE/check_timeSeries.pl $cntl_path_history \
+                                     $cntl_rootname \
+                                     $cntl_first_yr \
+                                     $cntl_end \
+                                     $cntl_path_climo \
+                                     $strip_off_vars \
+                                     $cntl_var_list \
+                                     cntl_file_list.txt
+      if ($status == 1) then
+        echo "*** Control case: Not all CAM output files were found."  
+        echo "*** Check that the casename and year ranges are correct."
+        echo "*** Exiting the script."
+        exit 1
+      endif
+      set cntl_djf = `head -n 1 $cntl_path_climo/DJF.txt`
     endif
-    echo ' '
-  else
-    @ cntl_end = $cntl_first_yr + $cntl_nyrs - 1
-    $DIAG_CODE/check_timeSeries.pl $cntl_path_history \
-                                   $cntl_rootname \
-                                   $cntl_first_yr \
-                                   $cntl_end \
-                                   $cntl_path_climo \
-                                   $strip_off_vars \
-                                   $cntl_var_list \
-                                   cntl_file_list.txt
-    if ($status == 1) then
-      echo "*** Control case: Not all CAM output files were found."  
-      echo "*** Check that the casename and year ranges are correct."
-      echo "*** Exiting the script."
-      exit 1
-    endif
-    set cntl_djf = `head -n 1 $cntl_path_climo/DJF.txt`
   endif
 endif
-
 #**************************************************************
 #***************************************************************
 # If not using swift => beginning of non swift branch
@@ -1142,248 +1142,248 @@ echo "SWIFT:" $use_swift
 #**************************************************************
 
 if ($use_swift == 1) then  # beginning of use_swift branch
+  if ($CLIMO_TIME_SERIES_SWITCH != ONLY_TIME_SERIES) then
 
-#**********************************************************************
-# COMPUTE CLIMATOLOGIES
-#**********************************************************************
-# JL Sep 2017:
-# Updated methodology for computing the climatologies
-# (see README.NorESM for more info)
-#---------------------------------------------------------------------
-#  COMPUTE CLIMATOLOGIES FOR TEST CASE
-#---------------------------------------------------------------------
+  #**********************************************************************
+  # COMPUTE CLIMATOLOGIES
+  #**********************************************************************
+  # JL Sep 2017:
+  # Updated methodology for computing the climatologies
+  # (see README.NorESM for more info)
+  #---------------------------------------------------------------------
+  #  COMPUTE CLIMATOLOGIES FOR TEST CASE
+  #---------------------------------------------------------------------
 
-set time_start_climo = `date +%s`
-if ($test_compute_climo == 0) then 
-   $DIAG_CODE/compute_climo.csh  $test_path_history \
-				 $test_path_climo \
-				 $test_path_diag \
-				 $test_first_yr \
-				 $test_nyrs \
-				 $test_casename \
-				 $test_rootname \
-				 $strip_off_vars \
-				 test \
-				 $test_djf \
-                                 $test_filetype \
-                                 $DIAG_CODE \
-				 $significance
+    if ($test_compute_climo == 0) then
+      set time_start_climo = `date +%s`
+      $DIAG_CODE/compute_climo.csh  $test_path_history \
+				    $test_path_climo \
+				    $test_path_diag \
+				    $test_first_yr \
+				    $test_nyrs \
+				    $test_casename \
+				    $test_rootname \
+				    $strip_off_vars \
+				    test \
+				    $test_djf \
+                                    $test_filetype \
+                                    $DIAG_CODE \
+				    $significance
 
-    if ($status > 0) then
-       echo "*** CRASH IN compute_climo.csh (test)"  
-       echo "*** EXITING THE SCRIPT"
-       exit 1
+      if ($status > 0) then
+        echo "*** CRASH IN compute_climo.csh (test)"  
+        echo "*** EXITING THE SCRIPT"
+        exit 1
+      endif
     endif
-				 
-endif
 
 #---------------------------------------------------------------------
 #  COMPUTE CLIMATOLOGIES FOR CTNL CASE
 #---------------------------------------------------------------------
 
-if ( ($CNTL == USER) && ($cntl_compute_climo == 0)  ) then 
+    if ( ($CNTL == USER) && ($cntl_compute_climo == 0)  ) then 
 
-   $DIAG_CODE/compute_climo.csh  $cntl_path_history \
-				 $cntl_path_climo \
-				 $test_path_diag \
-				 $cntl_first_yr \
-				 $cntl_nyrs \
-				 $cntl_casename \
-				 $cntl_rootname \
-				 $strip_off_vars \
-				 cntl \
-				 $cntl_djf \
-                                 $cntl_filetype \
-                                 $DIAG_CODE \
-				 $significance
+      $DIAG_CODE/compute_climo.csh  $cntl_path_history \
+				    $cntl_path_climo \
+				    $test_path_diag \
+				    $cntl_first_yr \
+				    $cntl_nyrs \
+				    $cntl_casename \
+				    $cntl_rootname \
+				    $strip_off_vars \
+				    cntl \
+				    $cntl_djf \
+                                    $cntl_filetype \
+                                    $DIAG_CODE \
+				    $significance
 
-    if ($status > 0) then
-       echo "*** CRASH IN compute_climo.csh (cntl)"  
-       echo "*** EXITING THE SCRIPT"
-       exit 1
-    endif
-				 
-endif  ## end of if ( ($CNTL == USER) && ($cntl_compute_climo == 0) )
-set time_end_climo = `date +%s`
+      if ($status > 0) then
+        echo "*** CRASH IN compute_climo.csh (cntl)"  
+        echo "*** EXITING THE SCRIPT"
+        exit 1
+      endif
+    endif  ## end of if ( ($CNTL == USER) && ($cntl_compute_climo == 0) )
+    set time_end_climo = `date +%s`
 
 #---------------------------------------------------------------------
 #  If SE grid, convert to lat/lon grid
 #---------------------------------------------------------------------
 
-if ($test_grid == SE && $test_compute_climo == 0) then
+    if ($test_grid == SE && $test_compute_climo == 0) then
 
-  echo Regridding Test case
+      echo Regridding Test case
 
-  setenv INGRID $test_res_in
-  setenv OUTGRID $test_res_out
-  mkdir ${test_path_climo}/sav_se
-  ls ${test_out}*.nc > ${test_path_climo}/climo_files
-  set files = `cat ${test_path_climo}/climo_files`
-  foreach file ($files)
-     set se_file=$file:r_$test_grid.nc
-     echo " "
-     echo REMAP $file from CAM-SE grid to RECTILINEAR $OUTGRID
-     mv $file $se_file
-     setenv TEST_INPUT ${se_file}
-     setenv TEST_PLOTVARS ${file}
-     $NCL <  $DIAG_CODE/regridclimo.ncl
-     mv $se_file ${test_path_climo}/sav_se
-  end
-endif   
+      setenv INGRID $test_res_in
+      setenv OUTGRID $test_res_out
+      mkdir ${test_path_climo}/sav_se
+      ls ${test_out}*.nc > ${test_path_climo}/climo_files
+      set files = `cat ${test_path_climo}/climo_files`
+      foreach file ($files)
+        set se_file=$file:r_$test_grid.nc
+        echo " "
+        echo REMAP $file from CAM-SE grid to RECTILINEAR $OUTGRID
+        mv $file $se_file
+        setenv TEST_INPUT ${se_file}
+        setenv TEST_PLOTVARS ${file}
+        $NCL <  $DIAG_CODE/regridclimo.ncl
+        mv $se_file ${test_path_climo}/sav_se
+      end
+    endif   
 
-if ($CNTL == USER) then
-if ($cntl_grid == SE && $cntl_compute_climo == 0) then
+    if ($CNTL == USER) then
+      if ($cntl_grid == SE && $cntl_compute_climo == 0) then
 
-  echo Regridding CNTL case
+        echo Regridding CNTL case
 
-  setenv INGRID $cntl_res_in
-  setenv OUTGRID $cntl_res_out 
-  mkdir ${cntl_path_climo}/sav_se
-  ls ${cntl_out}*.nc > ${cntl_path_climo}/climo_files
-  cat ${cntl_path_climo}/climo_files
-  set files = `cat ${cntl_path_climo}/climo_files`
+        setenv INGRID $cntl_res_in
+        setenv OUTGRID $cntl_res_out 
+        mkdir ${cntl_path_climo}/sav_se
+        ls ${cntl_out}*.nc > ${cntl_path_climo}/climo_files
+        cat ${cntl_path_climo}/climo_files
+        set files = `cat ${cntl_path_climo}/climo_files`
    
-  foreach file ($files)
-     set se_file=$file:r_$cntl_grid.nc
-     echo " "
-     echo REMAP $file from CAM-SE grid to RECTILINEAR $OUTGRID
-     mv $file $se_file
-     setenv TEST_INPUT ${se_file}
-     setenv TEST_PLOTVARS ${file}
-     $NCL <  $DIAG_CODE/regridclimo.ncl
-     mv $se_file ${cntl_path_climo}/sav_se
-  end
-endif
-   
-endif
+        foreach file ($files)
+          set se_file=$file:r_$cntl_grid.nc
+          echo " "
+          echo REMAP $file from CAM-SE grid to RECTILINEAR $OUTGRID
+          mv $file $se_file
+          setenv TEST_INPUT ${se_file}
+          setenv TEST_PLOTVARS ${file}
+          $NCL <  $DIAG_CODE/regridclimo.ncl
+          mv $se_file ${cntl_path_climo}/sav_se
+        end
+      endif
+    endif
 
 #**************************************************************
 # Check if climos are present
 #**************************************************************
 
-if ($climo_required == 0) then
-    echo "====>" $four_seasons
+    if ($climo_required == 0) then
+      echo "====>" $four_seasons
 
-    if ($four_seasons == 0) then
-	set climo_months = (01 02 03 04 05 06 07 08 09 10 11 12 ANN DJF MAM JJA SON)
-    else
+      if ($four_seasons == 0) then
+        set climo_months = (01 02 03 04 05 06 07 08 09 10 11 12 ANN DJF MAM JJA SON)
+      else
 	set climo_months = (01 02 03 04 05 06 07 08 09 10 11 12 ANN DJF JJA)   
-    endif
+      endif
 
 #--------------------------------------------------------------------
 # check for test case climo files always needed
 #--------------------------------------------------------------------
 
-    echo 'CHECKING FOR TEST CLIMO FILES'
-    echo ' '
+      echo 'CHECKING FOR TEST CLIMO FILES'
+      echo ' '
 
-    foreach mth ($climo_months)
-    
+      foreach mth ($climo_months)
 	set climo_file=${test_path_climo}/${test_casename}_${mth}_${test_first_yr_prnt}-${test_last_yr_prnt}_climo.nc
 	if (! -e $climo_file) then    
-	    echo ' '
-	    echo ERROR: $climo_file  NOT FOUND
-	    exit 1
+	  echo ' '
+	  echo ERROR: $climo_file  NOT FOUND
+	  exit 1
 	else
-	    echo FOUND : $climo_file
+	  echo FOUND : $climo_file
 	endif
-    end
+      end
 
-    # climatological files are present
-    echo '-->ALL NEEDED '${test_casename}' CLIMO AND/OR MEANS FILES FOUND'
-    echo ' '
+      # climatological files are present
+      echo '-->ALL NEEDED '${test_casename}' CLIMO AND/OR MEANS FILES FOUND'
+      echo ' '
 
 #--------------------------------------------------------------------
 # check for cntl case climo files if needed
 #--------------------------------------------------------------------
-    if ($CNTL == USER) then
+      if ($CNTL == USER) then
 
 	echo 'CHECKING FOR CTNL CLIMO FILES'
 	echo ' '
 
 	foreach mth ($climo_months)
-	
-	    set climo_file=${cntl_path_climo}/${cntl_casename}_${mth}_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_climo.nc
-	    if (! -e $climo_file) then    
-		echo ' '
-		echo ERROR: $climo_file  NOT FOUND
-		exit 1
-	    else
-		echo FOUND : $climo_file
-	    endif
+	  set climo_file=${cntl_path_climo}/${cntl_casename}_${mth}_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_climo.nc
+	  if (! -e $climo_file) then    
+	    echo ' '
+	    echo ERROR: $climo_file  NOT FOUND
+	    exit 1
+	  else
+	    echo FOUND : $climo_file
+	  endif
 	end
 
 	# climatological files are present
 	echo '-->ALL NEEDED '${cntl_casename}' CLIMO AND/OR MEANS FILES FOUND'
-
+      endif
     endif
-endif
-
+  endif
+    
 #---------------------------------------------------------------------
 # COMPUTE TIME SERIES
 #---------------------------------------------------------------------
 # code largely copied from ice_diag -- JL, Nov 2017
 
-if ($tset_1 == 0) then
-   if ($CNTL == OBS) then
+  if ($tset_1 == 0) then
+    if ($CNTL == OBS) then
       set CASES_TO_READ = ( $test_casename )
       set DATA_ROOT_VEC = ( $test_path_history_root )
-      set FILE_HEAD     = ( $test_rootname )
       set CASE_TYPES    = ( test )
-      set CAM_GRIDS     = ( $test_grid )
-   else
+    else
       set CASES_TO_READ = ( $test_casename $cntl_casename )
       set DATA_ROOT_VEC = ( $test_path_history_root $cntl_path_history_root )
-      set FILE_HEAD = ( $test_rootname $cntl_rootname )
       set CASE_TYPES    = ( test cntl )
-      set CAM_GRIDS     = ( $test_grid $cntl_grid )
-   endif
+    endif
 
-   echo "---------------------------"
-   echo "COMPUTE ANNUAL TIME SERIES "
-   echo "---------------------------"
-   set BEGYRS = ()
-   set ENDYRS = ()
-   @ m = 1
-   foreach CASE_TO_READ ($CASES_TO_READ)
+    echo "---------------------------"
+    echo "COMPUTE ANNUAL TIME SERIES "
+    echo "---------------------------"
+    set BEGYRS = ()
+    set ENDYRS = ()
+    @ m = 1
+    foreach CASE_TO_READ ($CASES_TO_READ)
       set DATA_ROOT   = $DATA_ROOT_VEC[$m]
-      set file_prefix = ${DATA_ROOT}/${CASE_TO_READ}/atm/hist/$FILE_HEAD[$m]
+      set file_prefix = ${DATA_ROOT}/${CASE_TO_READ}/atm/hist/${CASE_TO_READ}.cam.h0.
       set first_file  = `ls ${file_prefix}* | head -n 1`
       set last_file   = `ls ${file_prefix}* | tail -n 1`
       if ("$first_file" == "") then
-         echo "ERROR: No history files ${CASE_TO_READ} exist in $DATA_ROOT"
-         echo "***EXITING THE SCRIPT"
-         exit 1
+        set file_prefix = ${DATA_ROOT}/${CASE_TO_READ}/atm/hist/${CASE_TO_READ}.cam2.h0.
+        set first_file  = `ls ${file_prefix}* | head -n 1`
+        set last_file   = `ls ${file_prefix}* | tail -n 1`
+        if ("$first_file" == "") then
+          echo "ERROR: No history files ${CASE_TO_READ} exist in $DATA_ROOT"
+          echo "***EXITING THE SCRIPT"
+          exit 1
+        endif
       endif
       set fyr_in_dir_prnt = `echo $first_file | rev | cut -c 7-10 | rev`
       set fyr_in_dir      = `echo $fyr_in_dir_prnt | sed 's/^0*//'`
       set lyr_in_dir_prnt = `echo $last_file | rev | cut -c 7-10 | rev`
       set lyr_in_dir      = `echo $lyr_in_dir_prnt | sed 's/^0*//'`
       if (! -e ${file_prefix}${lyr_in_dir_prnt}-12.nc) then
-         @ lyr_in_dir = $lyr_in_dir - 1
-	 set lyr_in_dir_prnt = `printf "%04d" ${fyr_in_dir}`
+        @ lyr_in_dir = $lyr_in_dir - 1
+	set lyr_in_dir_prnt = `printf "%04d" ${fyr_in_dir}`
       endif
       if ($fyr_in_dir == $lyr_in_dir) then
-         echo "ERROR: First and last year in ${CASE_TO_READ} are identical: cannot compute trends"
-         echo "***EXITING THE SCRIPT"
-         exit 1
+        echo "ERROR: First and last year in ${CASE_TO_READ} are identical: cannot compute trends"
+        echo "***EXITING THE SCRIPT"
+        exit 1
       endif
       set BEGYRS = ($BEGYRS $fyr_in_dir)
       set ENDYRS = ($ENDYRS $lyr_in_dir)
       @ m++
-   end
-   echo " BEGYRS = $BEGYRS"
-   echo " ENDYRS = $ENDYRS"
-   echo "---------------------------"
-   @ m = 1
-   foreach CASE_TO_READ ($CASES_TO_READ)
-      $DIAG_CODE/compute_time_series.csh $timeseries_path $CASE_TO_READ $DATA_ROOT_VEC[$m] $BEGYRS[$m] $ENDYRS[$m] $test_path_diag $CASE_TYPES[$m] $CAM_GRIDS[$m] $four_seasons
+    end
+    echo " BEGYRS = $BEGYRS"
+    echo " ENDYRS = $ENDYRS"
+    echo "---------------------------"
+    @ m = 1
+    foreach CASE_TO_READ ($CASES_TO_READ)
+      set DATA_ROOT   = $DATA_ROOT_VEC[$m]
+      $DIAG_CODE/determine_output_attributes_ts.csh ${CASE_TYPES[$m]} $CASE_TO_READ $DATA_ROOT $test_path_diag ${BEGYRS[$m]}
+      set CAM_GRID = `cat $test_path_diag/attributes/test_grid`
+      $DIAG_CODE/compute_time_series.csh $timeseries_path $CASE_TO_READ ${DATA_ROOT_VEC[$m]} ${BEGYRS[$m]} ${ENDYRS[$m]} $test_path_diag ${CASE_TYPES[$m]} $CAM_GRID $four_seasons
       @ m++
-   end
-   if ($time_series_obs == 0) then
+    end
+    if ($time_series_obs == 0) then
       $DIAG_CODE/global_mean_obs.csh $timeseries_path $test_casename
-   endif
-endif
+    endif
+  endif
 
 #**************************************************************************
 
@@ -1404,69 +1404,68 @@ endif
 setenv USE_WACCM_LEVS 0
 
 #**************************************************************************
-if ($plot_ANN_climo == 1 && $plot_DJF_climo == 1 && \
+if ($CLIMO_TIME_SERIES_SWITCH != ONLY_TIME_SERIES) then
+  if ($plot_ANN_climo == 1 && $plot_DJF_climo == 1 && \
     $plot_SON_climo == 1 && $plot_MAM_climo == 1 && \
     $plot_JJA_climo == 1 && $plot_MON_climo == 1) then
-  echo ' '
-  echo "NO SELECTION MADE (ANN, MAM, JJA, SON, DJF, MON) FOR TABLES AND/OR PLOTS"
-  exit 1
+    echo ' '
+    echo "NO SELECTION MADE (ANN, MAM, JJA, SON, DJF, MON) FOR TABLES AND/OR PLOTS"
+    exit 1
+  endif
 endif
 
-
 if ($four_seasons == 0) then
-    set plots = (ANN DJF MAM JJA SON)
+  set plots = (ANN DJF MAM JJA SON)
 else
-    set plots = (ANN DJF JJA)
+  set plots = (ANN DJF JJA)
 endif
 
 
 #**********************************************************************
 # check for plot variable files and delete them if present
 
+if ($CLIMO_TIME_SERIES_SWITCH != ONLY_TIME_SERIES) then
+  foreach mth  (ANN DJF MAM JJA SON 01 02 03 04 05 06 07 08 09 10 11 12)
 
-foreach mth  (ANN DJF MAM JJA SON 01 02 03 04 05 06 07 08 09 10 11 12)
-
-  set file=${test_path_diag}/${test_casename}_${mth}_${test_first_yr_prnt}-${test_last_yr_prnt}_plotvars.nc
-  if (-e ${file}) then
-    \rm -f ${file}
-  endif
-
-  if ($CNTL != OBS) then
-    set file=${test_path_diag}/${cntl_casename}_${mth}_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_plotvars.nc
-    if (-e ${file} ) then
-      \rm -f ${file}  
-    endif
-  endif
-
-  set file=${test_path_diag}/${test_casename}_${test_first_yr_prnt}-${test_last_yr_prnt}_plotvars.nc
-  if (-e ${file}) then
-    \rm -f ${file}
-  endif
-  
-  if ($CNTL != OBS) then
-    set file=${test_path_diag}/${cntl_casename}_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_plotvars.nc
-    if (-e ${file} ) then
-      \rm -f ${file}  
-    endif
-  endif
-
-  if ($significance == 0) then 
-    set file=${test_path_diag}/${test_casename}_${mth}_${test_first_yr_prnt}-${test_last_yr_prnt}_variance.nc
+    set file=${test_path_diag}/${test_casename}_${mth}_${test_first_yr_prnt}-${test_last_yr_prnt}_plotvars.nc
     if (-e ${file}) then
-	\rm -f ${file}
+      \rm -f ${file}
     endif
-    
+
     if ($CNTL != OBS) then
+      set file=${test_path_diag}/${cntl_casename}_${mth}_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_plotvars.nc
+      if (-e ${file} ) then
+        \rm -f ${file}  
+      endif
+    endif
+
+    set file=${test_path_diag}/${test_casename}_${test_first_yr_prnt}-${test_last_yr_prnt}_plotvars.nc
+    if (-e ${file}) then
+      \rm -f ${file}
+    endif
+  
+    if ($CNTL != OBS) then
+      set file=${test_path_diag}/${cntl_casename}_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_plotvars.nc
+      if (-e ${file} ) then
+        \rm -f ${file}  
+      endif
+    endif
+
+    if ($significance == 0) then 
+      set file=${test_path_diag}/${test_casename}_${mth}_${test_first_yr_prnt}-${test_last_yr_prnt}_variance.nc
+      if (-e ${file}) then
+        \rm -f ${file}
+      endif
+    
+      if ($CNTL != OBS) then
 	set file=${test_path_diag}/${cntl_casename}_${mth}_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_variance.nc
 	if (-e ${file} ) then
-	\rm -f ${file}  
+ 	  \rm -f ${file}  
 	endif
+      endif
     endif
-
-
-  endif
-
-end
+  end
+endif
 
 # initial mode is to create new netcdf files
 setenv NCDF_MODE create
@@ -1488,27 +1487,44 @@ if ($web_pages == 0) then
     echo "ERROR: WEBPAGES ARE ONLY MADE FOR POSTSCRIPT PLOT TYPE"
     exit 1
   endif
-  @ test_end = $test_first_yr + $test_nyrs - 1
-  if ($CNTL == OBS) then
-    setenv WEBDIR ${test_path_diag}/yrs${test_first_yr}to${test_end}-obs
-    if (! -e $WEBDIR) mkdir $WEBDIR
-    cd $WEBDIR
-    $HTML_HOME/setup_obs $test_casename $image $time_series_obs
-    cd $test_path_diag
-    set tarfile = yrs${test_first_yr}to${test_end}-obs.tar
-  else          # model-to-model
-    @ cntl_end = $cntl_first_yr + $cntl_nyrs - 1
-    setenv WEBDIR ${test_path_diag}/yrs${test_first_yr}to${test_end}-${cntl_casename}
-    if ($test_casename == $cntl_casename) then
-       setenv WEBDIR ${test_path_diag}/yrs${test_first_yr}to${test_end}-yrs${cntl_first_yr}to${cntl_end}
+  if ($CLIMO_TIME_SERIES_SWITCH != ONLY_TIME_SERIES) then
+    @ test_end = $test_first_yr + $test_nyrs - 1
+    if ($CNTL == OBS) then
+      setenv WEBDIR ${test_path_diag}/yrs${test_first_yr}to${test_end}-obs
+      if (! -e $WEBDIR) mkdir $WEBDIR
+      cd $WEBDIR
+      $HTML_HOME/setup_obs $test_casename $image $time_series_obs
+      cd $test_path_diag
+      set tarfile = yrs${test_first_yr}to${test_end}-obs.tar
+    else          # model-to-model
+      @ cntl_end = $cntl_first_yr + $cntl_nyrs - 1
+      setenv WEBDIR ${test_path_diag}/yrs${test_first_yr}to${test_end}-${cntl_casename}
+      if ($test_casename == $cntl_casename) then
+        setenv WEBDIR ${test_path_diag}/yrs${test_first_yr}to${test_end}-yrs${cntl_first_yr}to${cntl_end}
+      endif
+      if (! -e $WEBDIR) mkdir $WEBDIR
+      cd $WEBDIR
+      $HTML_HOME/setup_2models $test_casename $cntl_casename $image
+      cd $test_path_diag
+      set tarfile = yrs${test_first_yr}to${test_end}-${cntl_casename}.tar
     endif
-    if (! -e $WEBDIR) mkdir $WEBDIR
-    cd $WEBDIR
-    $HTML_HOME/setup_2models $test_casename $cntl_casename $image
-    cd $test_path_diag
-    set tarfile = yrs${test_first_yr}to${test_end}-${cntl_casename}.tar
+  else # time series
+    if ($CNTL == OBS) then
+      setenv WEBDIR ${test_path_diag}/ts${BEGYRS[1]}to${ENDYRS[1]}
+      if (! -e $WEBDIR) mkdir $WEBDIR
+      cd $WEBDIR
+      $HTML_HOME/setup_obs $test_casename $image $time_series_obs
+      cd $test_path_diag
+      set tarfile = ts${BEGYRS[1]}to${ENDYRS[1]}.tar
+    else          # model-to-model
+      setenv WEBDIR ${test_path_diag}/ts${BEGYRS[1]}to${ENDYRS[1]}-${cntl_casename}
+      if (! -e $WEBDIR) mkdir $WEBDIR
+      cd $WEBDIR
+      $HTML_HOME/setup_2models $test_casename $cntl_casename $image
+      cd $test_path_diag
+      set tarfile = ts${BEGYRS[1]}to${ENDYRS[1]}-${cntl_casename}.tar
+    endif
   endif
-endif
 
 #****************************************************************
 #   SET 1 - TABLES OF MEANS, DIFFS, RMSE

@@ -144,59 +144,61 @@ endif #end use_swift
 # Retrieve data from MSS and pre-process data
 #**************************************************
 
-if ($regrid_file_type == "HISTORY") then
+if ($CLIMO_TIME_SERIES_SWITCH != ONLY_TIME_SERIES) then
+  if ($regrid_file_type == "HISTORY") then
 
-   echo "Regridding History Files ..... "
+    echo "Regridding History Files ..... "
 
-  if ($regrid_1 == 1) then
-    if ($clim_first_yr_1 >= $trends_first_yr_1) then
-      setenv fy $trends_first_yr_1
-    else
-      setenv fy $clim_first_yr_1 
-    endif
+    if ($regrid_1 == 1) then
+      if ($clim_first_yr_1 >= $trends_first_yr_1) then
+        setenv fy $trends_first_yr_1
+      else
+        setenv fy $clim_first_yr_1 
+      endif
     
-    if ($clim_num_yrs_1 >= $trends_num_yrs_1) then
-      setenv ny $clim_num_yrs_1
-    else
-      setenv ny $trends_num_yrs_1
+      if ($clim_num_yrs_1 >= $trends_num_yrs_1) then
+        setenv ny $clim_num_yrs_1
+      else
+        setenv ny $trends_num_yrs_1
+      endif
+
+      @ first_yr = $fy - 1
+      @ num_yr = $ny + 1
+      @ last_yr = $first_yr + $num_yr
+
+      echo $case_1_dir
+      $DIAG_SHARED/regrid_history_standalone.pl $case_1_dir $caseid_1 $first_yr $last_yr $prefix_1_dir/Regridded_History_Files/ \
+  		$wgt_dir_1 $area_dir_1 $old_res_1 $new_res_1 $method_1 $use_swift $swift_scratch_dir $DIAG_SHARED
+
+      setenv case_1_dir $prefix_1_dir/Regridded_History_Files/
     endif
 
-    @ first_yr = $fy - 1
-    @ num_yr = $ny + 1
-    @ last_yr = $first_yr + $num_yr
+    if ($regrid_2 == 1) then
+      if ($clim_first_yr_2 >= $trends_first_yr_2) then
+        setenv fy $trends_first_yr_2
+      else
+        setenv fy $clim_first_yr_2      
+      endif
 
-    echo $case_1_dir
-    $DIAG_SHARED/regrid_history_standalone.pl $case_1_dir $caseid_1 $first_yr $last_yr $prefix_1_dir/Regridded_History_Files/ \
-		$wgt_dir_1 $area_dir_1 $old_res_1 $new_res_1 $method_1 $use_swift $swift_scratch_dir $DIAG_SHARED
+      if ($clim_num_yrs_2 >= $trends_num_yrs_2) then
+        setenv ny $clim_num_yrs_2
+      else
+        setenv ny $trends_num_yrs_2
+      endif
 
-    setenv case_1_dir $prefix_1_dir/Regridded_History_Files/
+      @ first_yr = $fy - 1
+      @ num_yr = $ny + 1
+      @ last_yr = $first_yr + $num_yr
+
+      $DIAG_SHARED/regrid_history_standalone.pl $case_2_dir $caseid_2 $first_yr $last_yr $prefix_2_dir/Regridded_History_Files/ \
+                  $wgt_dir_2 $area_dir_2 $old_res_2 $new_res_2 $method_2 $use_swift $swift_scratch_dir $DIAG_SHARED
+
+      setenv case_2_dir $prefix_2_dir/Regridded_History_Files/
+    endif
+
+    setenv regrid_1 0
+    setenv regrid_2 0
   endif
-
-  if ($regrid_2 == 1) then
-    if ($clim_first_yr_2 >= $trends_first_yr_2) then
-      setenv fy $trends_first_yr_2
-    else
-      setenv fy $clim_first_yr_2      
-    endif
-
-    if ($clim_num_yrs_2 >= $trends_num_yrs_2) then
-      setenv ny $clim_num_yrs_2
-    else
-      setenv ny $trends_num_yrs_2
-    endif
-
-    @ first_yr = $fy - 1
-    @ num_yr = $ny + 1
-    @ last_yr = $first_yr + $num_yr
-
-    $DIAG_SHARED/regrid_history_standalone.pl $case_2_dir $caseid_2 $first_yr $last_yr $prefix_2_dir/Regridded_History_Files/ \
-                $wgt_dir_2 $area_dir_2 $old_res_2 $new_res_2 $method_2 $use_swift $swift_scratch_dir $DIAG_SHARED
-
-    setenv case_2_dir $prefix_2_dir/Regridded_History_Files/
-  endif
-
-  setenv regrid_1 0
-  setenv regrid_2 0
 endif
 
 if ($use_swift == 0) then
@@ -214,8 +216,8 @@ if ($use_swift == 0) then
      set PROCDIR_vec = ($PROCDIR1)
      set PROCDIR_ATM_vec = ($PROCDIR_ATM1)
   else
-     @ clim_last_yr_2 = $clim_first_yr_2 + $clim_num_yrs_2 - 1
      @ trends_last_yr_2 = $trends_first_yr_2 + $trends_num_yrs_2 - 1
+     @ clim_last_yr_2 = $clim_first_yr_2 + $clim_num_yrs_2 - 1
      set clim_first_yr_vec = ($clim_first_yr_1 $clim_first_yr_2)
      set clim_last_yr_vec = ($clim_last_yr_1 $clim_last_yr_2)
      set caseid_vec = ($caseid_1 $caseid_2)
@@ -250,11 +252,13 @@ if ($use_swift == 0) then
     set ts_nyrs1 = `cat $PROCDIR1/nyrs_ts`
     setenv trends_first_yr_1 $ts_fyr1
     setenv trends_num_yrs_1 $ts_nyrs1
+    @ trends_last_yr_1 = $trends_first_yr_1 + $trends_num_yrs_1 - 1
     if ($compareModels == 1) then
       set ts_fyr2 = `cat $PROCDIR2/fyr_ts`
       set ts_nyrs2 = `cat $PROCDIR2/nyrs_ts`
       setenv trends_first_yr_2 $ts_fyr2
       setenv trends_num_yrs_2 $ts_nyrs2
+      @ trends_last_yr_2 = $trends_first_yr_2 + $trends_num_yrs_2 - 1
     endif
   endif
   if ($regrid_file_type == "CLIMO") then
@@ -263,6 +267,15 @@ if ($use_swift == 0) then
     endif
   endif
 endif
+
+if ($CLIMO_TIME_SERIES_SWITCH == ONLY_TIME_SERIES) then
+  if ($RUNTYPE == model-obs) then
+    setenv WEBFOLD          ts${trends_first_yr_1}to${trends_last_yr_1}
+  else
+    setenv WEBFOLD          ts${trends_first_yr_1}to${trends_last_yr_1}-${prefix_2}
+  endif
+endif
+setenv WEBDIR           ${PTMPDIR}/${prefix_1}/${WEBFOLD}
 
 #**************************************************
 # if exit_after_MSS flag is set, exit diagnostics package 

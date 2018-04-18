@@ -36,13 +36,21 @@ setenv GRID_DIFF tn11
 set TRENDS_ALL = 1
 
 # If TRENDS_ALL=0, the following needs to be set
-set BEGYRS = ( 1 1 )           # Beginning years for line plots
-set ENDYRS = ( 100 100 )           # Ending years for line plots
+set BEGYRS = ( 0 0 )           # Beginning years for line plots
+set ENDYRS = ( 0 0 )           # Ending years for line plots
+
+# Check if climo/time-series switch has been used by diag_run
+# -JL, Nov 2017 
+set CLIMO_TIME_SERIES_SWITCH = SWITCHED_OFF
 
 # NCLIMO=1: Manually set the years over which climatology should be computed
 # NCLIMO=0: Climatology computed over the last $YRS_TO_AVG years of the trends,
 #           set by BEGYRS and ENDYRS above.
 set NCLIMO = 1
+
+if ($CLIMO_TIME_SERIES_SWITCH == ONLY_TIME_SERIES) then
+   set NCLIMO = 0
+endif
 
 if ($NCLIMO == 1) then
     set FIRST_YR_CLIMO1 = fyr_of_test # First year of climatology in CASE_TO_CONT
@@ -52,10 +60,6 @@ if ($NCLIMO == 1) then
 else
     set YRS_TO_AVG =  30                # for contour plots
 endif
-
-# Check if climo/time-series switch has been used by diag_run
-# -JL, Nov 2017 
-set CLIMO_TIME_SERIES_SWITCH = SWITCHED_OFF
 
 setenv X1_OFF 0
 setenv X2_OFF 0
@@ -294,16 +298,20 @@ if ($PLOT_CONT == 1 || $PLOT_VECT == 1 || $PLOT_LINE == 1) then
   set TO_DIFF = 0 # Make plots of a single case
   set CASES_TO_READ = ($CASE_TO_CONT)
   set DATA_ROOT_VEC = ($DATA_ROOT1)
-  set FIRST_YR_CLIMO = ($FIRST_YR_CLIMO1)
-  set NYRS_CLIMO = ($NYRS_CLIMO1)
+  if ($CLIMO_TIME_SERIES_SWITCH != ONLY_TIME_SERIES) then
+    set FIRST_YR_CLIMO = ($FIRST_YR_CLIMO1)
+    set NYRS_CLIMO = ($NYRS_CLIMO1)
+  endif
 endif
 
 if ($PLOT_CONT_DIFF == 1 || $PLOT_VECT_DIFF == 1 || $PLOT_LINE_DIFF == 1) then
   set TO_DIFF = 1   # Make difference plots of two model cases
   set CASES_TO_READ = ($CASE_TO_CONT $CASE_TO_DIFF)
   set DATA_ROOT_VEC = ($DATA_ROOT1 $DATA_ROOT2)
-  set FIRST_YR_CLIMO = ($FIRST_YR_CLIMO1 $FIRST_YR_CLIMO2)
-  set NYRS_CLIMO = ($NYRS_CLIMO1 $NYRS_CLIMO2)
+  if ($CLIMO_TIME_SERIES_SWITCH != ONLY_TIME_SERIES) then
+    set FIRST_YR_CLIMO = ($FIRST_YR_CLIMO1 $FIRST_YR_CLIMO2)
+    set NYRS_CLIMO = ($NYRS_CLIMO1 $NYRS_CLIMO2)  
+  endif
 endif
 
 if ($TO_DIFF < 0) then
@@ -593,6 +601,9 @@ if ($TO_DIFF == 0) then
   setenv YR_AVG_LAST $END_YR_AVG
   setenv VAR_NAMES $VAR_NAME_TYPE[$m]
   set TAR_FILE = yrs${FRST_YR_AVG}to${END_YR_AVG}
+  if ($CLIMO_TIME_SERIES_SWITCH == ONLY_TIME_SERIES) then
+     set TAR_FILE = ts${BEGYRS[1]}to${ENDYRS[1]}
+  endif
   setenv WKDIR  ${PLOT_ROOT}/${TAR_FILE}/
   if !(-d ${WKDIR}maps) mkdir -p ${WKDIR}maps
   if !(-d ${WKDIR}obs) mkdir -p ${WKDIR}obs
@@ -722,6 +733,9 @@ if ($TO_DIFF == 1) then
   set TAR_FILE  = yrs${NEW_YR_AVG_FRST}to${NEW_YR_AVG_LAST}-${CASE_TO_DIFF}
   if ($CASE_TO_CONT == $CASE_TO_DIFF) then
      set TAR_FILE = yrs${NEW_YR_AVG_FRST}to${NEW_YR_AVG_LAST}-yrs${PREV_YR_AVG_FRST}to${PREV_YR_AVG_LAST}
+  endif
+  if ($CLIMO_TIME_SERIES_SWITCH == ONLY_TIME_SERIES) then
+     set TAR_FILE = ts${BEGYRS[1]}to${ENDYRS[1]}-${CASE_TO_DIFF}
   endif
   setenv WKDIR  ${PLOT_ROOT}/${TAR_FILE}/
   if !(-d ${WKDIR}maps) mkdir -p ${WKDIR}maps

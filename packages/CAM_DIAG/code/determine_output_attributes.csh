@@ -17,7 +17,7 @@ unset echo verbose
 
 
 if ($#argv != 11) then
-  echo "Usage: determine_output_attributes.csh: needs 10 arguments "
+  echo "Usage: determine_output_attributes.csh: needs 11 arguments "
   exit 1
 endif
 
