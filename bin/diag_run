@@ -81,7 +81,7 @@ if [ $# -eq 0 ]; then
     echo "${THIS_SCRIPT_NAME} -m cam -o /my/dir # install CAM diagnostics in /my/dir with minimal configuration."
     echo "${THIS_SCRIPT_NAME} -m micom,hamocc -c N1850OC_f19_tn11_exp1 -s 21 -e 50 # model-obs diagnostics for MICOM and HAMOCC."
     echo "${THIS_SCRIPT_NAME} -m clm -c N1850_f19_tn11_clmexp1 -t time_series --no-atm # model-obs time-series diagnostics for an offline (uncoupled) CLM simulation."
-    echo "${THIS_SCRIPT_NAME} -m hamocc -c N1850OC_f19_tn11_exp1 -s 31 -e 100 -c2 N1850OC_f19_tn11_exp2 -t time_series # model1-model2 time-series diagnostics for HAMOCC."
+#    echo "${THIS_SCRIPT_NAME} -m hamocc -c N1850OC_f19_tn11_exp1 -s 31 -e 100 -c2 N1850OC_f19_tn11_exp2 -t time_series # model1-model2 time-series diagnostics for HAMOCC."
     echo " "
     exit 0
 else
