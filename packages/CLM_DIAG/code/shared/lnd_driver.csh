@@ -76,7 +76,7 @@ endif
 #*********************************************
 if (! -e {$WKDIR}) then
   echo \$WKDIR {$WKDIR} does not exist: Creating
-  mkdir $WKDIR
+  mkdir -p $WKDIR
 endif
 
 #**************************************************
@@ -259,6 +259,8 @@ if ($use_swift == 0) then
       setenv trends_first_yr_2 $ts_fyr2
       setenv trends_num_yrs_2 $ts_nyrs2
       @ trends_last_yr_2 = $trends_first_yr_2 + $trends_num_yrs_2 - 1
+      setenv trends_match_yr_1        $trends_first_yr_1
+      setenv trends_match_yr_2        $trends_first_yr_2
     endif
   endif
   if ($regrid_file_type == "CLIMO") then

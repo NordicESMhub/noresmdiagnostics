@@ -11,7 +11,7 @@ echo "-----------------------"
 
 CDO=`which cdo`
 # Zonal mean variables
-datadir=/projects/NS2345K/noresm_diagnostics_dev/packages/HAMOCC_DIAG/obs_data/OcnProd_MODIS
+datadir=/projects/NS2345K/noresm_diagnostics_dev/packages/HAMOCC_DIAG/obs_data/WOA13
 infile=$datadir/ave.m.clim_MON_2003-2012
 
 for region in ARC NATL NPAC TATL TPAC IND MSO HSO

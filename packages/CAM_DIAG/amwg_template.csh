@@ -205,6 +205,12 @@ set strip_off_vars = 0     # (0=ON,1=OFF)
 # Set path where the time series files should be stored
 set timeseries_path = $diag_dir/time_series
 
+set TRENDS_ALL = ts_all_switch
+set test_first_yr_ts = fyr_of_ts_test
+set test_last_yr_ts = lyr_of_ts_test
+set cntl_first_yr_ts = fyr_of_ts_cntl
+set cntl_last_yr_ts = lyr_of_ts_cntl
+
 # ********************
 # *** Web options ***
 # ********************
@@ -1334,41 +1340,53 @@ if ($use_swift == 1) then  # beginning of use_swift branch
     echo "---------------------------"
     echo "COMPUTE ANNUAL TIME SERIES "
     echo "---------------------------"
-    set BEGYRS = ()
-    set ENDYRS = ()
-    @ m = 1
-    foreach CASE_TO_READ ($CASES_TO_READ)
-      set DATA_ROOT   = $DATA_ROOT_VEC[$m]
-      set file_prefix = ${DATA_ROOT}/${CASE_TO_READ}/atm/hist/${CASE_TO_READ}.cam.h0.
-      set first_file  = `ls ${file_prefix}* | head -n 1`
-      set last_file   = `ls ${file_prefix}* | tail -n 1`
-      if ("$first_file" == "") then
-        set file_prefix = ${DATA_ROOT}/${CASE_TO_READ}/atm/hist/${CASE_TO_READ}.cam2.h0.
+    if ($TRENDS_ALL == 1) then
+      # Make trends over the entire experiment
+      echo "COMPUTING FIRST AND LAST YR OF TRENDS:"
+      set BEGYRS = ()
+      set ENDYRS = ()
+      @ m = 1
+      foreach CASE_TO_READ ($CASES_TO_READ)
+        set DATA_ROOT   = $DATA_ROOT_VEC[$m]
+        set file_prefix = ${DATA_ROOT}/${CASE_TO_READ}/atm/hist/${CASE_TO_READ}.cam.h0.
         set first_file  = `ls ${file_prefix}* | head -n 1`
         set last_file   = `ls ${file_prefix}* | tail -n 1`
         if ("$first_file" == "") then
-          echo "ERROR: No history files ${CASE_TO_READ} exist in $DATA_ROOT"
+          set file_prefix = ${DATA_ROOT}/${CASE_TO_READ}/atm/hist/${CASE_TO_READ}.cam2.h0.
+          set first_file  = `ls ${file_prefix}* | head -n 1`
+          set last_file   = `ls ${file_prefix}* | tail -n 1`
+          if ("$first_file" == "") then
+            echo "ERROR: No history files ${CASE_TO_READ} exist in $DATA_ROOT"
+            echo "***EXITING THE SCRIPT"
+            exit 1
+          endif
+        endif
+        set fyr_in_dir_prnt = `echo $first_file | rev | cut -c 7-10 | rev`
+        set fyr_in_dir      = `echo $fyr_in_dir_prnt | sed 's/^0*//'`
+        set lyr_in_dir_prnt = `echo $last_file | rev | cut -c 7-10 | rev`
+        set lyr_in_dir      = `echo $lyr_in_dir_prnt | sed 's/^0*//'`
+        if (! -e ${file_prefix}${lyr_in_dir_prnt}-12.nc) then
+          @ lyr_in_dir = $lyr_in_dir - 1
+          set lyr_in_dir_prnt = `printf "%04d" ${fyr_in_dir}`
+        endif
+        if ($fyr_in_dir == $lyr_in_dir) then
+          echo "ERROR: First and last year in ${CASE_TO_READ} are identical: cannot compute trends"
           echo "***EXITING THE SCRIPT"
           exit 1
         endif
+        set BEGYRS = ($BEGYRS $fyr_in_dir)
+        set ENDYRS = ($ENDYRS $lyr_in_dir)
+        @ m++
+      end
+    else
+      if ($CNTL == OBS) then
+        set BEGYRS = ($test_first_yr_ts)
+        set ENDYRS = ($test_last_yr_ts)
+      else
+        set BEGYRS = ($test_first_yr_ts $cntl_first_yr_ts)
+        set ENDYRS = ($test_last_yr_ts $cntl_last_yr_ts)
       endif
-      set fyr_in_dir_prnt = `echo $first_file | rev | cut -c 7-10 | rev`
-      set fyr_in_dir      = `echo $fyr_in_dir_prnt | sed 's/^0*//'`
-      set lyr_in_dir_prnt = `echo $last_file | rev | cut -c 7-10 | rev`
-      set lyr_in_dir      = `echo $lyr_in_dir_prnt | sed 's/^0*//'`
-      if (! -e ${file_prefix}${lyr_in_dir_prnt}-12.nc) then
-        @ lyr_in_dir = $lyr_in_dir - 1
-	set lyr_in_dir_prnt = `printf "%04d" ${fyr_in_dir}`
-      endif
-      if ($fyr_in_dir == $lyr_in_dir) then
-        echo "ERROR: First and last year in ${CASE_TO_READ} are identical: cannot compute trends"
-        echo "***EXITING THE SCRIPT"
-        exit 1
-      endif
-      set BEGYRS = ($BEGYRS $fyr_in_dir)
-      set ENDYRS = ($ENDYRS $lyr_in_dir)
-      @ m++
-    end
+    endif
     echo " BEGYRS = $BEGYRS"
     echo " ENDYRS = $ENDYRS"
     echo "---------------------------"
@@ -2471,14 +2489,14 @@ if ($tset_1 == 0) then
 	setenv SEASON     $name
 	setenv CASE1      $test_casename
 	setenv TEST_INPUT $timeseries_path/$test_casename
-	setenv SYR1       $BEGYRS[1]
-	setenv EYR1       $ENDYRS[1]
+	setenv SYR1       ${BEGYRS[1]}
+	setenv EYR1       ${ENDYRS[1]}
 
 	if ($CNTL == USER) then
 	    setenv CASE2      $cntl_casename
 	    setenv CNTL_INPUT $timeseries_path/$cntl_casename
-	    setenv SYR2       $BEGYRS[2]
-	    setenv EYR2       $ENDYRS[2]
+	    setenv SYR2       ${BEGYRS[2]}
+	    setenv EYR2       ${ENDYRS[2]}
 	endif
 
 	echo " "

@@ -23,9 +23,9 @@ NYRS_CLIMO1=nyr_of_test
 # If TRENDS_ALL=1 the time series is computed over the
 # entire simulation; otherwise between first_yr_ts
 # and last_yr_ts
-TRENDS_ALL=1
-FIRST_YR_TS1=0
-LAST_YR_TS1=0
+TRENDS_ALL=ts_all_switch
+FIRST_YR_TS1=fyr_of_ts_test
+LAST_YR_TS1=lyr_of_ts_test
 
 # ---------------------------------------------------------
 # ROOT DIRECTORY FOR HISTORY FILES (CASE1)
@@ -51,8 +51,8 @@ NYRS_CLIMO2=nyr_of_cntl
 # ---------------------------------------------------------
 # TIME SERIES SETTING FOR CNTL CASE (CASE2)
 # ---------------------------------------------------------
-FIRST_YR_TS2=0
-LAST_YR_TS2=0
+FIRST_YR_TS2=fyr_of_ts_cntl
+LAST_YR_TS2=lyr_of_ts_cntl
 
 # ---------------------------------------------------------
 # ROOT DIRECTORY FOR HISTORY FILES (CASE2)

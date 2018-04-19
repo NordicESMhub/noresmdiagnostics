@@ -47,14 +47,16 @@ trendsFlag = stringtointeger(getenv("trends_match_Flag"))
      x2y2Plot = 1                ; 1=ON, 0=OFF
      yrDifferential = matchYr2 - matchYr1
      fy = min( (/fyr1,(fyr2-yrDifferential)/) )
+;     fy = fyr1
      ly = max( (/(fyr1+nyrs1),(fyr2-yrDifferential+nyrs2)/) )
+;     ly = max( (/(fyr1+nyrs1),(fyr1+nyrs2)/) )
      nyrs = ly - fy
-
      fy1 = fy
      fy2 = fy + yrDifferential
      if (fyr1 .eq. fy) then
         offset(0) = 0
         offset(1) = matchYr2 - fy2
+;        offset(1) = 0
      else
         offset(1) = 0
         offset(0) = matchYr1 - fy1

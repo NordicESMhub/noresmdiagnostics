@@ -226,16 +226,16 @@ endif
 # If trends_all_flag=1, trends will be computed over the entire simulation
 # -JL, Nov 2017
 #**************************************************
-setenv trends_all_flag      1      # (1=ON,0=OFF)
+setenv trends_all_flag      ts_all_switch      # (1=ON,0=OFF)
 #**************************************************
 # 9b: The following setting are  necessary only if trends_all_flag=0
 # -JL, Nov 2017
 #**************************************************
-setenv trends_first_yr_1      0      # YYYY (must be >= 1)
-setenv trends_num_yrs_1       0      # number of yrs (must be >= 2)
+setenv trends_first_yr_1    fyr_of_ts_test      # YYYY (must be >= 1)
+setenv trends_num_yrs_1     nyrs_of_ts_test     # number of yrs (must be >= 2)
 if ($ModelVsModel == 1) then
-  setenv trends_first_yr_2    0      # YYYY (must be >= 1)
-  setenv trends_num_yrs_2     0      # number of yrs (must be >= 2)
+  setenv trends_first_yr_2  fyr_of_ts_cntl      # YYYY (must be >= 1)
+  setenv trends_num_yrs_2   nyrs_of_ts_cntl         # number of yrs (must be >= 2)
 endif
 # Check if climo/time-series switch has been used by diag_run
 # -JL, Nov 2017
@@ -251,8 +251,12 @@ setenv CLIMO_TIME_SERIES_SWITCH  SWITCHED_OFF
 #     Only necessary if trends_all_flag=0 (JL, Nov 2017)
 #**************************************************
 setenv trends_match_Flag        0        # compare different years   (default=0)
-setenv trends_match_yr_1        1        # First year of overlap case1
-setenv trends_match_yr_2        1        # First year of overlap case2
+setenv trends_match_yr_1        $trends_first_yr_1        # First year of overlap case1
+if ($ModelVsModel == 1) then
+  setenv trends_match_yr_2      $trends_first_yr_2        # First year of overlap case2
+else
+  setenv trends_match_yr_2      1
+endif
 
 #**************************************************
 # 11: Turn this on to exit after reading MSS files 
@@ -511,6 +515,15 @@ if ($CLIMO_TIME_SERIES_SWITCH == ONLY_TIME_SERIES) then
   setenv clim_num_yrs_1 0
   setenv clim_first_yr_2 0
   setenv clim_num_yrs_2 0
+endif
+
+if ($trends_all_flag == 1) then
+  setenv trends_first_yr_1 0
+  setenv trends_num_yrs_1 0
+  if ($ModelVsModel == 1) then
+    setenv trends_first_yr_2 0
+    setenv trends_num_yrs_2 0
+  endif
 endif
 
 @ end_yr_tmp = $clim_first_yr_1 + $clim_num_yrs_1 - 1

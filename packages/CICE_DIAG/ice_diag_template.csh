@@ -33,11 +33,15 @@ setenv GRID_DIFF tn11
 
 # Determine if all completed model years should be used for plotting trends
 # JL, Nov 2017
-set TRENDS_ALL = 1
+set TRENDS_ALL = ts_all_switch
 
 # If TRENDS_ALL=0, the following needs to be set
-set BEGYRS = ( 0 0 )           # Beginning years for line plots
-set ENDYRS = ( 0 0 )           # Ending years for line plots
+set FIRST_YR_TS1 = fyr_of_ts_test
+set LAST_YR_TS1 = lyr_of_ts_test
+set FIRST_YR_TS2 = fyr_of_ts_cntl
+set LAST_YR_TS2 = lyr_of_ts_cntl
+set BEGYRS = ( $FIRST_YR_TS1 $FIRST_YR_TS2 )           # Beginning years for line plots
+set ENDYRS = ( $LAST_YR_TS1 $LAST_YR_TS2 )           # Ending years for line plots
 
 # Check if climo/time-series switch has been used by diag_run
 # -JL, Nov 2017 

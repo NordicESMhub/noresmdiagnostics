@@ -32,6 +32,8 @@ else
    ncases     = 1
 end if
 
+fyr    = stringtointeger(syr1)
+
 vars   = (/"Rnet","TREFHT","PRECT","CLDTOT","CLDLOW","CLDMED","CLDHGH","SWCF","LWCF"/)
 nvars  = dimsizes(vars)
 
@@ -135,7 +137,15 @@ do i = 0, nvars-1
       ndim = dimsizes(B)
       ntimes2 = ndim(0)
       ntimes_tot = max((/ntimes1,ntimes2/))
+      if (syr1.ne.syr2) then
+         print("Warning: first yr in case2 time series is different from case1.")
+         print("Shifting case2 time axis to that of case1.")
+      end if
+
    end if
+
+   eyr  = fyr+ntimes_tot-1
+   pyrs = fspan(fyr,eyr,ntimes_tot)
 
    if (compare .eq. "OBS") then
       if (color_type .eq. "COLOR") then
@@ -197,12 +207,14 @@ do i = 0, nvars-1
    res@tiMainFontHeightF      = 0.02
    res@txFontHeightF          = 0.01
    res@gsnYRefLine            = 0.0
+   res@trXMinF             = min(pyrs)
+   res@trXMaxF             = max(pyrs)
    if (season.eq."ANN") then
       res@trYMaxF                = y_range_max(i)
       res@trYMinF                = y_range_min(i)
    end if
 
-   pyrs = fspan(1,ntimes_tot,ntimes_tot)
+;   pyrs = fspan(1,ntimes_tot,ntimes_tot)
    wks = gsn_open_wks("ps",wkdir+"/"+plotname)
    plotO = new(1,"graphic")
    res@pmLegendOrthogonalPosF = -0.9
