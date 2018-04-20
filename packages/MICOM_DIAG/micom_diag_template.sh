@@ -1030,7 +1030,9 @@ if [ $set_7 -eq 1 ]; then
     fi
     $DIAG_CODE/webpage7.sh
 fi
-
+# Closing the webpage
+echo "</BODY>" >> $WEBDIR/index.html
+echo "</HTML>" >> $WEBDIR/index.html
 # Making tar file
 echo " "
 echo "****************************************************"

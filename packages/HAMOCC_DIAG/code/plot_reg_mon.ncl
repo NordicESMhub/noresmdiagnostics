@@ -28,7 +28,7 @@ if (compare.eq."USER") then
 end if
 
 ; model variables
-vars = (/"pco2","co2fxn","pp_tot"/) ; ,"srfo2","srfsi","srfpo4","srfno3"/)
+vars = (/"pco2","co2fxn","pp_tot","srfo2","srfsi","srfpo4","srfno3"/)
 regions  = (/"ARC","NATL","NPAC","TATL","TPAC","IND","MSO","HSO"/)
 reg_long = (/"Arctic","North Atlantic","North Pacific","Tropical Atlantic","Tropical Pacific","Indian ocean","Southern ocean","Southern ocean"/)
 
@@ -182,12 +182,46 @@ do i = 0, nvars-1
 	  assignFillValue(B,B)
         end if
 
+        if (vars(i).eq."srfo2") then
+          infile2 = climodir2+"/WOA13/woa13_all_oMON_01_"+creg+".nc"
+          inptr2  = addfile(infile2,"r")
+	  if (isfilevar(inptr2,"o_an")) then
+	    delete(B)
+            B = inptr2->o_an(:,0,0,0)
+	    B = (/B*44.661/)
+	    assignFillValue(B,B)
+	    case2="WOA13"
+	  end if
+        end if
+
+        if (vars(i).eq."srfsi") then
+          infile2 = climodir2+"/WOA13/woa13_all_iMON_01_"+creg+".nc"
+          inptr2  = addfile(infile2,"r")
+	  if (isfilevar(inptr2,"i_an")) then
+	    delete(B)
+            B = inptr2->i_an(:,0,0,0)
+	    assignFillValue(B,B)
+	    case2="WOA13"
+	  end if
+        end if
+
         if (vars(i).eq."srfpo4") then
           infile2 = climodir2+"/WOA13/woa13_all_pMON_01_"+creg+".nc"
           inptr2  = addfile(infile2,"r")
 	  if (isfilevar(inptr2,"p_an")) then
 	    delete(B)
-            B       = inptr2->p_an(:,0,0)
+            B       = inptr2->p_an(:,0,0,0)
+	    assignFillValue(B,B)
+	    case2="WOA13"
+	  end if
+        end if
+
+        if (vars(i).eq."srfno3") then
+          infile2 = climodir2+"/WOA13/woa13_all_nMON_01_"+creg+".nc"
+          inptr2  = addfile(infile2,"r")
+	  if (isfilevar(inptr2,"n_an")) then
+	    delete(B)
+            B       = inptr2->n_an(:,0,0,0)
 	    assignFillValue(B,B)
 	    case2="WOA13"
 	  end if
@@ -214,10 +248,22 @@ do i = 0, nvars-1
           B = get_pp (inptr2)
         end if
 
-        if (vars(i) .eq. "po4lvl") then
-          B = get_po4 (inptr2,(/0.0,100.0/),0.0)
+        if (vars(i) .eq. "srfo2") then
+          B = get_srfo2 (inptr2)
         end if
-	
+
+        if (vars(i) .eq. "srfsi") then
+          B = get_srfsi (inptr2)
+        end if
+
+        if (vars(i) .eq. "srfpo4") then
+          B = get_srfpo4 (inptr2)
+        end if
+
+        if (vars(i) .eq. "srfno3") then
+          B = get_srfno3 (inptr2)
+        end if
+
       end if
 
       if (all(B.eq.-999.)) then

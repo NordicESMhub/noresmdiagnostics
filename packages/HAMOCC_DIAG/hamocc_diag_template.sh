@@ -781,7 +781,9 @@ if [ $set_4 -eq 1 ]; then
     cp $DIAG_HTML/regions.png $WEBDIR
     $DIAG_CODE/webpage4.sh
 fi
-
+# Closing the webpage
+echo "</BODY>" >> $WEBDIR/index.html
+echo "</HTML>" >> $WEBDIR/index.html
 # Making tar file
 echo " "
 echo "****************************************************"
