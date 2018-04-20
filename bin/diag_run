@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with the diagnostic package.  If not, see <http://www.gnu.org/licenses/>.
 
-VERSION=4.1
+VERSION=4.3
 BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 ETC_DIR=$ROOT_DIR/etc
@@ -49,7 +49,7 @@ echo "-------------------------------------------------"
 ## Check all flags
 if [ $# -eq 0 ]; then
     echo "Short description:"
-    echo "${THIS_SCRIPT_NAME} is used to configure and run the NorESM diagnostic packages."
+    echo "A wrapper script for NorESM diagnostic packages."
     echo " "
     echo "Basic usage:"
     echo "${THIS_SCRIPT_NAME} -m [model] -c [test case name] -s [test case start yr] -e [test case end yr] # Run model-obs diagnostics"
@@ -85,16 +85,16 @@ if [ $# -eq 0 ]; then
     echo "--no-atm                                      Run CLM diagnostics without CAM data. Must be used for offline CLM simulations."
     echo " "
     echo "Examples:"
-    echo "${THIS_SCRIPT_NAME} -m all -c N1850_f19_tn11_exp1 -s 21 -e 50 # model-obs diagnostics of N1850_f19_tn11_exp1 for all (available) components."
-    echo "${THIS_SCRIPT_NAME} -m cam -c N1850_f19_tn11_exp1 -s 21 -e 50 -w /path/to/my/html # model-obs diagnostics for CAM, publish the html in /path/to/my/html."
-    echo "${THIS_SCRIPT_NAME} -m micom -c N1850_f19_tn11_exp1 -s 21 -e 50 # model-obs diagnostics for MICOM"
+    echo "${THIS_SCRIPT_NAME} -m all -c N1850_f19_tn11_exp1 -s 21 -e 50 # model-obs diagnostics of case=N1850_f19_tn11_exp1 (climatology between yrs 21 and 50) for all model components."
+    echo "${THIS_SCRIPT_NAME} -m cam -c N1850_f19_tn11_exp1 -s 21 -e 50 -w /path/to/my/html # model-obs diagnostics in CAM, publish the html in /path/to/my/html."
+    echo "${THIS_SCRIPT_NAME} -m micom -c N1850_f19_tn11_exp1 -t time_series # model-obs time-series diagnostics in MICOM for all years represented in the model output directory (${HISTORY_PATH1}/N1850_f19_tn11_exp1/ocn/hist/)."
     echo "${THIS_SCRIPT_NAME} -m cice -c N1850_f19_tn11_exp1 -s 21 -e 50 -p # configure (but do not run) model-obs diagnostics for CICE."
     echo "${THIS_SCRIPT_NAME} -m clm -c N1850_f19_tn11_exp1 -s 21 -e 50 -i /input/directory1 -c2 N1850_f19_tn11_exp2 -s2 21 -e2 50 -i2 /input/directory2 # model1-model2 diagnostics for CLM with user-specified history file directories"
     echo "${THIS_SCRIPT_NAME} -m micom -c N1850_f19_tn11_exp1 -s 21 -e 50 -t climo # model-obs climatology diagnostics (no time series) for MICOM:"
     echo "${THIS_SCRIPT_NAME} -m cam -o /my/dir # install CAM diagnostics in /my/dir with minimal configuration."
     echo "${THIS_SCRIPT_NAME} -m micom,hamocc -c N1850OC_f19_tn11_exp1 -s 21 -e 50 # model-obs diagnostics for MICOM and HAMOCC."
-    echo "${THIS_SCRIPT_NAME} -m clm -c N1850_f19_tn11_clmexp1 -t time_series --no-atm # model-obs time-series diagnostics for an offline (uncoupled) CLM simulation."
-#    echo "${THIS_SCRIPT_NAME} -m hamocc -c N1850OC_f19_tn11_exp1 -s 31 -e 100 -c2 N1850OC_f19_tn11_exp2 -t time_series # model1-model2 time-series diagnostics for HAMOCC."
+    echo "${THIS_SCRIPT_NAME} -m clm -c N1850_f19_tn11_clmexp1 -s 71 -e 100 --no-atm # model-obs time-series diagnostics for an offline (uncoupled) CLM simulation."
+    echo "${THIS_SCRIPT_NAME} -m hamocc -c N1850OC_f19_tn11_exp1 -s 31 -e 100 -t time_series # model-obs time-series diagnostics in HAMOCC between yrs 31 and 100."
     echo " "
     exit 0
 else

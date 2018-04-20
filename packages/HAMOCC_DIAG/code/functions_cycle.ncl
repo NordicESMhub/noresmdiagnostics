@@ -8,13 +8,12 @@ begin
    if (isfilevar(inptr,"srfo2")) then
       tmp = inptr->srfo2
       if (typeof(tmp).eq."double") then
-         xvar = dble2flt(tmp)
+         xvar = dble2flt(tmp(:,0,0))
       else
-         xvar = tmp
+         xvar = tmp(:,0,0)
       end if
       xvar = (/xvar*1.0e+3/)
       xvar@long_name = "Surface oxygen"
-      print(xvar@long_name)
       xvar@units = "mmol m-3"
       assignFillValue(xvar,xvar)
    else
@@ -29,13 +28,12 @@ begin
    if (isfilevar(inptr,"srfsi")) then
       tmp = inptr->srfsi
       if (typeof(tmp).eq."double") then
-         xvar = dble2flt(tmp)
+         xvar = dble2flt(tmp(:,0,0))
       else
-         xvar = tmp
+         xvar = tmp(:,0,0)
       end if
       xvar = (/xvar*1.0e+3/)
       xvar@long_name = "Surface silicate"
-      print(xvar@long_name)
       xvar@units = "mmol m-3"
       assignFillValue(xvar,xvar)
    else
@@ -50,9 +48,9 @@ begin
    if (isfilevar(inptr,"srfpo4")) then
       tmp = inptr->srfpo4
       if (typeof(tmp).eq."double") then
-         xvar = dble2flt(tmp)
+         xvar = dble2flt(tmp(:,0,0))
       else
-         xvar = tmp
+         xvar = tmp(:,0,0)
       end if
       xvar = (/xvar*1.0e+3/)
       xvar@long_name = "Surface PO4"
@@ -70,13 +68,12 @@ begin
    if (isfilevar(inptr,"srfno3")) then
       tmp = inptr->srfno3
       if (typeof(tmp).eq."double") then
-         xvar = dble2flt(tmp)
+         xvar = dble2flt(tmp(:,0,0))
       else
-         xvar = tmp
+         xvar = tmp(:,0,0)
       end if
       xvar = (/xvar*1.0e+3/)
       xvar@long_name = "Surface nitrate"
-      print(xvar@long_name)
       xvar@units = "mmol m-3"
       assignFillValue(xvar,xvar)
    else
