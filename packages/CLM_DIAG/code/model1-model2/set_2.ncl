@@ -510,7 +510,18 @@ begin
            x11      = scale_var(x11,scale_type(i),info)
            x2       = scale_var(x2, scale_type(i),info)
            x22      = scale_var(x22,scale_type(i),info)
-
+  	   if (typeof(x1).eq."double") then
+	      tmp2345 = x1
+	      delete(x1)
+	      x1 = dble2flt(tmp2345)
+	      delete(tmp2345)
+	   end if
+	   if (typeof(x2).eq."double") then
+	      tmp2345 = x2
+	      delete(x2)
+	      x2 = dble2flt(tmp2345)
+     	      delete(tmp2345)
+	   end if
 ; flip longitudes to -180 to 180 if needed 
            if (min(x2&lon) .ge. 0 .and. min(x1&lon) .lt. 0) then
               x2  = lonFlip(x2)
@@ -563,7 +574,6 @@ begin
               x11_interp = x11
               x22_interp = x22
            end if
-
 ;            interpolate obs to new grid if necessary
            if (obsFlag .eq. 1)                                   ; (1 = on; 0 = off)
               if (nlat1 .ne. nlat3 .or. nlat2 .ne. nlat3) then
@@ -867,7 +877,11 @@ begin
 
 ;                  Case 2 - Obs
                  diff = var_avg_1_intp ; trick to maintain meta data
-                 diff = var_avg_2_intp - doubletofloat(var_avg_3_intp)
+                 if (typeof(var_avg_3_intp).eq."double") then
+                   diff = var_avg_2_intp - doubletofloat(var_avg_3_intp)
+		 else
+                   diff = var_avg_2_intp - var_avg_3_intp
+		 end if
                  res@tiMainString     = cases(1)
                  res@gsnCenterString = "- Observations"
                  mindiff = min(diff)
@@ -1003,9 +1017,13 @@ begin
               if (obsFlag .eq. 1 .and. plotObs .eq. 1) then
 
                  pfinal = new((/use_nlat,use_nlon/),"double")
-
-                 diff13 = abs(var_avg_1_intp - doubletofloat(var_avg_3_intp))
-                 diff23 = abs(var_avg_2_intp - doubletofloat(var_avg_3_intp))
+                 if (typeof(var_avg_3_intp).eq."double") then
+                   diff13 = abs(var_avg_1_intp - doubletofloat(var_avg_3_intp))
+                   diff23 = abs(var_avg_2_intp - doubletofloat(var_avg_3_intp))
+		 else
+                   diff13 = abs(var_avg_1_intp - var_avg_3_intp)
+                   diff23 = abs(var_avg_2_intp - var_avg_3_intp)
+		 end if
                  delete(var_avg_3_intp)
                  copy_VarCoords(prob,diff13)
                  copy_VarCoords(prob,diff23)

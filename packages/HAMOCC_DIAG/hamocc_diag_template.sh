@@ -23,9 +23,9 @@ NYRS_CLIMO1=nyr_of_test
 # If TRENDS_ALL=1 the time series is computed over the
 # entire simulation; otherwise between first_yr_ts
 # and last_yr_ts
-TRENDS_ALL=1
-FIRST_YR_TS1=0
-LAST_YR_TS1=0
+TRENDS_ALL=ts_all_switch
+FIRST_YR_TS1=fyr_of_ts_test
+LAST_YR_TS1=lyr_of_ts_test
 
 # ---------------------------------------------------------
 # ROOT DIRECTORY FOR HISTORY FILES (CASE1)
@@ -51,8 +51,8 @@ NYRS_CLIMO2=nyr_of_cntl
 # ---------------------------------------------------------
 # TIME SERIES SETTING FOR CNTL CASE (CASE2)
 # ---------------------------------------------------------
-FIRST_YR_TS2=0
-LAST_YR_TS2=0
+FIRST_YR_TS2=fyr_of_ts_cntl
+LAST_YR_TS2=lyr_of_ts_cntl
 
 # ---------------------------------------------------------
 # ROOT DIRECTORY FOR HISTORY FILES (CASE2)
@@ -233,7 +233,7 @@ fi
 
 # Set required variables for climatology and time series
 required_vars_climo_ann="depth_bnds,o2lvl,silvl,po4lvl,no3lvl,dissiclvl,talklvl,pp_tot,epc100,pco2,co2fxd,co2fxu"
-required_vars_climo_mon="depth_bnds,pp,pddpo,pco2,co2fxd,co2fxu"
+required_vars_climo_mon="depth_bnds,pp,pddpo,pco2,co2fxd,co2fxu,srfpo4,srfo2,srfno3,srfsi"
 required_vars_climo_zm="o2lvl,silvl,po4lvl,no3lvl,dissiclvl,talklvl"
 required_vars_ts_ann="co2fxd,co2fxu,epc100,epcalc100"
 required_vars_ts_mon="o2,si,po4,no3,dissic,pp,pddpo"

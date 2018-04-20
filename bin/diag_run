@@ -1,7 +1,20 @@
 #!/bin/bash
-# Configuring and running diagnostics packages on NIRD
-# Written by Johan Liakka (latest update is the version number)
-# johan.liakka@nersc.no
+#
+# DESCRIPTION: Wrapper script for NorESM diagnostics
+# AUTHOR: Johan Liakka (johan.liakka@nersc.no)
+#
+# This application is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This application is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with the diagnostic package.  If not, see <http://www.gnu.org/licenses/>.
 
 VERSION=4.1
 BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -336,15 +349,20 @@ DIAG_FILES_OUT=($CAM_FILE_OUT $CLM_FILE_OUT $CICE_FILE_OUT $MICOM_FILE_OUT $HAMO
 TEST_CASE_NAMES=(test_casename caseid_1 CASE_TO_CONT CASENAME1 CASENAME1)
 TEST_FIRST_YR_NAMES=(test_first_yr clim_first_yr_1 FIRST_YR_CLIMO1 FIRST_YR_CLIMO1 FIRST_YR_CLIMO1)
 TEST_NYRS_NAMES=(test_nyrs clim_num_yrs_1 NYRS_CLIMO1 NYRS_CLIMO1 NYRS_CLIMO1)
+TEST_FIRST_YR_TS_NAMES=(test_first_yr_ts trends_first_yr_1 FIRST_YR_TS1 FIRST_YR_TS1 FIRST_YR_TS1)
+TEST_LAST_YR_TS_NAMES=(test_last_yr_ts trends_num_yrs_1 LAST_YR_TS1 LAST_YR_TS1 LAST_YR_TS1)
 DIAG_DIR_NAMES=(diag_dir PTMPDIR SCRIPT_HOME DIAG_ROOT DIAG_ROOT)
 CNTL_NAMES=(CNTL CNTL CNTL CNTL CNTL)
 CNTL_CASE_NAMES=(cntl_casename caseid_2 CASE_TO_DIFF CASENAME2 CASENAME2)
 CNTL_FIRST_YR_NAMES=(cntl_first_yr clim_first_yr_2 FIRST_YR_CLIMO2 FIRST_YR_CLIMO2 FIRST_YR_CLIMO2)
 CNTL_NYRS_NAMES=(cntl_nyrs clim_num_yrs_2 NYRS_CLIMO2 NYRS_CLIMO2 NYRS_CLIMO2)
+CNTL_FIRST_YR_TS_NAMES=(cntl_first_yr_ts trends_first_yr_2 FIRST_YR_TS2 FIRST_YR_TS2 FIRST_YR_TS2)
+CNTL_LAST_YR_TS_NAMES=(cntl_last_yr_ts trends_num_yrs_2 LAST_YR_TS2 LAST_YR_TS2 LAST_YR_TS2)
 WEB_DIR_NAMES=(publish_html_root publish_html_root publish_html_root publish_html_root publish_html_root)
 INPUT_DIR_NAMES1=(test_path_history_root SOURCE_1 DATA_ROOT1 pathdat_root1 pathdat_root1)
 INPUT_DIR_NAMES2=(cntl_path_history_root SOURCE_2 DATA_ROOT2 pathdat_root2 pathdat_root2)
 DIAG_RUNTIMES=(null null null null null)
+TRENDS_ALL_NAMES=(TRENDS_ALL trends_all_flag TRENDS_ALL TRENDS_ALL TRENDS_ALL)
 runtime_s_tot=0
 
 # DETERMINE WHICH PACKAGE TO RUN
@@ -411,14 +429,19 @@ do
 	TEST_CASE_NAME=${TEST_CASE_NAMES[icount]}
 	TEST_FIRST_YR_NAME=${TEST_FIRST_YR_NAMES[icount]}
 	TEST_NYRS_NAME=${TEST_NYRS_NAMES[icount]}
+	TEST_FIRST_YR_TS_NAME=${TEST_FIRST_YR_TS_NAMES[icount]}
+	TEST_LAST_YR_TS_NAME=${TEST_LAST_YR_TS_NAMES[icount]}
 	DIAG_DIR_NAME=${DIAG_DIR_NAMES[icount]}
 	CNTL_NAME=${CNTL_NAMES[icount]}
 	CNTL_CASE_NAME=${CNTL_CASE_NAMES[icount]}
 	CNTL_FIRST_YR_NAME=${CNTL_FIRST_YR_NAMES[icount]}
 	CNTL_NYRS_NAME=${CNTL_NYRS_NAMES[icount]}
+	CNTL_FIRST_YR_TS_NAME=${CNTL_FIRST_YR_TS_NAMES[icount]}
+	CNTL_LAST_YR_TS_NAME=${CNTL_LAST_YR_TS_NAMES[icount]}
 	WEB_DIR_NAME=${WEB_DIR_NAMES[icount]}
 	INPUT_DIR_NAME1=${INPUT_DIR_NAMES1[icount]}
 	INPUT_DIR_NAME2=${INPUT_DIR_NAMES2[icount]}
+	TRENDS_ALL_NAME=${TRENDS_ALL_NAMES[icount]}
 		
 	# CREATE USER DIAGNOSTICS DIRECTORY
 	if [ ! -d $DIAG_PATH/$MODEL_DIAG_CAPS ]; then
@@ -706,49 +729,92 @@ do
 	
     	# CHANGE START YR OF TEST CASE IN DIAGNOSTICS SCRIPT
 	if [ $SYR1 -ge 0 ]; then
-	    echo "-CHANGING FIRST YR IN TEST CASE TO $SYR1 in $DIAG_FILE"
-	    if /usr/bin/grep -q fyr_of_test $DIAG_FILE
-	    then
-    		/usr/bin/sed -i "s+fyr_of_test+${SYR1}+g" $DIAG_FILE
+	    if [ $TYPE_OF_DIAG == time_series ]; then
+		echo "-CHANGING FIRST TS YR IN TEST CASE TO $SYR1 in $DIAG_FILE"
+		if /usr/bin/grep -q fyr_of_ts_test $DIAG_FILE
+		then
+    		    /usr/bin/sed -i "s+fyr_of_ts_test+${SYR1}+g" $DIAG_FILE
+		else
+		    echo "ERROR: modifying $DIAG_PATH/$MODEL_DIAG_CAPS/$DIAG_FILE with new SYR1 failed"
+		    echo "*** EXITING THE SCRIPT"
+		    exit 1
+		fi
+		echo "# TIME-SERIES START YEAR IN TEST CASE:" >> config.log
+		echo "${TEST_FIRST_YR_TS_NAME} = $SYR1" >> config.log
 	    else
-		echo "ERROR: modifying $DIAG_PATH/$MODEL_DIAG_CAPS/$DIAG_FILE with new SYR1 failed"
-		echo "*** EXITING THE SCRIPT"
-		exit 1
-	    fi
-    	    echo "# START YEAR IN TEST CASE:" >> config.log
-	    echo "${TEST_FIRST_YR_NAME} = $SYR1" >> config.log
-	    if /usr/bin/grep -q $TEST_FIRST_YR_NAME required_vars
-	    then
-		/usr/bin/sed -i "/${TEST_FIRST_YR_NAME}/d" required_vars
-	    else
-		echo "ERROR: deleting ${TEST_FIRST_YR_NAME} from required_vars failed"
-		echo "*** EXITING THE SCRIPT"
-		exit 1
+		echo "-CHANGING FIRST CLIMO YR IN TEST CASE TO $SYR1 in $DIAG_FILE"
+		if /usr/bin/grep -q fyr_of_test $DIAG_FILE
+		then
+    		    /usr/bin/sed -i "s+fyr_of_test+${SYR1}+g" $DIAG_FILE
+		else
+		    echo "ERROR: modifying $DIAG_PATH/$MODEL_DIAG_CAPS/$DIAG_FILE with new SYR1 failed"
+		    echo "*** EXITING THE SCRIPT"
+		    exit 1
+		fi
+    		echo "# CLIMO START YEAR IN TEST CASE:" >> config.log
+		echo "${TEST_FIRST_YR_NAME} = $SYR1" >> config.log
+		if /usr/bin/grep -q $TEST_FIRST_YR_NAME required_vars
+		then
+		    /usr/bin/sed -i "/${TEST_FIRST_YR_NAME}/d" required_vars
+		else
+		    echo "ERROR: deleting ${TEST_FIRST_YR_NAME} from required_vars failed"
+		    echo "*** EXITING THE SCRIPT"
+		    exit 1
+		fi
 	    fi
 	fi
 
    	# CHANGE END YR OF TEST CASE IN DIAGNOSTICS SCRIPT
 	if [ $EYR1 -ge 0 ]; then
 	    if [ $EYR1 -gt $SYR1 ]; then
-		NYR1="$(($EYR1 - $SYR1 + 1))"
-		echo "-CHANGING NUMBER OF YEARS IN TEST CASE to $NYR1 in $DIAG_FILE"
-		if /usr/bin/grep -q nyr_of_test $DIAG_FILE
-		then
-    		    /usr/bin/sed -i "s+nyr_of_test+${NYR1}+g" $DIAG_FILE
+		if [ $TYPE_OF_DIAG == time_series ]; then
+		    if [ $MODEL == clm ]; then
+			NYR1="$(($EYR1 - $SYR1 + 1))"
+			echo "-CHANGING TS NUM YRS IN TEST CASE to $NYR1 in $DIAG_FILE"
+			if /usr/bin/grep -q nyrs_of_ts_test $DIAG_FILE
+			then
+    			    /usr/bin/sed -i "s+nyrs_of_ts_test+${NYR1}+g" $DIAG_FILE
+			else
+			    echo "ERROR: modifying $DIAG_PATH/$MODEL_DIAG_CAPS/$DIAG_FILE with new NYR1 failed"
+			    echo "*** EXITING THE SCRIPT"
+			    exit 1
+			fi
+    			echo "# TIME-SERIES NUM YEARS IN TEST CASE:" >> config.log
+			echo "${TEST_LAST_YR_TS_NAME} = $NYR1" >> config.log
+		    else
+			echo "-CHANGING LAST TS YR IN TEST CASE to $EYR1 in $DIAG_FILE"
+			if /usr/bin/grep -q lyr_of_ts_test $DIAG_FILE
+			then
+    			    /usr/bin/sed -i "s+lyr_of_ts_test+${EYR1}+g" $DIAG_FILE
+			else
+			    echo "ERROR: modifying $DIAG_PATH/$MODEL_DIAG_CAPS/$DIAG_FILE with new EYR1 failed"
+			    echo "*** EXITING THE SCRIPT"
+			    exit 1
+			fi
+    			echo "# TIME-SERIES END YEAR IN TEST CASE:" >> config.log
+			echo "${TEST_LAST_YR_TS_NAME} = $EYR1" >> config.log
+		    fi
 		else
-		    echo "ERROR: modifying $DIAG_PATH/$MODEL_DIAG_CAPS/$DIAG_FILE with new NYR1 failed"
-		    echo "*** EXITING THE SCRIPT"
-		    exit 1
-		fi
-    		echo "# END YEAR IN TEST CASE:" >> config.log
-		echo "${TEST_NYRS_NAME} = $NYR1" >> config.log
-		if /usr/bin/grep -q $TEST_NYRS_NAME required_vars
-		then
-		    /usr/bin/sed -i "/${TEST_NYRS_NAME}/d" required_vars
-		else
-		    echo "ERROR: deleting ${TEST_NYRS_NAME} from required_vars failed"
-		    echo "*** EXITING THE SCRIPT"
-		    exit 1
+		    NYR1="$(($EYR1 - $SYR1 + 1))"
+		    echo "-CHANGING NUMBER OF CLIMO YEARS IN TEST CASE to $NYR1 in $DIAG_FILE"
+		    if /usr/bin/grep -q nyr_of_test $DIAG_FILE
+		    then
+    			/usr/bin/sed -i "s+nyr_of_test+${NYR1}+g" $DIAG_FILE
+		    else
+			echo "ERROR: modifying $DIAG_PATH/$MODEL_DIAG_CAPS/$DIAG_FILE with new NYR1 failed"
+			echo "*** EXITING THE SCRIPT"
+			exit 1
+		    fi
+    		    echo "# CLIMO END YEAR IN TEST CASE:" >> config.log
+		    echo "${TEST_NYRS_NAME} = $NYR1" >> config.log
+		    if /usr/bin/grep -q $TEST_NYRS_NAME required_vars
+		    then
+			/usr/bin/sed -i "/${TEST_NYRS_NAME}/d" required_vars
+		    else
+			echo "ERROR: deleting ${TEST_NYRS_NAME} from required_vars failed"
+			echo "*** EXITING THE SCRIPT"
+			exit 1
+		    fi
 		fi
 	    else
 		echo "WARNING: end_year in $CASE1 is smaller than start_year: please correct this in $DIAG_FILE."
@@ -808,49 +874,92 @@ do
 
 	# CHANGE START YR OF CNTL CASE IN DIAGNOSTICS SCRIPT
 	if [ $SYR2 -ge 0 ]; then
-    	    echo "-CHANGING FIRST YR IN CNTL CASE to $SYR2 in $DIAG_FILE"
-	    if /usr/bin/grep -q fyr_of_cntl $DIAG_FILE
-	    then
-    		/usr/bin/sed -i "s+fyr_of_cntl+${SYR2}+g" $DIAG_FILE
+	    if [ $TYPE_OF_DIAG == time_series ]; then
+		echo "-CHANGING FIRST TS YR IN CNTL CASE to $SYR2 in $DIAG_FILE"
+		if /usr/bin/grep -q fyr_of_ts_cntl $DIAG_FILE
+		then
+    		    /usr/bin/sed -i "s+fyr_of_ts_cntl+${SYR2}+g" $DIAG_FILE
+		else
+		    echo "ERROR: modifying $DIAG_PATH/$MODEL_DIAG_PATH/$DIAG_FILE with new SYR2 failed"
+		    echo "*** EXITING THE SCRIPT"
+		    exit 1
+		fi
+		echo "# TIME-SERIES START YEAR IN CONTROL CASE:" >> config.log
+		echo "${CNTL_FIRST_YR_TS_NAME} = $SYR2" >> config.log
 	    else
-		echo "ERROR: modifying $DIAG_PATH/$MODEL_DIAG_PATH/$DIAG_FILE with new SYR2 failed"
-		echo "*** EXITING THE SCRIPT"
-		exit 1
-	    fi
-	    echo "# START YEAR IN CONTROL CASE:" >> config.log
-	    echo "${CNTL_FIRST_YR_NAME} = $SYR2" >> config.log
-	    if /usr/bin/grep -q $CNTL_FIRST_YR_NAME required_vars
-	    then
-		/usr/bin/sed -i "/${CNTL_FIRST_YR_NAME}/d" required_vars
-	    else
-		echo "ERROR: deleting ${CNTL_FIRST_YR_NAME} from required_vars failed"
-		echo "*** EXITING THE SCRIPT"
-		exit 1
+    		echo "-CHANGING FIRST CLIMO YR IN CNTL CASE to $SYR2 in $DIAG_FILE"
+		if /usr/bin/grep -q fyr_of_cntl $DIAG_FILE
+		then
+    		    /usr/bin/sed -i "s+fyr_of_cntl+${SYR2}+g" $DIAG_FILE
+		else
+		    echo "ERROR: modifying $DIAG_PATH/$MODEL_DIAG_PATH/$DIAG_FILE with new SYR2 failed"
+		    echo "*** EXITING THE SCRIPT"
+		    exit 1
+		fi
+		echo "# CLIMO START YEAR IN CONTROL CASE:" >> config.log
+		echo "${CNTL_FIRST_YR_NAME} = $SYR2" >> config.log
+		if /usr/bin/grep -q $CNTL_FIRST_YR_NAME required_vars
+		then
+		    /usr/bin/sed -i "/${CNTL_FIRST_YR_NAME}/d" required_vars
+		else
+		    echo "ERROR: deleting ${CNTL_FIRST_YR_NAME} from required_vars failed"
+		    echo "*** EXITING THE SCRIPT"
+		    exit 1
+		fi
 	    fi
 	fi
 
 	# CHANGE END YR OF CNTL CASE IN DIAGNOSTICS SCRIPT
 	if [ $EYR2 -ge 0 ]; then
 	    if [ $EYR2 -gt $SYR2 ]; then
-		NYR2="$(($EYR2 - $SYR2 + 1))"
-		echo "-CHANGING NUMBER OF YEARS IN CNTL CASE to $NYR2 in $DIAG_FILE"
-		if /usr/bin/grep -q nyr_of_cntl $DIAG_FILE
-		then
-    		    /usr/bin/sed -i "s+nyr_of_cntl+${NYR2}+g" $DIAG_FILE
+		if [ $TYPE_OF_DIAG == time_series ]; then
+		    if [ $MODEL == clm ]; then
+			NYR2="$(($EYR2 - $SYR2 + 1))"
+			echo "-CHANGING NUM TS YRS IN CNTL CASE to $NYR2 in $DIAG_FILE"
+			if /usr/bin/grep -q nyrs_of_ts_cntl $DIAG_FILE
+			then
+    			    /usr/bin/sed -i "s+nyrs_of_ts_cntl+${NYR2}+g" $DIAG_FILE
+			else
+			    echo "ERROR: modifying $DIAG_PATH/$MODEL_DIAG_CAPS/$DIAG_FILE with new NYR2 failed"
+			    echo "*** EXITING THE SCRIPT"
+			    exit 1
+			fi
+			echo "# TIME-SERIES NUM YEARS IN CONTROL CASE:" >> config.log
+			echo "${CNTL_LAST_YR_TS_NAME} = $NYR2" >> config.log
+		    else
+			echo "-CHANGING LAST TS YR IN CNTL CASE to $EYR2 in $DIAG_FILE"
+			if /usr/bin/grep -q lyr_of_ts_cntl $DIAG_FILE
+			then
+    			    /usr/bin/sed -i "s+lyr_of_ts_cntl+${EYR2}+g" $DIAG_FILE
+			else
+			    echo "ERROR: modifying $DIAG_PATH/$MODEL_DIAG_CAPS/$DIAG_FILE with new EYR2 failed"
+			    echo "*** EXITING THE SCRIPT"
+			    exit 1
+			fi
+			echo "# TIME-SERIES END YEAR IN CONTROL CASE:" >> config.log
+			echo "${CNTL_LAST_YR_TS_NAME} = $EYR2" >> config.log
+		    fi
 		else
-		    echo "ERROR: modifying $DIAG_PATH/$MODEL_DIAG_CAPS/$DIAG_FILE with new NYR2 failed"
-		    echo "*** EXITING THE SCRIPT"
-		    exit 1
-		fi
-		echo "# END YEAR IN CONTROL CASE:" >> config.log
-		echo "${CNTL_NYRS_NAME} = $NYR2" >> config.log
-		if /usr/bin/grep -q $CNTL_NYRS_NAME required_vars
-		then
-		    /usr/bin/sed -i "/${CNTL_NYRS_NAME}/d" required_vars
-		else
-		    echo "ERROR: deleting ${CNTL_NYRS_NAME} from required_vars failed"
-		    echo "*** EXITING THE SCRIPT"
-		    exit 1
+		    NYR2="$(($EYR2 - $SYR2 + 1))"
+		    echo "-CHANGING NUMBER OF CLIMO YEARS IN CNTL CASE to $NYR2 in $DIAG_FILE"
+		    if /usr/bin/grep -q nyr_of_cntl $DIAG_FILE
+		    then
+    			/usr/bin/sed -i "s+nyr_of_cntl+${NYR2}+g" $DIAG_FILE
+		    else
+			echo "ERROR: modifying $DIAG_PATH/$MODEL_DIAG_CAPS/$DIAG_FILE with new NYR2 failed"
+			echo "*** EXITING THE SCRIPT"
+			exit 1
+		    fi
+		    echo "# CLIMO END YEAR IN CONTROL CASE:" >> config.log
+		    echo "${CNTL_NYRS_NAME} = $NYR2" >> config.log
+		    if /usr/bin/grep -q $CNTL_NYRS_NAME required_vars
+		    then
+			/usr/bin/sed -i "/${CNTL_NYRS_NAME}/d" required_vars
+		    else
+			echo "ERROR: deleting ${CNTL_NYRS_NAME} from required_vars failed"
+			echo "*** EXITING THE SCRIPT"
+			exit 1
+		    fi
 		fi
 	    else
 		echo "WARNING: end_year of $CASE2 is smaller than start_year: please correct this in $DIAG_FILE."
@@ -911,7 +1020,34 @@ do
 	    echo "# ATM DIAGNOSTICS:" >> config.log
 	    echo "set_4 = ${RUN_ATM_CLM}" >> config.log
 	fi
-	    
+
+	# CHANGE SWITCH FOR TIME SERIES DIAGNOSITCS
+	if [ $TYPE_OF_DIAG == time_series ] && [ $SYR1 -ge 0 ] && [ $EYR1 -ge 0 ]; then
+	    echo "-SETTING UP TIME-SERIES DIAGNOSTICS WITHIN TIME LIMITS"
+	    if /usr/bin/grep -q ts_all_switch $DIAG_FILE
+	    then
+    		/usr/bin/sed -i "s/ts_all_switch/0/g" $DIAG_FILE
+	    else
+		echo "ERROR: modifying $DIAG_PATH/$MODEL_DIAG_CAPS/$DIAG_FILE with new ts_all_switch failed"
+		echo "*** EXITING THE SCRIPT"
+		exit 1
+	    fi
+	    echo "# TRENDS_ALL FLAG:" >> config.log
+	    echo "${TRENDS_ALL_NAME} = 0" >> config.log
+	else
+	    echo "-SETTING UP TIME-SERIES DIAGNOSTICS FOR ENTIRE EXPERIMENT"
+	    if /usr/bin/grep -q ts_all_switch $DIAG_FILE
+	    then
+    		/usr/bin/sed -i "s/ts_all_switch/1/g" $DIAG_FILE
+	    else
+		echo "ERROR: modifying $DIAG_PATH/$MODEL_DIAG_CAPS/$DIAG_FILE with new ts_all_switch failed"
+		echo "*** EXITING THE SCRIPT"
+		exit 1
+	    fi
+	    echo "# TRENDS_ALL FLAG:" >> config.log
+	    echo "${TRENDS_ALL_NAME} = 1" >> config.log
+	fi
+	
 	# CHECK IF SCRIPT CAN BE EXECUTED
 	if [ $RUN_DIAG -eq 1 ]; then
 	    final_message="RUNNING ${DIAG_FILE} ..."

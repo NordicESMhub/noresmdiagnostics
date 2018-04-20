@@ -2,28 +2,90 @@
 ; functions_latlon.ncl
 ; Johan Liakka, Dec 2017
 ;******************************************************************
- 
-function get_po4 (inptr:file,z:numeric,z0:numeric)
+
+function get_srfo2 (inptr:file)
 begin
-   if (isfilevar(inptr,"po4lvl")) then
-      tmp3d = inptr->po4lvl
-      iz=ind(z.eq.z0)
-      tmp = tmp3d(:,iz,0,0)
+   if (isfilevar(inptr,"srfo2")) then
+      tmp = inptr->srfo2
       if (typeof(tmp).eq."double") then
          xvar = dble2flt(tmp)
       else
          xvar = tmp
       end if
       xvar = (/xvar*1.0e+3/)
-      xvar@long_name = "PO4 z="+flt2string(z0)+"m"
+      xvar@long_name = "Surface oxygen"
+      print(xvar@long_name)
       xvar@units = "mmol m-3"
       assignFillValue(xvar,xvar)
    else
-      print("get_po4: no po4lvl variable present")
+      print("get_srfo2: no srfo2 variable present")
       xvar = -999.0
    end if
    return (xvar)
 end
+
+function get_srfsi (inptr:file)
+begin
+   if (isfilevar(inptr,"srfsi")) then
+      tmp = inptr->srfsi
+      if (typeof(tmp).eq."double") then
+         xvar = dble2flt(tmp)
+      else
+         xvar = tmp
+      end if
+      xvar = (/xvar*1.0e+3/)
+      xvar@long_name = "Surface silicate"
+      print(xvar@long_name)
+      xvar@units = "mmol m-3"
+      assignFillValue(xvar,xvar)
+   else
+      print("get_srfsi: no srfsi variable present")
+      xvar = -999.0
+   end if
+   return (xvar)
+end
+
+function get_srfpo4 (inptr:file)
+begin
+   if (isfilevar(inptr,"srfpo4")) then
+      tmp = inptr->srfpo4
+      if (typeof(tmp).eq."double") then
+         xvar = dble2flt(tmp)
+      else
+         xvar = tmp
+      end if
+      xvar = (/xvar*1.0e+3/)
+      xvar@long_name = "Surface PO4"
+      xvar@units = "mmol m-3"
+      assignFillValue(xvar,xvar)
+   else
+      print("get_srfpo4: no srfpo4 variable present")
+      xvar = -999.0
+   end if
+   return (xvar)
+end
+
+function get_srfno3 (inptr:file)
+begin
+   if (isfilevar(inptr,"srfno3")) then
+      tmp = inptr->srfno3
+      if (typeof(tmp).eq."double") then
+         xvar = dble2flt(tmp)
+      else
+         xvar = tmp
+      end if
+      xvar = (/xvar*1.0e+3/)
+      xvar@long_name = "Surface nitrate"
+      print(xvar@long_name)
+      xvar@units = "mmol m-3"
+      assignFillValue(xvar,xvar)
+   else
+      print("get_srfno3: no srfno3 variable present")
+      xvar = -999.0
+   end if
+   return (xvar)
+end
+
 
 function get_pp (inptr:file)
 begin
