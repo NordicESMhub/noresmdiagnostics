@@ -60,6 +60,13 @@ echo " procdir_atm   = $procdir_atm"
 echo " diag_shared   = $diag_shared"
 echo " "
 
+NCAP2=`which ncap2`
+if [ $? -ne 0 ]; then
+    echo "Could not find ncap2 (which ncap2)"
+    echo "*** EXITING THE SCRIPT ***"
+    exit 1
+fi
+
 required_vars_climo_clm="TSA,RAIN,SNOW,FSR,FSDS,FSA,FIRA,FCTR,FCEV,FGEV,QOVER,QDRAI,QRGWL,SNOWDP,FPSN,FSH,FSH_V,FSH_G,TV,TG,TSNOW,SABV,SABG,FIRE,FGR,FSM,TAUX,TAUY,ELAI,ESAI,TLAI,TSAI,LAISUN,LAISHA,BTRAN2,H2OSNO,H2OCAN,SNOWLIQ,SNOWICE,QINFL,QINTR,QDRIP,QSNOMELT,QSOIL,QVEGE,QVEGT,ERRSOI,ERRSEB,FSNO,ERRSOL,ERRH2O,TBOT,TLAKE,WIND,THBOT,QBOT,ZBOT,FLDS,FSDSNDLN,FSDSNI,FSDSVD,FSDSVDLN,FSDSVI,FSDSND,FSRND,FSRNDLN,FSRNI,FSRVD,FSRVDLN,FSRVI,Q2M,TREFMNAV,TREFMXAV,SOILLIQ,SOILICE,H2OSOI,TSOI,WA,WT,ZWT,QCHARGE,FCOV,PCO2,NEE,GPP,NPP,AR,HR,NEP,ER,SUPPLEMENT_TO_SMINN,SMINN_LEACHED,COL_FIRE_CLOSS,COL_FIRE_NLOSS,PFT_FIRE_CLOSS,PFT_FIRE_NLOSS,FIRESEASONL,FIRE_PROB,ANN_FAREA_BURNED,MEAN_FIRE_PROB,PBOT,landfrac,area"
 required_vars_climo_cam="T,Q,Z3"
 required_vars_ts="TSA,RAIN,SNOW,TSOI,FPSN,ELAI,ESAI,TLAI,TSAI,LAISUN,LAISHA,BTRAN2,QINFL,QOVER,QRGWL,QDRAI,QINTR,QSOIL,QVEGT,SOILLIQ,SOILICE,SOILPSI,SNOWLIQ,SNOWICE,WA,ZWT,QCHARGE,FCOV,PCO2,landfrac,area,FSR,PBOT,SNOWDP,FSDS,FSA,FLDS,FIRE,FIRA,FSH,FCTR,FCEV,FGEV,FGR,WT"
@@ -94,6 +101,10 @@ if [ $c_climo_clm -eq 1 ]; then
 	$diag_shared/check_history_vars.sh $casename $fyr_climo $lyr_climo $pathdat $model $procdir climo
 	if [ -f $procdir/vars_climo_${model} ]; then
             $diag_shared/compute_climo.sh $casename $fyr_climo $lyr_climo $pathdat $climo_ts_dir $procdir $model
+	else
+	    echo "ERROR: no clm climo variables found."
+	    echo "***EXITING THE SCRIPT***"
+	    exit 1
         fi
     else
 	echo "CLIMATOLOGY FILES ALREADY EXIST: SKIPPING $model CLIMATOLOGY COMPUTATION."
@@ -102,6 +113,7 @@ if [ $c_climo_clm -eq 1 ]; then
     if [ -L $climo_ts_dir/${casename}_MONS_climo.nc ]; then
         rm $climo_ts_dir/${casename}_MONS_climo.nc
     fi
+    echo "Creating symbolic links."
     ln -s $climo_ts_dir/${casename}_MON_${fyr_prnt_climo}-${lyr_prnt_climo}_climo.nc $climo_ts_dir/${casename}_MONS_climo.nc
     for seas in ANN DJF MAM JJA SON
     do
@@ -143,6 +155,10 @@ if [ $c_climo_cam -eq 1 ]; then
 	$diag_shared/check_history_vars.sh $casename $fyr_climo $lyr_climo $pathdat $model $procdir climo
 	if [ -f $procdir/vars_climo_${model} ]; then
             $diag_shared/compute_climo.sh $casename $fyr_climo $lyr_climo $pathdat $climo_ts_dir $procdir $model
+	else
+	    echo "ERROR: no cam climo variables found."
+	    echo "***EXITING THE SCRIPT***"
+	    exit 1
         fi
     else
 	echo "CLIMATOLOGY FILES ALREADY EXIST: SKIPPING $model CLIMATOLOGY COMPUTATION."
@@ -151,6 +167,7 @@ if [ $c_climo_cam -eq 1 ]; then
     if [ -L $climo_ts_dir/${casename}_MONS_climo_atm.nc ]; then
         rm $climo_ts_dir/${casename}_MONS_climo_atm.nc
     fi
+    echo "Creating symbolic links."
     ln -s $climo_ts_dir/${casename}_MON_${fyr_prnt_climo}-${lyr_prnt_climo}_climo.nc $climo_ts_dir/${casename}_MONS_climo_atm.nc
     for seas in ANN DJF MAM JJA SON
     do

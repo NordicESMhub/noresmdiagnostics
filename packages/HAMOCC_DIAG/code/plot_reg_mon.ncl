@@ -28,7 +28,7 @@ if (compare.eq."USER") then
 end if
 
 ; model variables
-vars = (/"pco2","co2fxn","pp_tot"/)
+vars = (/"pco2","co2fxn","pp_tot"/) ; ,"srfo2","srfsi","srfpo4","srfno3"/)
 regions  = (/"ARC","NATL","NPAC","TATL","TPAC","IND","MSO","HSO"/)
 reg_long = (/"Arctic","North Atlantic","North Pacific","Tropical Atlantic","Tropical Pacific","Indian ocean","Southern ocean","Southern ocean"/)
 
@@ -43,10 +43,10 @@ if (compare .eq. "OBS") then
 
   eth_vars  = (/"spco2","fgco2"/)
   prod_vars = (/"pp"/)
-  woa_vars  = (/"p_an"/)
+  woa_vars  = (/"o_an","i_an","p_an","n_an"/)
 
   ; observations: list of variables to plot
-  obsvars = (/"spco2","fgco2","pp","p_an"/)
+  obsvars = (/"spco2","fgco2","pp","o_an","i_an","p_an","n_an"/)
 end if
 
 pmth = fspan(1,12,12)
@@ -114,8 +114,20 @@ do i = 0, nvars-1
       A = get_pp (inptr1)
     end if
 
-    if (vars(i) .eq. "po4lvl") then
-      A = get_po4 (inptr1,(/0.0,100.0/),0.0)
+    if (vars(i) .eq. "srfo2") then
+      A = get_srfo2 (inptr1)
+    end if
+
+    if (vars(i) .eq. "srfsi") then
+      A = get_srfsi (inptr1)
+    end if
+
+    if (vars(i) .eq. "srfpo4") then
+      A = get_srfpo4 (inptr1)
+    end if
+
+    if (vars(i) .eq. "srfno3") then
+      A = get_srfno3 (inptr1)
     end if
 
     if (all(A.eq.-999.)) then
@@ -170,7 +182,7 @@ do i = 0, nvars-1
 	  assignFillValue(B,B)
         end if
 
-        if (vars(i).eq."po4lvl") then
+        if (vars(i).eq."srfpo4") then
           infile2 = climodir2+"/WOA13/woa13_all_pMON_01_"+creg+".nc"
           inptr2  = addfile(infile2,"r")
 	  if (isfilevar(inptr2,"p_an")) then
