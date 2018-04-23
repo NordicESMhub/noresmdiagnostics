@@ -199,19 +199,22 @@ do i = 0, nvars-1
       if (any(obsvars(i) .eq. prod_vars)) then
         inptr2 = ptr_prod
         case2 = "MODIS (2003-2012)"
+        lat2 = inptr2->lat
+        nlat2 = dimsizes(lat2) 
+        lon2 = inptr2->lon
+        nlon2 = dimsizes(lon2)
+        gw2 = latGauWgt(nlat2,"lat","gaussian weights","none")
       end if
 
       if (any(obsvars(i) .eq. eth_vars)) then
         inptr2 = ptr_eth
         case2 = "Landschuetzer et al. (2015)"
+        lat2 = inptr2->lat
+        nlat2 = dimsizes(lat2) 
+        lon2 = inptr2->lon
+        nlon2 = dimsizes(lon2)
+        gw2 = latGauWgt(nlat2,"lat","gaussian weights","none")
       end if
-
-;     get latitudes,longitudes, and weights
-      lat2 = inptr2->lat
-      nlat2 = dimsizes(lat2) 
-      lon2 = inptr2->lon
-      nlon2 = dimsizes(lon2)
-      gw2 = latGauWgt(nlat2,"lat","gaussian weights","none") 
 
 ;     get the variable
 
