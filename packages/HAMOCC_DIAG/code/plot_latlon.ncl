@@ -354,11 +354,13 @@ do i = 0, nvars-1
     end if
 
     if (compare .eq. "OBS") then
-      delete(gw2)
-      delete(lat2)
-      delete(nlat2)
-      delete(lon2)
-      delete(nlon2)
+      if (vars(i) .ne. "epc100") then
+        delete(gw2)
+        delete(lat2)
+        delete(nlat2)
+        delete(lon2)
+        delete(nlon2)
+      end if
     end if
 ;------------------------- GLOBAL CE PLOTS ------------------------
     if (vars(i).eq."co2fxn") then
