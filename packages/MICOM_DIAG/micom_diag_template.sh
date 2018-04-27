@@ -3,7 +3,7 @@
 # MICOM DIAGNOSTICS package
 # Johan Liakka, NERSC, johan.liakka@nersc.no
 # built upon previous work by Detelina Ivanova
-# Last update Feb 2018
+# Last update April 2018
 # set -e
 export NCARG_ROOT=/opt/ncl64
 export PATH=/opt/ncl64/bin/:/usr/local/bin:/usr/bin
@@ -36,7 +36,6 @@ PATHDAT1=$pathdat_root1/$CASENAME1/ocn/hist
 
 # ---------------------------------------------------------
 # SELECT TYPE OF CONTROL CASE
-# NOTE: CNTL=USER IS NOT YET SUPPORTED
 # ---------------------------------------------------------
 CNTL=type_of_control_case   # compare case1 to another experiment case2 (model-model diagnostics)
 
@@ -65,7 +64,7 @@ PATHDAT2=$pathdat_root2/$CASENAME2/ocn/hist
 DIAG_ROOT=/path/to/your/diagnostics
 
 # ---------------------------------------------------------
-# SELECT SETS (1-5)
+# SELECT SETS (1-7)
 # ---------------------------------------------------------
 set_1=1 # (1=ON,0=OFF) Annual time series plots
 set_2=1 # (1=ON,0=OFF) ENSO indices

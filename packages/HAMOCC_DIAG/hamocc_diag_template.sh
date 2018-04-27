@@ -35,7 +35,6 @@ PATHDAT1=$pathdat_root1/$CASENAME1/ocn/hist
 
 # ---------------------------------------------------------
 # SELECT TYPE OF CONTROL CASE
-# NOTE: CNTL=USER IS NOT YET SUPPORTED
 # ---------------------------------------------------------
 CNTL=type_of_control_case
 #CNTL=OBS    # compare case1 to observations (model-obs diagnostics)
@@ -66,7 +65,7 @@ PATHDAT2=$pathdat_root2/$CASENAME2/ocn/hist
 DIAG_ROOT=/path/to/your/diagnostics
 
 # ---------------------------------------------------------
-# SELECT SETS (1-3)
+# SELECT SETS (1-4)
 # ---------------------------------------------------------
 set_1=1 # (1=ON,0=OFF) Annual time series plots
 set_2=1 # (1=ON,0=OFF) 2D (lat-lon) contour plots
