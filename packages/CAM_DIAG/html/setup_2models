@@ -10,8 +10,8 @@ set HTML = $HTML_HOME/model1-model2
 echo "value of mg micro var: $MG_MICRO"
 
 #----------------------------------------------------------------
-if ($#argv != 3) then
-  echo "usage: setup_models <model1> <model2> <gif,jpg,png>"
+if ($#argv != 5) then
+  echo "usage: setup_2models <model1> <model2> <gif,jpg,png> <yrs_range_testcase> <yrs_range_cntlcase>"
   exit
 endif
 # create the needed subdirectories
@@ -77,7 +77,7 @@ if (-e sets.htm) then
   rm sets.htm
 endif
 cp sets_1.htm sets.htm
-sed 's/test_ctrl_runs/'$1'<br>and<br> '$2'/' sets.htm > temp.htm && /bin/mv temp.htm sets.htm
+sed 's/test_ctrl_runs/'$1' '$4'<br>and<br> '$2' '$5'/' sets.htm > temp.htm && /bin/mv temp.htm sets.htm
 echo '<b>Plots Created </b><br>' >> sets.htm
 echo `date` >> sets.htm
 cat sets_2.htm >> sets.htm
@@ -88,14 +88,14 @@ if (-e set1/set1.htm) then
   rm set1/set1.htm
 endif
 cp set1/set1_1.htm set1/set1.htm
-echo $1 "<br>and<br>" $2 >> set1/set1.htm
+echo $1' '$4 "<br>and<br>" $2' '$5 >> set1/set1.htm
 cat set1/set1_2.htm >> set1/set1.htm
 # SET2
 if (-e set2/set2.htm) then
   rm set2/set2.htm
 endif
 cp set2/set2_1.htm set2/set2.htm
-echo $1 "<br>and<br>" $2 >> set2/set2.htm
+echo $1' '$4 "<br>and<br>" $2' '$4 >> set2/set2.htm
 cat set2/set2_2.htm | sed -e s/xxx/$3/ >> set2/set2.htm
 # SET3
 if (-e set3/set3.htm) then

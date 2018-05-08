@@ -92,12 +92,12 @@ begin
    nspaces = 24-nchar
    if (vars(n).eq."AAM" .or. vars(n).eq."EP") then
      fmt = "%"+nspaces+".3e"
-     table(nheaders+n) = vars(n)+sprintf(fmt,means(n,0))+ \
+     table(nheaders+n) = vars(n)+" "+sprintf(fmt,means(n,0))+ \
                   sprintf("%20.3e",means(n,1))+sprintf("%18.3e",means(n,2))+ \
                   sprintf("%14.3f",means(n,3))
    else
      fmt = "%"+nspaces+".3f"
-     table(nheaders+n) = vars(n)+sprintf(fmt,means(n,0))+ \
+     table(nheaders+n) = vars(n)+" "+sprintf(fmt,means(n,0))+ \
      sprintf("%20.3f",means(n,1))+sprintf("%18.3f",means(n,2))+ \
      sprintf("%14.3f",means(n,3))
    end if
