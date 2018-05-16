@@ -58,100 +58,100 @@ while [ $YR -le $last_yr ]
 do
     yr_prnt=`printf "%04d" ${YR}`
     if [ $filetype == hm ]; then
-	# Extract sst from monthly history files
-	pid=()
-	for month in 01 02 03 04 05 06 07 08 09 10 11 12
-	do
-	    infile=${casename}.micom.hm.${yr_prnt}-${month}.nc
-	    tmpfile=${casename}_${yr_prnt}-${month}.nc
-	    eval $NCKS --no_tmp_fl -O -v sst $pathdat/$infile $WKDIR/$tmpfile &
-	    pid+=($!)
-	done
-	for ((m=0;m<=11;m++))
-	do
-	    wait ${pid[$m]}
-	    if [ $? -ne 0 ]; then
-		echo "ERROR in extracting variables from monthly history files: $NCKS --no_tmp_fl -O -v sst $pathdat/$infile $WKDIR/$tmpfile"
-		echo "*** EXITING THE SCRIPT ***"
-		exit 1
-	    fi
-	done
-	wait
+        # Extract sst from monthly history files
+        pid=()
+        for month in 01 02 03 04 05 06 07 08 09 10 11 12
+        do
+            infile=${casename}.micom.hm.${yr_prnt}-${month}.nc
+            tmpfile=${casename}_${yr_prnt}-${month}.nc
+            eval $NCKS --no_tmp_fl -O -v sst $pathdat/$infile $WKDIR/$tmpfile &
+            pid+=($!)
+        done
+        for ((m=0;m<=11;m++))
+        do
+            wait ${pid[$m]}
+            if [ $? -ne 0 ]; then
+                echo "ERROR in extracting variables from monthly history files: $NCKS --no_tmp_fl -O -v sst $pathdat/$infile $WKDIR/$tmpfile"
+                echo "*** EXITING THE SCRIPT ***"
+                exit 1
+            fi
+        done
+        wait
     fi
     if [ $filetype == hd ]; then
-	# Calculate monthly means from daily means
-	pid=()
-	for month in 01 02 03 04 05 06 07 08 09 10 11 12
-	do
-	    infile=${casename}.micom.hd.${yr_prnt}-${month}.nc
-	    tmpfile=${casename}_${yr_prnt}-${month}.nc
-	    eval $NCRA --no_tmp_fl -O -F -d time,1,,1 -v sst $pathdat/$infile $WKDIR/$tmpfile &
-	    pid+=($!)
-	done
-	for ((m=0;m<=11;m++))
-	do
-	    wait ${pid[$m]}
-	    if [ $? -ne 0 ]; then
-		echo "ERROR in calculating monthly means from daily history files: $NCRA --no_tmp_fl -O -F -d time,1,,1 -v sst $pathdat/$infile $WKDIR/$tmpfile"
-		echo "*** EXITING THE SCRIPT ***"
-		exit 1
-	    fi
-	done
-	wait
+        # Calculate monthly means from daily means
+        pid=()
+        for month in 01 02 03 04 05 06 07 08 09 10 11 12
+        do
+            infile=${casename}.micom.hd.${yr_prnt}-${month}.nc
+            tmpfile=${casename}_${yr_prnt}-${month}.nc
+            eval $NCRA --no_tmp_fl -O -F -d time,1,,1 -v sst $pathdat/$infile $WKDIR/$tmpfile &
+            pid+=($!)
+        done
+        for ((m=0;m<=11;m++))
+        do
+            wait ${pid[$m]}
+            if [ $? -ne 0 ]; then
+                echo "ERROR in calculating monthly means from daily history files: $NCRA --no_tmp_fl -O -F -d time,1,,1 -v sst $pathdat/$infile $WKDIR/$tmpfile"
+                echo "*** EXITING THE SCRIPT ***"
+                exit 1
+            fi
+        done
+        wait
     fi
     # Append the spatial mask
     for month in 01 02 03 04 05 06 07 08 09 10 11 12
     do
-	tmpfile=${casename}_${yr_prnt}-${month}.nc
-	$NCKS --no_tmp_fl -A -v mask${ENSOidx} -o $WKDIR/$tmpfile $mask_file
-	if [ $? -ne 0 ]; then
-	    echo "ERROR in appending nino_mask: $NCKS -A -v mask${ENSOidx} -o $WKDIR/$tmpfile $mask_file"
-	    echo "*** EXITING THE SCRIPT ***"
-	    exit 1
-	fi
+        tmpfile=${casename}_${yr_prnt}-${month}.nc
+        $NCKS --no_tmp_fl -A -v mask${ENSOidx} -o $WKDIR/$tmpfile $mask_file
+        if [ $? -ne 0 ]; then
+            echo "ERROR in appending nino_mask: $NCKS -A -v mask${ENSOidx} -o $WKDIR/$tmpfile $mask_file"
+            echo "*** EXITING THE SCRIPT ***"
+            exit 1
+        fi
     done
     # Compute the average SSTs for the index region
     let "YRM = $YR - 1"
     let "residual = $YRM % 10"
     if [ $residual -eq 0 ]; then
-	let "YRP = $YRM + 10"
-	if [ $YRP -gt $last_yr ]; then
-	   YRP=$last_yr
-	fi
-	echo "Monthly time series of nino$ENSOidx sst (yrs=${YR}-${YRP})"
+        let "YRP = $YRM + 10"
+        if [ $YRP -gt $last_yr ]; then
+           YRP=$last_yr
+        fi
+        echo "Monthly time series of nino$ENSOidx sst (yrs=${YR}-${YRP})"
     fi
     pid=()
     for month in 01 02 03 04 05 06 07 08 09 10 11 12
-	do
-	    infile=${casename}_${yr_prnt}-${month}.nc
-	    outfile=${casename}_${yr_prnt}-${month}_ave.nc
-	    eval $NCWA --no_tmp_fl -O -v sst -w mask${ENSOidx} -a x,y $WKDIR/$infile $WKDIR/$outfile &
-	    pid+=($!)
-	done
+        do
+            infile=${casename}_${yr_prnt}-${month}.nc
+            outfile=${casename}_${yr_prnt}-${month}_ave.nc
+            eval $NCWA --no_tmp_fl -O -v sst -w mask${ENSOidx} -a x,y $WKDIR/$infile $WKDIR/$outfile &
+            pid+=($!)
+        done
     for ((m=0;m<=11;m++))
     do
-	wait ${pid[$m]}
-	if [ $? -ne 0 ]; then
-	    echo "ERROR in calculating nino${ENSOidx}: $NCWA --no_tmp_fl -O -v sst -w mask${ENSOidx} -a x,y $WKDIR/$infile $WKDIR/$outfile"
-	    echo "*** EXITING THE SCRIPT ***"
-	    exit 1
-	fi
+        wait ${pid[$m]}
+        if [ $? -ne 0 ]; then
+            echo "ERROR in calculating nino${ENSOidx}: $NCWA --no_tmp_fl -O -v sst -w mask${ENSOidx} -a x,y $WKDIR/$infile $WKDIR/$outfile"
+            echo "*** EXITING THE SCRIPT ***"
+            exit 1
+        fi
     done
     wait
     # Merge monthly files
     outfile=${casename}_${yr_prnt}.nc
     $NCRCAT --no_tmp_fl -O $WKDIR/${casename}_${yr_prnt}-??_ave.nc $WKDIR/$outfile
     if [ $? -ne 0 ]; then
-	echo "ERROR in merging monthly files: $NCRCAT --no_tmp_fl -O $WKDIR/${casename}_${yr_prnt}-??_ave.nc $WKDIR/$outfile"
-	echo "*** EXITING THE SCRIPT ***"
-	exit 1
+        echo "ERROR in merging monthly files: $NCRCAT --no_tmp_fl -O $WKDIR/${casename}_${yr_prnt}-??_ave.nc $WKDIR/$outfile"
+        echo "*** EXITING THE SCRIPT ***"
+        exit 1
     fi
     # Cleaning up
     rm $WKDIR/${casename}_${yr_prnt}-*.nc
     if [ $? -ne 0 ]; then
-	echo "ERROR: rm $WKDIR/${casename}_MON_${yr_prnt}-*.nc"
-	echo "*** EXITING THE SCRIPT ***"
-	exit 1
+        echo "ERROR: rm $WKDIR/${casename}_MON_${yr_prnt}-*.nc"
+        echo "*** EXITING THE SCRIPT ***"
+        exit 1
     fi
     let YR++
 done

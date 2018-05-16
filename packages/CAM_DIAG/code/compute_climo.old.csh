@@ -69,7 +69,7 @@ endif
     #
     ##if ($weight_months == 0) then
     if ($filetype == "monthly_history") then
-	set filename = ${rootname}`printf "%04d" ${first_yr}`-01.nc
+        set filename = ${rootname}`printf "%04d" ${first_yr}`-01.nc
         ncks -C -O -v $non_time_var_list ${path_history}/${filename} ${path_climo}/unweighted.nc
     else
         set split_line = `echo $time_series_files[1]:q | sed 's/,/ /g'`
@@ -91,9 +91,9 @@ endif
     echo COMPUTING MONTHLY CLIMOS FOR "$casetype"
     @ yr_end = $first_yr + $nyrs - 1 
     if ($nyrs == 1) then
-	set ave_yrs = $first_yr
+        set ave_yrs = $first_yr
     else
-	set ave_yrs = $first_yr-$yr_end
+        set ave_yrs = $first_yr-$yr_end
     endif
     foreach mth (01 02 03 04 05 06 07 08 09 10 11 12)
         echo ' CLIMO FOR MONTH =' $mth
@@ -101,21 +101,21 @@ endif
              # select the files we need to compute the climos 
              # create symbolic links for these files
              @ yri = $first_yr
-	     while ( $yri <= $yr_end )              ; 
-	         set yr_prnt = ${rootname}`printf "%04d" ${yri}`-${mth}.nc
+             while ( $yri <= $yr_end )              ; 
+                 set yr_prnt = ${rootname}`printf "%04d" ${yri}`-${mth}.nc
                  ln -s  ${path_history}/${yr_prnt} ${path_climo}/file_yr_${yri}_${mth}.nc
-	         @ yri++
-	     end
+                 @ yri++
+             end
              # compute climos
              set filename = ${casename}_${mth}_climo.nc
              #echo ${path_climo}/file_yr_*_${mth}.nc
              if ($strip_off_vars == 0) then
-	         ls ${path_climo}/file_yr_*_${mth}.nc | ncra -O  ${path_climo}/temp.nc
-	         ncks -O -v $var_list ${path_climo}/temp.nc ${path_climo}/${filename} 
+                 ls ${path_climo}/file_yr_*_${mth}.nc | ncra -O  ${path_climo}/temp.nc
+                 ncks -O -v $var_list ${path_climo}/temp.nc ${path_climo}/${filename} 
                  rm -f  ${path_climo}/temp.nc
-	     else   
-	         ls ${path_climo}/file_yr_*_${mth}.nc | ncra -O  ${path_climo}/${filename} 			
-	     endif
+             else   
+                 ls ${path_climo}/file_yr_*_${mth}.nc | ncra -O  ${path_climo}/${filename}                         
+             endif
         else
              # Loop through the time series files to pull the needed monthly time slices and make an ave for each ts file
              foreach ts_file ($time_series_files)
@@ -136,7 +136,7 @@ endif
 
                  ${diagcode}/compute_ts_ave.pl $ts_file $year1 $month1 $year2 $month2 $first_yr $yr_end \
                                    $mth $path_climo "null" $strip_off_vars $var_list \
-				   ${path_climo}/tmp_file_yr_${var}_${year1}_${year2}_${mth}.nc
+                                   ${path_climo}/tmp_file_yr_${var}_${year1}_${year2}_${mth}.nc
                end 
                
                set var_files = `ls ${path_climo}/tmp_file_yr_*.nc`
@@ -152,8 +152,8 @@ endif
         # add attributes/variable
         ncks -C -A -v $non_time_var_list ${path_climo}/unweighted.nc  ${path_climo}/${filename} 
         ncatted -O -a yrs_averaged,global,c,c,$ave_yrs  ${path_climo}/${filename} 
-	# clean up 
-	/bin/rm ${path_climo}/file_yr_*_${mth}.nc
+        # clean up 
+        /bin/rm ${path_climo}/file_yr_*_${mth}.nc
     end 
     # compute climo for previous or next year for DJF calculation 
     if ($djf == PREV) then
@@ -163,21 +163,21 @@ endif
              # select the files we need to compute the climos 
              # create symbolic links for these files
              @ yri = $first_yr - 1
-	     while ( $yri <= $yr_end - 1 )              
-	         set yr_prnt = ${rootname}`printf "%04d" ${yri}`-${mth}.nc
+             while ( $yri <= $yr_end - 1 )              
+                 set yr_prnt = ${rootname}`printf "%04d" ${yri}`-${mth}.nc
                  ln -s  ${path_history}/${yr_prnt} ${path_climo}/file_yr_${yri}_${mth}.nc
-	         @ yri++
-	     end
+                 @ yri++
+             end
              # compute climos
              set filename = ${casename}_${mth}_climo_prev.nc
              #echo ${path_climo}/file_yr_*_${mth}.nc
              if ($strip_off_vars == 0) then
-	         ls ${path_climo}/file_yr_*_${mth}.nc | ncra -O  ${path_climo}/temp.nc
-	         ncks -O -v $var_list ${path_climo}/temp.nc ${path_climo}/${filename} 
+                 ls ${path_climo}/file_yr_*_${mth}.nc | ncra -O  ${path_climo}/temp.nc
+                 ncks -O -v $var_list ${path_climo}/temp.nc ${path_climo}/${filename} 
                  rm -f  ${path_climo}/temp.nc
-	     else   
-	         ls ${path_climo}/file_yr_*_${mth}.nc | ncra -O  ${path_climo}/${filename} 			
-	     endif
+             else   
+                 ls ${path_climo}/file_yr_*_${mth}.nc | ncra -O  ${path_climo}/${filename}                         
+             endif
         else
              # Loop through the time series files to pull the needed monthly time slices and make an ave for each ts file
              foreach ts_file ($time_series_files)
@@ -214,9 +214,9 @@ endif
         # add attributes/variable
         ncks -C -A -v $non_time_var_list ${path_climo}/unweighted.nc  ${path_climo}/${filename} 
         ncatted -O -a yrs_averaged,global,c,c,$ave_yrs  ${path_climo}/${filename} 
-	# clean up 
-	/bin/rm ${path_climo}/file_yr_*_${mth}.nc
-	end 
+        # clean up 
+        /bin/rm ${path_climo}/file_yr_*_${mth}.nc
+        end 
     else
         foreach mth (01 02)
         echo ' CLIMO FOR MONTH =' $mth '(NEXT YEAR)'
@@ -224,21 +224,21 @@ endif
              # select the files we need to compute the climos 
              # create symbolic links for these files
              @ yri = $first_yr + 1
-	     while ( $yri <= $yr_end + 1 )              
-	         set yr_prnt = ${rootname}`printf "%04d" ${yri}`-${mth}.nc
+             while ( $yri <= $yr_end + 1 )              
+                 set yr_prnt = ${rootname}`printf "%04d" ${yri}`-${mth}.nc
                  ln -s  ${path_history}/${yr_prnt} ${path_climo}/file_yr_${yri}_${mth}.nc
-	         @ yri++
-	     end
+                 @ yri++
+             end
              # compute climos
              set filename = ${casename}_${mth}_climo_next.nc
              #echo ${path_climo}/file_yr_*_${mth}.nc
              if ($strip_off_vars == 0) then
-	         ls ${path_climo}/file_yr_*_${mth}.nc | ncra -O  ${path_climo}/temp.nc
-	         ncks -O -v $var_list ${path_climo}/temp.nc ${path_climo}/${filename} 
+                 ls ${path_climo}/file_yr_*_${mth}.nc | ncra -O  ${path_climo}/temp.nc
+                 ncks -O -v $var_list ${path_climo}/temp.nc ${path_climo}/${filename} 
                  rm -f  ${path_climo}/temp.nc
-	     else   
-	         ls ${path_climo}/file_yr_*_${mth}.nc | ncra -O  ${path_climo}/${filename} 			
-	     endif 
+             else   
+                 ls ${path_climo}/file_yr_*_${mth}.nc | ncra -O  ${path_climo}/${filename}                         
+             endif 
         else
               # Loop through the time series files to pull the needed monthly time slices and make an ave for each ts file
              foreach ts_file ($time_series_files)
@@ -275,8 +275,8 @@ endif
         # add attributes/variable
         ncks -C -A -v $non_time_var_list ${path_climo}/unweighted.nc  ${path_climo}/${filename} 
         ncatted -O -a yrs_averaged,global,c,c,$ave_yrs  ${path_climo}/${filename} 
-	# clean up 
-	/bin/rm ${path_climo}/file_yr_*_${mth}.nc
+        # clean up 
+        /bin/rm ${path_climo}/file_yr_*_${mth}.nc
         end 
     endif
     echo ' '
@@ -288,37 +288,37 @@ endif
                     ${path_climo}/${casename}_05_climo.nc ${path_climo}/${casename}_06_climo.nc \
                     ${path_climo}/${casename}_07_climo.nc ${path_climo}/${casename}_08_climo.nc \
                     ${path_climo}/${casename}_09_climo.nc ${path_climo}/${casename}_10_climo.nc \
-		    ${path_climo}/${casename}_11_climo.nc ${path_climo}/${casename}_12_climo.nc `
+                    ${path_climo}/${casename}_11_climo.nc ${path_climo}/${casename}_12_climo.nc `
 
     #echo $files
     set out = ${path_climo}/${casename}
     #echo ${out}_ANN_climo.nc
     if ($weight_months == 0) then
-	# apply the weights to the monthly files
-	foreach m (1 2 3 4 5 6 7 8 9 10 11 12)
-	   set DATE=`date`;
-	   set month = `printf "%02d" ${m}` 
-	   if (-z $files[$m]) then
-		 echo "ERROR - Empty file:"  $files[$m]
-	   else
-	   if ($strip_off_vars == 0) then
-		 ncflint -O -c -v $var_list -w $ann_weights[$m],0.0 $files[$m] $files[$m] ${path_climo}/wgt_month.$month.nc
-	   else    
-		 ncflint -O -C -x -v $non_time_var_list -w $ann_weights[$m],0.0 $files[$m] $files[$m] ${path_climo}/wgt_month.$month.nc
-	   endif  
-	   endif
-	end
-	# sum the weighted files to make the climo file
-	ls ${path_climo}/wgt_month.*.nc > ${path_climo}/weighted_files
-	set files = `cat ${path_climo}/weighted_files`
-	ncea -O -y ttl $files ${path_climo}/${casename}_ANN_climo.nc 
-	# append the needed non-time varying variables
-	ncks -C -A -v $non_time_var_list ${path_climo}/unweighted.nc ${path_climo}/${casename}_ANN_climo.nc
+        # apply the weights to the monthly files
+        foreach m (1 2 3 4 5 6 7 8 9 10 11 12)
+           set DATE=`date`;
+           set month = `printf "%02d" ${m}` 
+           if (-z $files[$m]) then
+                 echo "ERROR - Empty file:"  $files[$m]
+           else
+           if ($strip_off_vars == 0) then
+                 ncflint -O -c -v $var_list -w $ann_weights[$m],0.0 $files[$m] $files[$m] ${path_climo}/wgt_month.$month.nc
+           else    
+                 ncflint -O -C -x -v $non_time_var_list -w $ann_weights[$m],0.0 $files[$m] $files[$m] ${path_climo}/wgt_month.$month.nc
+           endif  
+           endif
+        end
+        # sum the weighted files to make the climo file
+        ls ${path_climo}/wgt_month.*.nc > ${path_climo}/weighted_files
+        set files = `cat ${path_climo}/weighted_files`
+        ncea -O -y ttl $files ${path_climo}/${casename}_ANN_climo.nc 
+        # append the needed non-time varying variables
+        ncks -C -A -v $non_time_var_list ${path_climo}/unweighted.nc ${path_climo}/${casename}_ANN_climo.nc
         rm -f ${path_climo}/wgt_month.*.nc ${path_climo}/weighted_files   
-	echo ' WEIGHTED TIME AVERAGE'
+        echo ' WEIGHTED TIME AVERAGE'
     else
-	ncea -O $files ${path_climo}/${casename}_ANN_climo.nc 
-	echo ' TIME AVERAGE'
+        ncea -O $files ${path_climo}/${casename}_ANN_climo.nc 
+        echo ' TIME AVERAGE'
     endif
     ncatted -O -a yrs_averaged,global,c,c,$ave_yrs ${path_climo}/${casename}_ANN_climo.nc 
     echo ' '
@@ -329,31 +329,31 @@ endif
                     ${path_climo}/${casename}_08_climo.nc` 
     #echo $files
     if ($weight_months == 0) then
-	# apply the weights to the monthly files
-	foreach m (1 2 3)
-	   set DATE=`date`;
-	   set month = `printf "%02d" ${m}` 
-	   if (-z $files[$m]) then
-			echo "ERROR - Empty file:"  $files[$m]
-	   else
-	   if ($strip_off_vars == 0) then
-		 ncflint -O -c -v $var_list -w $jja_weights[$m],0.0 $files[$m] $files[$m] ${path_climo}/wgt_month.$month.nc
-	   else    
-		 ncflint -O -C -x -v $non_time_var_list -w $jja_weights[$m],0.0 $files[$m] $files[$m] ${path_climo}/wgt_month.$month.nc
-	   endif  
-	   endif
-	end
-	# sum the weighted files to make the climo file
-	ls ${path_climo}/wgt_month.*.nc > ${path_climo}/weighted_files
-	set files = `cat ${path_climo}/weighted_files`
-	ncea -O -y ttl $files ${path_climo}/${casename}_JJA_climo.nc 
-	# append the needed non-time varying variables
-	ncks -C -A -v $non_time_var_list ${path_climo}/unweighted.nc ${path_climo}/${casename}_JJA_climo.nc
+        # apply the weights to the monthly files
+        foreach m (1 2 3)
+           set DATE=`date`;
+           set month = `printf "%02d" ${m}` 
+           if (-z $files[$m]) then
+                        echo "ERROR - Empty file:"  $files[$m]
+           else
+           if ($strip_off_vars == 0) then
+                 ncflint -O -c -v $var_list -w $jja_weights[$m],0.0 $files[$m] $files[$m] ${path_climo}/wgt_month.$month.nc
+           else    
+                 ncflint -O -C -x -v $non_time_var_list -w $jja_weights[$m],0.0 $files[$m] $files[$m] ${path_climo}/wgt_month.$month.nc
+           endif  
+           endif
+        end
+        # sum the weighted files to make the climo file
+        ls ${path_climo}/wgt_month.*.nc > ${path_climo}/weighted_files
+        set files = `cat ${path_climo}/weighted_files`
+        ncea -O -y ttl $files ${path_climo}/${casename}_JJA_climo.nc 
+        # append the needed non-time varying variables
+        ncks -C -A -v $non_time_var_list ${path_climo}/unweighted.nc ${path_climo}/${casename}_JJA_climo.nc
         rm -f ${path_climo}/wgt_month.*.nc ${path_climo}/weighted_files   
-	echo ' WEIGHTED TIME AVERAGE'
+        echo ' WEIGHTED TIME AVERAGE'
     else
-	ncea -O $files ${path_climo}/${casename}_JJA_climo.nc 
-	echo ' TIME AVERAGE'
+        ncea -O $files ${path_climo}/${casename}_JJA_climo.nc 
+        echo ' TIME AVERAGE'
     endif
     ncatted -O -a yrs_averaged,global,c,c,$ave_yrs ${path_climo}/${casename}_JJA_climo.nc 
     echo ' '
@@ -364,31 +364,31 @@ endif
                     ${path_climo}/${casename}_05_climo.nc` 
     #echo $files
     if ($weight_months == 0) then
-	# apply the weights to the monthly files
-	foreach m (1 2 3)
-	   set DATE=`date`;
-	   set month = `printf "%02d" ${m}` 
-	   if (-z $files[$m]) then
-			echo "ERROR - Empty file:"  $files[$m]
-	   else
-	   if ($strip_off_vars == 0) then
-		 ncflint -O -c -v $var_list -w $mam_weights[$m],0.0 $files[$m] $files[$m] ${path_climo}/wgt_month.$month.nc
-	   else    
-		 ncflint -O -C -x -v $non_time_var_list -w $mam_weights[$m],0.0 $files[$m] $files[$m] ${path_climo}/wgt_month.$month.nc
-	   endif  
-	   endif
-	end
-	# sum the weighted files to make the climo file
-	ls ${path_climo}/wgt_month.*.nc > ${path_climo}/weighted_files
-	set files = `cat ${path_climo}/weighted_files`
-	ncea -O -y ttl $files ${path_climo}/${casename}_MAM_climo.nc 
-	# append the needed non-time varying variables
-	ncks -C -A -v $non_time_var_list ${path_climo}/unweighted.nc ${path_climo}/${casename}_MAM_climo.nc
+        # apply the weights to the monthly files
+        foreach m (1 2 3)
+           set DATE=`date`;
+           set month = `printf "%02d" ${m}` 
+           if (-z $files[$m]) then
+                        echo "ERROR - Empty file:"  $files[$m]
+           else
+           if ($strip_off_vars == 0) then
+                 ncflint -O -c -v $var_list -w $mam_weights[$m],0.0 $files[$m] $files[$m] ${path_climo}/wgt_month.$month.nc
+           else    
+                 ncflint -O -C -x -v $non_time_var_list -w $mam_weights[$m],0.0 $files[$m] $files[$m] ${path_climo}/wgt_month.$month.nc
+           endif  
+           endif
+        end
+        # sum the weighted files to make the climo file
+        ls ${path_climo}/wgt_month.*.nc > ${path_climo}/weighted_files
+        set files = `cat ${path_climo}/weighted_files`
+        ncea -O -y ttl $files ${path_climo}/${casename}_MAM_climo.nc 
+        # append the needed non-time varying variables
+        ncks -C -A -v $non_time_var_list ${path_climo}/unweighted.nc ${path_climo}/${casename}_MAM_climo.nc
         rm -f ${path_climo}/wgt_month.*.nc ${path_climo}/weighted_files   
-	echo ' WEIGHTED TIME AVERAGE'
+        echo ' WEIGHTED TIME AVERAGE'
     else
-	ncea -O $files ${path_climo}/${casename}_MAM_climo.nc 
-	echo ' TIME AVERAGE'
+        ncea -O $files ${path_climo}/${casename}_MAM_climo.nc 
+        echo ' TIME AVERAGE'
     endif
     ncatted -O -a yrs_averaged,global,c,c,$ave_yrs ${path_climo}/${casename}_MAM_climo.nc 
     echo ' '
@@ -399,31 +399,31 @@ endif
                     ${path_climo}/${casename}_11_climo.nc` 
     #echo $files
     if ($weight_months == 0) then
-	# apply the weights to the monthly files
-	foreach m (1 2 3)
-	   set DATE=`date`;
-	   set month = `printf "%02d" ${m}` 
-	   if (-z $files[$m]) then
-			echo "ERROR - Empty file:"  $files[$m]
-	   else
-	   if ($strip_off_vars == 0) then
-		 ncflint -O -c -v $var_list -w $son_weights[$m],0.0 $files[$m] $files[$m] ${path_climo}/wgt_month.$month.nc
-	   else    
-		 ncflint -O -C -x -v $non_time_var_list -w $son_weights[$m],0.0 $files[$m] $files[$m] ${path_climo}/wgt_month.$month.nc
-	   endif  
-	   endif
-	end
-	# sum the weighted files to make the climo file
-	ls ${path_climo}/wgt_month.*.nc > ${path_climo}/weighted_files
-	set files = `cat ${path_climo}/weighted_files`
-	ncea -O -y ttl $files ${path_climo}/${casename}_SON_climo.nc 
-	# append the needed non-time varying variables
-	ncks -C -A -v $non_time_var_list ${path_climo}/unweighted.nc ${path_climo}/${casename}_SON_climo.nc
+        # apply the weights to the monthly files
+        foreach m (1 2 3)
+           set DATE=`date`;
+           set month = `printf "%02d" ${m}` 
+           if (-z $files[$m]) then
+                        echo "ERROR - Empty file:"  $files[$m]
+           else
+           if ($strip_off_vars == 0) then
+                 ncflint -O -c -v $var_list -w $son_weights[$m],0.0 $files[$m] $files[$m] ${path_climo}/wgt_month.$month.nc
+           else    
+                 ncflint -O -C -x -v $non_time_var_list -w $son_weights[$m],0.0 $files[$m] $files[$m] ${path_climo}/wgt_month.$month.nc
+           endif  
+           endif
+        end
+        # sum the weighted files to make the climo file
+        ls ${path_climo}/wgt_month.*.nc > ${path_climo}/weighted_files
+        set files = `cat ${path_climo}/weighted_files`
+        ncea -O -y ttl $files ${path_climo}/${casename}_SON_climo.nc 
+        # append the needed non-time varying variables
+        ncks -C -A -v $non_time_var_list ${path_climo}/unweighted.nc ${path_climo}/${casename}_SON_climo.nc
         rm -f ${path_climo}/wgt_month.*.nc ${path_climo}/weighted_files   
-	echo ' WEIGHTED TIME AVERAGE'
+        echo ' WEIGHTED TIME AVERAGE'
     else
-	ncea -O $files ${path_climo}/${casename}_SON_climo.nc 
-	echo ' TIME AVERAGE'
+        ncea -O $files ${path_climo}/${casename}_SON_climo.nc 
+        echo ' TIME AVERAGE'
     endif
     ncatted -O -a yrs_averaged,global,c,c,$ave_yrs ${path_climo}/${casename}_SON_climo.nc 
     echo ' '
@@ -432,42 +432,42 @@ endif
     echo COMPUTING CASE DJF AVERAGES FOR "$casetype"
   
     if ( $djf == "PREV") then
-	set files[1] = `ls ${path_climo}/${casename}_12_climo_prev.nc` 
-	set files[2] = `ls ${path_climo}/${casename}_01_climo.nc` 
+        set files[1] = `ls ${path_climo}/${casename}_12_climo_prev.nc` 
+        set files[2] = `ls ${path_climo}/${casename}_01_climo.nc` 
         set files[3] = `ls ${path_climo}/${casename}_02_climo.nc` 
     else
-	set files[1] = `ls ${path_climo}/${casename}_12_climo.nc` 
-	set files[2] = `ls ${path_climo}/${casename}_01_climo_next.nc` 
+        set files[1] = `ls ${path_climo}/${casename}_12_climo.nc` 
+        set files[2] = `ls ${path_climo}/${casename}_01_climo_next.nc` 
         set files[3] = `ls ${path_climo}/${casename}_02_climo_next.nc` 
     endif
     ##echo $files
     if ($weight_months == 0) then
-	# apply the weights to the monthly files
-	foreach m (1 2 3)
-	   set DATE=`date`;
-	   set month = `printf "%02d" ${m}` 
-	   if (-z $files[$m]) then
-			echo "ERROR - Empty file:"  $files[$m]
-	   else
-	   if ($strip_off_vars == 0) then
-		 ncflint -O -c -v $var_list -w $djf_weights[$m],0.0 $files[$m] $files[$m] ${path_climo}/wgt_month.$month.nc
-	   else    
-		 ncflint -O -C -x -v $non_time_var_list -w $djf_weights[$m],0.0 $files[$m] $files[$m] ${path_climo}/wgt_month.$month.nc
-	   endif  
-	   endif
-	end
-	# sum the weighted files to make the climo file
-	ls ${path_climo}/wgt_month.*.nc > ${path_climo}/weighted_files
-	set files = `cat ${path_climo}/weighted_files`
-	ncea -O -y ttl $files ${path_climo}/${casename}_DJF_climo.nc 
-	# append the needed non-time varying variables
-	ncks -C -A -v $non_time_var_list ${path_climo}/unweighted.nc ${path_climo}/${casename}_DJF_climo.nc
+        # apply the weights to the monthly files
+        foreach m (1 2 3)
+           set DATE=`date`;
+           set month = `printf "%02d" ${m}` 
+           if (-z $files[$m]) then
+                        echo "ERROR - Empty file:"  $files[$m]
+           else
+           if ($strip_off_vars == 0) then
+                 ncflint -O -c -v $var_list -w $djf_weights[$m],0.0 $files[$m] $files[$m] ${path_climo}/wgt_month.$month.nc
+           else    
+                 ncflint -O -C -x -v $non_time_var_list -w $djf_weights[$m],0.0 $files[$m] $files[$m] ${path_climo}/wgt_month.$month.nc
+           endif  
+           endif
+        end
+        # sum the weighted files to make the climo file
+        ls ${path_climo}/wgt_month.*.nc > ${path_climo}/weighted_files
+        set files = `cat ${path_climo}/weighted_files`
+        ncea -O -y ttl $files ${path_climo}/${casename}_DJF_climo.nc 
+        # append the needed non-time varying variables
+        ncks -C -A -v $non_time_var_list ${path_climo}/unweighted.nc ${path_climo}/${casename}_DJF_climo.nc
         rm -f ${path_climo}/wgt_month.*.nc ${path_climo}/weighted_files   
-	echo ' WEIGHTED TIME AVERAGE'
+        echo ' WEIGHTED TIME AVERAGE'
     else
-	##echo "=== CLIMO =======> " ncea -O $files ${path_climo}/${casename}_DJF_climo.nc 
-	ncea -O $files ${path_climo}/${casename}_DJF_climo.nc 
-	echo ' TIME AVERAGE'
+        ##echo "=== CLIMO =======> " ncea -O $files ${path_climo}/${casename}_DJF_climo.nc 
+        ncea -O $files ${path_climo}/${casename}_DJF_climo.nc 
+        echo ' TIME AVERAGE'
     endif
     ncatted -O -a yrs_averaged,global,c,c,$ave_yrs ${path_climo}/${casename}_DJF_climo.nc 
     echo ' '

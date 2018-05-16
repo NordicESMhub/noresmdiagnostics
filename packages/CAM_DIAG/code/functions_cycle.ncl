@@ -167,9 +167,9 @@ begin
       inptr = addfile(prefix+"_"+month(m)+"_"+yrs_prnt+"_climo.nc","r")
       if (isfilevar(inptr,"PRECT")) then
         prect2 = inptr->PRECT(0,{latv},{lonv})
-	tmp = prect2
-	tmp = (/prect2*8.64e7/)
-      else	
+        tmp = prect2
+        tmp = (/prect2*8.64e7/)
+      else        
         precc = inptr->PRECC(0,{latv},{lonv})
         precl = inptr->PRECL(0,{latv},{lonv})
         tmp = precc

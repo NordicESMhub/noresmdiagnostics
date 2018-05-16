@@ -24,30 +24,30 @@ setenv PATH /opt/ncl64/bin/:/usr/local/bin:/usr/bin
 # 1:  Path to data
 #**************************************************
 
-setenv PTMPDIR   	/path/to/your/diagnostics     # Diagnostics directory
-setenv SOURCE_1  	/path/to/test_case/history    # Path to test simulation
-setenv SOURCE_2  	/path/to/cntl_case/history    # Path to control simulation
+setenv PTMPDIR          /path/to/your/diagnostics     # Diagnostics directory
+setenv SOURCE_1         /path/to/test_case/history    # Path to test simulation
+setenv SOURCE_2         /path/to/cntl_case/history    # Path to control simulation
 
 # Turn on if history files exist on local directory on another machine
 # Files will be copied to local directory
 
-setenv LOCAL_FLAG_1       0	#1=ON; 0=OFF
-setenv LOCAL_FLAG_2       0	#1=ON; 0=OFF
-setenv LOCAL_FLAG_atm_1   0	#1=ON; 0=OFF
-setenv LOCAL_FLAG_atm_2   0	#1=ON; 0=OFF
-setenv LOCAL_FLAG_rtm_1   0	#1=ON; 0=OFF
-setenv LOCAL_FLAG_rtm_2   0	#1=ON; 0=OFF
+setenv LOCAL_FLAG_1       0     #1=ON; 0=OFF
+setenv LOCAL_FLAG_2       0     #1=ON; 0=OFF
+setenv LOCAL_FLAG_atm_1   0     #1=ON; 0=OFF
+setenv LOCAL_FLAG_atm_2   0     #1=ON; 0=OFF
+setenv LOCAL_FLAG_rtm_1   0     #1=ON; 0=OFF
+setenv LOCAL_FLAG_rtm_2   0     #1=ON; 0=OFF
 
-setenv LOCAL_LN           0	#1=soft link; 0=copy 
+setenv LOCAL_LN           0     #1=soft link; 0=copy 
 
 #*****************************************************************
 # 2a:  Path to land diagnostics package source code
 # Do not change this path unless you wish to create
 # code changes.  Revisions to code base will not be broadcast.
 #**************************************************
-# setenv DIAG_HOME /project/tss/diag/lnd_diag4.2		# CGD
-#setenv DIAG_HOME /glade/p/cesm/lmwg/diag/lnd_diag4.2		# CISL
-#setenv DIAG_HOME /work-common/shared/bjerknes/diagnostics/Packages/CLM_DIAG/lnd_diag4.2.25		# Grunch
+# setenv DIAG_HOME /project/tss/diag/lnd_diag4.2                # CGD
+#setenv DIAG_HOME /glade/p/cesm/lmwg/diag/lnd_diag4.2           # CISL
+#setenv DIAG_HOME /work-common/shared/bjerknes/diagnostics/Packages/CLM_DIAG/lnd_diag4.2.25     # Grunch
 #setenv DIAG_HOME /projects/NS2345K/noresm_diagnostics/CLM_DIAG/lnd_diag4.2.25 # Nird
 # NIRD (do not change this! -JL, Nov 2017)
 setenv DIAG_HOME /path/to/code/and/data
@@ -55,7 +55,7 @@ setenv DIAG_HOME /path/to/code/and/data
 #*****************************************************************
 # 2b:  Path to observational datasets
 #*****************************************************************
-# setenv OBS_HOME  /project/tss/diag/lnd_diag4.2		# CGD
+# setenv OBS_HOME  /project/tss/diag/lnd_diag4.2                # CGD
 #setenv OBS_HOME  /work-common/shared/bjerknes/diagnostics/Packages/CLM_DIAG/lnd_diag4.2.25
 # NIRD (do not change this! -JL, Nov 2017)
 setenv OBS_HOME /path/to/code/and/data
@@ -76,7 +76,7 @@ setenv plotObs  1                                               # (1 = compare t
 #   c.  change INPUT_HOME to point to new lists
 #**************************************************
 setenv INPUT_HOME /${DIAG_HOME}/code
-setenv var_master_cn 	variable_master4.3.ncl
+setenv var_master_cn    variable_master4.3.ncl
 setenv var_master_casa  variable_master_CASA.ncl
 
 #**************************************************
@@ -89,11 +89,11 @@ set CNTL = type_of_control_case
 #set CNTL = USER
 
 if ($CNTL == OBS) then
-   setenv OBS		1
-   setenv ModelVsModel	0
+   setenv OBS           1
+   setenv ModelVsModel  0
 else if ($CNTL == USER) then
-   setenv OBS		0
-   setenv ModelVsModel	1
+   setenv OBS           0
+   setenv ModelVsModel  1
 else
    echo "ERROR: CNTL must be either set to OBS or USER"
    exit
@@ -105,18 +105,18 @@ endif
 
 # Case 1
 setenv caseid_1   your_test_simulation  # identifies history files
-setenv prefix_1   $caseid_1 	        # used for output file names (uses same as caseid for simplicity -JL, Nov 2017)
-setenv commonName_1    test  	        # (Optional) common name for ID'ing run e.g., low water use
-setenv UseCommonName_1  0	        # 1 = use commonName in plots; 0 = use caseid or prefix
+setenv prefix_1   $caseid_1             # used for output file names (uses same as caseid for simplicity -JL, Nov 2017)
+setenv commonName_1    test             # (Optional) common name for ID'ing run e.g., low water use
+setenv UseCommonName_1  0               # 1 = use commonName in plots; 0 = use caseid or prefix
 
 # Case 2
 if ($OBS == 1) then
-   setenv caseid_2 obs  		# identifies history files
-   setenv prefix_2 obs  	     	# used for output file names
+   setenv caseid_2 obs                  # identifies history files
+   setenv prefix_2 obs                  # used for output file names
 else
-   setenv caseid_2 your_cntl_simulation	# identifies history files
-   setenv prefix_2 $caseid_2	        # USER SUPPLIED for output file names
-   setenv commonName_2    control  	# (Optional) common name for ID'ing run e.g., low water use
+   setenv caseid_2 your_cntl_simulation # identifies history files
+   setenv prefix_2 $caseid_2            # USER SUPPLIED for output file names
+   setenv commonName_2    control       # (Optional) common name for ID'ing run e.g., low water use
    setenv UseCommonName_2  0            # 1 = use commonName in plots; 0 = use caseid or prefix
 endif
 
@@ -125,8 +125,8 @@ endif
 # NOTE: DEPRECATED. Use the script get_hpss_files.csh in code/shared to get history files 
 #                   before running diagnostics package
 #**************************************************
-setenv MSS_tarfile_1    0  	# 1=MSS files are annual tar files; 0=MSS files are monthly history files.
-setenv MSS_tarfile_2    0  	# 1=MSS files are annual tar files; 0=MSS files are monthly history files.
+setenv MSS_tarfile_1    0       # 1=MSS files are annual tar files; 0=MSS files are monthly history files.
+setenv MSS_tarfile_2    0       # 1=MSS files are annual tar files; 0=MSS files are monthly history files.
 setenv MSS_path_1       /home/${USER}/csm/${caseid_1}/lnd/hist
 setenv MSS_path_2       /home/${USER}/csm/${caseid_2}/lnd/hist
 setenv MSS_path_atm_1   /home/${USER}/csm/${caseid_1}/atm/hist
@@ -147,7 +147,7 @@ setenv LOCAL_rtm_2   /glade/scratch/${USER}/${caseid_2}/rof/hist
 # NOTE: DEPRECATED. 
 #**************************************************
 set UPPERCASE_USER = `echo $USER | tr '[a-z]' '[A-Z]'`
-setenv MSS_write       0   # (1=ON,0=OFF) Write summary files to the MSS 	    (Default=0)
+setenv MSS_write       0   # (1=ON,0=OFF) Write summary files to the MSS            (Default=0)
 setenv MSS_pe        365   # MSS retention period
 setenv MSS_proj 00000000   # MSS project number
 setenv write2MSS_Only  0   # (1=ON,0=OFF)  write files to MSS only                  (Default = 0)
@@ -268,7 +268,7 @@ endif
 # NOTE: DEPRECATED. Use the script get_hpss_files.csh in code/shared to get history files 
 #                   before running diagnostics package
 #**************************************************
-setenv exit_after_MSS            0     	 # (1=ON;0=OFF)  			(default = 0)
+setenv exit_after_MSS            0      # (1=ON;0=OFF)              (default = 0)
 
 #**************************************************
 # 12a:  Is the Carbon/Nitrogen model active?
@@ -283,7 +283,7 @@ setenv CASA    0  # (1=CASA terminology,0=CLM-CN terminology)         NOT TESTED
 setenv HYDRO   1  # (1=HYDRO vars active,0=HYDRO vars inactive)  (default = 1)
 
 #**************************************************
-# 13:  NaN Pre-screening	(recommended)
+# 13:  NaN Pre-screening        (recommended)
 #**************************************************
 setenv set_0      0   # (1=ON,0=OFF)  PRE-SCREEN for NaNs
 setenv BLOCK_NAN  0   # (1=ON,0=OFF)  Exit script if NaNs are found
@@ -295,18 +295,18 @@ setenv BLOCK_NAN  0   # (1=ON,0=OFF)  Exit script if NaNs are found
 #       and are therefore always set to zero
 #       -JL, Nov 2017
 #**************************************************
-setenv set_1      1   # (1=ON,0=OFF)  ANNUAL TRENDS					(default=1)
-setenv set_2      1   # (1=ON,0=OFF)  CE CONTOUR PLOTS					(default=1)
-setenv set_3      1   # (1=ON,0=OFF)  REGIONAL MONTHLY 2M-TEMP,PRECIP,			(default=1)
+setenv set_1      1   # (1=ON,0=OFF)  ANNUAL TRENDS                                     (default=1)
+setenv set_2      1   # (1=ON,0=OFF)  CE CONTOUR PLOTS                                  (default=1)
+setenv set_3      1   # (1=ON,0=OFF)  REGIONAL MONTHLY 2M-TEMP,PRECIP,                  (default=1)
                       # RUNOFF,RADIATIVE AND TURBULENT FLUXES
-setenv set_4      ATM_DIAG   # (1=ON,0=OFF)  VERTICAL PROFILES					(default=1)
-setenv set_5      1   # (1=ON,0=OFF)  ANNUAL MEANS OF REGIONAL HYDROLOGIC		(default=1)
+setenv set_4      ATM_DIAG   # (1=ON,0=OFF)  VERTICAL PROFILES                          (default=1)
+setenv set_5      1   # (1=ON,0=OFF)  ANNUAL MEANS OF REGIONAL HYDROLOGIC               (default=1)
                       # CYCLE AND GLOBAL QUANTITIES
-setenv set_6      1   # (1=ON,0=OFF)  ANNUAL TRENDS FOR REGIONS				(default=1)
-setenv set_7      0   # (1=ON,0=OFF)  RIVER FLOW AND DISCHARGE			 	(default=0)
-setenv set_8      0   # (1=ON,0=OFF)  OCN-ATMOS TRACERS					(default=0)
-setenv set_8_lnd  0   # (1=ON,0=OFF)  LND-ATMOS TRACERS					(default=0)
-setenv set_9      0   # (1=ON,0=OFF)  VALIDATION DIAGNOSTICS (ONLY FOR MODEL-MODEL)	(default=1)
+setenv set_6      1   # (1=ON,0=OFF)  ANNUAL TRENDS FOR REGIONS                         (default=1)
+setenv set_7      0   # (1=ON,0=OFF)  RIVER FLOW AND DISCHARGE                          (default=0)
+setenv set_8      0   # (1=ON,0=OFF)  OCN-ATMOS TRACERS                                 (default=0)
+setenv set_8_lnd  0   # (1=ON,0=OFF)  LND-ATMOS TRACERS                                 (default=0)
+setenv set_9      0   # (1=ON,0=OFF)  VALIDATION DIAGNOSTICS (ONLY FOR MODEL-MODEL)     (default=1)
 
 #**************************************************
 # 15:  Restart Set Analysis and skip previous sets.
@@ -326,11 +326,11 @@ setenv setRestart_set   2   # (Valid sets:  2,3,4,5,6,7,8,9)
  setenv rmMonFilesClimo  0      # (1=ON,0=OFF)  rm monthly MSS files after climo files are created   (default = 0)
  setenv raster           1      # (1=ON,0=OFF)  raster mode for set2 contour plots.                  (default = 1)
  setenv expContours      0      # (1=ON,0=OFF)  All contours are user defined for set2 plots.        (default = 0)
-				#  To set explicit contours when expContours=0: change 0 to 1 in $INPUT_HOME/set2_*.txt 
+                                #  To set explicit contours when expContours=0: change 0 to 1 in $INPUT_HOME/set2_*.txt 
                                 #  expContours SHOULD ALWAYS BE OFF NOW (set to 0) BECAUSE OF RECENT CHANGES TO SET2
                                 #  THAT MAKE THIS OPTION UNNECESSARY
  setenv deleteProcDir    1      # (1=ON,0=OFF)  delete processing directory.  Turn off if you are
-				#               considering a continuation of current run.           (default = 1)
+                                #               considering a continuation of current run.           (default = 1)
 #**************************************************
 # 17a:  Create web pages?
 #*************************************************
@@ -347,7 +347,7 @@ if ($web_pages == 1) then
  setenv cleanup_Only     0      # (1=ON,0=OFF)  cleanup directories after tar file is created        (default = 0)
  setenv webPage_Only     0      # (1=ON,0=OFF)  skip everything except making the webpage            (default = 0)
  setenv ps2gif_Only      0      # (1=ON,0=OFF)  skip making sets, start with conversion of ps to gif (default = 0)
- setenv convert          1      # (1=ON,0=OFF)  convert ps2png					     (default = 1)
+ setenv convert          1      # (1=ON,0=OFF)  convert ps2png                                       (default = 1)
 endif
 #**************************************************
 # 17c: Publish html on the NIRD web server (does only work in conjunction with web_pages = 1),
@@ -367,9 +367,9 @@ endif
 setenv remote      0      # (1=ON,0=OFF)  send email to unix.
 setenv scpFile     0      # (1=ON,0=OFF)  send tar file to unix (requires interactive passwd).
 if ($remote == 1) then
-	setenv remote_system  'mycomputer.cgd.ucar.edu'
-	setenv remote_dir     '/mydir/diagnostics'
-	setenv email_address  ${LOGNAME}@ucar.edu
+        setenv remote_system  'mycomputer.cgd.ucar.edu'
+        setenv remote_dir     '/mydir/diagnostics'
+        setenv email_address  ${LOGNAME}@ucar.edu
 endif
 
 # Set directory to ncclimo.
@@ -505,9 +505,9 @@ if ($OBS == $ModelVsModel) then
    echo 'ERROR:  Select run type... (Model vs Obs) and (Model1 vs Model2) can not both be active.'
    exit
 else if ($OBS == 1) then
-   set runtype 	= model-obs     # model vs observations
+   set runtype  = model-obs     # model vs observations
 else if ($ModelVsModel == 1) then
-   set runtype 	= model1-model2	# two model comparison
+   set runtype  = model1-model2 # two model comparison
 endif
 
 if ($CLIMO_TIME_SERIES_SWITCH == ONLY_TIME_SERIES) then
@@ -528,28 +528,28 @@ endif
 
 @ end_yr_tmp = $clim_first_yr_1 + $clim_num_yrs_1 - 1
 setenv PLOTTYPE         $p_type                                                 # current version: postscript
-setenv RUNTYPE          $runtype						# creates directory name
-setenv case_1_dir       ${SOURCE_1}/${caseid_1}/lnd/hist/		# files for case 1
-setenv case_2_dir       ${SOURCE_2}/${caseid_2}/lnd/hist/		# files for case 2
-setenv case_1_atm_dir   ${SOURCE_1}/${caseid_1}/atm/hist/		# atm files for case 1
-setenv case_2_atm_dir   ${SOURCE_2}/${caseid_2}/atm/hist/		# atm files for case 2
+setenv RUNTYPE          $runtype                                        # creates directory name
+setenv case_1_dir       ${SOURCE_1}/${caseid_1}/lnd/hist/               # files for case 1
+setenv case_2_dir       ${SOURCE_2}/${caseid_2}/lnd/hist/               # files for case 2
+setenv case_1_atm_dir   ${SOURCE_1}/${caseid_1}/atm/hist/               # atm files for case 1
+setenv case_2_atm_dir   ${SOURCE_2}/${caseid_2}/atm/hist/               # atm files for case 2
 setenv rtm_1            $rtm_1                                          # rtm files for case 1 
 setenv rtm_2            $rtm_2                                          # rtm files for case 2 
 setenv case_1_rtm_dir   ${SOURCE_1}/${caseid_1}/rof/hist/               # rtm files for case 1
 setenv case_2_rtm_dir   ${SOURCE_2}/${caseid_2}/rof/hist/               # rtm files for case 2
-setenv prefix_1_dir     ${PTMPDIR}/${prefix_1}/				# create separate directory for each run
-setenv prefix_2_dir     ${PTMPDIR}/${prefix_2}/				# create separate directory for each run
-setenv prefix_1_atm_dir ${PTMPDIR}/${prefix_1}/atm/			# atm files for case 1
-setenv prefix_2_atm_dir ${PTMPDIR}/${prefix_2}/atm/			# atm files for case 2
+setenv prefix_1_dir     ${PTMPDIR}/${prefix_1}/                         # create separate directory for each run
+setenv prefix_2_dir     ${PTMPDIR}/${prefix_2}/                         # create separate directory for each run
+setenv prefix_1_atm_dir ${PTMPDIR}/${prefix_1}/atm/                     # atm files for case 1
+setenv prefix_2_atm_dir ${PTMPDIR}/${prefix_2}/atm/                     # atm files for case 2
 setenv prefix_1_rtm_dir ${PTMPDIR}/${prefix_1}/rof/                     # rtm files for case 1
 setenv prefix_2_rtm_dir ${PTMPDIR}/${prefix_2}/rof/                     # rtm files for case 2
-setenv PROCDIR1  	${PTMPDIR}/${prefix_1}/proc/			# pre-process history files case 1
-setenv PROCDIR2  	${PTMPDIR}/${prefix_2}/proc/			# pre-process history files case 2
-setenv PROCDIR_ATM1  	${PTMPDIR}/${prefix_1}/atm/proc/		# pre-process history files case 1
-setenv PROCDIR_ATM2  	${PTMPDIR}/${prefix_2}/atm/proc/		# pre-process history files case 2
+setenv PROCDIR1         ${PTMPDIR}/${prefix_1}/proc/                    # pre-process history files case 1
+setenv PROCDIR2         ${PTMPDIR}/${prefix_2}/proc/                    # pre-process history files case 2
+setenv PROCDIR_ATM1     ${PTMPDIR}/${prefix_1}/atm/proc/                # pre-process history files case 1
+setenv PROCDIR_ATM2     ${PTMPDIR}/${prefix_2}/atm/proc/                # pre-process history files case 2
 setenv PROCDIR_RTM1     ${PTMPDIR}/${prefix_1}/rof/proc/                # pre-process history files case 1
 setenv PROCDIR_RTM2     ${PTMPDIR}/${prefix_2}/rof/proc/                # pre-process history files case 2
-setenv WKDIR  	        ${PTMPDIR}/${prefix_1}/${runtype}/		# diagnostic ps files
+setenv WKDIR            ${PTMPDIR}/${prefix_1}/${runtype}/              # diagnostic ps files
 setenv WEBFOLD          yrs${clim_first_yr_1}to${end_yr_tmp}-${prefix_2}
 setenv WEBDIR           ${PTMPDIR}/${prefix_1}/${WEBFOLD}  # webpages 
 
@@ -625,4 +625,4 @@ endif
 #**************************************************
 # RUN THE PACKAGE ....
 #**************************************************
-$DIAG_HOME/code/shared/lnd_driver.csh         			# invoke the rest of the diagnostics
+$DIAG_HOME/code/shared/lnd_driver.csh                           # invoke the rest of the diagnostics

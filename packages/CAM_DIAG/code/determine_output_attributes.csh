@@ -138,26 +138,26 @@ set required_vars = (AODVIS AODDUST AODDUST1 AODDUST2 AODDUST3 \
                      TAUIMODIS TAUWMODIS TAUTMODIS PCTMODIS \
                      CFAD_DBZE94_CS CFAD_SR532_CAL CLISCCP CLMISR \
                      CLDTOT_CAL CLDLOW_CAL CLDMED_CAL CLDHGH_CAL CLDTOT_CS2 U10 \
-		     gw ilev hyai hybi)
+                     gw ilev hyai hybi)
 
 set first_find = 1
 set var_list = " "
 foreach var ($required_vars)
-	if ($cam_grid != SE) then 
-	    /usr/local/bin/ncks --quiet  -d lat,0 -d lon,0 -d lev,0 -d ilev,0 -v $var $fullpath_filename  >&! /dev/null 
-	    set var_present = $status
-	else  
-	    /usr/local/bin/ncks --quiet  -d ncol,0 -d lev,0 -d ilev,0 -v $var $fullpath_filename >&! /dev/null 
-	    set var_present = $status
-	endif
-	if ($var_present == 0) then
-	    if ($first_find) then
-		set var_list = $var
-		set first_find=0
-	    else
-		set var_list = ${var_list},$var
-	    endif
-	endif
+        if ($cam_grid != SE) then 
+            /usr/local/bin/ncks --quiet  -d lat,0 -d lon,0 -d lev,0 -d ilev,0 -v $var $fullpath_filename  >&! /dev/null 
+            set var_present = $status
+        else  
+            /usr/local/bin/ncks --quiet  -d ncol,0 -d lev,0 -d ilev,0 -v $var $fullpath_filename >&! /dev/null 
+            set var_present = $status
+        endif
+        if ($var_present == 0) then
+            if ($first_find) then
+                set var_list = $var
+                set first_find=0
+            else
+                set var_list = ${var_list},$var
+            endif
+        endif
 end
 
 echo  ${var_list}  > ${path_diag}/attributes/${casetype}_var_list

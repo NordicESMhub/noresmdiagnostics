@@ -166,21 +166,21 @@ begin
       getvalues wks
          "wkDeviceLowerX"   : ps_xLeft
          "wkDeviceLowerY"   : ps_yLeft
-	 "wkDeviceUpperX"   : ps_xRight
+         "wkDeviceUpperX"   : ps_xRight
       end getvalues
       
       if(ps_xLeft .lt. 0)then           ; 36 is default, 0 is the beginning
          xoff_set = fabs(ps_xLeft/612.) ; 612 is 8.5 * 72 in-1
          xLeft = 0.02941 + xoff_set     ; .02941 is 1/4 of an inch
       else                              ; which is the margin required
-	 xLeft = 0.02941                ; when printing postscript 
+         xLeft = 0.02941                ; when printing postscript 
       end if
 
       if(ps_xRight .gt. 612)then              ; 576 is default,612 is end
          xoff_set = fabs(1 - (ps_xRight/612.)); 612 is 8.5 * 72 in-1
          xRight= 0.97059 - xoff_set
       else
-	 xRight = 0.97059
+         xRight = 0.97059
       end if
 
       if(ps_yLeft .lt. 0)then         ; 126 is default, 0 is the beginning

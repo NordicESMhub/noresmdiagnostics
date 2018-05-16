@@ -34,13 +34,13 @@ echo -n "Converting $nset figures to png... "
 for figps in ${nset}_*.ps
 do
     if [ -f $figps ]; then
-	figs_exist=1
-	$CONVERT $CONVERT_ARGS $figps $WEBDIR/$nset/${figps%.*}.png
-	if [ $? -ne 0 ]; then
-	    echo "ERROR in converting from ps to png: $CONVERT $CONVERT_ARGS $figps $WEBDIR/$nset/${figps%.*}.png"
-	    echo "*** EXITING THE SCRIPT ***"
-	    exit 1
-	fi
+        figs_exist=1
+        $CONVERT $CONVERT_ARGS $figps $WEBDIR/$nset/${figps%.*}.png
+        if [ $? -ne 0 ]; then
+            echo "ERROR in converting from ps to png: $CONVERT $CONVERT_ARGS $figps $WEBDIR/$nset/${figps%.*}.png"
+            echo "*** EXITING THE SCRIPT ***"
+            exit 1
+        fi
     fi
 done
 if [ $figs_exist -eq 1 ]; then

@@ -39,15 +39,15 @@ do
     echo "Regional mean over $region"
     $CDO -s ifthen $maskfile $infile $tmpfile
     if [ $? -ne 0 ]; then
-	echo "ERROR in masking out $region: $CDO ifthen $maskfile $infile $tmpfile"
-	echo "*** EXITING THE SCRIPT ***"
-	exit 1
+        echo "ERROR in masking out $region: $CDO ifthen $maskfile $infile $tmpfile"
+        echo "*** EXITING THE SCRIPT ***"
+        exit 1
     fi
     $CDO -s fldmean $tmpfile $outfile
     if [ $? -ne 0 ]; then
-	echo "ERROR in taking zonal average: $CDO fldmean $tmpfile $outfile"
-	echo "*** EXITING THE SCRIPT ***"
-	exit 1
+        echo "ERROR in taking zonal average: $CDO fldmean $tmpfile $outfile"
+        echo "*** EXITING THE SCRIPT ***"
+        exit 1
     fi
     rm -f $tmpfile
 done

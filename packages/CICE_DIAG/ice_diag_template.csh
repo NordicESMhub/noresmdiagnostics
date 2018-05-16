@@ -136,7 +136,7 @@ set PLOT_VECT_DIFF =  0          # 1 --> make vector plots
 setenv PLOT_LINE_DIFF 0          # 1 --> make line plots 
 
 # Set this to plot regional plots: 0 = NH/SH only, NH,SH and all regions
-set PLOT_REGIONS = 1		 # 1 --> make regional plots
+set PLOT_REGIONS = 1                 # 1 --> make regional plots
 
 # set YRS_TO_KEEP =   $YRS_TO_AVG  # years of data to keep
 set KEEP_PS_FILES = 0            # Keep .ps files, 1 = yes 
@@ -339,41 +339,41 @@ end
 # Determine BEGYRS and ENDYRS if TRENDS_ALL=1
 if ($PLOT_LINE == 1 || $PLOT_LINE_DIFF == 1) then
     if ($TRENDS_ALL == 1) then
-	echo "-----------------------------------------"
-	echo "TRENDS_ALL=1:                            "
+        echo "-----------------------------------------"
+        echo "TRENDS_ALL=1:                            "
         echo "COMPUTE TRENDS OVER THE ENTIRE SIMULATION"
         echo "-----------------------------------------"
-    	# Initialize
-	set BEGYRS = ()
+            # Initialize
+        set BEGYRS = ()
         set ENDYRS = ()
-	@ m = 1
-	foreach CASE_TO_READ ($CASES_TO_READ)
-	    setenv DATA_ROOT $DATA_ROOT_VEC[$m]
-	    set file_prefix = ${DATA_ROOT}/${CASE_TO_READ}/ice/hist/$FILE_HEAD[$m]
-	    set first_file  = `ls ${file_prefix}* | head -n 1`
-	    set last_file   = `ls ${file_prefix}* | tail -n 1`
-	    if ("$first_file" == "") then
-		echo "ERROR: No history files ${CASE_TO_READ} exist in $DATA_ROOT"
-		echo "***EXITING THE SCRIPT"
-		exit 1
-	    endif
-	    set fyr_in_dir_prnt = `echo $first_file | rev | cut -c 7-10 | rev`
-	    set fyr_in_dir      = `echo $fyr_in_dir_prnt | sed 's/^0*//'`
-	    set lyr_in_dir_prnt = `echo $last_file | rev | cut -c 7-10 | rev`
-	    set lyr_in_dir      = `echo $lyr_in_dir_prnt | sed 's/^0*//'`
-	    if (! -e ${file_prefix}${lyr_in_dir_prnt}-12.nc) then
+        @ m = 1
+        foreach CASE_TO_READ ($CASES_TO_READ)
+            setenv DATA_ROOT $DATA_ROOT_VEC[$m]
+            set file_prefix = ${DATA_ROOT}/${CASE_TO_READ}/ice/hist/$FILE_HEAD[$m]
+            set first_file  = `ls ${file_prefix}* | head -n 1`
+            set last_file   = `ls ${file_prefix}* | tail -n 1`
+            if ("$first_file" == "") then
+                echo "ERROR: No history files ${CASE_TO_READ} exist in $DATA_ROOT"
+                echo "***EXITING THE SCRIPT"
+                exit 1
+            endif
+            set fyr_in_dir_prnt = `echo $first_file | rev | cut -c 7-10 | rev`
+            set fyr_in_dir      = `echo $fyr_in_dir_prnt | sed 's/^0*//'`
+            set lyr_in_dir_prnt = `echo $last_file | rev | cut -c 7-10 | rev`
+            set lyr_in_dir      = `echo $lyr_in_dir_prnt | sed 's/^0*//'`
+            if (! -e ${file_prefix}${lyr_in_dir_prnt}-12.nc) then
                @ lyr_in_dir = $lyr_in_dir - 1
                set lyr_in_dir_prnt = `printf "%04d" ${fyr_in_dir}`
             endif
-	    if ($fyr_in_dir == $lyr_in_dir) then
-		echo "ERROR: First and last year in ${CASE_TO_READ} are identical: cannot compute trends"
-		echo "***EXITING THE SCRIPT"
-		exit 1
-	    endif
-	    set BEGYRS = ($BEGYRS $fyr_in_dir)
-   	    set ENDYRS = ($ENDYRS $lyr_in_dir)
-	    @ m++
-	end
+            if ($fyr_in_dir == $lyr_in_dir) then
+                echo "ERROR: First and last year in ${CASE_TO_READ} are identical: cannot compute trends"
+                echo "***EXITING THE SCRIPT"
+                exit 1
+            endif
+            set BEGYRS = ($BEGYRS $fyr_in_dir)
+               set ENDYRS = ($ENDYRS $lyr_in_dir)
+            @ m++
+        end
         echo " BEGYRS = $BEGYRS"
         echo " ENDYRS = $ENDYRS"
     endif
@@ -441,9 +441,9 @@ foreach CASE_TO_READ ($CASES_TO_READ)
 
 #       Pre-processed data does not exist. See if data exists.
         $DIAG_HOME/check_history.csh $DATE_FORMAT $BEG_READ $END_READ
-	if ($status > 0) then
+        if ($status > 0) then
            echo "Part 1: ERROR IN check_history.csh"
-	   echo "***EXITING THE SCRIPT"
+           echo "***EXITING THE SCRIPT"
            exit 1
         endif
      
@@ -471,7 +471,7 @@ foreach CASE_TO_READ ($CASES_TO_READ)
          $NCRCAT $PRE_PROC_DIR/$PRE_PROC_FILE $PRE_PROC_DIR/$PRE_PROC_CAT
       else
          if ($NYRS_TOT > 10) then
-	    $NCRCAT $PRE_PROC_DIR/$PRE_PROC_CAT $PRE_PROC_DIR/$PRE_PROC_FILE tmp_$YR1-$YR2.nc
+            $NCRCAT $PRE_PROC_DIR/$PRE_PROC_CAT $PRE_PROC_DIR/$PRE_PROC_FILE tmp_$YR1-$YR2.nc
             mv -f tmp_$YR1-$YR2.nc $PRE_PROC_DIR/$PRE_PROC_CAT
          endif
 
@@ -537,7 +537,7 @@ foreach CASE_TO_READ ($CASES_TO_READ)
          echo " $AVG_FILE file exists. Done."
       else
          echo " $AVG_FILE file does not exist."
-	 set compute_climo = 1
+         set compute_climo = 1
       endif
     end
 
@@ -552,10 +552,10 @@ foreach CASE_TO_READ ($CASES_TO_READ)
        set filename_prev_year = ${FILE_HEADER}`printf "%04d" ${prev_yri}`
        if ( -e ${PATHDAT}/${filename_prev_year}-12.nc ) then
           set test_djf = SCD # Seasonally Continuous DJF
-	  echo "-->FOUND DECEMBER FILE FROM YEAR ${prev_yri}: USING test_djf=SCD"
+          echo "-->FOUND DECEMBER FILE FROM YEAR ${prev_yri}: USING test_djf=SCD"
        else
           set test_djf = SDD # Seasonally Discontinuous DJF
-	  echo "-->NO DECEMBER FILE FROM YEAR ${prev_yri} WAS FOUND: USING test_djf=SDD"
+          echo "-->NO DECEMBER FILE FROM YEAR ${prev_yri} WAS FOUND: USING test_djf=SDD"
        endif
        echo ' '
        echo " ========================================="
@@ -860,7 +860,7 @@ if ($web_pages == 1 && $publish_html == 1) then
          echo " ${full_url}                                                                        "
          echo " ***********************************************************************************"
          echo " COPY AND PASTE THE URL INTO THE ADDRESS BAR OF YOUR WEB BROWSER TO VIEW THE RESULTS"
-	 ${DIAG_HOME}/web/redirect_html.csh $TAR_FILE $publish_html_path $full_url
+         ${DIAG_HOME}/web/redirect_html.csh $TAR_FILE $publish_html_path $full_url
       else
          echo " THE HTML FILES ARE LOCATED IN:                                                     "
          echo " ${publish_html_path}/${TAR_FILE}                                                   "

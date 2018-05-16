@@ -549,9 +549,9 @@ begin
           ep@derive_op = "EP=QFLX*8.64e4-(PRECC+PRECL)*8.64e7"
           assignFillValue(ep,ep)
           outptr->EP = ep
-	else
-	  ep = -999.0
-	end if
+        else
+          ep = -999.0
+        end if
       end if
     else
       ep = -999.0
@@ -1658,7 +1658,7 @@ begin
           outptr->PRECT_LAND = prect_land
         else
           prect_land = -999.0
-	end if
+        end if
       end if
     end if
   end if
