@@ -30,16 +30,16 @@ set rootname = $5
     if (! -e ${path_local}/${filename}-12.nc || -z ${path_local}/${filename}-12.nc) then
          hsi ls  ${path_HPSS}{$filename}-12.nc    # Check whether history files are stored by month or year
          if(${status} == 0) then
-	    echo 'GETTING '{$path_HPSS}{$filename}-12.nc
+            echo 'GETTING '{$path_HPSS}{$filename}-12.nc
             hsi -q get ${path_local}{$filename}-12.nc :  {$path_HPSS}{$filename}-12.nc
          else
-    	    echo 'GETTING '{$path_HPSS}{$filename}.tar
+                echo 'GETTING '{$path_HPSS}{$filename}.tar
             hsi -q get  $path_local/{$filename}.tar : {$path_HPSS}{$filename}.tar               
-	    tar -xvf ${path_local}/${filename}.tar    -C ${path_local}  
-	    rm    -f ${path_local}/${filename}.tar
+            tar -xvf ${path_local}/${filename}.tar    -C ${path_local}  
+            rm    -f ${path_local}/${filename}.tar
          endif
     else
-    	 echo 'FOUND '{$path_local}{$filename}-12.nc
+             echo 'FOUND '{$path_local}{$filename}-12.nc
     endif
   else
     echo ERROR: FIRST YEAR OF TEST DATA $first_year MUST BE GT ZERO
@@ -54,23 +54,23 @@ set rootname = $5
     @ mon = 1
     set months = (01 02 03 04 05 06 07 08 09 10 11 12)
     while ($mon <= 12)
-    	set tname = {$rootname}`printf "%04d" {$yri}`-${months[$mon]}.nc
+            set tname = {$rootname}`printf "%04d" {$yri}`-${months[$mon]}.nc
         if (! -e ${path_local}/$tname || -z ${path_local}/$tname) then
-	    hsi ls ${path_HPSS}${tname}     # Check whether history files are stored by month or year
-	    if(${status} == 0) then
-   		echo  'GETTING '${path_HPSS}${tname}''     
+            hsi ls ${path_HPSS}${tname}     # Check whether history files are stored by month or year
+            if(${status} == 0) then
+                   echo  'GETTING '${path_HPSS}${tname}''     
                 hsi  "get '${path_local}${tname}'  : '${path_HPSS}${tname}'  "
             else 
-    	        echo 'GETTING '{$path_HPSS}{$filename}.tar
+                    echo 'GETTING '{$path_HPSS}{$filename}.tar
                 hsi  get  ${path_local}/${filename}.tar  : ${path_HPSS}{$filename}.tar 
-		tar -xvf ${path_local}/${filename}.tar   -C ${path_local} 
-		rm    -f ${path_local}/${filename}.tar
-	        @ mon = 12
+                tar -xvf ${path_local}/${filename}.tar   -C ${path_local} 
+                rm    -f ${path_local}/${filename}.tar
+                @ mon = 12
             endif
-    	else
-    	    echo  'FOUND '{$path_local}{$tname}
-	endif
-	@ mon++
+            else
+                echo  'FOUND '{$path_local}{$tname}
+        endif
+        @ mon++
     end
     @ yri++                             # advance year
   end 
@@ -80,31 +80,31 @@ set rootname = $5
   set filename = {$rootname}`printf "%04d" {$yri}`
   if (! -e ${path_local}${filename}-01.nc || -z ${path_local}${filename}-01.nc ) then
          hsi ls ${path_HPSS}${tname}     # Check whether history files are stored by month or year
-	 if(${status} == 0) then
-	    echo 'GETTING '{$path_HPSS}{$filename}-01.nc
-	    hsi "get  ${path_local}{$filename}-01.nc : {$path_HPSS}{$filename}-01.nc"
+         if(${status} == 0) then
+            echo 'GETTING '{$path_HPSS}{$filename}-01.nc
+            hsi "get  ${path_local}{$filename}-01.nc : {$path_HPSS}{$filename}-01.nc"
          else
-	    echo 'GETTING '{$path_HPSS}{$filename}.tar
-	    hsi get  ${path_local}{$filename}.tar : {$path_HPSS}{$filename}.tar
-	    tar -xvf ${path_local}/${filename}.tar    -C ${path_local}  
-	    rm    -f ${path_local}/${filename}.tar
-	 endif  
+            echo 'GETTING '{$path_HPSS}{$filename}.tar
+            hsi get  ${path_local}{$filename}.tar : {$path_HPSS}{$filename}.tar
+            tar -xvf ${path_local}/${filename}.tar    -C ${path_local}  
+            rm    -f ${path_local}/${filename}.tar
+         endif  
   else
-       	    echo  'FOUND '${path_local}${filename}-01.nc
+                   echo  'FOUND '${path_local}${filename}-01.nc
   endif
   if (! -e ${path_local}${filename}-02.nc || -z ${path_local}${filename}-02.nc ) then
          hsi ls ${path_HPSS}${tname}     # Check whether history files are stored by month or year
-	 if(${status} == 0) then
-	    echo 'GETTING '{$path_HPSS}{$filename}-02.nc
-	    hsi "get  ${path_local}{$filename}-02.nc : {$path_HPSS}{$filename}-02.nc"
+         if(${status} == 0) then
+            echo 'GETTING '{$path_HPSS}{$filename}-02.nc
+            hsi "get  ${path_local}{$filename}-02.nc : {$path_HPSS}{$filename}-02.nc"
          else
-	    echo 'GETTING '{$path_HPSS}{$filename}.tar
-	    hsi get  ${path_local}{$filename}.tar : {$path_HPSS}{$filename}.tar
-	    tar -xvf ${path_local}/${filename}.tar    -C ${path_local}  
-	    rm    -f ${path_local}/${filename}.tar
-	 endif   
+            echo 'GETTING '{$path_HPSS}{$filename}.tar
+            hsi get  ${path_local}{$filename}.tar : {$path_HPSS}{$filename}.tar
+            tar -xvf ${path_local}/${filename}.tar    -C ${path_local}  
+            rm    -f ${path_local}/${filename}.tar
+         endif   
   else
-     	    echo  'FOUND '${path_local}${filename}-02.nc
+                 echo  'FOUND '${path_local}${filename}-02.nc
   endif
 
 echo ' '

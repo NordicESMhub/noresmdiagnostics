@@ -316,7 +316,7 @@ do i = 0, nvars-1
         C = B
         C = (/tmp - B/)
         gblmean_C = wgt_areaave(C,gw2,1.0,0)
-	
+        
       else                                ; interp B to nlat1       
       
         tmp = A

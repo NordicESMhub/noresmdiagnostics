@@ -128,8 +128,8 @@ begin
             sig0trg=sig0top(ilat,ilon)+0.03
             kz1 = 0
             kz2 = 0
-	    first_find = 0
-	    do iz = 0,nz-2
+            first_find = 0
+            do iz = 0,nz-2
               if ( .not.ismissing(sig0(iz,ilat,ilon)) ) then
                 if (sig0(iz,ilat,ilon).lt.sig0trg) then
                   kz1=iz
@@ -146,7 +146,7 @@ begin
             else
               xvar(ilat,ilon)=((sig0(kz2,ilat,ilon)-sig0trg)*(zc(kz1+1,ilat,ilon)+zc(kz1,ilat,ilon)) \
                  +(sig0trg-sig0(kz1,ilat,ilon))*(zc(kz2+1,ilat,ilon)+zc(kz2,ilat,ilon)))/(2*(sig0(kz2,ilat,ilon)-sig0(kz1,ilat,ilon)))
-	    end if
+            end if
           end if
         end do
       end do

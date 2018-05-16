@@ -69,13 +69,13 @@ ichunk=1
 while [ $ichunk -le $nchunkp ]
 do
     if [ $residual -gt 0 ]; then
-	if [ $ichunk -lt $nchunkp ]; then
+        if [ $ichunk -lt $nchunkp ]; then
             nyrs=$nproc
-	else
+        else
             nyrs=$residual
-	fi
+        fi
     else
-	nyrs=$nproc
+        nyrs=$nproc
     fi
     let "nyrsm = $nyrs - 1"
     pid=()
@@ -83,56 +83,56 @@ do
     let "YR_start = ($ichunk - 1) * $nproc + $first_yr"
     let "YR_end = ($ichunk - 1) * $nproc + $nyrs + $first_yr - 1"
     if [ $filetype == hbgcy ]; then
-	# Extract variables from annual file if in hy mode
-	echo "Extracting time-series variables from annual history files (yrs ${YR_start}-${YR_end})"
-	while [ $iproc -le $nyrs ]
-	do
+        # Extract variables from annual file if in hy mode
+        echo "Extracting time-series variables from annual history files (yrs ${YR_start}-${YR_end})"
+        while [ $iproc -le $nyrs ]
+        do
             let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
             yr_prnt=`printf "%04d" ${YR}`
             filename=${casename}.micom.hbgcy.${yr_prnt}.nc
             eval $NCKS -O -v $var_list --no_tmp_fl $pathdat/$filename $WKDIR/${casename}_ANN_${yr_prnt}.nc &
             pid+=($!)
             let iproc++
-	done
-	for ((m=0;m<=$nyrsm;m++))
-	do
+        done
+        for ((m=0;m<=$nyrsm;m++))
+        do
             wait ${pid[$m]}
-	    if [ $? -ne 0 ]; then
-		echo "ERROR in extracting variables from annual history file: $NCKS -O -v $var_list --no_tmp_fl $pathdat/$filename $WKDIR/${casename}_ANN_${yr_prnt}.nc"
-		echo "*** EXITING THE SCRIPT ***"
-		exit 1
-	    fi
-	done
-	wait
+            if [ $? -ne 0 ]; then
+                echo "ERROR in extracting variables from annual history file: $NCKS -O -v $var_list --no_tmp_fl $pathdat/$filename $WKDIR/${casename}_ANN_${yr_prnt}.nc"
+                echo "*** EXITING THE SCRIPT ***"
+                exit 1
+            fi
+        done
+        wait
     else 
-	# Compute annual means if in hm mode
-	echo "Computing annual means from monthly history files (yrs ${YR_start}-${YR_end})"
-	pid=()
-	iproc=1
-	while [ $iproc -le $nyrs ]
-	do
+        # Compute annual means if in hm mode
+        echo "Computing annual means from monthly history files (yrs ${YR_start}-${YR_end})"
+        pid=()
+        iproc=1
+        while [ $iproc -le $nyrs ]
+        do
             let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
             yr_prnt=`printf "%04d" ${YR}`
-	    filenames=()
-	    for mon in 01 02 03 04 05 06 07 08 09 10 11 12
-	    do
-		filename=${casename}.micom.hbgcm.${yr_prnt}-${mon}.nc
-		filenames+=($filename)
-	    done
-	    eval $NCRA -O --no_tmp_fl --hdr_pad=10000 -w 31,28,31,30,31,30,31,31,30,31,30,31 -v $var_list -p $pathdat ${filenames[*]} $WKDIR/${casename}_ANN_${yr_prnt}.nc &
+            filenames=()
+            for mon in 01 02 03 04 05 06 07 08 09 10 11 12
+            do
+                filename=${casename}.micom.hbgcm.${yr_prnt}-${mon}.nc
+                filenames+=($filename)
+            done
+            eval $NCRA -O --no_tmp_fl --hdr_pad=10000 -w 31,28,31,30,31,30,31,31,30,31,30,31 -v $var_list -p $pathdat ${filenames[*]} $WKDIR/${casename}_ANN_${yr_prnt}.nc &
             pid+=($!)
             let iproc++
-	done
-       	for ((m=0;m<=$nyrsm;m++))
-	do
+        done
+               for ((m=0;m<=$nyrsm;m++))
+        do
             wait ${pid[$m]}
-	    if [ $? -ne 0 ]; then
-		echo "ERROR in computing annual means from monthly history files: $NCRA -O --no_tmp_fl --hdr_pad=10000 -w 31,28,31,30,31,30,31,31,30,31,30,31 -v $var_list -p $pathdat $filenames $WKDIR/${casename}_ANN_${yr_prnt}.nc"
-		echo "*** EXITING THE SCRIPT ***"
-		exit 1
-	    fi
-	done
-	wait
+            if [ $? -ne 0 ]; then
+                echo "ERROR in computing annual means from monthly history files: $NCRA -O --no_tmp_fl --hdr_pad=10000 -w 31,28,31,30,31,30,31,31,30,31,30,31 -v $var_list -p $pathdat $filenames $WKDIR/${casename}_ANN_${yr_prnt}.nc"
+                echo "*** EXITING THE SCRIPT ***"
+                exit 1
+            fi
+        done
+        wait
     fi
     # Append parea if necessary
     iproc=1
@@ -141,204 +141,204 @@ do
     do
         let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
         yr_prnt=`printf "%04d" ${YR}`
-	filename=${casename}_ANN_${yr_prnt}.nc
-	$NCKS --quiet -d depth,0 -d x,0 -d y,0 -v parea $WKDIR/$filename >/dev/null 2>&1
-	if [ $? -ne 0 ]; then
-	    $NCKS -A -v parea -o $WKDIR/$filename $grid_file
-	fi
-	let iproc++
+        filename=${casename}_ANN_${yr_prnt}.nc
+        $NCKS --quiet -d depth,0 -d x,0 -d y,0 -v parea $WKDIR/$filename >/dev/null 2>&1
+        if [ $? -ne 0 ]; then
+            $NCKS -A -v parea -o $WKDIR/$filename $grid_file
+        fi
+        let iproc++
     done
     # Loop over variables and do some averaging...
     for var in `echo $var_list | sed 's/,/ /g'`
     do
-	# Mass weighted 3D averaging of temp and saln
-	if [ $var == o2 ] || [ $var == si ] || [ $var == po4 ] || \
-	   [ $var == no3 ] || [ $var == dissic ]; then
+        # Mass weighted 3D averaging of temp and saln
+        if [ $var == o2 ] || [ $var == si ] || [ $var == po4 ] || \
+           [ $var == no3 ] || [ $var == dissic ]; then
             echo "Mass weighted global average of $var (yrs ${YR_start}-${YR_end})"
             pid=()
             iproc=1
             while [ $iproc -le $nyrs ]
-	    do
-		let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-		yr_prnt=`printf "%04d" ${YR}`
-		infile=${casename}_ANN_${yr_prnt}.nc
-		outfile=${var}_${casename}_ANN_${yr_prnt}.nc
-		eval $NCWA --no_tmp_fl -O -v $var -w pddpo -a sigma,y,x $WKDIR/$infile $WKDIR/$outfile &
-		pid+=($!)
-		let iproc++
-	    done
-	    for ((m=0;m<=$nyrsm;m++))
-	    do
-		wait ${pid[$m]}
-		if [ $? -ne 0 ]; then
-		    echo "ERROR in calculating mass weighted global average: $NCWA --no_tmp_fl -O -v $var -w dp -a sigma,y,x $WKDIR/$infile $WKDIR/$outfile"
-		    echo "*** EXITING THE SCRIPT ***"
-		    exit 1
-		fi
-	    done
-	    wait
-	fi
-	# Export production
-	if [ $var == epc100 ]; then
-	    echo "Total $var (yrs ${YR_start}-${YR_end})"
+            do
+                let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
+                yr_prnt=`printf "%04d" ${YR}`
+                infile=${casename}_ANN_${yr_prnt}.nc
+                outfile=${var}_${casename}_ANN_${yr_prnt}.nc
+                eval $NCWA --no_tmp_fl -O -v $var -w pddpo -a sigma,y,x $WKDIR/$infile $WKDIR/$outfile &
+                pid+=($!)
+                let iproc++
+            done
+            for ((m=0;m<=$nyrsm;m++))
+            do
+                wait ${pid[$m]}
+                if [ $? -ne 0 ]; then
+                    echo "ERROR in calculating mass weighted global average: $NCWA --no_tmp_fl -O -v $var -w dp -a sigma,y,x $WKDIR/$infile $WKDIR/$outfile"
+                    echo "*** EXITING THE SCRIPT ***"
+                    exit 1
+                fi
+            done
+            wait
+        fi
+        # Export production
+        if [ $var == epc100 ]; then
+            echo "Total $var (yrs ${YR_start}-${YR_end})"
             iproc=1
             while [ $iproc -le $nyrs ]
-	    do
-		let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-		yr_prnt=`printf "%04d" ${YR}`
-		infile=${casename}_ANN_${yr_prnt}.nc
-		outfile_tmp=${var}_${casename}_ANN_${yr_prnt}_tmp.nc
-     		outfile=${var}_${casename}_ANN_${yr_prnt}.nc
-		$NCAP2 -O -s 'epc100_area=epc100*parea' $WKDIR/$infile $WKDIR/$outfile_tmp
-		$NCAP2 -O -s 'epc100_tot=epc100_area.total($x,$y)*12.011*86400.0*365.0*1.0e-15' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
+            do
+                let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
+                yr_prnt=`printf "%04d" ${YR}`
+                infile=${casename}_ANN_${yr_prnt}.nc
+                outfile_tmp=${var}_${casename}_ANN_${yr_prnt}_tmp.nc
+                     outfile=${var}_${casename}_ANN_${yr_prnt}.nc
+                $NCAP2 -O -s 'epc100_area=epc100*parea' $WKDIR/$infile $WKDIR/$outfile_tmp
+                $NCAP2 -O -s 'epc100_tot=epc100_area.total($x,$y)*12.011*86400.0*365.0*1.0e-15' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
                 $NCKS --no_tmp_fl -O -v epc100_tot $WKDIR/$outfile_tmp $WKDIR/$outfile
-		rm -f $WKDIR/$outfile_tmp
-		let iproc++
-	    done
-	fi
-	# Export CaCO3
-	if [ $var == epcalc100 ]; then
-	    echo "Total $var (yrs ${YR_start}-${YR_end})"
+                rm -f $WKDIR/$outfile_tmp
+                let iproc++
+            done
+        fi
+        # Export CaCO3
+        if [ $var == epcalc100 ]; then
+            echo "Total $var (yrs ${YR_start}-${YR_end})"
             iproc=1
             while [ $iproc -le $nyrs ]
-	    do
-		let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-		yr_prnt=`printf "%04d" ${YR}`
-		infile=${casename}_ANN_${yr_prnt}.nc
-		outfile_tmp=${var}_${casename}_ANN_${yr_prnt}_tmp.nc
-     		outfile=${var}_${casename}_ANN_${yr_prnt}.nc
-		$NCAP2 -O -s 'epcalc100_area=epcalc100*parea' $WKDIR/$infile $WKDIR/$outfile_tmp
-		$NCAP2 -O -s 'epcalc100_tot=epcalc100_area.total($x,$y)*12.0*86400.0*365.0*1.0e-15' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
+            do
+                let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
+                yr_prnt=`printf "%04d" ${YR}`
+                infile=${casename}_ANN_${yr_prnt}.nc
+                outfile_tmp=${var}_${casename}_ANN_${yr_prnt}_tmp.nc
+                     outfile=${var}_${casename}_ANN_${yr_prnt}.nc
+                $NCAP2 -O -s 'epcalc100_area=epcalc100*parea' $WKDIR/$infile $WKDIR/$outfile_tmp
+                $NCAP2 -O -s 'epcalc100_tot=epcalc100_area.total($x,$y)*12.0*86400.0*365.0*1.0e-15' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
                 $NCKS --no_tmp_fl -O -v epcalc100_tot $WKDIR/$outfile_tmp $WKDIR/$outfile
-		rm -f $WKDIR/$outfile_tmp
-		let iproc++
-	    done
-	fi
-	# Total downward co2 flux
-	if [ $var == co2fxd ]; then
-	    echo "Total $var (yrs ${YR_start}-${YR_end})"
+                rm -f $WKDIR/$outfile_tmp
+                let iproc++
+            done
+        fi
+        # Total downward co2 flux
+        if [ $var == co2fxd ]; then
+            echo "Total $var (yrs ${YR_start}-${YR_end})"
             iproc=1
             while [ $iproc -le $nyrs ]
-	    do
-		let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-		yr_prnt=`printf "%04d" ${YR}`
-		infile=${casename}_ANN_${yr_prnt}.nc
-		outfile_tmp=${var}_${casename}_ANN_${yr_prnt}_tmp.nc
-     		outfile=${var}_${casename}_ANN_${yr_prnt}.nc
-		$NCAP2 -O -s 'co2fxd_area=co2fxd*parea' $WKDIR/$infile $WKDIR/$outfile_tmp
-		$NCAP2 -O -s 'co2fxd_tot=co2fxd_area.total($x,$y)*86400.0*365.0*1.0e-12' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
+            do
+                let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
+                yr_prnt=`printf "%04d" ${YR}`
+                infile=${casename}_ANN_${yr_prnt}.nc
+                outfile_tmp=${var}_${casename}_ANN_${yr_prnt}_tmp.nc
+                     outfile=${var}_${casename}_ANN_${yr_prnt}.nc
+                $NCAP2 -O -s 'co2fxd_area=co2fxd*parea' $WKDIR/$infile $WKDIR/$outfile_tmp
+                $NCAP2 -O -s 'co2fxd_tot=co2fxd_area.total($x,$y)*86400.0*365.0*1.0e-12' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
                 $NCKS --no_tmp_fl -O -v co2fxd_tot $WKDIR/$outfile_tmp $WKDIR/$outfile
-		rm -f $WKDIR/$outfile_tmp
-		let iproc++
-	    done
-	fi
-	# Total upward co2 flux
-	if [ $var == co2fxu ]; then
-	    echo "Total $var (yrs ${YR_start}-${YR_end})"
+                rm -f $WKDIR/$outfile_tmp
+                let iproc++
+            done
+        fi
+        # Total upward co2 flux
+        if [ $var == co2fxu ]; then
+            echo "Total $var (yrs ${YR_start}-${YR_end})"
             iproc=1
             while [ $iproc -le $nyrs ]
-	    do
-		let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-		yr_prnt=`printf "%04d" ${YR}`
-		infile=${casename}_ANN_${yr_prnt}.nc
-		outfile_tmp=${var}_${casename}_ANN_${yr_prnt}_tmp.nc
-     		outfile=${var}_${casename}_ANN_${yr_prnt}.nc
-		$NCAP2 -O -s 'co2fxu_area=co2fxu*parea' $WKDIR/$infile $WKDIR/$outfile_tmp
-		$NCAP2 -O -s 'co2fxu_tot=co2fxu_area.total($x,$y)*86400.0*365.0*1.0e-12' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
+            do
+                let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
+                yr_prnt=`printf "%04d" ${YR}`
+                infile=${casename}_ANN_${yr_prnt}.nc
+                outfile_tmp=${var}_${casename}_ANN_${yr_prnt}_tmp.nc
+                     outfile=${var}_${casename}_ANN_${yr_prnt}.nc
+                $NCAP2 -O -s 'co2fxu_area=co2fxu*parea' $WKDIR/$infile $WKDIR/$outfile_tmp
+                $NCAP2 -O -s 'co2fxu_tot=co2fxu_area.total($x,$y)*86400.0*365.0*1.0e-12' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
                 $NCKS --no_tmp_fl -O -v co2fxu_tot $WKDIR/$outfile_tmp $WKDIR/$outfile
-		rm -f $WKDIR/$outfile_tmp
-		let iproc++
-	    done
-	fi
-	# Total primary production
-	if [ $var == pp ]; then
-	    echo "Total $var (yrs ${YR_start}-${YR_end})"
+                rm -f $WKDIR/$outfile_tmp
+                let iproc++
+            done
+        fi
+        # Total primary production
+        if [ $var == pp ]; then
+            echo "Total $var (yrs ${YR_start}-${YR_end})"
             pid=()
             iproc=1
             while [ $iproc -le $nyrs ]
-	    do
-		let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-		yr_prnt=`printf "%04d" ${YR}`
-		infile=${casename}_ANN_${yr_prnt}.nc
-		outfile_tmp=${var}_${casename}_ANN_${yr_prnt}_tmp.nc
-		eval $NCAP2 -O -s 'pp_vol=pp*parea*pddpo' $WKDIR/$infile $WKDIR/$outfile_tmp &
-		pid+=($!)
-		let iproc++
-	    done
-	    for ((m=0;m<=$nyrsm;m++))
-	    do
-		wait ${pid[$m]}
-		if [ $? -ne 0 ]; then
-		    echo "ERROR in calculating pp_vol: $NCAP2 -O -s 'pp_vol=pp*parea*pddpo' $WKDIR/$infile $WKDIR/$outfile_tmp"
-		    echo "*** EXITING THE SCRIPT ***"
-		    exit 1
-		fi
-	    done
-	    wait
+            do
+                let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
+                yr_prnt=`printf "%04d" ${YR}`
+                infile=${casename}_ANN_${yr_prnt}.nc
+                outfile_tmp=${var}_${casename}_ANN_${yr_prnt}_tmp.nc
+                eval $NCAP2 -O -s 'pp_vol=pp*parea*pddpo' $WKDIR/$infile $WKDIR/$outfile_tmp &
+                pid+=($!)
+                let iproc++
+            done
+            for ((m=0;m<=$nyrsm;m++))
+            do
+                wait ${pid[$m]}
+                if [ $? -ne 0 ]; then
+                    echo "ERROR in calculating pp_vol: $NCAP2 -O -s 'pp_vol=pp*parea*pddpo' $WKDIR/$infile $WKDIR/$outfile_tmp"
+                    echo "*** EXITING THE SCRIPT ***"
+                    exit 1
+                fi
+            done
+            wait
             pid=()
             iproc=1
             while [ $iproc -le $nyrs ]
-	    do
-		let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-		yr_prnt=`printf "%04d" ${YR}`
-		outfile_tmp=${var}_${casename}_ANN_${yr_prnt}_tmp.nc
-		$NCAP2 -O -s 'pp_tot=pp_vol.total($sigma,$y,$x)*12.0*86400.0*365.0*1.0e-15' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp &
-		pid+=($!)
-		let iproc++
-	    done
-	    for ((m=0;m<=$nyrsm;m++))
-	    do
-		wait ${pid[$m]}
-		if [ $? -ne 0 ]; then
-		    echo "ERROR in calculating pp_tot: $NCAP2 -O -s 'pp_tot=pp_vol.total($x,$y,$sigma)*12.0*86400.0*365.0*1.0e-15' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp"
-		    echo "*** EXITING THE SCRIPT ***"
-		    exit 1
-		fi
-	    done
-	    wait
-	    pid=()
+            do
+                let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
+                yr_prnt=`printf "%04d" ${YR}`
+                outfile_tmp=${var}_${casename}_ANN_${yr_prnt}_tmp.nc
+                $NCAP2 -O -s 'pp_tot=pp_vol.total($sigma,$y,$x)*12.0*86400.0*365.0*1.0e-15' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp &
+                pid+=($!)
+                let iproc++
+            done
+            for ((m=0;m<=$nyrsm;m++))
+            do
+                wait ${pid[$m]}
+                if [ $? -ne 0 ]; then
+                    echo "ERROR in calculating pp_tot: $NCAP2 -O -s 'pp_tot=pp_vol.total($x,$y,$sigma)*12.0*86400.0*365.0*1.0e-15' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp"
+                    echo "*** EXITING THE SCRIPT ***"
+                    exit 1
+                fi
+            done
+            wait
+            pid=()
             iproc=1
             while [ $iproc -le $nyrs ]
-	    do
-		let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-		yr_prnt=`printf "%04d" ${YR}`
-		outfile_tmp=${var}_${casename}_ANN_${yr_prnt}_tmp.nc
-		outfile=${var}_${casename}_ANN_${yr_prnt}.nc
-		eval $NCKS --no_tmp_fl -O -v pp_tot $WKDIR/$outfile_tmp $WKDIR/$outfile &
-		pid+=($!)
-		let iproc++
-	    done
-	    for ((m=0;m<=$nyrsm;m++))
-	    do
-		wait ${pid[$m]}
-		if [ $? -ne 0 ]; then
-		    echo "ERROR in calculating pp_tot: $NCAP2 -O -s 'pp_tot=pp_vol.total($x,$y,$sigma)*12.0*86400.0*365.0*1.0e-15' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp"
-		    echo "*** EXITING THE SCRIPT ***"
-		    exit 1
-		fi
-	    done
-	    wait
-	    # Clean tmp files
-	    iproc=1
+            do
+                let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
+                yr_prnt=`printf "%04d" ${YR}`
+                outfile_tmp=${var}_${casename}_ANN_${yr_prnt}_tmp.nc
+                outfile=${var}_${casename}_ANN_${yr_prnt}.nc
+                eval $NCKS --no_tmp_fl -O -v pp_tot $WKDIR/$outfile_tmp $WKDIR/$outfile &
+                pid+=($!)
+                let iproc++
+            done
+            for ((m=0;m<=$nyrsm;m++))
+            do
+                wait ${pid[$m]}
+                if [ $? -ne 0 ]; then
+                    echo "ERROR in calculating pp_tot: $NCAP2 -O -s 'pp_tot=pp_vol.total($x,$y,$sigma)*12.0*86400.0*365.0*1.0e-15' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp"
+                    echo "*** EXITING THE SCRIPT ***"
+                    exit 1
+                fi
+            done
+            wait
+            # Clean tmp files
+            iproc=1
             while [ $iproc -le $nyrs ]
-	    do
-		let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-		yr_prnt=`printf "%04d" ${YR}`
-		outfile_tmp=${var}_${casename}_ANN_${yr_prnt}_tmp.nc
-		rm -f $WKDIR/$outfile_tmp
-		let iproc++
-	    done
-	fi
+            do
+                let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
+                yr_prnt=`printf "%04d" ${YR}`
+                outfile_tmp=${var}_${casename}_ANN_${yr_prnt}_tmp.nc
+                rm -f $WKDIR/$outfile_tmp
+                let iproc++
+            done
+        fi
     done
     # clean up
     iproc=1
     while [ $iproc -le $nyrs ]
     do
-	let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-	yr_prnt=`printf "%04d" ${YR}`
-	filename=${casename}_ANN_${yr_prnt}.nc
-	rm -f $WKDIR/$filename
-	let iproc++
+        let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
+        yr_prnt=`printf "%04d" ${YR}`
+        filename=${casename}_ANN_${yr_prnt}.nc
+        rm -f $WKDIR/$filename
+        let iproc++
     done
     let ichunk++
 done
@@ -349,17 +349,17 @@ for var in `echo $var_list | sed 's/,/ /g'`
 do
     first_file=${var}_${casename}_ANN_${first_yr_prnt}.nc
     if [ -f $WKDIR/$first_file ]; then
-	echo "Merging all $var time series files..."
-	$NCRCAT --no_tmp_fl -O $WKDIR/${var}_${casename}_ANN_????.nc $WKDIR/${var}_${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}.nc
-	if [ $? -eq 0 ]; then
+        echo "Merging all $var time series files..."
+        $NCRCAT --no_tmp_fl -O $WKDIR/${var}_${casename}_ANN_????.nc $WKDIR/${var}_${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}.nc
+        if [ $? -eq 0 ]; then
             if [ $first_var -eq 1 ]; then
-		first_var=0
-  		mv $WKDIR/${var}_${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}.nc $tsdir/$ann_ts_file
-	    else
-		$NCKS -A -o $tsdir/$ann_ts_file $WKDIR/${var}_${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}.nc
-	    fi
-	fi
-	rm -f $WKDIR/${var}_${casename}_ANN_*.nc
+                first_var=0
+                  mv $WKDIR/${var}_${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}.nc $tsdir/$ann_ts_file
+            else
+                $NCKS -A -o $tsdir/$ann_ts_file $WKDIR/${var}_${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}.nc
+            fi
+        fi
+        rm -f $WKDIR/${var}_${casename}_ANN_*.nc
     fi
 done
 

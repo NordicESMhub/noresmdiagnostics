@@ -70,15 +70,15 @@ do
     # Append grid file if necessary
     $NCKS --quiet -d depth,0 -d x,0 -d y,0 -v plon $climodir/$infile >/dev/null 2>&1
     if [ $? -ne 0 ]; then
-	echo "Appending coordinates to $climodir/$infile"
-	$NCKS -A -v plon,plat,parea -o $climodir/$infile $grid_file
+        echo "Appending coordinates to $climodir/$infile"
+        $NCKS -A -v plon,plat,parea -o $climodir/$infile $grid_file
     fi
     # Remove variables that should not be remapped
     $NCKS --quiet -d lat,0 -d region,0 -v mmflxd $climodir/$infile >/dev/null 2>&1
     if [ $? -eq 0 ]; then
-	$NCKS -O -x -v $vars_excl --no_tmp_fl  $climodir/$infile $climodir/climo_${month}.nc
+        $NCKS -O -x -v $vars_excl --no_tmp_fl  $climodir/$infile $climodir/climo_${month}.nc
     else
-	cp $climodir/$infile $climodir/climo_${month}.nc
+        cp $climodir/$infile $climodir/climo_${month}.nc
     fi
 done
     
@@ -96,9 +96,9 @@ for ((m=0;m<=${max_proc};m++))
 do
     wait ${pid[$m]}
     if [ $? -ne 0 ]; then
-	echo "ERROR in remapping: $CDO -s remapbil,global_1 $climodir/climo_${month}.nc $climodir/$outfile"
-	echo "*** EXITING THE SCRIPT ***"
-	exit 1
+        echo "ERROR in remapping: $CDO -s remapbil,global_1 $climodir/climo_${month}.nc $climodir/$outfile"
+        echo "*** EXITING THE SCRIPT ***"
+        exit 1
     fi
 done
 wait
@@ -107,7 +107,7 @@ wait
 for month in $mon_seas_list
 do
     if [ -f $climodir/climo_${month}.nc ]; then
-	rm -f $climodir/climo_${month}.nc
+        rm -f $climodir/climo_${month}.nc
     fi
 done
 

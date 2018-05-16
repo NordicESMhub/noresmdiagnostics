@@ -31,8 +31,8 @@ do
     $NCKS -O -v $var -d x,0 -d y,0 $climodir/$ann_file $WKDIR/tmp.nc
     $NCKS --quiet -d x,0 -d y,0 -v $var $WKDIR/tmp.nc >/dev/null 2>&1
     if [ $? -eq 0 ]; then
-	echo "Adding coordinate attributes to $var"
-	$NCATTED -a coordinates,$var,c,c,"plon plat" $climodir/$ann_file
+        echo "Adding coordinate attributes to $var"
+        $NCATTED -a coordinates,$var,c,c,"plon plat" $climodir/$ann_file
     fi
     rm -f $WKDIR/tmp.nc
 done

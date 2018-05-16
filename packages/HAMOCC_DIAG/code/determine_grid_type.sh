@@ -47,60 +47,60 @@ $CDO selvar,co2fxd $fullpath_filename $WKDIR/co2fxd_tmp.nc >/dev/null 2>&1
 if [ $? -eq 0 ]; then
     gp=`$CDO -s griddes $WKDIR/co2fxd_tmp.nc | grep gridsize | sed -e 's/^[^=]*=//g'`
     if [ $gp -eq $gp_tn0083 ]; then
-	grid_type=tnx0.083
-	grid_ver=1
+        grid_type=tnx0.083
+        grid_ver=1
     elif [ $gp -eq $gp_tn025 ]; then
-	grid_type=tnx0.25
+        grid_type=tnx0.25
         nmiss=`$CDO -s info $WKDIR/co2fxd_tmp.nc | awk '{print $7}' | tail -n 1`
-	if [ $nmiss -eq $nmiss_tn025v1 ]; then
+        if [ $nmiss -eq $nmiss_tn025v1 ]; then
             grid_ver=1
-	elif [ $nmiss -eq $nmiss_tn025v3 ]; then
-	    grid_ver=3
-	elif [ $nmiss -eq $nmiss_tn025v4 ]; then
+        elif [ $nmiss -eq $nmiss_tn025v3 ]; then
+            grid_ver=3
+        elif [ $nmiss -eq $nmiss_tn025v4 ]; then
             grid_ver=4
-	else
+        else
             echo "ERROR: could not determine version of tn0.25 grid:"
             echo "Number of missing values found: $nmiss"
             echo "Should be ${nmiss_tn025v1},${nmiss_tn025v3},${nmiss_tn025v4} in v1,3,4 respectively."
             echo "*** EXITING THE SCRIPT ***"
             exit 1
-	fi
+        fi
    elif [ $gp -eq $gp_tn1 ]; then
-	grid_type=tnx1
-	nmiss=`/usr/bin/cdo -s info $WKDIR/co2fxd_tmp.nc | awk '{print $7}' | tail -n 1`
-	if [ $nmiss -eq $nmiss_tn1v1 ]; then
+        grid_type=tnx1
+        nmiss=`/usr/bin/cdo -s info $WKDIR/co2fxd_tmp.nc | awk '{print $7}' | tail -n 1`
+        if [ $nmiss -eq $nmiss_tn1v1 ]; then
             grid_ver=1
-	elif [ $nmiss -eq $nmiss_tn1v2 ]; then
+        elif [ $nmiss -eq $nmiss_tn1v2 ]; then
             grid_ver=2
-	elif [ $nmiss -eq $nmiss_tn1v3 ]; then
+        elif [ $nmiss -eq $nmiss_tn1v3 ]; then
             grid_ver=3
-	elif [ $nmiss -eq $nmiss_tn1v4 ]; then
+        elif [ $nmiss -eq $nmiss_tn1v4 ]; then
             grid_ver=4
-	elif [ $nmiss -eq $nmiss_tn1v1_lgm ]; then
+        elif [ $nmiss -eq $nmiss_tn1v1_lgm ]; then
             grid_ver=1_lgm
-	elif [ $nmiss -eq $nmiss_tn1v1_mis3 ]; then
+        elif [ $nmiss -eq $nmiss_tn1v1_mis3 ]; then
             grid_ver=1_mis3
-	elif [ $nmiss -eq $nmiss_tn1v1_plio ]; then
+        elif [ $nmiss -eq $nmiss_tn1v1_plio ]; then
             grid_ver=1_PlioMIP2
-	else
+        else
             echo "ERROR: could not determine version of tn1 grid:"
             echo "Number of missing values found: $nmiss"
             echo "Should be ${nmiss_tn1v1},${nmiss_tn1v2},${nmiss_tn1v3},${nmiss_tn1v4} in v1,2,3,4 respectively."
             echo "*** EXITING THE SCRIPT ***"
             exit 1
-	fi
+        fi
    elif [ $gp -eq $gp_tn15 ]; then
-	grid_type=tnx1.5
-	grid_ver=1
+        grid_type=tnx1.5
+        grid_ver=1
    elif [ $gp -eq $gp_tn2 ]; then
-	grid_type=tnx2
-	grid_ver=1
+        grid_type=tnx2
+        grid_ver=1
    elif [ $gp -eq $gp_g1 ]; then
-	grid_type=g1x
-	grid_ver=6
+        grid_type=g1x
+        grid_ver=6
    elif [ $gp -eq $gp_g3 ]; then
-	grid_type=g3x
-	grid_ver=7
+        grid_type=g3x
+        grid_ver=7
    else
        echo "ERROR: the horizontal grid does not match any of the predefined grids (tn0.083,tn0.25,tn1,tn2,g1,g3)"
        echo "*** EXITING THE SCRIPT ***"
@@ -109,7 +109,7 @@ if [ $? -eq 0 ]; then
     echo "Grid type and version: ${grid_type}v${grid_ver}"
     echo "${grid_type}v${grid_ver}" > $WKDIR/attributes/grid_${casename}
     if [ -f $WKDIR/co2fxd_tmp.nc ]; then
-	rm -f $WKDIR/co2fxd_tmp.nc
+        rm -f $WKDIR/co2fxd_tmp.nc
     fi
 else
     echo "ERROR in reading co2fxd from the history file: $CDO selvar,sst $fullpath_filename $WKDIR/sst_tmp.nc >/dev/null 2>&1"

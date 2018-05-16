@@ -37,13 +37,13 @@ else
      if ($MONTH == JJA) then
        set months = (06 07 08)
      else 
-	if ($MONTH == SOM) then
-	    set months = (09 10 11)
-	else 
-	    if ($MONTH != DJF) then 
-		echo ERROR: Check usage: check_history_present.csh 
-		echo MONTH is not set properly
-	    endif        
+        if ($MONTH == SOM) then
+            set months = (09 10 11)
+        else 
+            if ($MONTH != DJF) then 
+                echo ERROR: Check usage: check_history_present.csh 
+                echo MONTH is not set properly
+            endif        
         endif
      endif
   endif
@@ -120,7 +120,7 @@ else
       foreach month (01 02)
         set filename = ${rootname}`printf "%04d" ${yri}`-${month}     
         echo  'CHECKING FOR '${path_local}/${filename}.nc
-	if (! -e ${path_local}/${filename}.nc || -z ${path_local}/${filename}.nc) then      #file does not exist
+        if (! -e ${path_local}/${filename}.nc || -z ${path_local}/${filename}.nc) then      #file does not exist
           echo ERROR: ${path_local}/${filename}.nc NOT FOUND
           echo ERROR: NEEDED MONTHLY FILES NOT IN $path_local
           exit
@@ -146,7 +146,7 @@ else
       foreach month (01 02)
         set filename = ${rootname}`printf "%04d" ${yri}`-${month}     
         echo  'CHECKING FOR '${path_local}/${filename}.nc
-	if (! -e ${path_local}/${filename}.nc || -z ${path_local}/${filename}.nc) then      #file does not exist
+        if (! -e ${path_local}/${filename}.nc || -z ${path_local}/${filename}.nc) then      #file does not exist
           echo ERROR: ${path_local}/${filename}.nc NOT FOUND
           echo ERROR: NEEDED MONTHLY FILES NOT IN $path_local
           exit

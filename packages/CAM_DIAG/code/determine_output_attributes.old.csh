@@ -60,16 +60,16 @@ endif
 if (! -e ${fullpath_filename} || -z ${fullpath_filename} ) then
     hsi -q ls ${path_HPSS}/${filename}     # Check whether history files are stored by month or year
     if(${status} == 0) then
-	echo 'GETTING '${path_HPSS}/${filename}''     
-	hsi "get '${path_history}/${filename}': '${path_HPSS}/${filename}'"
+        echo 'GETTING '${path_HPSS}/${filename}''     
+        hsi "get '${path_history}/${filename}': '${path_HPSS}/${filename}'"
     else 
         hsi -q ls ${path_HPSS}/${filename_tar}    
-	if(${status} == 0) then
-	    echo 'GETTING '${path_HPSS}/${filename_tar}
-	    hsi "get '${path_history}/${filename_tar}': '${path_HPSS}/${filename_tar}'"
-	    tar -xvf ${path_history}/${filename_tar} -C ${path_history} 
-	    rm -f ${path_history}/${filename_tar}
-	endif     
+        if(${status} == 0) then
+            echo 'GETTING '${path_HPSS}/${filename_tar}
+            hsi "get '${path_history}/${filename_tar}': '${path_HPSS}/${filename_tar}'"
+            tar -xvf ${path_history}/${filename_tar} -C ${path_history} 
+            rm -f ${path_history}/${filename_tar}
+        endif     
     endif
 
 endif
@@ -86,19 +86,19 @@ if (! -e ${fullpath_filename} || -z ${fullpath_filename} ) then
     set fullpath_filename  = ${path_history}/${filename} 
    
     if (! -e ${fullpath_filename} || -z ${fullpath_filename} ) then
-	hsi -q ls ${path_HPSS}/${filename}     # Check whether history files are stored by month or year
-	if(${status} == 0) then
-	    echo 'GETTING '${path_HPSS}/${filename}''     
-	    hsi "get '${path_history}/${filename}': '${path_HPSS}/${filename}'"
-	else 
-	    hsi -q ls ${path_HPSS}/${filename_tar}    
-	    if(${status} == 0) then	    
-		echo 'GETTING '${path_HPSS}/${filename_tar}
-		hsi "get '${path_history}/${filename_tar}': '${path_HPSS}/${filename_tar}'"
-		tar -xvf ${path_history}/${filename_tar} -C ${path_history} 
-		rm -f ${path_history}/${filename_tar}
-	    endif
-	endif
+        hsi -q ls ${path_HPSS}/${filename}     # Check whether history files are stored by month or year
+        if(${status} == 0) then
+            echo 'GETTING '${path_HPSS}/${filename}''     
+            hsi "get '${path_history}/${filename}': '${path_HPSS}/${filename}'"
+        else 
+            hsi -q ls ${path_HPSS}/${filename_tar}    
+            if(${status} == 0) then            
+                echo 'GETTING '${path_HPSS}/${filename_tar}
+                hsi "get '${path_history}/${filename_tar}': '${path_HPSS}/${filename_tar}'"
+                tar -xvf ${path_history}/${filename_tar} -C ${path_history} 
+                rm -f ${path_history}/${filename_tar}
+            endif
+        endif
     endif
 
 endif
@@ -199,21 +199,21 @@ set required_vars = (AODVIS AODDUST AODDUST1 AODDUST2 AODDUST3 \
 set first_find = 1
 set var_list = " "
 foreach var ($required_vars)
-	if ($cam_grid != SE) then 
-	    ncks --quiet  -d lat,0 -d lon,0 -d lev,0 -d ilev,0 -v $var $fullpath_filename  >&! /dev/null 
-	    set var_present = $status
-	else  
-	    ncks --quiet   -d ncol,0 -d lev,0 -d ilev,0 -v $var $fullpath_filename >&! /dev/null 
-	    set var_present = $status
-	endif
-	if ($var_present == 0) then
-	    if ($first_find) then
-		set var_list = $var
-		set first_find=0
-	    else
-		set var_list = ${var_list},$var
-	    endif
-	endif
+        if ($cam_grid != SE) then 
+            ncks --quiet  -d lat,0 -d lon,0 -d lev,0 -d ilev,0 -v $var $fullpath_filename  >&! /dev/null 
+            set var_present = $status
+        else  
+            ncks --quiet   -d ncol,0 -d lev,0 -d ilev,0 -v $var $fullpath_filename >&! /dev/null 
+            set var_present = $status
+        endif
+        if ($var_present == 0) then
+            if ($first_find) then
+                set var_list = $var
+                set first_find=0
+            else
+                set var_list = ${var_list},$var
+            endif
+        endif
 end
 
 echo  ${var_list}  > ${path_diag}/attributes/${casetype}_var_list

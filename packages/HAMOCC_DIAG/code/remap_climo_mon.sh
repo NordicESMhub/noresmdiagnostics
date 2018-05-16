@@ -47,8 +47,8 @@ do
     # Append grid file if necessary
     $NCKS --quiet -d depth,0 -d x,0 -d y,0 -v plon $climodir/$infile >/dev/null 2>&1
     if [ $? -ne 0 ]; then
-	echo "Appending coordinates to $climodir/$infile"
-	$NCKS -A -v plon,plat,parea -o $climodir/$infile $grid_file
+        echo "Appending coordinates to $climodir/$infile"
+        $NCKS -A -v plon,plat,parea -o $climodir/$infile $grid_file
     fi
 done
 

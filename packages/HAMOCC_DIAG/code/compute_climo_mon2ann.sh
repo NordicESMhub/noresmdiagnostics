@@ -45,25 +45,25 @@ first_find=1
 for var in $var_list_tot
 do
     if [ $mode == remap ]; then
-	$NCKS --quiet -d lon,0 -d lat,0 -v $var $mon_file >/dev/null 2>&1
+        $NCKS --quiet -d lon,0 -d lat,0 -v $var $mon_file >/dev/null 2>&1
     else
-	$NCKS --quiet -d x,0 -d y,0 -v $var $mon_file >/dev/null 2>&1
+        $NCKS --quiet -d x,0 -d y,0 -v $var $mon_file >/dev/null 2>&1
     fi
     if [ $? -eq 0 ]; then
-	echo "$var exists in monthly climatology"
-	# Updating $var_list
-	if [ $first_find -eq 1 ]; then
-	    var_list=$var
-	    first_find=0
-	else
-	    var_list=${var_list},${var}
-	fi
-	if grep -q ,$var $WKDIR/attributes/required_vars
-	then
+        echo "$var exists in monthly climatology"
+        # Updating $var_list
+        if [ $first_find -eq 1 ]; then
+            var_list=$var
+            first_find=0
+        else
+            var_list=${var_list},${var}
+        fi
+        if grep -q ,$var $WKDIR/attributes/required_vars
+        then
             sed -i "s/,${var}//g" $WKDIR/attributes/required_vars
-	else
+        else
             sed -i "s/${var},//g" $WKDIR/attributes/required_vars
-	fi
+        fi
     fi
 done
 
@@ -71,9 +71,9 @@ mon_avg_files=()
 for month in 01 02 03 04 05 06 07 08 09 10 11 12
 do
     if [ $mode == remap ]; then
-	mon_avg_file=${casename}_${month}_${fyr_prnt}-${lyr_prnt}_climo_remap.nc
+        mon_avg_file=${casename}_${month}_${fyr_prnt}-${lyr_prnt}_climo_remap.nc
     else
-	mon_avg_file=${casename}_${month}_${fyr_prnt}-${lyr_prnt}_climo.nc
+        mon_avg_file=${casename}_${month}_${fyr_prnt}-${lyr_prnt}_climo.nc
     fi
     mon_avg_files+=($mon_avg_file)
 done

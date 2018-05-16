@@ -35,17 +35,17 @@ do
     seas_avg_file=$climodir/${casename}_${season}_${file_suff}.nc
 
     if [ $season == JFM ]; then
-	infiles=(${casename}_01_${file_suff}.nc ${casename}_02_${file_suff}.nc ${casename}_03_${file_suff}.nc)
-	wgts=31,28,31
+        infiles=(${casename}_01_${file_suff}.nc ${casename}_02_${file_suff}.nc ${casename}_03_${file_suff}.nc)
+        wgts=31,28,31
     elif [ $season == AMJ ]; then
-	infiles=(${casename}_04_${file_suff}.nc ${casename}_05_${file_suff}.nc ${casename}_06_${file_suff}.nc)
-	wgts=30,31,30
+        infiles=(${casename}_04_${file_suff}.nc ${casename}_05_${file_suff}.nc ${casename}_06_${file_suff}.nc)
+        wgts=30,31,30
     elif [ $season == JAS ]; then
-	infiles=(${casename}_07_${file_suff}.nc ${casename}_08_${file_suff}.nc ${casename}_09_${file_suff}.nc)
-	wgts=31,31,30
+        infiles=(${casename}_07_${file_suff}.nc ${casename}_08_${file_suff}.nc ${casename}_09_${file_suff}.nc)
+        wgts=31,31,30
     elif [ $season == OND ]; then
-	infiles=(${casename}_10_${file_suff}.nc ${casename}_11_${file_suff}.nc ${casename}_12_${file_suff}.nc)
-	wgts=31,30,31
+        infiles=(${casename}_10_${file_suff}.nc ${casename}_11_${file_suff}.nc ${casename}_12_${file_suff}.nc)
+        wgts=31,30,31
     fi
     $NCRA -O -w $wgts --no_tmp_fl --hdr_pad=10000 -v $season_vars -p $climodir ${infiles[*]} $seas_avg_file
     if [ $? -ne 0 ]; then

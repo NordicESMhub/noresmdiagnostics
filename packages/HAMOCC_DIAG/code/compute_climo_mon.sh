@@ -46,15 +46,15 @@ do
     YR=$first_yr
     while [ $YR -le $last_yr ]
     do
-	yr_prnt=`printf "%04d" ${YR}`
+        yr_prnt=`printf "%04d" ${YR}`
         filename=${casename}.micom.hbgcm.${yr_prnt}-${month}.nc
         if [ -f $pathdat/$filename ]; then
-	    filenames+=($filename)
+            filenames+=($filename)
         else
-	    echo "ERROR: $pathdat/$filename does not exist."
-	    echo "*** EXITING THE SCRIPT ***"
-	    exit 1
-	fi
+            echo "ERROR: $pathdat/$filename does not exist."
+            echo "*** EXITING THE SCRIPT ***"
+            exit 1
+        fi
         let YR++
     done
     mon_avg_file=${casename}_${month}_${first_yr_prnt}-${last_yr_prnt}_climo.nc

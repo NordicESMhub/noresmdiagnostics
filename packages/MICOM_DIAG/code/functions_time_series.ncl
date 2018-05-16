@@ -89,9 +89,9 @@ begin
       do it = 0,nt-2
          ds(it) = xvar(it+1)-xvar(it)
          if (abs(ds(it)).gt.0.001) then
-	   print("WARNING: replaced salinity outlier "+flt2string(xvar(it+1))+" (it="+tostring(it)+") with previous value ("+flt2string(xvar(it))+").")
-	   xvar(it+1) = xvar(it)
-	 end if
+           print("WARNING: replaced salinity outlier "+flt2string(xvar(it+1))+" (it="+tostring(it)+") with previous value ("+flt2string(xvar(it))+").")
+           xvar(it+1) = xvar(it)
+         end if
       end do
    else
       print("get_saln: no saln variable present")

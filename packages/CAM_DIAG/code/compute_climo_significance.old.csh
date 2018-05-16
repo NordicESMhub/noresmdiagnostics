@@ -70,8 +70,8 @@ set son_weights = (0.32967033 0.34065934 0.32967033)
 #
 if ($weight_months == 0) then
      if ($file_type == "monthly_history") then
-	set filename = ${rootname}`printf "%04d" ${first_yr}`-01.nc
-	ncks -C -O -v $non_time_var_list ${path_history}/${filename} ${path_climo}/unweighted.nc
+        set filename = ${rootname}`printf "%04d" ${first_yr}`-01.nc
+        ncks -C -O -v $non_time_var_list ${path_history}/${filename} ${path_climo}/unweighted.nc
      else
         set split_line = `echo $time_series_files[1]:q | sed 's/,/ /g'`
         set ts_file_temp = $split_line[1]
@@ -111,10 +111,10 @@ while ( $yr_cnt <= $yr_end )               # loop over years
       /bin/rm $year_slice_file
     endif
     $DIAG_CODE/find_time_series_year.pl ${path_climo}/${casetype}_file_list.txt \
-			  		$yr_cnt \
-					$path_climo \
-					"null" \
-					$year_slice_file
+                                          $yr_cnt \
+                                        $path_climo \
+                                        "null" \
+                                        $year_slice_file
     set files = `cat $year_slice_file`
   endif
   if ($weight_months == 0) then
@@ -175,9 +175,9 @@ while ( $yr_cnt <= $yr_end )               # loop over years
                    set ts_file = ${ts_file_temp}${year1}-${month1}_cat_${year2}-${month2}.nc
                    ncflint  -O -C -x -v $non_time_var_list -w $ann_weights[$m],0.0 -F -d time,$i,$i,1 \
                    $ts_file $ts_file {$path_climo}/wgt_month.${month}.nc
- 		 else
+                  else
                    set ts_file = ${ts_file_temp}${var}.${year1}-${month1}_cat_${year2}-${month2}.nc
-		   ncflint  -O -C -x -v $non_time_var_list -w $ann_weights[$m],0.0 -F -d time,$i,$i,1 \
+                   ncflint  -O -C -x -v $non_time_var_list -w $ann_weights[$m],0.0 -F -d time,$i,$i,1 \
                    $ts_file $ts_file {$path_climo}/tmp_wgt_month.${month}.${var}.nc
                  endif
                end
@@ -724,7 +724,7 @@ while ( $yr_cnt <= $yr_end )
                  if ($var == null) then
                    set ts_file = ${ts_file_temp}${year1}-${month1}_cat_${year2}-${month2}.nc
                    ncflint -O -c -v $var_list -w $jja_weights[$m],0.0  -F -d time,$i,$i,1 \
-	               $ts_file $ts_file {$path_climo}/wgt_month.$month.nc
+                       $ts_file $ts_file {$path_climo}/wgt_month.$month.nc
                  else
                    set ts_file = ${ts_file_temp}${var}.${year1}-${month1}_cat_${year2}-${month2}.nc
                    ncflint -O -w $jja_weights[$m],0.0  -F -d time,$i,$i,1 \

@@ -47,9 +47,9 @@ if [ $pp_avail -eq 1 ]; then
     pid=()
     for mon in 01 02 03 04 05 06 07 08 09 10 11 12
     do
-	infile=$climodir/${casename}_${mon}_${first_yr_prnt}-${last_yr_prnt}_climo.nc
-	$NCAP2 -O -s 'pp_z=pp*pddpo' $infile $infile &
-	pid+=($!)
+        infile=$climodir/${casename}_${mon}_${first_yr_prnt}-${last_yr_prnt}_climo.nc
+        $NCAP2 -O -s 'pp_z=pp*pddpo' $infile $infile &
+        pid+=($!)
     done
     for ((m=0;m<=11;m++))
     do
@@ -64,9 +64,9 @@ if [ $pp_avail -eq 1 ]; then
     pid=()
     for mon in 01 02 03 04 05 06 07 08 09 10 11 12
     do
-	infile=$climodir/${casename}_${mon}_${first_yr_prnt}-${last_yr_prnt}_climo.nc
-	$NCAP2 -O -s 'pp_tot=pp_z.total($sigma)*86400.0*365.0' $infile $infile &
-	pid+=($!)
+        infile=$climodir/${casename}_${mon}_${first_yr_prnt}-${last_yr_prnt}_climo.nc
+        $NCAP2 -O -s 'pp_tot=pp_z.total($sigma)*86400.0*365.0' $infile $infile &
+        pid+=($!)
     done
     for ((m=0;m<=11;m++))
     do
@@ -81,17 +81,17 @@ if [ $pp_avail -eq 1 ]; then
     tmpfile=$climodir/tmp123.nc
     for mon in 01 02 03 04 05 06 07 08 09 10 11 12
     do
-	infile=$climodir/${casename}_${mon}_${first_yr_prnt}-${last_yr_prnt}_climo.nc
-	$NCATTED -O -a units,pp_tot,m,c,"mol C m-2 yr-1" $infile
-	$NCKS -O --no_tmp_fl -C -x -v sigma,pp,pddpo,pp_z $infile $tmpfile
-	mv $tmpfile $infile
+        infile=$climodir/${casename}_${mon}_${first_yr_prnt}-${last_yr_prnt}_climo.nc
+        $NCATTED -O -a units,pp_tot,m,c,"mol C m-2 yr-1" $infile
+        $NCKS -O --no_tmp_fl -C -x -v sigma,pp,pddpo,pp_z $infile $tmpfile
+        mv $tmpfile $infile
     done
     sed -i "s/pp/pp_tot/g" $WKDIR/attributes/vars_climo_mon_$casename
     if grep -q ,pddpo $WKDIR/attributes/vars_climo_mon_$casename
     then
         sed -i "s/,pddpo//g" $WKDIR/attributes/vars_climo_mon_$casename
     else
-	sed -i "s/pddpo,//g" $WKDIR/attributes/vars_climo_mon_$casename
+        sed -i "s/pddpo,//g" $WKDIR/attributes/vars_climo_mon_$casename
     fi
 else
     echo "WARNING: Could not find pp and/or pddpo in $infile"

@@ -110,9 +110,9 @@ if ( $significance == 0 ) then
       set fnov = ${rootname}`printf "%04d" ${yr_cnt}`-11.nc
       if ( $djf == SCD ) then
          @ yr_prev = $yr_cnt - 1
- 	 set fdec = ${rootname}`printf "%04d" ${yr_prev}`-12.nc
+          set fdec = ${rootname}`printf "%04d" ${yr_prev}`-12.nc
       else
-      	 set fdec = ${rootname}`printf "%04d" ${yr_cnt}`-12.nc
+               set fdec = ${rootname}`printf "%04d" ${yr_cnt}`-12.nc
       endif
       echo " FOR YEAR: $yr_cnt"
       if ( $strip_off_vars == 0 ) then
@@ -120,13 +120,13 @@ if ( $significance == 0 ) then
          /usr/local/bin/ncra -O -p ${path_history} -w 31,30,31    -v $var_list $fmar $fapr $fmay ${path_climo}/tmp_mam_${yr_cnt}.nc
          /usr/local/bin/ncra -O -p ${path_history} -w 30,31,31    -v $var_list $fjun $fjul $faug ${path_climo}/tmp_jja_${yr_cnt}.nc
          /usr/local/bin/ncra -O -p ${path_history} -w 30,31,30    -v $var_list $fsep $foct $fnov ${path_climo}/tmp_son_${yr_cnt}.nc
-	 /usr/local/bin/ncra -O -p ${path_climo}   -w 90,92,92,91 -v $var_list tmp_djf_${yr_cnt}.nc tmp_mam_${yr_cnt}.nc tmp_jja_${yr_cnt}.nc tmp_son_${yr_cnt}.nc ${path_climo}/tmp_ann_${yr_cnt}.nc
+         /usr/local/bin/ncra -O -p ${path_climo}   -w 90,92,92,91 -v $var_list tmp_djf_${yr_cnt}.nc tmp_mam_${yr_cnt}.nc tmp_jja_${yr_cnt}.nc tmp_son_${yr_cnt}.nc ${path_climo}/tmp_ann_${yr_cnt}.nc
       else
          /usr/local/bin/ncra -O -p ${path_history} -w 31,31,28    $fdec $fjan $ffeb ${path_climo}/tmp_djf_${yr_cnt}.nc
          /usr/local/bin/ncra -O -p ${path_history} -w 31,30,31    $fmar $fapr $fmay ${path_climo}/tmp_mam_${yr_cnt}.nc
          /usr/local/bin/ncra -O -p ${path_history} -w 30,31,31    $fjun $fjul $faug ${path_climo}/tmp_jja_${yr_cnt}.nc
          /usr/local/bin/ncra -O -p ${path_history} -w 30,31,30    $fsep $foct $fnov ${path_climo}/tmp_son_${yr_cnt}.nc
-	 /usr/local/bin/ncra -O -p ${path_climo}   -w 90,92,92,91 tmp_djf_${yr_cnt}.nc tmp_mam_${yr_cnt}.nc tmp_jja_${yr_cnt}.nc tmp_son_${yr_cnt}.nc ${path_climo}/tmp_ann_${yr_cnt}.nc
+         /usr/local/bin/ncra -O -p ${path_climo}   -w 90,92,92,91 tmp_djf_${yr_cnt}.nc tmp_mam_${yr_cnt}.nc tmp_jja_${yr_cnt}.nc tmp_son_${yr_cnt}.nc ${path_climo}/tmp_ann_${yr_cnt}.nc
       endif
       @ yr_cnt++
    end
@@ -147,4 +147,4 @@ if ( $significance == 0 ) then
    rm -f ${path_climo}/tmp_*.nc
 endif
 
-	     
+             

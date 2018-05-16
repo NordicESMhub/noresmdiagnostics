@@ -31,10 +31,10 @@ for mon in 01 02 03 04 05 06 07 08 09 10 11 12
 do
     filename=$climodir/${casename}_${mon}_${fyr_prnt}-${lyr_prnt}_climo.nc
     if [ -f $filename ]; then
-	rm $filename
+        rm $filename
     fi
     filename=$climodir/${casename}_${mon}_${fyr_prnt}-${lyr_prnt}_climo_remap.nc
     if [ -f $filename ]; then
-	rm $filename
+        rm $filename
     fi
 done
