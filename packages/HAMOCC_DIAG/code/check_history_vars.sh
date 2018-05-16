@@ -2,8 +2,10 @@
 #
 # HAMOCC DIAGNOSTICS package: check_history_vars.sh
 # PURPOSE: checks if the history files exist, and which variables are present.
-# Johan Liakka, NERSC, johan.liakka@nersc.no
+# Johan Liakka, NERSC
 # Last updated: Feb 2018
+# Yanchun He, NERSC, yanchun.he@nersc.no
+# Last updated: May 2018
 
 # Input arguments:
 #  $casename  name of experiment
@@ -37,8 +39,8 @@ if [ $mode == ts_mon ] || [ $mode == climo_mon ]; then
     filetypes="hbgcm"
 fi
 
-# Look for sst (used to determine grid type and version)
-if [ ! -f $WKDIR/attributes/sst_file_${casename} ]; then
+# Look for co2fxd (used to determine grid type and version)
+if [ ! -f $WKDIR/attributes/co2fxd_file_${casename} ]; then
     for filetype in $filetypes
     do
         if [ $filetype == hbgcy ]; then
@@ -47,8 +49,10 @@ if [ ! -f $WKDIR/attributes/sst_file_${casename} ]; then
             fullpath_filename=$pathdat/$casename.micom.$filetype.`printf "%04d" ${first_yr}`-01.nc
         fi
         $NCKS --quiet -d y,0 -d x,0 -v co2fxd $fullpath_filename >/dev/null 2>&1
+        echo $fullpath_filename
         if [ $? -eq 0 ]; then
             echo $fullpath_filename > $WKDIR/attributes/co2fxd_file_${casename}
+            break   # if found in any of hbgcy or hbgcm files, then exit
         fi
     done
 fi

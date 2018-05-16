@@ -231,10 +231,10 @@ if [ $CNTL == USER ]; then
 fi
 
 # Set required variables for climatology and time series
-required_vars_climo_ann="depth_bnds,o2lvl,silvl,po4lvl,no3lvl,dissiclvl,talklvl,pp_tot,epc100,pco2,co2fxd,co2fxu"
-required_vars_climo_mon="depth_bnds,pp,pddpo,pco2,co2fxd,co2fxu,srfpo4,srfo2,srfno3,srfsi"
+required_vars_climo_ann="depth_bnds,o2lvl,silvl,po4lvl,no3lvl,dissiclvl,talklvl,pp_tot,ppint,epc100,pco2,co2fxd,co2fxu"
+required_vars_climo_mon="depth_bnds,pp,ppint,pddpo,pco2,co2fxd,co2fxu,srfpo4,srfo2,srfno3,srfsi"
 required_vars_climo_zm="o2lvl,silvl,po4lvl,no3lvl,dissiclvl,talklvl"
-required_vars_ts_ann="co2fxd,co2fxu,epc100,epcalc100"
+required_vars_ts_ann="co2fxd,co2fxu,epc100,epcalc100,ppint,o2,si,po4,no3,dissic"
 required_vars_ts_mon="o2,si,po4,no3,dissic,pp,pddpo"
 
 
@@ -378,7 +378,7 @@ do
                 echo "*** EXITING THE SCRIPT ***"
                 exit 1
             fi
-            # Some extra climo calculations
+            # Some extra climo calculations, pp_tot
             $DIAG_CODE/compute_climo_means.sh $CASENAME $FIRST_YR_CLIMO $LAST_YR_CLIMO $CLIMO_TS_DIR
             echo " "
             echo "****************************************************"
@@ -394,7 +394,7 @@ do
             $DIAG_CODE/remap_climo_mon.sh $CASENAME $FYR_PRNT_CLIMO $LYR_PRNT_CLIMO $CLIMO_TS_DIR
             # Merge monthly climo files
             $DIAG_CODE/merge_monClim.sh $CASENAME $FYR_PRNT_CLIMO $LYR_PRNT_CLIMO $CLIMO_TS_DIR
-            # Merge monthly climo files
+            # Compute regional means
             $DIAG_CODE/regional_mean.sh $CASENAME $FYR_PRNT_CLIMO $LYR_PRNT_CLIMO $CLIMO_TS_DIR
         else
             echo "$CLIMO_TS_DIR/$MON_RGR_FILE already exists."
@@ -619,9 +619,11 @@ mkdir -p $WEBDIR/set4
 cp $DIAG_HTML/index.html $WEBDIR
 cdate=`date`
 sed -i "s/test_run/$CASENAME1/g" $WEBDIR/index.html
+sed -i "s/FY1/$FIRST_YR_CLIMO1/g" $WEBDIR/index.html
+sed -i "s/LY1/$LAST_YR_CLIMO1/g" $WEBDIR/index.html
 sed -i "s/date_and_time/$cdate/g" $WEBDIR/index.html
 if [ $CNTL == USER ]; then
-    sed -i "17i<br>and $CASENAME2" $WEBDIR/index.html
+    sed -i "17i<br>and $CASENAME2 yrs${LAST_YR_CLIMO2}to${LAST_YR_CLIMO2}" $WEBDIR/index.html
 fi
 if [ $set_1 -eq 1 ]; then
     echo "<font color=maroon size=+1><b><u>Time series plots</u></b></font><br>" >> $WEBDIR/index.html
@@ -777,7 +779,7 @@ if [ $set_4 -eq 1 ]; then
         echo "*** EXITING THE SCRIPT ***"
         exit 1
     fi
-    cp $DIAG_HTML/regions.png $WEBDIR
+    cp $DIAG_HTML/regions2.png $WEBDIR
     $DIAG_CODE/webpage4.sh
 fi
 # Closing the webpage

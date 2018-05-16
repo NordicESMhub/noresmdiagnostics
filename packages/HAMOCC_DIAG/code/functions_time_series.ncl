@@ -176,11 +176,30 @@ begin
       else
          xvar = tmp
       end if
-      xvar@long_name = "total primary production"
+      xvar@long_name = "total primary production (pp)"
       xvar@units = "Pg yr-1"
       assignFillValue(xvar,xvar)
    else
       print("get_pp: no pp_tot variable present")
+      xvar = -999.0
+   end if
+   return (xvar)
+end
+
+function get_ppint (inptr:file) 
+begin
+   if (isfilevar(inptr,"ppint_tot")) then
+      tmp = inptr->ppint_tot
+      if (typeof(tmp).eq."double") then
+         xvar = dble2flt(tmp)
+      else
+         xvar = tmp
+      end if
+      xvar@long_name = "total primary production (ppint)"
+      xvar@units = "Pg yr-1"
+      assignFillValue(xvar,xvar)
+   else
+      print("get_pp: no ppint_tot variable present")
       xvar = -999.0
    end if
    return (xvar)

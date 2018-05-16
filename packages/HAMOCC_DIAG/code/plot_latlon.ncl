@@ -3,6 +3,7 @@
 ; Mark Stevens Sept 2001
 ; Rich Neale Jan 2008
 ; Johan Liakka Mar 2018: Update for HAMOCC
+; Last update, Yanchun He, May 2018
 ;********************************************************
 load "$DIAG_CODE/functions_latlon.ncl"
 ;********************************************************
@@ -87,21 +88,23 @@ end if
 ;************************************************
 ; contours definition (global)
 cntrs_pp=(/2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40/)
+cntrs_ppint=(/2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40/)
 cntrs_epc=(/0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10/)
 cntrs_pco2=(/250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350, 360, 370, 380, 390, 400, 410, 420, 430, 440/)
 cntrs_co2fxn=(/-4.5, -4, -3.5, -3, -2.5, -2, -1.5, -1, -0.5, -0.25, 0.25, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5/)
 
 dcntrs_pp=(/-17,-15,-13,-11,-9,-7,-5,-3,-1,1,3,5,7,9,11,13,15,17/)
+dcntrs_ppint=(/-17,-15,-13,-11,-9,-7,-5,-3,-1,1,3,5,7,9,11,13,15,17/)
 dcntrs_epc=(/-1.7,-1.5,-1.3,-1.1,-0.9,-0.7,-0.5,-0.3,-0.1,0.1,0.3,0.5,0.7,0.9,1.1,1.3,1.5,1.7/)
 dcntrs_pco2=(/-80, -70, -60, -50, -40, -30, -20, -10, -5, 5, 10, 20, 30, 40, 50, 60, 70, 80/)
 dcntrs_co2fxn=(/-4, -3.5, -3, -2.5, -2, -1.5, -1, -0.5, -0.25, 0.25, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4/)
 
 ; model variables
-vars = (/"pp_tot","epc100","pco2","co2fxn"/)
+vars = (/"pp_tot","ppint","epc100","pco2","co2fxn"/)
 
 ; define contour intervals
-cntrs = (/cntrs_pp,cntrs_epc,cntrs_pco2,cntrs_co2fxn/)
-dcntrs = (/dcntrs_pp,dcntrs_epc,dcntrs_pco2,dcntrs_co2fxn/)
+cntrs = (/cntrs_pp,cntrs_ppint,cntrs_epc,cntrs_pco2,cntrs_co2fxn/)
+dcntrs = (/dcntrs_pp,dcntrs_ppint,dcntrs_epc,dcntrs_pco2,dcntrs_co2fxn/)
 
 nvars = dimsizes(vars)
 
@@ -113,7 +116,7 @@ if (compare .eq. "OBS") then
   eth_vars  = (/"spco2","fgco2"/)
 
   ; observations: list of variables to plot
-  obsvars = (/"pp","dummy","spco2","fgco2"/)
+  obsvars = (/"pp","pp","dummy","spco2","fgco2"/)
   
 end if
 ;-------------------------------------------------------------
@@ -169,6 +172,10 @@ do i = 0, nvars-1
       A = get_pp (inptr1)
     end if
 
+    if (vars(i) .eq. "ppint") then
+      A = get_ppint (inptr1)
+    end if
+
     if (vars(i) .eq. "epc100") then
       A = get_epc (inptr1)
     end if
@@ -219,10 +226,10 @@ do i = 0, nvars-1
 ;     get the variable
 
       B = -999.
-      if (vars(i) .eq. "pp_tot") then
+      if (vars(i) .eq. "pp_tot" .or. vars(i) .eq. "ppint") then
         delete(B)
         B = inptr2->pp(:,:)
-	B = (/B*365*86400/)
+        B = (/B*365*86400/)
         B@long_name = "PP"
         B@units = "mol C m-2 yr-1"
       end if
@@ -237,7 +244,7 @@ do i = 0, nvars-1
       if (vars(i) .eq. "co2fxn") then
         delete(B)
         B = inptr2->fgco2(:,:)
-	B = (/-B/)
+        B = (/-B/)
         B@long_name = "net downward CO2 flux"
         B@units = "mol C m-2 yr-1"
       end if
@@ -254,6 +261,10 @@ do i = 0, nvars-1
 
       if (vars(i) .eq. "pp_tot") then
         B = get_pp (inptr2)
+      end if
+
+      if (vars(i) .eq. "ppint") then
+        B = get_ppint (inptr2)
       end if
 
       if (vars(i) .eq. "epc100") then

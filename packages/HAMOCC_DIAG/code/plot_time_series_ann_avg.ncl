@@ -84,7 +84,7 @@ do i = 0, nvars-1
    
    if (all(A.eq.-999.)) then
       print (vars(i)+" is not present in case1 input file.")
-      delete(A)
+;      delete(A)
    end if
 
    ndim = dimsizes(A)

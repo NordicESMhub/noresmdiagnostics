@@ -142,9 +142,16 @@ fi
 echo "<TR>" >> $WEBDIR/index.html
 echo "<TD>Primary productivity (pp)" >> $WEBDIR/index.html
 if [ -f $WEBDIR/set2/set2_ann_pp_tot_${cinfo}.png ]; then
-    echo "<TD colspan='7'><a href='set2/set2_ann_pp_tot_${cinfo}.png'>column-integrated</a>" >> $WEBDIR/index.html
+    echo "<TD colspan='7'><a href='set2/set2_ann_pp_tot_${cinfo}.png'>column-integrated (diagnosed offline)</a>" >> $WEBDIR/index.html
 else
-    echo "<TD colspan='7'><I>column-integrated</I>" >> $WEBDIR/index.html
+    echo "<TD colspan='7'><I>column-integrated (diagnosed offline)</I>" >> $WEBDIR/index.html
+fi
+echo "<TR>" >> $WEBDIR/index.html
+echo "<TD>Primary productivity (ppint)" >> $WEBDIR/index.html
+if [ -f $WEBDIR/set2/set2_ann_ppint_${cinfo}.png ]; then
+    echo "<TD colspan='7'><a href='set2/set2_ann_ppint_${cinfo}.png'>column-integrated (diagnosed online)</a>" >> $WEBDIR/index.html
+else
+    echo "<TD colspan='7'><I>column-integrated (diagnosed online)</I>" >> $WEBDIR/index.html
 fi
 echo "<TR>" >> $WEBDIR/index.html
 echo "<TD>Export production (epc100)" >> $WEBDIR/index.html

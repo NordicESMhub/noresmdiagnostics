@@ -28,7 +28,7 @@ if (compare.eq."USER") then
 end if
 
 ; model variables
-vars = (/"pco2","co2fxn","pp_tot","srfo2","srfsi","srfpo4","srfno3"/)
+vars = (/"pco2","co2fxn","pp_tot","ppint","srfo2","srfsi","srfpo4","srfno3"/)
 regions  = (/"ARC","NATL","NPAC","TATL","TPAC","IND","MSO","HSO"/)
 reg_long = (/"Arctic","North Atlantic","North Pacific","Tropical Atlantic","Tropical Pacific","Indian ocean","Southern ocean","Southern ocean"/)
 
@@ -46,7 +46,7 @@ if (compare .eq. "OBS") then
   woa_vars  = (/"o_an","i_an","p_an","n_an"/)
 
   ; observations: list of variables to plot
-  obsvars = (/"spco2","fgco2","pp","o_an","i_an","p_an","n_an"/)
+  obsvars = (/"spco2","fgco2","pp","pp","o_an","i_an","p_an","n_an"/)
 end if
 
 pmth = fspan(1,12,12)
@@ -87,10 +87,11 @@ do i = 0, nvars-1
 
   plot = new(nreg,"graphic")
   if (compare .eq. "OBS") then
-    wks = gsn_open_wks("ps",wkdir+"/set4_"+vars(i)+"_1model")
+    psfile=wkdir+"/set4_"+vars(i)+"_1model"
   else
-    wks = gsn_open_wks("ps",wkdir+"/set4_"+vars(i)+"_2models")
+    psfile=wkdir+"/set4_"+vars(i)+"_2model"
   end if
+  wks = gsn_open_wks("ps",psfile)
 
   plot_switch_A = 0
   do ireg = 0, nreg-1
@@ -114,6 +115,10 @@ do i = 0, nvars-1
       A = get_pp (inptr1)
     end if
 
+    if (vars(i) .eq. "ppint") then
+      A = get_ppint (inptr1)
+    end if
+
     if (vars(i) .eq. "srfo2") then
       A = get_srfo2 (inptr1)
     end if
@@ -130,11 +135,13 @@ do i = 0, nvars-1
       A = get_srfno3 (inptr1)
     end if
 
-    if (all(A.eq.-999.)) then
+    if (isvar("A") .and. all(A.eq.-999.)) then
       print (vars(i)+" not present in case1 input file.")
       plot_switch_A=1
       delete(A)
-      continue       ; procede to next variable in do loop
+      delete(wks)
+      system("rm -f "+psfile+".ps")
+      break       ; procede to next variable in do loop
     else
       print (A@long_name+" ("+creg+")")
 
@@ -150,81 +157,81 @@ do i = 0, nvars-1
           infile2 = climodir2+"/Landschuetzer_2015/spco2_ETH_MON_1982-2011_"+creg+".nc"
           inptr2  = addfile(infile2,"r")
           if (isfilevar(inptr2,"spco2")) then
-	    delete(B)
+            delete(B)
             B = inptr2->spco2(:,0,0)
             assignFillValue(B,B)
-	    case2="Landschuetzer et al. (2015)"
-	  end if
+            case2="Landschuetzer et al. (2015)"
+          end if
         end if
 
         if (vars(i).eq."co2fxn") then
           infile2 = climodir2+"/Landschuetzer_2015/spco2_ETH_MON_1982-2011_"+creg+".nc"
           inptr2  = addfile(infile2,"r")
           if (isfilevar(inptr2,"fgco2")) then
-	    delete(B)
+            delete(B)
             tmp     = inptr2->fgco2(:,0,0)
             B       = (/-tmp/)
-	    delete(tmp)
-	    case2="Landschuetzer et al. (2015)"
-	  end if
-	  assignFillValue(B,B)
+            delete(tmp)
+            case2="Landschuetzer et al. (2015)"
+          end if
+          assignFillValue(B,B)
         end if
 
         if (vars(i).eq."pp_tot") then
           infile2 = climodir2+"/OcnProd_MODIS/ave.m.clim_MON_2003-2012_"+creg+".nc"
           inptr2  = addfile(infile2,"r")
           if (isfilevar(inptr2,"pp")) then
-	    delete(B)
+            delete(B)
             B       = inptr2->pp(:,0,0)
             B       = (/B*365*86400/)
-	    case2="MODIS (2003-2012)"
-	  end if
-	  assignFillValue(B,B)
+            case2="MODIS (2003-2012)"
+          end if
+          assignFillValue(B,B)
         end if
 
         if (vars(i).eq."srfo2") then
           infile2 = climodir2+"/WOA13/woa13_all_oMON_01_"+creg+".nc"
           inptr2  = addfile(infile2,"r")
-	  if (isfilevar(inptr2,"o_an")) then
-	    delete(B)
+          if (isfilevar(inptr2,"o_an")) then
+            delete(B)
             B = inptr2->o_an(:,0,0,0)
-	    B = (/B*44.661/)
-	    assignFillValue(B,B)
-	    case2="WOA13"
-	  end if
+            B = (/B*44.661/)
+            assignFillValue(B,B)
+            case2="WOA13"
+          end if
         end if
 
         if (vars(i).eq."srfsi") then
           infile2 = climodir2+"/WOA13/woa13_all_iMON_01_"+creg+".nc"
           inptr2  = addfile(infile2,"r")
-	  if (isfilevar(inptr2,"i_an")) then
-	    delete(B)
+          if (isfilevar(inptr2,"i_an")) then
+            delete(B)
             B = inptr2->i_an(:,0,0,0)
-	    assignFillValue(B,B)
-	    case2="WOA13"
-	  end if
+            assignFillValue(B,B)
+            case2="WOA13"
+          end if
         end if
 
         if (vars(i).eq."srfpo4") then
           infile2 = climodir2+"/WOA13/woa13_all_pMON_01_"+creg+".nc"
           inptr2  = addfile(infile2,"r")
-	  if (isfilevar(inptr2,"p_an")) then
-	    delete(B)
+          if (isfilevar(inptr2,"p_an")) then
+            delete(B)
             B       = inptr2->p_an(:,0,0,0)
-	    assignFillValue(B,B)
-	    case2="WOA13"
-	  end if
+            assignFillValue(B,B)
+            case2="WOA13"
+          end if
         end if
 
         if (vars(i).eq."srfno3") then
           infile2 = climodir2+"/WOA13/woa13_all_nMON_01_"+creg+".nc"
           inptr2  = addfile(infile2,"r")
-	  if (isfilevar(inptr2,"n_an")) then
-	    delete(B)
+          if (isfilevar(inptr2,"n_an")) then
+            delete(B)
             B       = inptr2->n_an(:,0,0,0)
-	    assignFillValue(B,B)
-	    case2="WOA13"
-	  end if
+            assignFillValue(B,B)
+            case2="WOA13"
+          end if
         end if
 
       else ; Compare to model
@@ -268,7 +275,7 @@ do i = 0, nvars-1
 
       if (all(B.eq.-999.)) then
         print (vars(i)+" not present in case2 input file.")
-	plot_switch_B=1
+        plot_switch_B=1
 ;        delete(B)
 ;        continue       ; procede to next variable in do loop
       end if

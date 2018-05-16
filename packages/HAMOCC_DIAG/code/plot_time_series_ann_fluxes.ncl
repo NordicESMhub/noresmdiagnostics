@@ -50,25 +50,31 @@ do i = 0, nvars-1
    end if
 
    if (vars(i).eq."pp") then
-      A = get_pp (inptr1)
+      A = get_ppint(inptr1)    ; firstly try ppint
+      if (all(A.eq.-999.)) then
+        delete(A)
+        A = get_pp(inptr1)     ; otherwise try pp_tot
+      end if
    end if
 
    if (vars(i).eq."epc100") then
-      A = get_epc (inptr1)
+      A = get_epc(inptr1)
    end if
 
    if (vars(i).eq."epcalc100") then
-      A = get_epcalc (inptr1)
+      A = get_epcalc(inptr1)
    end if
    
-   if (all(A.eq.-999.)) then
+   if (isvar("A") .and. all(A.eq.-999.)) then
       print (vars(i)+" is not present in case1 input file.")
       delete(A)
+      continue
+   else
+      print(vars(i))
+      ndim = dimsizes(A)
+      ntimes1 = ndim(0)
+      ntimes_tot = ntimes1
    end if
-
-   ndim = dimsizes(A)
-   ntimes1 = ndim(0)
-   ntimes_tot = ntimes1
 
    if (compare.eq."USER") then
 
@@ -105,8 +111,10 @@ do i = 0, nvars-1
    eyr  = fyr+ntimes_tot-1
    pyrs = fspan(fyr,eyr,ntimes_tot)
 
-   res@tiYAxisString       = A@units
-   res@tiMainString        = A@long_name
+   if (isvar("A")) then
+       res@tiYAxisString       = A@units
+       res@tiMainString        = A@long_name
+   end if
    res@tiMainFontHeightF   = 0.025
 
 ;   res@tiMainFontHeightF   = 0.02
@@ -123,11 +131,13 @@ do i = 0, nvars-1
    end if
 
    data = new((/ncases,ntimes_tot/),float)
-   data(0,0:ntimes1-1) = A
-   if (compare .eq. "USER") then
-      data(1,0:ntimes2-1) = B
+   if (isvar("A")) then
+       data(0,0:ntimes1-1) = A
+       if (compare .eq. "USER") then
+          data(1,0:ntimes2-1) = B
+       end if
+       plot(i) = gsn_csm_xy(wks,pyrs,data,res)
    end if
-   plot(i) = gsn_csm_xy(wks,pyrs,data,res)
 
    delete (data)
 end do

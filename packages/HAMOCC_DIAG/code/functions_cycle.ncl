@@ -1,5 +1,5 @@
 ; NCL script
-; functions_latlon.ncl
+; functions_cycle.ncl
 ; Johan Liakka, Dec 2017
 ;******************************************************************
 
@@ -93,11 +93,30 @@ begin
       else
          xvar = tmp(:,0,0)
       end if
-      xvar@long_name = "PP"
+      xvar@long_name = "PP (vertically-integrated, offline)"
       xvar@units = "mol C m-2 yr-1"
       assignFillValue(xvar,xvar)
    else
       print("get_pp: no pp_tot variable present")
+      xvar = -999.0
+   end if
+   return (xvar)
+end
+
+function get_ppint (inptr:file)
+begin
+   if (isfilevar(inptr,"ppint")) then
+      tmp = inptr->ppint
+      if (typeof(tmp).eq."double") then
+         xvar = dble2flt(tmp(:,0,0))
+      else
+         xvar = tmp(:,0,0)
+      end if
+      xvar@long_name = "PP (vertically-integrated,online)"
+      xvar@units = "mol C m-2 yr-1"
+      assignFillValue(xvar,xvar)
+   else
+      print("get_ppint: no ppint variable present")
       xvar = -999.0
    end if
    return (xvar)

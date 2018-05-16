@@ -159,6 +159,27 @@ begin
    return (xvar)
 end
 
+function get_ppint (inptr:file)
+begin
+   if (isfilevar(inptr,"ppint")) then
+      tmp = inptr->ppint
+      if (typeof(tmp).eq."double") then
+         xvar = dble2flt(tmp(0,:,:))
+      else
+         xvar = tmp(0,:,:)
+      end if
+      xvar  = xvar*365*24*3600
+      xvar@long_name = "PP"
+      print(xvar@long_name)
+      xvar@units = "mol C m-2 yr-1"
+      assignFillValue(xvar,xvar)
+   else
+      print("get_ppint: no ppint variable present")
+      xvar = -999.0
+   end if
+   return (xvar)
+end
+
 function get_epc (inptr:file)
 begin
    if (isfilevar(inptr,"epc100")) then
