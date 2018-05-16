@@ -92,19 +92,21 @@ cntrs_ppint=(/2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40/)
 cntrs_epc=(/0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10/)
 cntrs_pco2=(/250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350, 360, 370, 380, 390, 400, 410, 420, 430, 440/)
 cntrs_co2fxn=(/-4.5, -4, -3.5, -3, -2.5, -2, -1.5, -1, -0.5, -0.25, 0.25, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5/)
+cntrs_dmsflux=(/10,20,30,40,50,60,70,80,90,100,120,140,160,180,200,220,240,260,280,300/)
 
 dcntrs_pp=(/-17,-15,-13,-11,-9,-7,-5,-3,-1,1,3,5,7,9,11,13,15,17/)
 dcntrs_ppint=(/-17,-15,-13,-11,-9,-7,-5,-3,-1,1,3,5,7,9,11,13,15,17/)
 dcntrs_epc=(/-1.7,-1.5,-1.3,-1.1,-0.9,-0.7,-0.5,-0.3,-0.1,0.1,0.3,0.5,0.7,0.9,1.1,1.3,1.5,1.7/)
 dcntrs_pco2=(/-80, -70, -60, -50, -40, -30, -20, -10, -5, 5, 10, 20, 30, 40, 50, 60, 70, 80/)
 dcntrs_co2fxn=(/-4, -3.5, -3, -2.5, -2, -1.5, -1, -0.5, -0.25, 0.25, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4/)
+dcntrs_dmsflux=(/-17,-15,-13,-11,-9,-7,-5,-3,-1,1,3,5,7,9,11,13,15,17/)
 
 ; model variables
-vars = (/"pp_tot","ppint","epc100","pco2","co2fxn"/)
+vars = (/"pp_tot","ppint","epc100","pco2","co2fxn","dmsflux"/)
 
 ; define contour intervals
-cntrs = (/cntrs_pp,cntrs_ppint,cntrs_epc,cntrs_pco2,cntrs_co2fxn/)
-dcntrs = (/dcntrs_pp,dcntrs_ppint,dcntrs_epc,dcntrs_pco2,dcntrs_co2fxn/)
+cntrs = (/cntrs_pp,cntrs_ppint,cntrs_epc,cntrs_pco2,cntrs_co2fxn,cntrs_dmsflux/)
+dcntrs = (/dcntrs_pp,dcntrs_ppint,dcntrs_epc,dcntrs_pco2,dcntrs_co2fxn,dcntrs_dmsflux/)
 
 nvars = dimsizes(vars)
 
@@ -116,7 +118,7 @@ if (compare .eq. "OBS") then
   eth_vars  = (/"spco2","fgco2"/)
 
   ; observations: list of variables to plot
-  obsvars = (/"pp","pp","dummy","spco2","fgco2"/)
+  obsvars = (/"pp","pp","dummy","spco2","fgco2","dummy"/)
   
 end if
 ;-------------------------------------------------------------
@@ -186,6 +188,10 @@ do i = 0, nvars-1
 
     if (vars(i) .eq. "co2fxn") then
       A = get_co2fxn (inptr1)
+    end if
+
+    if (vars(i) .eq. "dmsflux") then
+      A = get_dmsflux (inptr1)
     end if
 
     if (all(A.eq.-999.)) then
@@ -279,6 +285,10 @@ do i = 0, nvars-1
         B = get_co2fxn (inptr2)
       end if
 
+      if (vars(i) .eq. "dmsflux") then
+        B = get_dmsflux (inptr2)
+      end if
+
       if (all(B.eq.-999.)) then
         print (vars(i)+" not present in case2 file.")
         delete(A)
@@ -365,7 +375,7 @@ do i = 0, nvars-1
     end if
 
     if (compare .eq. "OBS") then
-      if (vars(i) .ne. "epc100") then
+      if (vars(i) .ne. "epc100" .and. vars(i) .ne. "dmsflux" ) then
         delete(gw2)
         delete(lat2)
         delete(nlat2)

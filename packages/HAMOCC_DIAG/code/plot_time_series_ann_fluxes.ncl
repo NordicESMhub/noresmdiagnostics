@@ -23,7 +23,7 @@ if (compare.eq."USER") then
   ncases  = 2
 end if
 
-vars   = (/"co2fxn","pp","epc100","epcalc100"/)
+vars   = (/"co2fxn","pp","epc100","epcalc100","dmsflux"/)
 nvars  = dimsizes(vars)
 
 if (compare.eq."OBS") then
@@ -53,6 +53,7 @@ do i = 0, nvars-1
       A = get_ppint(inptr1)    ; firstly try ppint
       if (all(A.eq.-999.)) then
         delete(A)
+        print("use pp_tot instead")
         A = get_pp(inptr1)     ; otherwise try pp_tot
       end if
    end if
@@ -65,12 +66,15 @@ do i = 0, nvars-1
       A = get_epcalc(inptr1)
    end if
    
+   if (vars(i).eq."dmsflux") then
+      A = get_dmsflux(inptr1)
+   end if
+
    if (isvar("A") .and. all(A.eq.-999.)) then
       print (vars(i)+" is not present in case1 input file.")
       delete(A)
       continue
    else
-      print(vars(i))
       ndim = dimsizes(A)
       ntimes1 = ndim(0)
       ntimes_tot = ntimes1
@@ -92,6 +96,10 @@ do i = 0, nvars-1
 
       if (vars(i).eq."epcalc100") then
          B = get_epcalc (inptr2)
+      end if
+   
+      if (vars(i).eq."dmsflux") then
+         B = get_dmsflux (inptr2)
       end if
    
       if (all(B.eq.-999.)) then
@@ -133,8 +141,10 @@ do i = 0, nvars-1
    data = new((/ncases,ntimes_tot/),float)
    if (isvar("A")) then
        data(0,0:ntimes1-1) = A
+       delete(A)
        if (compare .eq. "USER") then
           data(1,0:ntimes2-1) = B
+          delete(B)
        end if
        plot(i) = gsn_csm_xy(wks,pyrs,data,res)
    end if
@@ -148,7 +158,7 @@ pan@gsnPaperOrientation = "portrait"
 pan@gsnFrame = False
 pan@gsnPanelXWhiteSpacePercent = 3
 pan@gsnPanelBottom     = 0.08
-gsn_panel(wks,(/plot/),(/2,2/),pan)
+gsn_panel(wks,(/plot/),(/2,3/),pan)
 
 ; Draw a text string at the bottom
 txres               = True

@@ -199,7 +199,7 @@ begin
       xvar@units = "Pg yr-1"
       assignFillValue(xvar,xvar)
    else
-      print("get_pp: no ppint_tot variable present")
+      print("get_ppint: no ppint_tot variable present")
       xvar = -999.0
    end if
    return (xvar)
@@ -238,6 +238,25 @@ begin
       assignFillValue(xvar,xvar)
    else
       print("get_epcalc: no epcalc100_tot variable present")
+      xvar = -999.0
+   end if
+   return (xvar)
+end
+
+function get_dmsflux (inptr:file) 
+begin
+   if (isfilevar(inptr,"dmsflux_tot")) then
+      tmp = inptr->dmsflux_tot
+      if (typeof(tmp).eq."double") then
+         xvar = dble2flt(tmp)
+      else
+         xvar = tmp
+      end if
+      xvar@long_name = "total DMS flux"
+      xvar@units = "TgS yr-1"
+      assignFillValue(xvar,xvar)
+   else
+      print("get_dmsflux: no dmsflux_tot variable present")
       xvar = -999.0
    end if
    return (xvar)

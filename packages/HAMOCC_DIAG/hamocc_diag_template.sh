@@ -231,10 +231,10 @@ if [ $CNTL == USER ]; then
 fi
 
 # Set required variables for climatology and time series
-required_vars_climo_ann="depth_bnds,o2lvl,silvl,po4lvl,no3lvl,dissiclvl,talklvl,pp_tot,ppint,epc100,pco2,co2fxd,co2fxu"
+required_vars_climo_ann="depth_bnds,o2lvl,silvl,po4lvl,no3lvl,dissiclvl,talklvl,pp_tot,ppint,epc100,pco2,co2fxd,co2fxu,dmsflux"
 required_vars_climo_mon="depth_bnds,pp,ppint,pddpo,pco2,co2fxd,co2fxu,srfpo4,srfo2,srfno3,srfsi"
 required_vars_climo_zm="o2lvl,silvl,po4lvl,no3lvl,dissiclvl,talklvl"
-required_vars_ts_ann="co2fxd,co2fxu,epc100,epcalc100,ppint,o2,si,po4,no3,dissic"
+required_vars_ts_ann="co2fxd,co2fxu,epc100,epcalc100,ppint,dmsflux"
 required_vars_ts_mon="o2,si,po4,no3,dissic,pp,pddpo"
 
 
@@ -503,7 +503,7 @@ do
                 $DIAG_CODE/merge_files.sh $CLIMO_TS_DIR $ANN_TS_FILE_ANN_HY $ANN_TS_FILE_ANN_HM $ANN_TS_FILE_ANN
                 if [ ! -f $WKDIR/attributes/vars_ts_ann_${CASENAME}_hbgcy ] && [ ! -f $WKDIR/attributes/vars_ts_ann_${CASENAME}_hbgcm ]; then
                     echo "WARNING: could not find required variables ($required_vars_ts_ann) for annual time series."
-                    echo "-> SKIPPING COMPUTING ANNUAL TIME SERIES"
+                    echo "-> SKIPPING COMPUTING ANNUAL TIME SERIES FROM ANNUAL FILES"
                 fi
             else
                 echo "$CLIMO_TS_DIR/$ANN_TS_FILE_ANN already exists."
@@ -522,11 +522,11 @@ do
                     $DIAG_CODE/merge_files.sh $CLIMO_TS_DIR $ANN_TS_FILE_MON1 $ANN_TS_FILE_MON2 $ANN_TS_FILE_MON
                 else
                     echo "WARNING: could not find required variables ($required_vars_ts_mon) for annual time series."
-                    echo "-> SKIPPING COMPUTING ANNUAL TIME SERIES"
+                    echo "-> SKIPPING COMPUTING ANNUAL TIME SERIES FROM MONTHLY FILES"
                 fi
             else
                 echo "$CLIMO_TS_DIR/$ANN_TS_FILE_ANN already exists."
-                echo "-> SKIPPING COMPUTING ANNUAL TIME SERIES FROM ANNUAL FILES"
+                echo "-> SKIPPING COMPUTING ANNUAL TIME SERIES FROM MONTHLY FILES"
             fi
             # Merge ts files
             if [ -f $CLIMO_TS_DIR/$ANN_TS_FILE_ANN ] || [ -f $CLIMO_TS_DIR/$ANN_TS_FILE_MON ]; then

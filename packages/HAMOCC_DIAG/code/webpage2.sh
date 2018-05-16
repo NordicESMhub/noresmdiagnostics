@@ -174,4 +174,12 @@ if [ -f $WEBDIR/set2/set2_ann_co2fxn_${cinfo}.png ]; then
 else
     echo "<TD colspan='5'><I>surface</I>" >> $WEBDIR/index.html
 fi
+
+echo "<TR>" >> $WEBDIR/index.html
+echo "<TD>DMS flux (dmsflux)" >> $WEBDIR/index.html
+if [ -f $WEBDIR/set2/set2_ann_dmsflux_${cinfo}.png ]; then
+    echo "<TD colspan='5'><a href='set2/set2_ann_dmsflux_${cinfo}.png'>surface</a>" >> $WEBDIR/index.html
+else
+    echo "<TD colspan='5'><I>surface</I>" >> $WEBDIR/index.html
+fi
 echo '</TABLE>' >> $WEBDIR/index.html

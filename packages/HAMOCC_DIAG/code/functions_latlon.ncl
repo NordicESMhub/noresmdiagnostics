@@ -250,4 +250,23 @@ begin
    return (xvar)
 end
 
-
+function get_dmsflux (inptr:file)
+begin
+   if (isfilevar(inptr,"dmsflux")) then
+      tmp = inptr->dmsflux
+      if (typeof(tmp).eq."double") then
+         xvar = dble2flt(tmp(0,:,:))
+      else
+         xvar = tmp(0,:,:)
+      end if
+      xvar  = xvar*1.e12
+      xvar@long_name = "DMS flux"
+      print(xvar@long_name)
+      xvar@units = "pico (1e-12) mol DMS m-2 s-1"
+      assignFillValue(xvar,xvar)
+   else
+      print("get_dmsflux: no dmsflux variable present")
+      xvar = -999.0
+   end if
+   return (xvar)
+end

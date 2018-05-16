@@ -11,7 +11,7 @@ script_start=`date +%s`
 # Run the 10 chunk year in parallel for 3D operations
 
 # Input arguments:
-#  $filetype  hm or hy
+#  $filetype  hbgcm or hbgcy
 #  $casename  name of experiment
 #  $first_yr  first year of the average
 #  $last_yr   last year of the average
@@ -83,7 +83,7 @@ do
     let "YR_start = ($ichunk - 1) * $nproc + $first_yr"
     let "YR_end = ($ichunk - 1) * $nproc + $nyrs + $first_yr - 1"
     if [ $filetype == hbgcy ]; then
-        # Extract variables from annual file if in hy mode
+        # Extract variables from annual file if in hbgcy mode
         echo "Extracting time-series variables from annual history files (yrs ${YR_start}-${YR_end})"
         while [ $iproc -le $nyrs ]
         do
@@ -105,7 +105,7 @@ do
         done
         wait
     else 
-        # Compute annual means if in hm mode
+        # Compute annual means if in hbgcm mode
         echo "Computing annual means from monthly history files (yrs ${YR_start}-${YR_end})"
         pid=()
         iproc=1
@@ -242,10 +242,28 @@ do
                 yr_prnt=`printf "%04d" ${YR}`
                 infile=${casename}_ANN_${yr_prnt}.nc
                 outfile_tmp=${var}_${casename}_ANN_${yr_prnt}_tmp.nc
-                     outfile=${var}_${casename}_ANN_${yr_prnt}.nc
+                outfile=${var}_${casename}_ANN_${yr_prnt}.nc
                 $NCAP2 -O -s 'co2fxu_area=co2fxu*parea' $WKDIR/$infile $WKDIR/$outfile_tmp
                 $NCAP2 -O -s 'co2fxu_tot=co2fxu_area.total($x,$y)*86400.0*365.0*1.0e-12' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
                 $NCKS --no_tmp_fl -O -v co2fxu_tot $WKDIR/$outfile_tmp $WKDIR/$outfile
+                rm -f $WKDIR/$outfile_tmp
+                let iproc++
+            done
+        fi
+        # Total DMS flux
+        if [ $var == dmsflux ]; then
+            echo "Total $var (yrs ${YR_start}-${YR_end})"
+            iproc=1
+            while [ $iproc -le $nyrs ]
+            do
+                let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
+                yr_prnt=`printf "%04d" ${YR}`
+                infile=${casename}_ANN_${yr_prnt}.nc
+                outfile_tmp=${var}_${casename}_ANN_${yr_prnt}_tmp.nc
+                outfile=${var}_${casename}_ANN_${yr_prnt}.nc
+                $NCAP2 -O -s 'dmsflux_area=dmsflux*parea' $WKDIR/$infile $WKDIR/$outfile_tmp
+                $NCAP2 -O -s 'dmsflux_tot=dmsflux_area.total($x,$y)*86400.0*365.0*62.13*1.0e-12' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
+                $NCKS --no_tmp_fl -O -v dmsflux_tot $WKDIR/$outfile_tmp $WKDIR/$outfile
                 rm -f $WKDIR/$outfile_tmp
                 let iproc++
             done

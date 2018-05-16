@@ -52,7 +52,7 @@ if [ ! -f $WKDIR/attributes/co2fxd_file_${casename} ]; then
         echo $fullpath_filename
         if [ $? -eq 0 ]; then
             echo $fullpath_filename > $WKDIR/attributes/co2fxd_file_${casename}
-            break   # if found in any of hbgcy or hbgcm files, then exit
+            break   # if found in any of hbgcy or hbgcm files, exit
         fi
     done
 fi
