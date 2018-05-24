@@ -144,7 +144,10 @@ do
         filename=${casename}_ANN_${yr_prnt}.nc
         $NCKS --quiet -d depth,0 -d x,0 -d y,0 -v parea $WKDIR/$filename >/dev/null 2>&1
         if [ $? -ne 0 ]; then
-            $NCKS -A -v parea -o $WKDIR/$filename $grid_file
+            $NCKS --quiet -A -v parea -o $WKDIR/$filename $grid_file
+            $NCAP2 -O -s 'dmass=dp*parea' $WKDIR/$filename  -o dmass.nc >/dev/null 2>&1
+            $NCKS --quiet -A -v dmass -o $WKDIR/$filename dmass.nc >/dev/null 2>&1
+            rm -f dmass.nc
         fi
         let iproc++
     done
@@ -162,7 +165,7 @@ do
                 yr_prnt=`printf "%04d" ${YR}`
                 infile=${casename}_ANN_${yr_prnt}.nc
                 outfile=${var}_${casename}_ANN_${yr_prnt}.nc
-                eval $NCWA --no_tmp_fl -O -v $var -w dp -a sigma,y,x $WKDIR/$infile $WKDIR/$outfile &
+                eval $NCWA --no_tmp_fl -O -v $var -w dmass -a sigma,y,x $WKDIR/$infile $WKDIR/$outfile &
                 pid+=($!)
                 let iproc++
             done
@@ -170,7 +173,7 @@ do
             do
                 wait ${pid[$m]}
                 if [ $? -ne 0 ]; then
-                    echo "ERROR in calculating mass weighted global average: $NCWA --no_tmp_fl -O -v $var -w dp -a sigma,y,x $WKDIR/$infile $WKDIR/$outfile"
+                    echo "ERROR in calculating mass weighted global average: $NCWA --no_tmp_fl -O -v $var -w dmass -a sigma,y,x $WKDIR/$infile $WKDIR/$outfile"
                     echo "*** EXITING THE SCRIPT ***"
                     exit 1
                 fi

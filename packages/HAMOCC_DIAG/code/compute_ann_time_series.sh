@@ -171,7 +171,7 @@ do
             do
                 wait ${pid[$m]}
                 if [ $? -ne 0 ]; then
-                    echo "ERROR in calculating mass weighted global average: $NCWA --no_tmp_fl -O -v $var -w dp -a sigma,y,x $WKDIR/$infile $WKDIR/$outfile"
+                    echo "ERROR in calculating mass weighted global average: $NCWA --no_tmp_fl -O -v $var -w pddpo -a sigma,y,x $WKDIR/$infile $WKDIR/$outfile"
                     echo "*** EXITING THE SCRIPT ***"
                     exit 1
                 fi
