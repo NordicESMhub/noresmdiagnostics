@@ -123,7 +123,7 @@ do
             pid+=($!)
             let iproc++
         done
-               for ((m=0;m<=$nyrsm;m++))
+        for ((m=0;m<=$nyrsm;m++))
         do
             wait ${pid[$m]}
             if [ $? -ne 0 ]; then
