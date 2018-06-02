@@ -139,6 +139,28 @@ begin
    return (xvar)
 end
 
+function get_delta13c (inptr:file,z:numeric,z0:numeric)
+begin
+   if (isfilevar(inptr,"delta13clvl")) then
+      tmp3d = inptr->delta13clvl
+      iz=ind(z.eq.z0)
+      tmp = tmp3d(0,iz,:,:)
+      if (typeof(tmp).eq."double") then
+         xvar = dble2flt(tmp)
+      else
+         xvar = tmp
+      end if
+      xvar@long_name = "delta13C z="+flt2string(z0)+"m"
+      print(xvar@long_name)
+      xvar@units = "permil"
+      assignFillValue(xvar,xvar)
+   else
+      print("get_delta13c: no delta13clvl variable present")
+      xvar = -999.0
+   end if
+   return (xvar)
+end
+
 function get_pp (inptr:file)
 begin
    if (isfilevar(inptr,"pp_tot")) then

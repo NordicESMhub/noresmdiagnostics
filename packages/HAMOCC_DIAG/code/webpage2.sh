@@ -140,6 +140,28 @@ else
     echo "<TD><I>4000m</I>" >> $WEBDIR/index.html
 fi
 echo "<TR>" >> $WEBDIR/index.html
+echo "<TD>&delta;13C (delta13clvl)" >> $WEBDIR/index.html
+if ls $WEBDIR/set2/set2_ann_delta13clvl_*_${cinfo}.png >/dev/null 2>&1
+then
+    #echo "<TD><I>0m</I>" >> $WEBDIR/index.html
+    #echo "<TD><I>100m</I>" >> $WEBDIR/index.html
+    echo "<TD><a href='set2/set2_ann_delta13clvl_0_${cinfo}.png'>0m</a>" >> $WEBDIR/index.html
+    echo "<TD><a href='set2/set2_ann_delta13clvl_100_${cinfo}.png'>100m</a>" >> $WEBDIR/index.html
+    echo "<TD><a href='set2/set2_ann_delta13clvl_500_${cinfo}.png'>500m</a>" >> $WEBDIR/index.html
+    echo "<TD><a href='set2/set2_ann_delta13clvl_1000_${cinfo}.png'>1000m</a>" >> $WEBDIR/index.html
+    echo "<TD><a href='set2/set2_ann_delta13clvl_2000_${cinfo}.png'>2000m</a>" >> $WEBDIR/index.html
+    echo "<TD><a href='set2/set2_ann_delta13clvl_3000_${cinfo}.png'>3000m</a>" >> $WEBDIR/index.html
+    echo "<TD><a href='set2/set2_ann_delta13clvl_4000_${cinfo}.png'>4000m</a>" >> $WEBDIR/index.html
+else
+    echo "<TD><I>0m</I>" >> $WEBDIR/index.html
+    echo "<TD><I>100m</I>" >> $WEBDIR/index.html
+    echo "<TD><I>500m</I>" >> $WEBDIR/index.html
+    echo "<TD><I>1000m</I>" >> $WEBDIR/index.html
+    echo "<TD><I>2000m</I>" >> $WEBDIR/index.html
+    echo "<TD><I>3000m</I>" >> $WEBDIR/index.html
+    echo "<TD><I>4000m</I>" >> $WEBDIR/index.html
+fi
+echo "<TR>" >> $WEBDIR/index.html
 echo "<TD>Primary productivity (pp)" >> $WEBDIR/index.html
 if [ -f $WEBDIR/set2/set2_ann_pp_tot_${cinfo}.png ]; then
     echo "<TD colspan='7'><a href='set2/set2_ann_pp_tot_${cinfo}.png'>column-integrated (diagnosed offline)</a>" >> $WEBDIR/index.html

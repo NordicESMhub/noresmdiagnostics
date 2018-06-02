@@ -231,9 +231,9 @@ if [ $CNTL == USER ]; then
 fi
 
 # Set required variables for climatology and time series
-required_vars_climo_ann="depth_bnds,o2lvl,silvl,po4lvl,no3lvl,dissiclvl,talklvl,pp_tot,ppint,epc100,pco2,co2fxd,co2fxu,dmsflux"
+required_vars_climo_ann="depth_bnds,o2lvl,silvl,po4lvl,no3lvl,dissiclvl,talklvl,delta13clvl,pp_tot,ppint,epc100,pco2,co2fxd,co2fxu,dmsflux"
 required_vars_climo_mon="depth_bnds,pp,ppint,pddpo,pco2,co2fxd,co2fxu,srfpo4,srfo2,srfno3,srfsi"
-required_vars_climo_zm="o2lvl,silvl,po4lvl,no3lvl,dissiclvl,talklvl"
+required_vars_climo_zm="o2lvl,silvl,po4lvl,no3lvl,dissiclvl,talklvl,delta13clvl"
 required_vars_ts_ann="co2fxd,co2fxu,epc100,epcalc100,ppint,dmsflux"
 required_vars_ts_mon="o2,si,po4,no3,dissic,pp,pddpo"
 

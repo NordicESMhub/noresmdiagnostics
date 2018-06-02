@@ -9,6 +9,7 @@ begin
 
 compare    = getenv("COMPARE")
 wkdir      = getenv("WKDIR")
+webdir    = getenv("WEBDIR")
 infile1    = getenv("INFILE1")     ; case1 climo input filename
 fyr1       = getenv("FYR1")
 lyr1       = getenv("LYR1")
@@ -51,6 +52,7 @@ if (compare .eq. "OBS") then
   ptr_woa13n  = addfile(infile2+"/WOA13/woa13_all_n00_01_zm_"+region+".nc","r")
   ptr_glodap  = addfile(infile2+"/GLODAPv2/GLODAPv2.2016b.TCO2_reordered_zm_"+region+".nc","r")
   ptr_glodap2 = addfile(infile2+"/GLODAPv2/GLODAPv2.2016b.TAlk_reordered_zm_"+region+".nc","r")
+  ptr_d13c    = addfile(infile2+"/EideM-etal_2017/C13_Climatology_zm_"+region+".nc","r")
 else
   inptr2   = addfile(infile2,"r")
   case2    = getenv("CASE2")
@@ -97,12 +99,15 @@ dcntrs_dissic=(/-0.09,-0.08,-0.07,-0.06,-0.05,-0.04,-0.03,-0.02,-0.01,0.01,0.02,
 cntrs_talklvl=(/2.2,2.22,2.24,2.26,2.28,2.3,2.32,2.34,2.36,2.38,2.4,2.42,2.44,2.46,2.48,2.5,2.52,2.54,2.56,2.58/)
 dcntrs_talklvl=(/-0.09,-0.08,-0.07,-0.06,-0.05,-0.04,-0.03,-0.02,-0.01,0.01,0.02,0.03,0.04,0.05,0.06,0.07,0.08,0.09/)
 
+cntrs_d13clvl=(/0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0/)
+dcntrs_d13clvl=(/-0.85,-0.75,-0.65,-0.55,-0.45,-0.35,-0.25,-0.15,-0.05,0.05,0.15,0.25,0.35,0.45,0.55,0.65,0.75,0.85/)
+
 ; model variables
-vars = (/"o2lvl","silvl","po4lvl","no3lvl","dissiclvl","talklvl"/)
+vars = (/"o2lvl","silvl","po4lvl","no3lvl","dissiclvl","talklvl","delta13clvl"/)
 
 ; define contour intervals
-cntrs = (/cntrs_o2,cntrs_si,cntrs_po4,cntrs_no3,cntrs_dissic,cntrs_talklvl/)
-dcntrs = (/dcntrs_o2,dcntrs_si,dcntrs_po4,dcntrs_no3,dcntrs_dissic,dcntrs_talklvl/)
+cntrs = (/cntrs_o2,cntrs_si,cntrs_po4,cntrs_no3,cntrs_dissic,cntrs_talklvl,cntrs_d13clvl/)
+dcntrs = (/dcntrs_o2,dcntrs_si,dcntrs_po4,dcntrs_no3,dcntrs_dissic,dcntrs_talklvl,dcntrs_d13clvl/)
 
 nvars = dimsizes(vars)
 
@@ -116,9 +121,11 @@ if (compare .eq. "OBS") then
   woa13n_vars  = (/"n_an"/)
   glodap_vars  = (/"TCO2"/)
   glodap_vars2 = (/"TAlk"/)
+  d13c_vars    = (/"c13_pi"/)
 
   ; observations: list of variables to plot
-  obsvars = (/"o_an","i_an","p_an","n_an","TCO2","TAlk"/)
+  obsvars = (/"o_an","i_an","p_an","n_an","TCO2","TAlk","c13_pi"/)
+  
 end if
 ;-------------------------------------------------------------
 ; common resources for global contour plots 
@@ -183,6 +190,10 @@ do i = 0, nvars-1
     A = get_talk (inptr1)
   end if
 
+  if (vars(i) .eq. "delta13clvl") then
+    A = get_delta13c (inptr1)
+  end if
+
   if (all(A.eq.-999.)) then
     print (vars(i)+" not present in case1 input file.")
     delete(A)
@@ -226,6 +237,11 @@ do i = 0, nvars-1
    if (any(obsvars(i) .eq. glodap_vars2)) then
      inptr2 = ptr_glodap2
      case2 = "GLODAPv2"
+   end if
+
+   if (any(obsvars(i) .eq. d13c_vars)) then
+     inptr2 = ptr_d13c
+     case2 = "d13C"
    end if
 
 ;  get latitudes and depth
@@ -305,6 +321,22 @@ do i = 0, nvars-1
      end if
    end if
 
+   if (vars(i) .eq. "delta13clvl") then
+     if (isfilevar(inptr2,"c13_pi")) then
+       tmp = inptr2->c13_pi
+       B   = tofloat(tmp)
+       copy_VarCoords(tmp,B)
+;       B = (/B*0.001025/)
+       B@long_name = "delta13C"
+       B@units = "per mil"
+       assignFillValue(B,B)
+       delete(tmp)
+     else
+       B = -999.
+     end if
+   end if
+
+
  ;-------------
  ; Control case (if model to model comparison)
  ;-------------
@@ -333,6 +365,10 @@ do i = 0, nvars-1
 
     if (vars(i) .eq. "talklvl") then
       B = get_talk (inptr2)
+    end if
+
+    if (vars(i) .eq. "delta13clvl") then
+      B = get_delta13c (inptr2)
     end if
 
   end if
@@ -399,14 +435,15 @@ do i = 0, nvars-1
 ;  print(dimsizes(data2))
 
   data1 = A(0,:,:,0)
-  if (vars(i).eq."dissiclvl" .and. compare.eq."OBS") then
+  if (vars(i).eq."dissiclvl" .or. vars(i).eq."talklvl" .or. vars(i).eq."delta13clvl" .and. compare.eq."OBS") then
     data2 = B(:,:,0)
   else
-    if (vars(i).eq."talklvl" .and. compare.eq."OBS") then
-      data2 = B(:,:,0)
-    else
+;    if (vars(i).eq."talklvl" .and. compare.eq."OBS") then
+;      data2 = B(:,:,0)
+;    else
+;        printVarSummary(B)
       data2 = B(0,:,:,0)
-    end if
+;    end if
   end if
   delete(A)
   delete(B)
@@ -417,9 +454,11 @@ do i = 0, nvars-1
 
 ;--------------------- Open files for plots ------------------------------
   if (compare .eq. "OBS") then
-    wks = gsn_open_wks("ps",wkdir+"/set3_ann_"+vars(i)+"_"+region+"_1model")
+;    wks = gsn_open_wks("ps",wkdir+"/set3_ann_"+vars(i)+"_"+region+"_1model")
+    wks = gsn_open_wks("png",webdir+"/set3/set3_ann_"+vars(i)+"_"+region+"_1model")
   else
-    wks = gsn_open_wks("ps",wkdir+"/set3_ann_"+vars(i)+"_"+region+"_2models") 
+;    wks = gsn_open_wks("png",wkdir+"/set3_ann_"+vars(i)+"_"+region+"_2models") 
+    wks = gsn_open_wks("png",webdir+"/set3/set3_ann_"+vars(i)+"_"+region+"_2models") 
   end if
 
   if (compare .eq. "OBS") then
@@ -433,6 +472,27 @@ do i = 0, nvars-1
   max1 = max(data1)
   min2 = min(data2)
   max2 = max(data2)
+
+  if (region .eq. "glb") then
+      cres@trXMinF  = -80.
+      cres@trXMaxF  = 89.5
+  else if (region .eq. "pac") then
+      cres@trXMinF  = -40.
+      cres@trXMaxF  = 70.
+  else if (region .eq. "atl") then
+      cres@trXMinF  = -40.
+      cres@trXMaxF  = 70.
+  else if (region .eq. "ind") then
+      cres@trXMinF  = -40.
+      cres@trXMaxF  = 30.
+  else if (region .eq. "so") then
+      cres@trXMinF  = -80.
+      cres@trXMaxF  = -30.
+  end if
+  end if
+  end if
+  end if
+  end if
 
   cres@lbLabelStride  = 2
   cres@lbOrientation = "Vertical"

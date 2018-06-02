@@ -120,3 +120,22 @@ begin
    end if
    return (xvar)
 end
+
+function get_delta13c (inptr:file)
+begin
+   if (isfilevar(inptr,"delta13clvl")) then
+      tmp = inptr->delta13clvl
+      if (typeof(tmp).eq."double") then
+         xvar = dble2flt(tmp)
+      else
+         xvar = tmp
+      end if
+      xvar@long_name = "delta13C"
+      xvar@units = "permil"
+      assignFillValue(xvar,xvar)
+   else
+      print("get_delta13c: no delta13clvl variable present")
+      xvar = -999.0
+   end if
+   return (xvar)
+end

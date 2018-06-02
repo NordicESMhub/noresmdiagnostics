@@ -68,6 +68,7 @@ if (compare .eq. "OBS") then
   ptr_woa13p  = addfile(infile2+"/WOA13/woa13_all_p00_01.nc","r")
   ptr_glodap  = addfile(infile2+"/GLODAPv2/GLODAPv2.2016b.TCO2_reordered.nc","r")
   ptr_glodap2 = addfile(infile2+"/GLODAPv2/GLODAPv2.2016b.TAlk_reordered.nc","r")
+  ptr_d13c    = addfile(infile2+"/EideM-etal_2017/C13_Climatology.nc","r")
 else
   inptr2   = addfile(infile2,"r")
   case2    = getenv("CASE2")
@@ -128,13 +129,15 @@ dcntrs_dissiclvl=(/-0.17,-0.15,-0.13,-0.11,-0.09,-0.07,-0.05,-0.03,-0.01,0.01,0.
 cntrs_talklvl=(/1.8,1.85,1.9,1.95,2,2.05,2.1,2.15,2.2,2.25,2.3,2.35,2.4,2.45,2.5,2.55,2.6,2.65,2.7,2.75/)
 dcntrs_talklvl=(/-0.17,-0.15,-0.13,-0.11,-0.09,-0.07,-0.05,-0.03,-0.01,0.01,0.03,0.05,0.07,0.09,0.11,0.13,0.15,0.17/)
 
+cntrs_d13clvl=(/0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0/)
+dcntrs_d13clvl=(/-0.85,-0.75,-0.65,-0.55,-0.45,-0.35,-0.25,-0.15,-0.05,0.05,0.15,0.25,0.35,0.45,0.55,0.65,0.75,0.85/)
+
 ; model variables
-vars = (/"o2lvl","silvl","po4lvl","no3lvl","dissiclvl","talklvl"/)
+vars = (/"o2lvl","silvl","po4lvl","no3lvl","dissiclvl","talklvl","delta13clvl"/)
 
 ; define contour intervals
-cntrs = (/cntrs_o2lvl,cntrs_silvl,cntrs_po4lvl,cntrs_no3lvl,cntrs_dissiclvl,cntrs_talklvl/)
-
-dcntrs = (/dcntrs_o2lvl,dcntrs_silvl,dcntrs_po4lvl,dcntrs_no3lvl,dcntrs_dissiclvl,dcntrs_talklvl/)
+cntrs = (/cntrs_o2lvl,cntrs_silvl,cntrs_po4lvl,cntrs_no3lvl,cntrs_dissiclvl,cntrs_talklvl,cntrs_d13clvl/)
+dcntrs = (/dcntrs_o2lvl,dcntrs_silvl,dcntrs_po4lvl,dcntrs_no3lvl,dcntrs_dissiclvl,dcntrs_talklvl,dcntrs_d13clvl/)
 
 nvars = dimsizes(vars)
 
@@ -148,9 +151,10 @@ if (compare .eq. "OBS") then
   woa13n_vars  = (/"n_an"/)
   glodap_vars  = (/"TCO2"/)
   glodap_vars2 = (/"TAlk"/)
+  d13c_vars    = (/"c13_pi"/)
 
   ; observations: list of variables to plot
-  obsvars = (/"o_an","i_an","p_an","n_an","TCO2","TAlk"/)
+  obsvars = (/"o_an","i_an","p_an","n_an","TCO2","TAlk","c13_pi"/)
   
 end if
 ;-------------------------------------------------------------
@@ -228,6 +232,10 @@ do i = 0, nvars-1
     if (vars(i) .eq. "talklvl") then
       A = get_talk (inptr1,depth1,depth_plot(iz))
     end if
+
+    if (vars(i) .eq. "delta13clvl") then
+      A = get_delta13c (inptr1,depth1,depth_plot(iz))
+    end if
   
     if (all(A.eq.-999.)) then
       print (vars(i)+" not present in case1 input file.")
@@ -274,6 +282,11 @@ do i = 0, nvars-1
         case2 = "GLODAPv2"
       end if
 
+      if (any(obsvars(i) .eq. d13c_vars)) then
+        inptr2 = ptr_d13c
+        case2 = "d13C"
+      end if
+
 ;     get latitudes,longitudes, and weights
       lat2 = inptr2->lat
       nlat2 = dimsizes(lat2) 
@@ -287,7 +300,7 @@ do i = 0, nvars-1
       if (vars(i) .eq. "o2lvl") then
         delete(B)
         B = inptr2->o_an(0,{depth_plot(iz)},:,:)
-	B = (/B*44.661/)
+        B = (/B*44.661/)
         B@long_name = "Oxygen z"+flt2string(depth_plot(iz))+"m"
         B@units = "mmol m-3"
       end if
@@ -316,7 +329,7 @@ do i = 0, nvars-1
       if (vars(i) .eq. "dissiclvl") then
         delete(B)
         B = inptr2->TCO2({depth_plot(iz)},:,:)
-	B = (/B*0.001025/)
+        B = (/B*0.001025/)
         B@long_name = "DIC z"+flt2string(depth_plot(iz))+"m"
         B@units = "mol m-3"
       end if
@@ -324,9 +337,19 @@ do i = 0, nvars-1
       if (vars(i) .eq. "talklvl") then
         delete(B)
         B = inptr2->TAlk({depth_plot(iz)},:,:)
-	B = (/B*0.001025/)
+        B = (/B*0.001025/)
         B@long_name = "Alkalinity z"+flt2string(depth_plot(iz))+"m"
         B@units = "mol m-3"
+      end if
+
+      if (vars(i) .eq. "delta13clvl") then
+        delete(B)
+        tmp = inptr2->c13_pi({depth_plot(iz)},:,:)
+        B   = tofloat(tmp)
+        copy_VarCoords(tmp,B)
+        B@long_name = "delta13C z"+flt2string(depth_plot(iz))+"m"
+        B@units = "per mil"
+        delete(tmp)
       end if
 
       if (all(B.eq.-999.)) then
@@ -361,6 +384,10 @@ do i = 0, nvars-1
 
       if (vars(i) .eq. "talklvl") then
         B = get_talk (inptr2,depth2,depth_plot(iz))
+      end if
+
+      if (vars(i) .eq. "delta13clvl") then
+        B = get_delta13c (inptr2,depth2,depth_plot(iz))
       end if
 
       if (all(B.eq.-999.)) then
