@@ -738,12 +738,12 @@ if [ $set_3 -eq 1 ]; then
         $NCL -Q < $DIAG_CODE/plot_zonal_mean.ncl
     done
     
-    $DIAG_CODE/ps2png.sh set3 $density
-    if [ $? -ne 0 ]; then
-        echo "ERROR occurred in ps2png.sh (set3)"
-        echo "*** EXITING THE SCRIPT ***"
-        exit 1
-    fi
+    #$DIAG_CODE/ps2png.sh set3 $density
+    #if [ $? -ne 0 ]; then
+        #echo "ERROR occurred in ps2png.sh (set3)"
+        #echo "*** EXITING THE SCRIPT ***"
+        #exit 1
+    #fi
     $DIAG_CODE/webpage3.sh
 fi
 # ------------------------------------------------
