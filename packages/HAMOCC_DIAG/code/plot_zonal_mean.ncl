@@ -241,7 +241,7 @@ do i = 0, nvars-1
 
    if (any(obsvars(i) .eq. d13c_vars)) then
      inptr2 = ptr_d13c
-     case2 = "d13C"
+     case2 = "EideM-etal_2017"
    end if
 
 ;  get latitudes and depth
