@@ -88,7 +88,7 @@ cres@tiMainFontHeightF        = 0.025
 cres@txFontHeightF            = 0.023
 cres@cnLevelSelectionMode     = "ExplicitLevels" 
 cres@cnFillOn                 = True
-cres@cnLinesOn                = True
+cres@cnLinesOn                = False
 cres@cnLineLabelsOn           = False
 cres@cnMissingValFillColor    = "gray75"
 cres@lbTitleOn                = True
@@ -167,6 +167,18 @@ do i = 0,nreg1-1
    cres@tiMainString = case1+" (yrs "+yrs_ave1+")"
    cres@gsnLeftString = region(i)
    cres@gsnRightString = "non-lin y "+A@units
+
+   if (isStrSubset(region(i),"atlantic_arctic_ocean")) then
+       cres@trXMinF = -40.0
+       cres@trXMaxF = 80.0
+   else if (isStrSubset(region(i),"indian_pacific_ocean")) then
+       cres@trXMinF = -40.0
+       cres@trXMaxF = 70.0
+   else
+       cres@trXMinF = -80.0
+       cres@trXMaxF = 85.0
+   end if
+   end if
 
    cres@gsnYAxisIrregular2Linear = False
    cnplot(0) = gsn_csm_contour(wks,A,cres)

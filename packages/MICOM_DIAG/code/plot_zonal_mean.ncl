@@ -332,6 +332,27 @@ do i = 0, nvars-1
   min2 = min(data2)
   max2 = max(data2)
 
+  if (region .eq. "glb") then
+      cres@trXMinF  = -80.
+      cres@trXMaxF  = 89.5
+  else if (region .eq. "pac") then
+      cres@trXMinF  = -40.
+      cres@trXMaxF  = 70.
+  else if (region .eq. "atl") then
+      cres@trXMinF  = -40.
+      cres@trXMaxF  = 70.
+  else if (region .eq. "ind") then
+      cres@trXMinF  = -40.
+      cres@trXMaxF  = 30.
+  else if (region .eq. "so") then
+      cres@trXMinF  = -80.
+      cres@trXMaxF  = -30.
+  end if
+  end if
+  end if
+  end if
+  end if
+
   cres@lbLabelStride  = 2
   if (vars(i).eq."salnlvl") then
     cres@lbLabelStride  = 2
