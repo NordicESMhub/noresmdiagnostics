@@ -116,7 +116,10 @@ else
     echo "<TD><I>Southern</I>" >> $WEBDIR/index.html
 fi
 echo "<TR>" >> $WEBDIR/index.html
-echo "<TD>&delta;13C (delta13c)" >> $WEBDIR/index.html
+echo "<TD>&delta;13C (delta13clvl)
+<div class="tooltip">(<b>?</b>)
+  <span class="tooltiptext">No observations for 0 and 100 m</span>
+</div>" >> $WEBDIR/index.html
 if ls $WEBDIR/set3/set3_ann_delta13clvl_*_${cinfo}.png >/dev/null 2>&1
 then
     echo "<TD><a href='set3/set3_ann_delta13clvl_glb_${cinfo}.png'>Global</a>" >> $WEBDIR/index.html

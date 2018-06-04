@@ -140,7 +140,10 @@ else
     echo "<TD><I>4000m</I>" >> $WEBDIR/index.html
 fi
 echo "<TR>" >> $WEBDIR/index.html
-echo "<TD>&delta;13C (delta13clvl)" >> $WEBDIR/index.html
+echo "<TD>&delta;13C (delta13clvl)
+<div class="tooltip">(<b>?</b>)
+  <span class="tooltiptext">No observations for 0 and 100 m</span>
+</div>" >> $WEBDIR/index.html
 if ls $WEBDIR/set2/set2_ann_delta13clvl_*_${cinfo}.png >/dev/null 2>&1
 then
     #echo "<TD><I>0m</I>" >> $WEBDIR/index.html
