@@ -677,9 +677,11 @@ mkdir -p $WEBDIR/set7
 cp $DIAG_HTML/index.html $WEBDIR
 cdate=`date`
 sed -i "s/test_run/$CASENAME1/g" $WEBDIR/index.html
+sed -i "s/FY1/$FIRST_YR_CLIMO1/g" $WEBDIR/index.html
+sed -i "s/LY1/$LAST_YR_CLIMO1/g" $WEBDIR/index.html
 sed -i "s/date_and_time/$cdate/g" $WEBDIR/index.html
 if [ $CNTL == USER ]; then
-    sed -i "17i<br>and $CASENAME2" $WEBDIR/index.html
+    sed -i "17i<br>and $CASENAME2 yrs${LAST_YR_CLIMO2}to${LAST_YR_CLIMO2}" $WEBDIR/index.html
 fi
 if [ $set_1 -eq 1 ] || [ $set_2 -eq 1 ]; then
     echo "<font color=maroon size=+1><b><u>Time series plots</u></b></font><br>" >> $WEBDIR/index.html
