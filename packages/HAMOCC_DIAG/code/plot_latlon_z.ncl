@@ -345,8 +345,7 @@ do i = 0, nvars-1
       if (vars(i) .eq. "delta13clvl") then
         delete(B)
         tmp = inptr2->c13_pi({depth_plot(iz)},:,:)
-        B   = tofloat(tmp)
-        copy_VarCoords(tmp,B)
+        B   = short2flt(tmp)
         B@long_name = "delta13C z"+flt2string(depth_plot(iz))+"m"
         B@units = "per mil"
         delete(tmp)

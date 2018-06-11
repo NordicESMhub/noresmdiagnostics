@@ -39,11 +39,12 @@ script_start=`date +%s`
 if [ -z $PGRIDPATH ]; then
     grid_type=`cat $WKDIR/attributes/grid_${casename}`
     grid_file=$DIAG_GRID/$grid_type/grid.nc
+    wgt_file=$DIAG_GRID/$grid_type/map_${grid_type}_to_1x1_bilin.nc
 else
     grid_file=$PGRIDPATH/grid.nc
 fi
-if [ ! -f $grid_file ]; then
-    echo "ERROR: grid file $grid_file doesn't exist."
+if [ ! -f $grid_file ] || [ ! -f $wgt_file ]; then
+    echo "ERROR: grid file $grid_file or weight file $wgt_file doesn't exist."
     echo "*** EXITING THE SCRIPT ***"
     exit 1
 fi
@@ -89,14 +90,14 @@ do
     infile=${casename}_${month}_${fyr_prnt}-${lyr_prnt}_climo.nc
     outfile=${casename}_${month}_${fyr_prnt}-${lyr_prnt}_climo_remap.nc
     echo "Remapping $climodir/$infile to a regular 1x1 grid"
-    eval $CDO -s remapbil,global_1 $climodir/climo_${month}.nc $climodir/$outfile >/dev/null 2>&1 &
+    eval cdo remap,global_1,$wgt_file $climodir/climo_${month}.nc $climodir/$outfile >/dev/null 2>&1 &
     pid+=($!)
 done
 for ((m=0;m<=${max_proc};m++))
 do
     wait ${pid[$m]}
     if [ $? -ne 0 ]; then
-        echo "ERROR in remapping: $CDO -s remapbil,global_1 $climodir/climo_${month}.nc $climodir/$outfile"
+        echo "ERROR in remapping: $CDO -s remap,global_1,$wgt_file $climodir/climo_${month}.nc $climodir/$outfile"
         echo "*** EXITING THE SCRIPT ***"
         exit 1
     fi
