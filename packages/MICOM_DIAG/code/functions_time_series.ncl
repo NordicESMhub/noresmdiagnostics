@@ -69,7 +69,7 @@ begin
       dt = new(nt-1,"float")
       do it = 0,nt-2
          dt(it) = xvar(it+1)-xvar(it)
-         if (abs(dt(it)).gt.0.01) then
+         if (abs(dt(it)).gt.0.03) then
            print("WARNING: replaced temperature outlier "+flt2string(xvar(it+1))+" (it="+tostring(it)+") with previous value ("+flt2string(xvar(it))+").")
            xvar(it+1) = xvar(it)
          end if
@@ -97,7 +97,7 @@ begin
       ds = new(nt-1,"float")
       do it = 0,nt-2
          ds(it) = xvar(it+1)-xvar(it)
-         if (abs(ds(it)).gt.0.001) then
+         if (abs(ds(it)).gt.0.002) then
            print("WARNING: replaced salinity outlier "+flt2string(xvar(it+1))+" (it="+tostring(it)+") with previous value ("+flt2string(xvar(it))+").")
            xvar(it+1) = xvar(it)
          end if
