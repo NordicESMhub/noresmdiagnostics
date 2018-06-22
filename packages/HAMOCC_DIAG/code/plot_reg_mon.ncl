@@ -177,7 +177,7 @@ do i = 0, nvars-1
           assignFillValue(B,B)
         end if
 
-        if (vars(i).eq."pp_tot") then
+        if (vars(i).eq."pp_tot" .or. vars(i).eq."ppint") then
           infile2 = climodir2+"/OcnProd_MODIS/ave.m.clim_MON_2003-2012_"+creg+".nc"
           inptr2  = addfile(infile2,"r")
           if (isfilevar(inptr2,"pp")) then

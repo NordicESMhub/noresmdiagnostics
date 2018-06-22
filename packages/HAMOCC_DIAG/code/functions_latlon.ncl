@@ -190,7 +190,7 @@ begin
       else
          xvar = tmp(0,:,:)
       end if
-      xvar  = xvar*365*24*3600
+      xvar  = xvar*365*86400
       xvar@long_name = "PP"
       print(xvar@long_name)
       xvar@units = "mol C m-2 yr-1"

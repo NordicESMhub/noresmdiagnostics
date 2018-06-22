@@ -779,7 +779,7 @@ if [ $set_4 -eq 1 ]; then
         echo "*** EXITING THE SCRIPT ***"
         exit 1
     fi
-    cp $DIAG_HTML/regions2.png $WEBDIR
+    cp $DIAG_HTML/regions2.png $WEBDIR/set4/
     $DIAG_CODE/webpage4.sh
 fi
 # Closing the webpage

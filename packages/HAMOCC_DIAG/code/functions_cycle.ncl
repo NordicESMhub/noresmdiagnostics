@@ -93,6 +93,7 @@ begin
       else
          xvar = tmp(:,0,0)
       end if
+      xvar    = (/xvar*365*86400/)
       xvar@long_name = "PP (vertically-integrated, offline)"
       xvar@units = "mol C m-2 yr-1"
       assignFillValue(xvar,xvar)
@@ -112,6 +113,7 @@ begin
       else
          xvar = tmp(:,0,0)
       end if
+      xvar    = (/xvar*365*86400/)
       xvar@long_name = "PP (vertically-integrated,online)"
       xvar@units = "mol C m-2 yr-1"
       assignFillValue(xvar,xvar)
