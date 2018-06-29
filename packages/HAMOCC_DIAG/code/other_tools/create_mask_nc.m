@@ -14,12 +14,12 @@ lat  = ncread(infile,'lat');
 nlon = length(lon); nlat = length(lat);
 
 % Read mask file
-mask_woa13_file='/projects/NS2345K/noresm_diagnostics_dev/packages/MICOM_DIAG/grid_files/region_mask_woa13_1x1.dat';
+mask_woa13_file='/projects/NS2345K/noresm_diagnostics_dev/packages/MICOM_DIAG/grid_files/1x1d/generic/region_mask_woa13_1x1.dat';
 fid=fopen(mask_woa13_file,'r');
 mask_woa13=fread(fid,[nlon,nlat],'float32');
 fclose(fid);
 
-outdir = '/projects/NS2345K/noresm_diagnostics_dev/packages/MICOM_DIAG/grid_files';
+outdir = '/projects/NS2345K/noresm_diagnostics_dev/packages/MICOM_DIAG/grid_files/1x1d/generic';
 
 regions  = [1 2 4 7 0];
 reg_name = {'pac','atl','so','ind','glb'};

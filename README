@@ -2,8 +2,8 @@
 README of diag_run and NorESM diagnostics
 =========================================
 Author: Johan Liakka
-Last updated: 26/11/2017
-
+Author: Yanchun He
+Last updated: 29/06/2018
 
 Table of contents
 -----------------
@@ -14,33 +14,31 @@ Table of contents
 4.1 CAM_DIAG specific changes
 4.2 CLM_DIAG specific changes
 4.3 CICE_DIAG specific changes
+4.4 MICOM_DIAG
+4.5 HAMOCC_DIAG
 5.  Contact information
 -----------------
 
-
 1. Objective of README
 -----------------------------------------------------------
-This README describes version 1.0 of the application diag_run, which is used to run NorESM diagnostics packages from the command line.
+This README describes version 5.0 of the application diag_run, which is used to run NorESM diagnostics packages from the command line.
 In addition, this README documents some major changes that has been made to the diagnostics packages since their original versions (developed by NCAR).
 All future modifications to diag_run and the associated diagnostics packages are documented by git (https://github.com/johiak/NoresmDiagnostics).
 
 For simplicity, throughout this README, all directories are written as roots of /projects/NS2345K/noresm_diagnostics.
 Hence, for example ./mydir/myfile -> /projects/NS2345K/noresm_diagnostics/mydir/myfile.
 
-
 2. Description of diag_run
 -----------------------------------------------------------
-./bin/diag_run is an executable bash application, wrapping around the different c shell (csh) scripts, used to run the diagnostics of each of the NorESM components.
-Hence, instead of modifying each csh script manually for each component, diag_run enables the user to run and configure each package from the command line.
+./bin/diag_run is an executable bash application, wrapping around the different bash/csh shell scripts, used to run the diagnostics of each of the NorESM components.
+Hence, instead of modifying each bash/csh script manually for each component, diag_run enables the user to run and configure each package from the command line.
 
-At the moment, the atmospheric (CAM), land (CLM) and sea-ice (CICE) diagnostics packages have been implemented to diag_run (micom and pop are under development).
-The code to those packages are located in ./CAM_DIAG, ./CLM_DIAG and ./CICE_DIAG, respectively.
-
+At the moment, the atmospheric (CAM), land (CLM) and sea-ice (CICE), ocean (MICOM) and carbon-cycle (HAMOCC) diagnostics packages have been implemented to diag_run.
+The code to those packages are located in ./CAM_DIAG, ./CLM_DIAG, ./CICE_DIAG, ./MICOM_DIAG, and HAMOCC_DIAG, respectively.
 
 3. Basic usage
 -----------------------------------------------------------
 A user manual of diag_run is avalable on the NorESM wiki (https://wiki.met.no/noresm/modeldiagnostics), and also appears if you run ./bin/diag_run
-
 
 4. Major changes in diagnostics packages compared to the NCAR versions
 -----------------------------------------------------------
@@ -50,9 +48,9 @@ Unfortunately, because anz version control system (such as Git) was not used fro
 
 The following major changes have been made in all diagnostic packages:
 - The calculation of the climatology has been improved, using the ncclimo oporator from nco.
-- The csh variables publish_html and publish_html_root have been added in order to enable publication of the html on the NIRD web server.
+- The bash/csh variables publish_html and publish_html_root have been added in order to enable publication of the html on the NIRD web server.
 - There is now the option to calculate time series over the entire simulation (default). Hence, the start and end years of the time series must no longer be specified.
-- The csh variable CLIMO_TIME_SERIES_SWITCH has been added in order to allow for diag_run to compute only climatology or time series if desired.
+- The bash/csh variable CLIMO_TIME_SERIES_SWITCH has been added in order to allow for diag_run to compute only climatology or time series if desired.
 - The environmental variable ncclimo_dir has been added in order to allow for diag_run to be run by cron.
 
 4.1 CAM_DIAG specific major changes
@@ -68,8 +66,38 @@ The following major changes have been made in all diagnostic packages:
 -----------------------------------------------------------
 - The switch CNTL has been added in order to determine whether one or two cases should be plotted.
 
+4.4 MICOM_DIAG
+-----------------------------------------------------------
+Has two modes: compare to the observations and anthor model run;
+Includes diagnostics of:
+- Time series plots
+    * Sections transports
+    * Global averages
+    * Maximum AMOC
+    * Hovmoeller plots
+    * ENSO indices
+- Climatology plots
+    * Horizontal fields - annual means
+    * Horizontal fields - seasonal/monthly means
+    * Overturning circulation
+    * Zonal means (lat-depth)
+    * Equatorial cross sections
+    * Meridional fluxes (vertically integrated)
+
+4.5 HAMOCC_DIAG
+-----------------------------------------------------------
+Has two modes: compare to the observations and anthor model run;
+Includes diagnostics of:
+- Time series plots
+    * Global fluxes
+    * Global averages
+- Climatology plots
+    * Horizontal fields
+    * Zonal mean fields
+    * Regionally-averaged monthly climatologies
+
 5. Contact information
 -----------------------------------------------------------
 Please contact me if you encounter any problems, or have any comments or questions:
-E-mail: johan.liakka@nersc.no
-Phone: +47 555 89842
+E-mail: yanchun.he@nersc.no
+Phone:

@@ -170,3 +170,60 @@ begin
    end if
    return (xvar)
 end
+
+function get_sst (inptr:file)
+begin
+   if (isfilevar(inptr,"sst")) then
+      tmp = inptr->sst
+      if (typeof(tmp).eq."double") then
+         xvar = dble2flt(tmp(:,0,0))
+      else
+         xvar = tmp(:,0,0)
+      end if
+      xvar@long_name = "SST"
+      xvar@units = "degC"
+      assignFillValue(xvar,xvar)
+   else
+      print("get_sst: no sst variable present")
+      xvar = -999.0
+   end if
+   return (xvar)
+end
+
+function get_sss (inptr:file)
+begin
+   if (isfilevar(inptr,"sss")) then
+      tmp = inptr->sss
+      if (typeof(tmp).eq."double") then
+         xvar = dble2flt(tmp(:,0,0))
+      else
+         xvar = tmp(:,0,0)
+      end if
+      xvar@long_name = "SSS"
+      xvar@units = "PSU"
+      assignFillValue(xvar,xvar)
+   else
+      print("get_sss: no sss variable present")
+      xvar = -999.0
+   end if
+   return (xvar)
+end
+
+function get_mld (inptr:file)
+begin
+   if (isfilevar(inptr,"mld")) then
+      tmp = inptr->mld
+      if (typeof(tmp).eq."double") then
+         xvar = dble2flt(tmp(:,0,0))
+      else
+         xvar = tmp(:,0,0)
+      end if
+      xvar@long_name = "mixed layer depth"
+      xvar@units = "meter"
+      assignFillValue(xvar,xvar)
+   else
+      print("get_mld: no mld variable present")
+      xvar = -999.0
+   end if
+   return (xvar)
+end

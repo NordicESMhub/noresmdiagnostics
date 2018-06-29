@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with the diagnostic package.  If not, see <http://www.gnu.org/licenses/>.
 
-VERSION=4.3
+VERSION=5.0
 BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 ETC_DIR=$ROOT_DIR/etc

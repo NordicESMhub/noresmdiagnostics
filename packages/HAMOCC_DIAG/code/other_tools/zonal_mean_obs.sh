@@ -23,7 +23,7 @@ infile=$datadir/C13_Climatology.nc
 
 for region in glb pac atl ind so
 do
-    maskfile=/projects/NS2345K/noresm_diagnostics_dev/packages/HAMOCC_DIAG/grid_files/region_mask_1x1_${region}.nc
+    maskfile=/projects/NS2345K/noresm_diagnostics_dev/packages/HAMOCC_DIAG/grid_files/1x1d/generic/region_mask_1x1_${region}.nc
 #    outfile=$datadir/woa13_all_${var}00_01_zm_${region}.nc
     #outfile=$datadir/GLODAPv2.2016b.TAlk_reordered_zm_${region}.nc
     outfile=$datadir/C13_Climatology_zm_${region}.nc

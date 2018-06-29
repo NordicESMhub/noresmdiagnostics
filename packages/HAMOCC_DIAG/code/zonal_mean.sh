@@ -52,7 +52,7 @@ done
 if [ $find_any -eq 1 ]; then
     for region in glb pac atl ind so
     do
-        maskfile=$DIAG_GRID/region_mask_1x1_${region}.nc
+        maskfile=$DIAG_GRID/1x1d/generic/region_mask_1x1_${region}.nc
         outfile=$climodir/${casename}_ANN_${first_yr}-${last_yr}_climo_remap_zm_${region}.nc
         tmpfile1=$climodir/${casename}_${region}_tmp1.nc
         tmpfile2=$climodir/${casename}_${region}_tmp2.nc

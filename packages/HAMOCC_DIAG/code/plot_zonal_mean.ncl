@@ -9,7 +9,6 @@ begin
 
 compare    = getenv("COMPARE")
 wkdir      = getenv("WKDIR")
-webdir    = getenv("WEBDIR")
 infile1    = getenv("INFILE1")     ; case1 climo input filename
 fyr1       = getenv("FYR1")
 lyr1       = getenv("LYR1")
@@ -435,7 +434,7 @@ do i = 0, nvars-1
 ;  print(dimsizes(data2))
 
   data1 = A(0,:,:,0)
-  if (vars(i).eq."dissiclvl" .or. vars(i).eq."talklvl" .or. vars(i).eq."delta13clvl" .and. compare.eq."OBS") then
+  if ( (vars(i).eq."dissiclvl" .or. vars(i).eq."talklvl" .or. vars(i).eq."delta13clvl") .and. compare.eq."OBS") then
     data2 = B(:,:,0)
   else
 ;    if (vars(i).eq."talklvl" .and. compare.eq."OBS") then
@@ -454,11 +453,9 @@ do i = 0, nvars-1
 
 ;--------------------- Open files for plots ------------------------------
   if (compare .eq. "OBS") then
-;    wks = gsn_open_wks("ps",wkdir+"/set3_ann_"+vars(i)+"_"+region+"_1model")
-    wks = gsn_open_wks("png",webdir+"/set3/set3_ann_"+vars(i)+"_"+region+"_1model")
+    wks = gsn_open_wks("ps",wkdir+"/set3_ann_"+vars(i)+"_"+region+"_1model")
   else
-;    wks = gsn_open_wks("png",wkdir+"/set3_ann_"+vars(i)+"_"+region+"_2models") 
-    wks = gsn_open_wks("png",webdir+"/set3/set3_ann_"+vars(i)+"_"+region+"_2models") 
+    wks = gsn_open_wks("ps",wkdir+"/set3_ann_"+vars(i)+"_"+region+"_2models") 
   end if
 
   if (compare .eq. "OBS") then

@@ -16,7 +16,7 @@ fyr_prnt1  = getenv("FYR_PRNT1")
 lyr_prnt1  = getenv("LYR_PRNT1")
 climodir1  = getenv("CLIMODIR1")
 climodir2  = getenv("CLIMODIR2")
-
+obsdir     = getenv("DIAG_OBS")
 wkdir      = getenv("WKDIR")
 
 if (compare.eq."USER") then
@@ -28,7 +28,7 @@ if (compare.eq."USER") then
 end if
 
 ; model variables
-vars = (/"pco2","co2fxn","pp_tot","ppint","srfo2","srfsi","srfpo4","srfno3"/)
+vars = (/"pco2","co2fxn","pp_tot","ppint","srfo2","srfsi","srfpo4","srfno3","sst","sss","mld"/)
 regions  = (/"ARC","NATL","NPAC","TATL","TPAC","IND","MSO","HSO"/)
 reg_long = (/"Arctic","North Atlantic","North Pacific","Tropical Atlantic","Tropical Pacific","Indian ocean","Southern ocean","Southern ocean"/)
 
@@ -43,10 +43,11 @@ if (compare .eq. "OBS") then
 
   eth_vars  = (/"spco2","fgco2"/)
   prod_vars = (/"pp"/)
-  woa_vars  = (/"o_an","i_an","p_an","n_an"/)
+  woa_vars  = (/"o_an","i_an","p_an","n_an","t_an","s_an"/)
+  woce_vars = (/"mld"/)
 
   ; observations: list of variables to plot
-  obsvars = (/"spco2","fgco2","pp","pp","o_an","i_an","p_an","n_an"/)
+  obsvars = (/"spco2","fgco2","pp","pp","o_an","i_an","p_an","n_an","t_an","s_an","mld"/)
 end if
 
 pmth = fspan(1,12,12)
@@ -89,7 +90,7 @@ do i = 0, nvars-1
   if (compare .eq. "OBS") then
     psfile=wkdir+"/set4_"+vars(i)+"_1model"
   else
-    psfile=wkdir+"/set4_"+vars(i)+"_2model"
+    psfile=wkdir+"/set4_"+vars(i)+"_2models"
   end if
   wks = gsn_open_wks("ps",psfile)
 
@@ -135,6 +136,16 @@ do i = 0, nvars-1
       A = get_srfno3 (inptr1)
     end if
 
+    if (vars(i) .eq. "sst") then
+      A = get_sst (inptr1)
+    end if
+    if (vars(i) .eq. "sss") then
+      A = get_sss (inptr1)
+    end if
+    if (vars(i) .eq. "mld") then
+      A = get_mld (inptr1)
+    end if
+
     if (isvar("A") .and. all(A.eq.-999.)) then
       print (vars(i)+" not present in case1 input file.")
       plot_switch_A=1
@@ -149,92 +160,128 @@ do i = 0, nvars-1
         delete(B)
       end if
 
-      B = -999.
-      plot_switch_B=0
-      if (compare.eq."OBS") then    ; Compare to OBS
+      C = -999.
+      plot_switch_C=0
+;      if (compare.eq."OBS") then    ; Compare to OBS
 
         if (vars(i).eq."pco2") then
-          infile2 = climodir2+"/Landschuetzer_2015/spco2_ETH_MON_1982-2011_"+creg+".nc"
+          infile2 = obsdir+"/Landschuetzer_2015/spco2_ETH_MON_1982-2011_"+creg+".nc"
           inptr2  = addfile(infile2,"r")
           if (isfilevar(inptr2,"spco2")) then
-            delete(B)
-            B = inptr2->spco2(:,0,0)
-            assignFillValue(B,B)
-            case2="Landschuetzer et al. (2015)"
+            delete(C)
+            C = inptr2->spco2(:,0,0)
+            assignFillValue(C,C)
+            obsname="Landschuetzer et al. (2015)"
           end if
         end if
 
         if (vars(i).eq."co2fxn") then
-          infile2 = climodir2+"/Landschuetzer_2015/spco2_ETH_MON_1982-2011_"+creg+".nc"
+          infile2 = obsdir+"/Landschuetzer_2015/spco2_ETH_MON_1982-2011_"+creg+".nc"
           inptr2  = addfile(infile2,"r")
           if (isfilevar(inptr2,"fgco2")) then
-            delete(B)
+            delete(C)
             tmp     = inptr2->fgco2(:,0,0)
-            B       = (/-tmp/)
+            C       = (/-tmp/)
             delete(tmp)
-            case2="Landschuetzer et al. (2015)"
+            obsname="Landschuetzer et al. (2015)"
           end if
-          assignFillValue(B,B)
+          assignFillValue(C,C)
         end if
 
         if (vars(i).eq."pp_tot" .or. vars(i).eq."ppint") then
-          infile2 = climodir2+"/OcnProd_MODIS/ave.m.clim_MON_2003-2012_"+creg+".nc"
+          infile2 = obsdir+"/OcnProd_MODIS/ave.m.clim_MON_2003-2012_"+creg+".nc"
           inptr2  = addfile(infile2,"r")
           if (isfilevar(inptr2,"pp")) then
-            delete(B)
-            B       = inptr2->pp(:,0,0)
-            B       = (/B*365*86400/)
-            case2="MODIS (2003-2012)"
+            delete(C)
+            C       = inptr2->pp(:,0,0)
+            C       = (/C*365*86400/)
+            obsname="MODIS (2003-2012)"
           end if
-          assignFillValue(B,B)
+          assignFillValue(C,C)
         end if
 
         if (vars(i).eq."srfo2") then
-          infile2 = climodir2+"/WOA13/woa13_all_oMON_01_"+creg+".nc"
+          infile2 = obsdir+"/WOA13/woa13_all_oMON_01_"+creg+".nc"
           inptr2  = addfile(infile2,"r")
           if (isfilevar(inptr2,"o_an")) then
-            delete(B)
-            B = inptr2->o_an(:,0,0,0)
-            B = (/B*44.661/)
-            assignFillValue(B,B)
-            case2="WOA13"
+            delete(C)
+            C = inptr2->o_an(:,0,0,0)
+            C = (/C*44.661/)
+            assignFillValue(C,C)
+            obsname="WOA13"
           end if
         end if
 
         if (vars(i).eq."srfsi") then
-          infile2 = climodir2+"/WOA13/woa13_all_iMON_01_"+creg+".nc"
+          infile2 = obsdir+"/WOA13/woa13_all_iMON_01_"+creg+".nc"
           inptr2  = addfile(infile2,"r")
           if (isfilevar(inptr2,"i_an")) then
-            delete(B)
-            B = inptr2->i_an(:,0,0,0)
-            assignFillValue(B,B)
-            case2="WOA13"
+            delete(C)
+            C = inptr2->i_an(:,0,0,0)
+            assignFillValue(C,C)
+            obsname="WOA13"
           end if
         end if
 
         if (vars(i).eq."srfpo4") then
-          infile2 = climodir2+"/WOA13/woa13_all_pMON_01_"+creg+".nc"
+          infile2 = obsdir+"/WOA13/woa13_all_pMON_01_"+creg+".nc"
           inptr2  = addfile(infile2,"r")
           if (isfilevar(inptr2,"p_an")) then
-            delete(B)
-            B       = inptr2->p_an(:,0,0,0)
-            assignFillValue(B,B)
-            case2="WOA13"
+            delete(C)
+            C       = inptr2->p_an(:,0,0,0)
+            assignFillValue(C,C)
+            obsname="WOA13"
           end if
         end if
 
         if (vars(i).eq."srfno3") then
-          infile2 = climodir2+"/WOA13/woa13_all_nMON_01_"+creg+".nc"
+          infile2 = obsdir+"/WOA13/woa13_all_nMON_01_"+creg+".nc"
           inptr2  = addfile(infile2,"r")
           if (isfilevar(inptr2,"n_an")) then
-            delete(B)
-            B       = inptr2->n_an(:,0,0,0)
-            assignFillValue(B,B)
-            case2="WOA13"
+            delete(C)
+            C       = inptr2->n_an(:,0,0,0)
+            assignFillValue(C,C)
+            obsname="WOA13"
           end if
         end if
 
-      else ; Compare to model
+        if (vars(i).eq."sst") then
+          infile2 = obsdir+"/WOA13/woa13_decav_tMON_01_"+creg+".nc"
+          inptr2  = addfile(infile2,"r")
+          if (isfilevar(inptr2,"t_an")) then
+            delete(C)
+            C       = inptr2->t_an(:,0,0,0)
+            assignFillValue(C,C)
+            obsname="WOA13"
+          end if
+        end if
+
+        if (vars(i).eq."sss") then
+          infile2 = obsdir+"/WOA13/woa13_decav_sMON_01_"+creg+".nc"
+          inptr2  = addfile(infile2,"r")
+          if (isfilevar(inptr2,"s_an")) then
+            delete(C)
+            C       = inptr2->s_an(:,0,0,0)
+            assignFillValue(C,C)
+            obsname="WOA13"
+          end if
+        end if
+
+        if (vars(i).eq."mld") then
+          infile2 = obsdir+"/MLD/mld_clim_WOCE_1x1_"+creg+".nc"
+          inptr2  = addfile(infile2,"r")
+          if (isfilevar(inptr2,"mld")) then
+            delete(C)
+            C       = inptr2->mld(:,0,0)
+            assignFillValue(C,C)
+            obsname="WOCE"
+          end if
+        end if
+
+;      else ; Compare to model
+      B = -999.
+      plot_switch_B=0
+      if (compare.eq."USER") then
 
         if (isvar("B")) then
           delete(B)
@@ -255,6 +302,10 @@ do i = 0, nvars-1
           B = get_pp (inptr2)
         end if
 
+        if (vars(i) .eq. "ppint") then
+          B = get_ppint (inptr1)
+        end if
+
         if (vars(i) .eq. "srfo2") then
           B = get_srfo2 (inptr2)
         end if
@@ -271,8 +322,17 @@ do i = 0, nvars-1
           B = get_srfno3 (inptr2)
         end if
 
-      end if
+        if (vars(i) .eq. "sst") then
+          B = get_sst (inptr1)
+        end if
+        if (vars(i) .eq. "sss") then
+          B = get_sss (inptr1)
+        end if
+        if (vars(i) .eq. "mld") then
+          B = get_mld (inptr1)
+        end if
 
+      end if
       if (all(B.eq.-999.)) then
         print (vars(i)+" not present in case2 input file.")
         plot_switch_B=1
@@ -286,27 +346,46 @@ do i = 0, nvars-1
       res@tiYAxisString       = A@long_name+" ["+A@units+"]"
       res@tiMainString        = reg_long(ireg)+" "+latbs(ireg)
 
-      if (plot_switch_B.eq.1) then
+      if (plot_switch_B.eq.1 .and. plot_switch_C.eq.1) then
         res@xyLineThicknesses = (/2/)
         res@xyDashPatterns    = (/0/)
         res@xyLineColors      = (/"blue"/)
-        ncases = 1
-      else
+        data=new((/1,12/),float)
+        data(0,0:11) = A
+      end if
+      if (plot_switch_C.eq.0 .and. plot_switch_B.eq.1) then
         res@xyLineThicknesses = (/2,2/)
         res@xyDashPatterns    = (/0,0/)
-        res@xyLineColors      = (/"blue","red"/)
-        ncases = 2
+        res@xyLineColors      = (/"blue","black"/)
+        data=new((/2,12/),float)
+        data(0,0:11) = A
+        data(1,0:11) = (/C/)
       end if
 
-      data=new((/ncases,12/),float)
-      data(0,0:11) = A
-      if (plot_switch_B.eq.0) then
+      if (plot_switch_C.eq.1 .and. plot_switch_B.eq.0) then
+        res@xyLineThicknesses = (/2,2/)
+        res@xyDashPatterns    = (/0,16/)
+        res@xyLineColors      = (/"blue","red"/)
+        data=new((/2,12/),float)
+        data(0,0:11) = A
         data(1,0:11) = (/B/)
       end if
+
+      if (plot_switch_B.eq.0 .and. plot_switch_C.eq.0) then
+        res@xyLineThicknesses = (/2,2,2/)
+        res@xyDashPatterns    = (/0,16,0/)
+        res@xyLineColors      = (/"blue","red","black"/)
+        data=new((/3,12/),float)
+        data(0,0:11) = A
+        data(1,0:11) = (/B/)
+        data(2,0:11) = (/C/)
+      end if
+
       plot(ireg) = gsn_csm_xy(wks,pmth,data,res)
       delete(data)
       delete(A)
       delete(B)
+      delete(C)
       delete(res@xyLineThicknesses)
       delete(res@xyDashPatterns)
       delete(res@xyLineColors)
@@ -324,6 +403,15 @@ do i = 0, nvars-1
     if (plot_switch_B.eq.0) then
       txres@txFontColor   = "red"
       gsn_text_ndc(wks,case2,0.99,0.19,txres)
+      if (plot_switch_C.eq.0) then
+          txres@txFontColor   = "black"
+          gsn_text_ndc(wks,obsname,0.99,0.16,txres)
+      end if
+    else
+        if (plot_switch_C.eq.0) then
+          txres@txFontColor   = "black"
+          gsn_text_ndc(wks,obsname,0.99,0.19,txres)
+        end if
     end if
     frame(wks)
     delete (wks)
