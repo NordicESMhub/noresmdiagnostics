@@ -196,7 +196,7 @@ begin
          xvar = tmp
       end if
       xvar@long_name = "total primary production (ppint)"
-      xvar@units = "Pg yr-1"
+      xvar@units = "pmol C yr-1"
       assignFillValue(xvar,xvar)
    else
       print("get_ppint: no ppint_tot variable present")

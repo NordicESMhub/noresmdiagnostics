@@ -592,6 +592,10 @@ do i = 0, nvars-1
     delete(A)
     continue       ; procede to next variable in do loop
   end if
+  if(.not.isatt(A,"_FillValue")) then
+      A@_FillValue = default_fillvalue(typeof(A))
+  end if
+  A = where(abs(A).gt.1e20, A@_FillValue, A)
 
   if (compare .eq. "OBS") then            ; CASE 2 IS OBS
     if (any(obsvars(i).eq.ncep_vars)) then
@@ -824,6 +828,10 @@ do i = 0, nvars-1
  
     B = dim_avg_Wrap(tmp)          ; zonal ave
     delete(tmp)
+;    if (vars(i) .eq. "TAUWLOGMODIS") then
+;        printVarSummary(B)
+;        print(B)
+;    end if
   else                              
 ;   CASE 2 IS MODEL
     if (vars(i) .eq. "CLDHGH") then
