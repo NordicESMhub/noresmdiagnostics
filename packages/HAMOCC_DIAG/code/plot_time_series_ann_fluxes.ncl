@@ -87,7 +87,12 @@ do i = 0, nvars-1
       end if
 
       if (vars(i).eq."pp") then
-         B = get_pp (inptr2)
+         B = get_ppint(inptr2)    ; firstly try ppint
+         if (all(B.eq.-999.)) then
+           delete(B)
+           print("use pp_tot instead")
+           B = get_pp(inptr2)     ; otherwise try pp_tot
+         end if
       end if
 
       if (vars(i).eq."epc100") then

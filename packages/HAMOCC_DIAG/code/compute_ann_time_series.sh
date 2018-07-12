@@ -359,7 +359,7 @@ do
                 outfile_tmp=${var}_${casename}_ANN_${yr_prnt}_tmp.nc
                 outfile=${var}_${casename}_ANN_${yr_prnt}.nc
                 $NCAP2 -O -s 'ppint_area=ppint*parea' $WKDIR/$infile $WKDIR/$outfile_tmp
-                $NCAP2 -O -s 'ppint_tot=ppint_area.total($x,$y)*86400.0*365.0*1.0e-12' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
+                $NCAP2 -O -s 'ppint_tot=ppint_area.total($x,$y)*86400.0*365.0*12*1.0e-15' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
                 $NCKS --no_tmp_fl -O -v ppint_tot $WKDIR/$outfile_tmp $WKDIR/$outfile
                 rm -f $WKDIR/$outfile_tmp
                 let iproc++
