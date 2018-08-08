@@ -7,8 +7,8 @@
 
 unset echo verbose
 setenv DIAG_VERSION 140207  # version number YYMMDD
-setenv NCARG_ROOT /opt/ncl64
-setenv PATH /opt/ncl64/bin/:/usr/local/bin:/usr/bin
+setenv NCARG_ROOT /opt/ncl65
+setenv PATH /opt/ncl65/bin/:/usr/local/bin:/usr/bin
 
 #******************************************************************
 #  C-shell control script for AMWG Diagnostics Package.           *
@@ -2506,7 +2506,7 @@ if ($tset_1 == 0) then
         echo " "
         echo " COMPUTING $SEASON MEAN ..."
         if ($time_series_obs == 0) then
-             if ($SEASON == DJF || $SEASON == JJA || $SEASON == ANN) then
+           if ($SEASON == DJF || $SEASON == JJA || $SEASON == ANN) then
               $NCL < $DIAG_CODE/plot_time_series_vs_obs.ncl
               $NCL < $DIAG_CODE/plot_time_series_Rnet.ncl
            else

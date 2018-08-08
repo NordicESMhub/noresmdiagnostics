@@ -33,19 +33,23 @@ else
 end if
 
 vars = "Rnet"
-y_range_max = 3.
-y_range_min = -3.
+;y_range_max = 3.
+;y_range_min = -3.
 
 A = get_Rnet (inptr1)
 ndim = dimsizes(A)
 ntimes1 = ndim(0)
 ntimes_tot = ntimes1
 
+;y_range_max = max(fabs(A))
+
 if (compare .eq. "USER") then
    B = get_Rnet (inptr2)
    ndim = dimsizes(B)
    ntimes2 = ndim(0)
    ntimes_tot = max((/ntimes1,ntimes2/))
+
+;   y_range_max = max((/fabs(A),fabs(B)/))
 end if
 
 if (compare .eq. "OBS") then
@@ -108,10 +112,11 @@ end if
    res@tiMainFontHeightF      = 0.02
    res@txFontHeightF          = 0.01
    res@gsnYRefLine            = 0.0
-   if (season.eq."ANN") then
-      res@trYMaxF                = y_range_max
-      res@trYMinF                = y_range_min
-   end if
+;   if (season.eq."ANN") then
+;      res@trYMaxF                = y_range_max
+;      res@trYMinF                = y_range_min
+;      res@trYMinF                = -y_range_max
+;   end if
 
    pyrs = fspan(1,ntimes_tot,ntimes_tot)
    wks = gsn_open_wks("ps",wkdir+"/"+plotname)
