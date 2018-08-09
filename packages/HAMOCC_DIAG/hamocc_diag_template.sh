@@ -4,8 +4,9 @@
 # Johan Liakka, NERSC, johan.liakka@nersc.no
 # Last update Apr 2018
 #set -e
-export NCARG_ROOT=/opt/ncl64
-export PATH=/opt/ncl64/bin/:/usr/local/bin:/usr/bin
+export NCARG_ROOT=/opt/ncl65
+#export PATH=/opt/ncl64/bin/:/usr/local/bin:/usr/bin
+export PATH=/opt/ncl65/bin/:/opt/nco-4.7.5-intel/bin/:/opt/intel/compilers_and_libraries_2017.4.196/linux/bin/intel64:/opt/intel/compilers_and_libraries_2017.4.196/linux/mpi/intel64/bin:/usr/local/bin:/usr/bin
 #***************************
 #*** USER MODIFY SECTION ***
 #***************************
