@@ -25,6 +25,6 @@ endif
 foreach obs_source ($obs_sources)
    echo " COMPUTING GLOBAL MEANS OF $obs_source OBSERVATIONAL DATA."
    foreach seas (DJF JJA ANN)
-      /usr/bin/ncwa -h -O -w gw -a lat,lon $OBS_DATA/${obs_source}_${seas}_climo.nc $time_out_path/${obs_source}_${seas}_gm.nc
+      $nco_dir/ncwa -h -O -w gw -a lat,lon $OBS_DATA/${obs_source}_${seas}_climo.nc $time_out_path/${obs_source}_${seas}_gm.nc
    end
 end

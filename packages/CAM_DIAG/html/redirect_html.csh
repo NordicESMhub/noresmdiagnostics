@@ -13,7 +13,7 @@ set full_url  = $3
 
 cd $html_path
 
-cat >${tar_file}.html << EOF
+/usr/bin/cat >${tar_file}.html << EOF
 <html>
 <head>
 <meta http-equiv="refresh" content="0; url=http://${full_url}"/>

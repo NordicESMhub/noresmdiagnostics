@@ -90,7 +90,7 @@ echo ${rootname} >  ${path_diag}/attributes/${casetype}_rootname
 ##
 ## Determine case grid
 ##
-/usr/local/bin/ncks  -q -d lat,0 -d lon,0 -d lev,0 -d ilev,0 -v gw $fullpath_filename  >&! /dev/null 
+$nco_dir/ncks  -q -d lat,0 -d lon,0 -d lev,0 -d ilev,0 -v gw $fullpath_filename  >&! /dev/null 
 set var_present = $status
 
 if ($var_present == 0) then
@@ -144,10 +144,10 @@ set first_find = 1
 set var_list = " "
 foreach var ($required_vars)
         if ($cam_grid != SE) then 
-            /usr/local/bin/ncks --quiet  -d lat,0 -d lon,0 -d lev,0 -d ilev,0 -v $var $fullpath_filename  >&! /dev/null 
+            $nco_dir/ncks --quiet  -d lat,0 -d lon,0 -d lev,0 -d ilev,0 -v $var $fullpath_filename  >&! /dev/null 
             set var_present = $status
         else  
-            /usr/local/bin/ncks --quiet  -d ncol,0 -d lev,0 -d ilev,0 -v $var $fullpath_filename >&! /dev/null 
+            $nco_dir/ncks --quiet  -d ncol,0 -d lev,0 -d ilev,0 -v $var $fullpath_filename >&! /dev/null 
             set var_present = $status
         endif
         if ($var_present == 0) then

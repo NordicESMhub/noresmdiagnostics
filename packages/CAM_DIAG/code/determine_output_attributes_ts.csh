@@ -78,7 +78,7 @@ echo ${rootname} >  ${path_diag}/attributes/${casetype}_rootname
 ##
 ## Determine case grid
 ##
-/usr/local/bin/ncks  -q -d lat,0 -d lon,0 -d lev,0 -d ilev,0 -v gw $fullpath_filename  >&! /dev/null 
+$nco_dir/ncks  -q -d lat,0 -d lon,0 -d lev,0 -d ilev,0 -v gw $fullpath_filename  >&! /dev/null 
 set var_present = $status
 
 if ($var_present == 0) then

@@ -1,4 +1,4 @@
-#!/bin/csh -f
+#!/bin/csh -fv
 
 unset echo verbose
 
@@ -72,10 +72,10 @@ echo "COMPUTING CLIMO FOR $casetype"
 echo "-------------------------"
 
 if ( $strip_off_vars == 0 ) then
-#   /usr/local/bin/ncclimo --model_name=$modelname --var_lst=$var_list --dec_md=$djf_md --case=$casename --yr_srt=$first_yr --yr_end=$yr_end --drc_in=$path_history --drc_out=$path_climo
-   $ncclimo_dir/ncclimo --clm_md=mth -m $modelname -v $var_list -a $djf_md -c $casename -s $first_yr -e $yr_end -i $path_history -o $path_climo
+#   $nco_dir/ncclimo --model_name=$modelname --var_lst=$var_list --dec_md=$djf_md --case=$casename --yr_srt=$first_yr --yr_end=$yr_end --drc_in=$path_history --drc_out=$path_climo
+   $nco_dir/ncclimo --clm_md=mth -m $modelname -v $var_list -a $djf_md -c $casename -s $first_yr -e $yr_end -i $path_history -o $path_climo
 else
-   $ncclimo_dir/ncclimo --clm_md=mth -m $modelname              -a $djf_md -c $casename -s $first_yr -e $yr_end -i $path_history -o $path_climo
+   $nco_dir/ncclimo --clm_md=mth -m $modelname              -a $djf_md -c $casename -s $first_yr -e $yr_end -i $path_history -o $path_climo
 endif
 # Add time stamp
 set first_yr_prnt = `printf "%04d" ${first_yr}`
@@ -116,35 +116,33 @@ if ( $significance == 0 ) then
       endif
       echo " FOR YEAR: $yr_cnt"
       if ( $strip_off_vars == 0 ) then
-         /usr/local/bin/ncra -O -p ${path_history} -w 31,31,28    -v $var_list $fdec $fjan $ffeb ${path_climo}/tmp_djf_${yr_cnt}.nc
-         /usr/local/bin/ncra -O -p ${path_history} -w 31,30,31    -v $var_list $fmar $fapr $fmay ${path_climo}/tmp_mam_${yr_cnt}.nc
-         /usr/local/bin/ncra -O -p ${path_history} -w 30,31,31    -v $var_list $fjun $fjul $faug ${path_climo}/tmp_jja_${yr_cnt}.nc
-         /usr/local/bin/ncra -O -p ${path_history} -w 30,31,30    -v $var_list $fsep $foct $fnov ${path_climo}/tmp_son_${yr_cnt}.nc
-         /usr/local/bin/ncra -O -p ${path_climo}   -w 90,92,92,91 -v $var_list tmp_djf_${yr_cnt}.nc tmp_mam_${yr_cnt}.nc tmp_jja_${yr_cnt}.nc tmp_son_${yr_cnt}.nc ${path_climo}/tmp_ann_${yr_cnt}.nc
+        $nco_dir/ncra -O -p ${path_history} -w 31,31,28    -v $var_list $fdec $fjan $ffeb ${path_climo}/tmp_djf_${yr_cnt}.nc
+        $nco_dir/ncra -O -p ${path_history} -w 31,30,31    -v $var_list $fmar $fapr $fmay ${path_climo}/tmp_mam_${yr_cnt}.nc
+        $nco_dir/ncra -O -p ${path_history} -w 30,31,31    -v $var_list $fjun $fjul $faug ${path_climo}/tmp_jja_${yr_cnt}.nc
+        $nco_dir/ncra -O -p ${path_history} -w 30,31,30    -v $var_list $fsep $foct $fnov ${path_climo}/tmp_son_${yr_cnt}.nc
+        $nco_dir/ncra -O -p ${path_climo}   -w 90,92,92,91 -v $var_list tmp_djf_${yr_cnt}.nc tmp_mam_${yr_cnt}.nc tmp_jja_${yr_cnt}.nc tmp_son_${yr_cnt}.nc ${path_climo}/tmp_ann_${yr_cnt}.nc
       else
-         /usr/local/bin/ncra -O -p ${path_history} -w 31,31,28    $fdec $fjan $ffeb ${path_climo}/tmp_djf_${yr_cnt}.nc
-         /usr/local/bin/ncra -O -p ${path_history} -w 31,30,31    $fmar $fapr $fmay ${path_climo}/tmp_mam_${yr_cnt}.nc
-         /usr/local/bin/ncra -O -p ${path_history} -w 30,31,31    $fjun $fjul $faug ${path_climo}/tmp_jja_${yr_cnt}.nc
-         /usr/local/bin/ncra -O -p ${path_history} -w 30,31,30    $fsep $foct $fnov ${path_climo}/tmp_son_${yr_cnt}.nc
-         /usr/local/bin/ncra -O -p ${path_climo}   -w 90,92,92,91 tmp_djf_${yr_cnt}.nc tmp_mam_${yr_cnt}.nc tmp_jja_${yr_cnt}.nc tmp_son_${yr_cnt}.nc ${path_climo}/tmp_ann_${yr_cnt}.nc
+         $nco_dir/ncra -O -p ${path_history} -w 31,31,28    $fdec $fjan $ffeb ${path_climo}/tmp_djf_${yr_cnt}.nc
+         $nco_dir/ncra -O -p ${path_history} -w 31,30,31    $fmar $fapr $fmay ${path_climo}/tmp_mam_${yr_cnt}.nc
+         $nco_dir/ncra -O -p ${path_history} -w 30,31,31    $fjun $fjul $faug ${path_climo}/tmp_jja_${yr_cnt}.nc
+         $nco_dir/ncra -O -p ${path_history} -w 30,31,30    $fsep $foct $fnov ${path_climo}/tmp_son_${yr_cnt}.nc
+         $nco_dir/ncra -O -p ${path_climo}   -w 90,92,92,91 tmp_djf_${yr_cnt}.nc tmp_mam_${yr_cnt}.nc tmp_jja_${yr_cnt}.nc tmp_son_${yr_cnt}.nc ${path_climo}/tmp_ann_${yr_cnt}.nc
       endif
       @ yr_cnt++
    end
 
    # Concatenate files
    echo " CONCATENATING DJF FILES ..."
-   /usr/local/bin/ncrcat -O ${path_climo}/tmp_djf_*.nc ${path_climo}/${casename}_DJF_${first_yr_prnt}-${last_yr_prnt}_means.nc
+   $nco_dir/ncrcat -O ${path_climo}/tmp_djf_*.nc ${path_climo}/${casename}_DJF_${first_yr_prnt}-${last_yr_prnt}_means.nc
    echo " CONCATENATING MAM FILES ..."
-   /usr/local/bin/ncrcat -O ${path_climo}/tmp_mam_*.nc ${path_climo}/${casename}_MAM_${first_yr_prnt}-${last_yr_prnt}_means.nc
+   $nco_dir/ncrcat -O ${path_climo}/tmp_mam_*.nc ${path_climo}/${casename}_MAM_${first_yr_prnt}-${last_yr_prnt}_means.nc
    echo " CONCATENATING JJA FILES ..."
-   /usr/local/bin/ncrcat -O ${path_climo}/tmp_jja_*.nc ${path_climo}/${casename}_JJA_${first_yr_prnt}-${last_yr_prnt}_means.nc
+   $nco_dir/ncrcat -O ${path_climo}/tmp_jja_*.nc ${path_climo}/${casename}_JJA_${first_yr_prnt}-${last_yr_prnt}_means.nc
    echo " CONCATENATING SON FILES ..."
-   /usr/local/bin/ncrcat -O ${path_climo}/tmp_son_*.nc ${path_climo}/${casename}_SON_${first_yr_prnt}-${last_yr_prnt}_means.nc
+   $nco_dir/ncrcat -O ${path_climo}/tmp_son_*.nc ${path_climo}/${casename}_SON_${first_yr_prnt}-${last_yr_prnt}_means.nc
    echo " CONCATENATING ANN FILES ..."
-   /usr/local/bin/ncrcat -O ${path_climo}/tmp_ann_*.nc ${path_climo}/${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}_means.nc
+   $nco_dir/ncrcat -O ${path_climo}/tmp_ann_*.nc ${path_climo}/${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}_means.nc
 
    # Clean up
    rm -f ${path_climo}/tmp_*.nc
 endif
-
-             
