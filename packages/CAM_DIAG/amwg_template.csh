@@ -8,7 +8,8 @@
 unset echo verbose
 setenv DIAG_VERSION 140207  # version number YYMMDD
 setenv NCARG_ROOT /opt/ncl65
-setenv PATH /opt/ncl65/bin/:/opt/nco-4.7.5-intel/bin/:/opt/intel/compilers_and_libraries_2017.4.196/linux/bin/intel64:/opt/intel/compilers_and_libraries_2017.4.196/linux/mpi/intel64/bin:/usr/local/bin:/usr/bin
+setenv PATH /opt/ncl65/bin/:/opt/nco-4.7.5-intel/bin/:/usr/local/bin:/usr/bin
+source /opt/intel/compilers_and_libraries/linux/bin/compilervars.sh -arch intel64 -platform linux
 
 #******************************************************************
 #  C-shell control script for AMWG Diagnostics Package.           *
