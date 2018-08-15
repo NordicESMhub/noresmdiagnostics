@@ -301,6 +301,12 @@ else
     done
 fi
 
+# remove the leading zeros
+SYR1=$((10#$SYR1))
+EYR1=$((10#$EYR1))
+SYR2=$((10#$SYR2))
+EYR2=$((10#$EYR2))
+
 # SECURITY CHECKS
 if [[ ${DIAG_PATH:0:1} != "/" ]]; then
     echo "ERROR: ${DIAG_PATH} is not a directory. Please give the full path."
