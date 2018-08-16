@@ -1,5 +1,4 @@
 #!/bin/bash
-
 script_start=`date +%s`
 #
 # MICOM DIAGNOSTICS package: compute_ann_time_series.sh
@@ -183,9 +182,7 @@ do
             $NCKS --quiet -d depth,0 -d x,0 -d y,0 -v parea $WKDIR/$filename >/dev/null 2>&1
             if [ $? -ne 0 ]; then
                 $NCKS --quiet -A -v parea -o $WKDIR/$filename $grid_file
-                $NCAP2 -O -s 'dmass=dp*parea' $WKDIR/$filename  -o dmass.nc >/dev/null 2>&1
-                $NCKS --quiet -h -A -v dmass -o $WKDIR/$filename dmass.nc >/dev/null 2>&1
-                rm -f dmass.nc
+                $NCAP2 -O -s 'dmass=dp*parea' $WKDIR/$filename  -o $WKDIR/$filename >/dev/null 2>&1
             fi
         fi
         let iproc++
@@ -326,13 +323,13 @@ do
     first_file=${var}_${casename}_ANN_${filetype}_${first_yr_prnt}.nc
     if [ -f $tsdir/ann_ts/$first_file ]; then
         echo "Merging all $var time series files..."
-        $NCRCAT --no_tmp_fl -O -p $tsdir/ann_ts -n ${nyrs},4,1 ${var}_${casename}_ANN_${filetype}_${first_yr_prnt}.nc -o $WKDIR/${var}_${casename}_ANN_${filetype}_${first_yr_prnt}-${last_yr_prnt}.nc
+        $NCRCAT -3 --no_tmp_fl -O -p $tsdir/ann_ts -n ${nyrs},4,1 ${var}_${casename}_ANN_${filetype}_${first_yr_prnt}.nc -o $WKDIR/${var}_${casename}_ANN_${filetype}_${first_yr_prnt}-${last_yr_prnt}.nc
         if [ $? -eq 0 ]; then
             if [ $first_var -eq 1 ]; then
                 first_var=0
                 mv $WKDIR/${var}_${casename}_ANN_${filetype}_${first_yr_prnt}-${last_yr_prnt}.nc $tsdir/$ann_ts_file
             else
-                $NCKS -A -o $tsdir/$ann_ts_file $WKDIR/${var}_${casename}_ANN_${filetype}_${first_yr_prnt}-${last_yr_prnt}.nc
+                $NCKS -3 -A -v ${var} -o $tsdir/$ann_ts_file $WKDIR/${var}_${casename}_ANN_${filetype}_${first_yr_prnt}-${last_yr_prnt}.nc
                 rm -f $WKDIR/${var}_${casename}_ANN_${filetype}_${first_yr_prnt}-${last_yr_prnt}.nc
             fi
         fi

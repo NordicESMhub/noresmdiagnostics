@@ -8,7 +8,7 @@ unset echo verbose
 # - Updated web interface for NIRD
 # - NCL updates to version 4.6.0.
 setenv NCARG_ROOT /opt/ncl65
-setenv PATH /opt/ncl65/bin/:/opt/nco-4.7.5-intel/bin/:/usr/local/bin:/usr/bin
+setenv PATH /opt/ncl65/bin/:/opt/nco-4.7.6-intel/bin/:/usr/local/bin:/usr/bin
 source /opt/intel/compilers_and_libraries/linux/bin/compilervars.csh -arch intel64 -platform linux
 #--------------------------------------------------------------------#
 #----------------- USER DEFINED INPUT -------------------------------#
@@ -181,7 +181,7 @@ endif
 
 # Set directory to ncclimo.
 # This is changed by diag_run when running with crontab
-setenv ncclimo_dir  /opt/nco-4.7.5-intel/bin
+setenv ncclimo_dir  /opt/nco-4.7.6-intel/bin
 set NCRCAT = `which ncrcat`
 
 # set c-shell limits
