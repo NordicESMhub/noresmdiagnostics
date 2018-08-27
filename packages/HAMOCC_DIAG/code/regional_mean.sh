@@ -2,8 +2,9 @@
 
 # HAMOCC DIAGNOSTICS package: regional_mean.sh
 # PURPOSE: computes the regional mean of different basins using CDO
-# Johan Liakka, NERSC, johan.liakka@nersc.no
-# Last update Mar 2018 
+# Johan Liakka, NERSC
+# Yanchun He, NERSC, yanchun.he@nersc.no
+# Last update June 2018 
 
 # Input arguments:
 #  $casename    experiment name
