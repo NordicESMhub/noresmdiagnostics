@@ -183,6 +183,10 @@ do i = 0, nvars-1
    plot(i) = gsn_csm_xy(wks,pyrs,data,res)
 
    delete (data)
+   delete (A)
+   if (compare .eq. "USER") then
+       delete(B)
+   end if
 end do
 
 pan = True
