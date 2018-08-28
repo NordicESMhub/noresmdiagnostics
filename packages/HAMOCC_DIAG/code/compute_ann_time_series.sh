@@ -386,7 +386,7 @@ do
     first_file=${var}_${casename}_ANN_${first_yr_prnt}.nc
     if [ -f $WKDIR/$first_file ]; then
         echo "Merging all $var time series files..."
-        $NCRCAT --no_tmp_fl -O $WKDIR/${var}_${casename}_ANN_????.nc $WKDIR/${var}_${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}.nc
+        $NCRCAT -3 --no_tmp_fl -O $WKDIR/${var}_${casename}_ANN_????.nc $WKDIR/${var}_${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}.nc
         if [ $? -eq 0 ]; then
             if [ $first_var -eq 1 ]; then
                 first_var=0
@@ -394,6 +394,10 @@ do
             else
                 $NCKS -A -o $tsdir/$ann_ts_file $WKDIR/${var}_${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}.nc
             fi
+        else
+            echo "ERROR: $NCRCAT -3 --no_tmp_fl -O $WKDIR/${var}_${casename}_ANN_????.nc $WKDIR/${var}_${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}.nc"
+            echo "*** EXITING THE SCRIPT ***"
+            exit 1
         fi
         rm -f $WKDIR/${var}_${casename}_ANN_*.nc
     fi
