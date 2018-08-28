@@ -15,6 +15,10 @@ inptr1 = addfile(infile1,"r")
 ncases = 1
 fyr    = stringtointeger(fyr1)
 
+time    = inptr1->time
+ntimes01  = dimsizes(time)
+delete(time)
+
 if (compare.eq."USER") then
    infile2 = getenv("INFILE2")
    case2   = getenv("CASE2")
@@ -143,13 +147,22 @@ do i = 0, nvars-1
       end if
    end if
 
+   if (ntimes_tot .eq. 1) then
+       ntimes_tot = max((/ntimes01,2/))
+   end if
+
    eyr  = fyr+ntimes_tot-1
    pyrs = fspan(fyr,eyr,ntimes_tot)
 
-   res@tiYAxisString       = A@units
-   res@tiMainString        = A@long_name
+   if (.not. all(A.eq.-999.)) then
+       res@tiYAxisString       = A@units
+       res@tiMainString        = A@long_name
+   else
+       res@tiYAxisString       = "(missing)"
+       res@tiMainString        = vars(i)+" (missing)"
+   end if
    
-;   res@tiMainFontHeightF   = 0.02
+;  res@tiMainFontHeightF   = 0.02
    res@trXMinF             = min(pyrs)
    res@trXMaxF             = max(pyrs)
    if (compare.eq."OBS") then
