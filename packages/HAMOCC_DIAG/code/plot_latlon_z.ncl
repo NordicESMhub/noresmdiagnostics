@@ -345,13 +345,13 @@ do i = 0, nvars-1
       if (vars(i) .eq. "delta13clvl") then
         delete(B)
         tmp = inptr2->c13_pi({depth_plot(iz)},:,:)
-        B   = short2flt(tmp)
+        B   = dble2flt(tmp)
         B@long_name = "delta13C z"+flt2string(depth_plot(iz))+"m"
         B@units = "per mil"
         delete(tmp)
       end if
 
-      if (all(B.eq.-999.)) then
+      if (all(B.eq.-999.) .or. all(ismissing(B))) then
         print (vars(i)+" not present in observations: plotting only model results")
       end if
 
@@ -389,7 +389,7 @@ do i = 0, nvars-1
         B = get_delta13c (inptr2,depth2,depth_plot(iz))
       end if
 
-      if (all(B.eq.-999.)) then
+      if (all(B.eq.-999.) .or. all(ismissing(B))) then
         print (vars(i)+" not present in case2 file.")
         delete(A)
         delete(B)
@@ -403,7 +403,7 @@ do i = 0, nvars-1
 ; same grid iff needed, and the mean of the difference of the
 ; interpolated fields
 
-    if (all(B.ne.-999.)) then
+    if (all(B.ne.-999.) .and. .not.all(ismissing(B))) then
       if (nlat1 .eq. nlat2) then            ; same grids
         gblmean_A = wgt_areaave (A,gw1,1.0,0)
         gblmean_B = wgt_areaave (B,gw2,1.0,0)
@@ -481,7 +481,7 @@ do i = 0, nvars-1
 ;------------------------- GLOBAL CE PLOTS ------------------------
     min1 = min(A)
     max1 = max(A)
-    if (all(B.ne.-999.)) then
+    if (all(B.ne.-999.) .and. .not.all(ismissing(B))) then
       min2 = min(B)
       max2 = max(B)
     end if
@@ -500,7 +500,7 @@ do i = 0, nvars-1
     res@gsnCenterString = "mean= "+sprintf("%6.2f",gblmean_A)
     res@cnFillPalette   = cmap
 
-    if (all(B.eq.-999.)) then
+    if (all(B.eq.-999.) .or. all(ismissing(B))) then
       plot = gsn_csm_contour_map_ce(wks,A,res)   ; plot model data
     else
       plot(0) = gsn_csm_contour_map_ce(wks,A,res)   ; plot model data
@@ -508,7 +508,7 @@ do i = 0, nvars-1
     delete (res@lbTitleString)
     delete (res@tiMainString)
     delete (res@gsnCenterString)
-    if (all(B.ne.-999.)) then
+    if (all(B.ne.-999.) .and. .not.all(ismissing(B))) then
       if (isvar("yrs_ave2")) then
         res@tiMainString = case2+" (yrs "+yrs_ave2+")"
       else  
@@ -517,7 +517,6 @@ do i = 0, nvars-1
       res@gsnCenterString = "mean= "+sprintf("%6.2f",gblmean_B)
       res@lbTitleString = "Min = "+sprintf("%6.2f",min2)+ \
                           " Max = "+sprintf("%6.2f",max2)
-
 
       plot(1) = gsn_csm_contour_map_ce(wks,B,res)   ; plot model or obs
       delete (res@lbTitleString)
@@ -534,8 +533,8 @@ do i = 0, nvars-1
 
 ;------------------------ DIFFERENCE PLOTS --------------------------
   ; Global CE plots
-    if (all(B.eq.-999.)) then
-      gsn_panel(wks,plot,(/1,1/),pan)
+    if (all(B.eq.-999.) .or.all(ismissing(B))) then
+      gsn_panel(wks,plot(0),(/1,1/),pan)
       delete(A)
       delete(B)
     else

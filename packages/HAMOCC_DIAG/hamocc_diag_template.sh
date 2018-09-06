@@ -529,7 +529,7 @@ do
                     echo "-> SKIPPING COMPUTING ANNUAL TIME SERIES FROM MONTHLY FILES"
                 fi
             else
-                echo "$CLIMO_TS_DIR/$ANN_TS_FILE_ANN already exists."
+                echo "$CLIMO_TS_DIR/$ANN_TS_FILE_MON already exists."
                 echo "-> SKIPPING COMPUTING ANNUAL TIME SERIES FROM MONTHLY FILES"
             fi
             # Merge ts files
