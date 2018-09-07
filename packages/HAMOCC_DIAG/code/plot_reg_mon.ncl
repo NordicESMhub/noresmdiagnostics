@@ -278,10 +278,10 @@ do i = 0, nvars-1
           end if
         end if
 
-;      else ; Compare to model
       B = -999.
-      plot_switch_B=0
+      plot_switch_B=1
       if (compare.eq."USER") then
+        plot_switch_B=0
 
         if (isvar("B")) then
           delete(B)
