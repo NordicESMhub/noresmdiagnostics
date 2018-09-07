@@ -332,12 +332,10 @@ do i = 0, nvars-1
           B = get_mld (inptr1)
         end if
 
-      end if
       if (all(B.eq.-999.)) then
         print (vars(i)+" not present in case2 input file.")
         plot_switch_B=1
-;        delete(B)
-;        continue       ; procede to next variable in do loop
+      end if
       end if
       
     end if
