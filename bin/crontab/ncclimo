@@ -2291,10 +2291,10 @@ if [ "${clm_flg}" = 'Yes' ] && [ "${clm_md}" = 'mth' ] && [ "${bnr_flg}" = 'No' 
 	    for ((mth_idx=${csn_srt_idx[${map_r2d[${csn_idx}]}]};mth_idx<=${csn_end_idx[${map_r2d[${csn_idx}]}]};mth_idx++)); do
 		fl_lst="${fl_lst} ${fl_out[${mth_idx}]}"
 	    done # !mth_idx
-	    cmd_clm[${clm_idx}]="${cmd_mpi[${clm_idx}]} ncra --cb -O -w ${csn_wgt[${map_r2d[${csn_idx}]}]} ${nco_opt} ${gaa_sng} ${fl_lst} ${fl_out[${clm_idx}]}"
+	    cmd_clm[${clm_idx}]="${cmd_mpi[${clm_idx}]} ncra -O -w ${csn_wgt[${map_r2d[${csn_idx}]}]} ${nco_opt} ${gaa_sng} ${fl_lst} ${fl_out[${clm_idx}]}"
 	    # DJF specified as exception since month-order is non-consecutive (12,1,2)
 	    if [ "${csn_abb[${map_r2d[${csn_idx}]}]}" = 'DJF' ]; then
-		cmd_clm[${clm_idx}]="${cmd_mpi[${clm_idx}]} ncra --cb -O -w 31,31,28 ${nco_opt} ${gaa_sng} ${fl_out[12]} ${fl_out[1]} ${fl_out[2]} ${fl_out[${clm_idx}]}"
+		cmd_clm[${clm_idx}]="${cmd_mpi[${clm_idx}]} ncra -O -w 31,31,28 ${nco_opt} ${gaa_sng} ${fl_out[12]} ${fl_out[1]} ${fl_out[2]} ${fl_out[${clm_idx}]}"
 	    fi # !DJF
 	done # !csn_idx
 	# cmd_clm[13]="${cmd_mpi[13]} ncra --cb -O -w 31,30,31 ${nco_opt} ${gaa_sng} ${fl_out[3]} ${fl_out[4]} ${fl_out[5]} ${fl_out[13]}"
