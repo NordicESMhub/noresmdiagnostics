@@ -32,7 +32,7 @@ if [ -f $filedir/$file1 ]; then
    mv $filedir/$file1 $filedir/$fileout
    if [ -f $filedir/$file2 ]; then
       echo "Merging $file1 and $file2 to $fileout"
-      $NCKS -A -o $filedir/$fileout $filedir/$file2
+      $NCKS -A -3 -o $filedir/$fileout $filedir/$file2
       rm -f $filedir/$file2
    else
        echo "Renaming $file1 -> $fileout"
