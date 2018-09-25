@@ -1,9 +1,10 @@
 #!/bin/bash
-#
+set -e
 # MICOM DIAGNOSTICS package
-# Johan Liakka, NERSC, johan.liakka@nersc.no
+# Johan Liakka, NERSC
+# Yanchun He, NERSC, yanchun.he@nersc.no
 # built upon previous work by Detelina Ivanova
-# Last update April 2018
+# Last update Sept. 2018
 # set -e
 export NCARG_ROOT=/opt/ncl65
 #export PATH=/opt/ncl64/bin/:/usr/local/bin:/usr/bin
@@ -676,18 +677,40 @@ mkdir -p $WEBDIR/set4
 mkdir -p $WEBDIR/set5
 mkdir -p $WEBDIR/set6
 mkdir -p $WEBDIR/set7
-cp $DIAG_HTML/index.html $WEBDIR
+
+cinfo=1model
+if [ $CNTL == USER ]; then
+    cinfo=2models
+fi
+
+cp $DIAG_HTML/index.html $WEBDIR/index.html
 cdate=`date`
 sed -i "s/test_run/$CASENAME1/g" $WEBDIR/index.html
 sed -i "s/FY1/$FIRST_YR_CLIMO1/g" $WEBDIR/index.html
 sed -i "s/LY1/$LAST_YR_CLIMO1/g" $WEBDIR/index.html
 sed -i "s/date_and_time/$cdate/g" $WEBDIR/index.html
 if [ $CNTL == USER ]; then
-    sed -i "17i<br>and $CASENAME2 yrs${LAST_YR_CLIMO2}to${LAST_YR_CLIMO2}" $WEBDIR/index.html
+    sed -i "17i<br>and $CASENAME2 yrs${FIRST_YR_CLIMO2}to${LAST_YR_CLIMO2}" $WEBDIR/index.html
 fi
 if [ $set_1 -eq 1 ] || [ $set_2 -eq 1 ]; then
     echo "<font color=maroon size=+1><b><u>Time series plots</u></b></font><br>" >> $WEBDIR/index.html
     echo "<br>" >> $WEBDIR/index.html
+fi
+
+# new index page
+cp -r $DIAG_HTML/images/ $WEBDIR/
+cp $DIAG_HTML/index1.html $WEBDIR/indexnew.html
+cdate=`date`
+sed -i "s/test_run/$CASENAME1/g" $WEBDIR/indexnew.html
+sed -i "s/FY1/$FIRST_YR_CLIMO1/g" $WEBDIR/indexnew.html
+sed -i "s/LY1/$LAST_YR_CLIMO1/g" $WEBDIR/indexnew.html
+sed -i "s/date_and_time/$cdate/g" $WEBDIR/indexnew.html
+if [ $CNTL == USER ]; then
+    sed -i "12i<br>and $CASENAME2 yrs${LAST_YR_CLIMO2}to${LAST_YR_CLIMO2}" $WEBDIR/indexnew.html
+fi
+if [ $set_1 -eq 1 ] || [ $set_2 -eq 1 ]; then
+    echo '<h2 id="Time-series-plots">Time series plots</h2>' >> $WEBDIR/indexnew.html
+    echo "<br>" >> $WEBDIR/indexnew.html
 fi
 
 cd $WKDIR
@@ -723,6 +746,15 @@ if [ $set_1 -eq 1 ]; then
         exit 1
     fi
     $DIAG_CODE/webpage1.sh
+
+    # new index page
+    echo " "
+    echo "-----------------------"
+    echo "Generating html for set1 plots"
+    echo "-----------------------"
+    echo " "
+    cat $DIAG_HTML/webpage1.html | sed "s/CINFO.png/${cinfo}.png/g" >> $WEBDIR/indexnew.html
+
 fi
 # ---------------------------------
 # set 2: nino index
@@ -767,6 +799,15 @@ if [ $set_2 -eq 1 ]; then
         exit 1
     fi
     $DIAG_CODE/webpage2.sh
+
+    # new index page
+    echo " "
+    echo "-----------------------"
+    echo "Generating html for set2 plots"
+    echo "-----------------------"
+    echo " "
+    cat $DIAG_HTML/webpage2.html | sed "s/CINFO.png/${cinfo}.png/g" >> $WEBDIR/indexnew.html
+
 fi
 
 if [ $set_3 -eq 1 ] || [ $set_4 -eq 1 ] || [ $set_5 -eq 1 ] || [ $set_6 -eq 1 ]; then
@@ -774,6 +815,9 @@ if [ $set_3 -eq 1 ] || [ $set_4 -eq 1 ] || [ $set_5 -eq 1 ] || [ $set_6 -eq 1 ];
         echo "<br>" >> $WEBDIR/index.html
     fi
     echo "<font color=maroon size=+1><b><u>Climatology plots</u></b></font><br>" >> $WEBDIR/index.html
+# new index page
+    echo '<hr noshade size=2 width="62.8%"><br>' >> $WEBDIR/indexnew.html
+    echo '<h2 id="Climatology-plots">Climatology plots</h2>' >> $WEBDIR/indexnew.html
 fi
 # ---------------------------------
 # set 3: lat/lon plots
@@ -904,6 +948,15 @@ if [ $set_3 -eq 1 ]; then
         exit 1
     fi
     $DIAG_CODE/webpage3.sh
+
+    # new index page
+    echo " "
+    echo "-----------------------"
+    echo "Generating html for set3 plots"
+    echo "-----------------------"
+    echo " "
+    cat $DIAG_HTML/webpage3.html | sed "s/CINFO.png/${cinfo}.png/g" >> $WEBDIR/indexnew.html
+
 fi
 # ---------------------------------
 # set 4: MOCs
@@ -934,6 +987,14 @@ if [ $set_4 -eq 1 ]; then
         exit 1
     fi
     $DIAG_CODE/webpage4.sh
+
+    # new index page
+    echo " "
+    echo "-----------------------"
+    echo "Generating html for set4 plots"
+    echo "-----------------------"
+    echo " "
+    $DIAG_CODE/newpage/webpage4.sh
 fi
 # ---------------------------------
 # set 5: Zonal means
@@ -971,6 +1032,14 @@ if [ $set_5 -eq 1 ]; then
         exit 1
     fi
     $DIAG_CODE/webpage5.sh
+
+    # new index page
+    echo " "
+    echo "-----------------------"
+    echo "Generating html for set5 plots"
+    echo "-----------------------"
+    echo " "
+    $DIAG_CODE/newpage/webpage5.sh
 fi
 # ---------------------------------
 # set 6: Equatorial plots
@@ -1002,6 +1071,14 @@ if [ $set_6 -eq 1 ]; then
         exit 1
     fi
     $DIAG_CODE/webpage6.sh
+
+    # new index page
+    echo " "
+    echo "-----------------------"
+    echo "Generating html for set6 plots"
+    echo "-----------------------"
+    echo " "
+    $DIAG_CODE/newpage/webpage6.sh
 fi
 # ---------------------------------
 # set 7: Meridional fluxes
@@ -1032,10 +1109,20 @@ if [ $set_7 -eq 1 ]; then
         exit 1
     fi
     $DIAG_CODE/webpage7.sh
+
+    # new index page
+    echo " "
+    echo "-----------------------"
+    echo "Generating html for set7 plots"
+    echo "-----------------------"
+    echo " "
+    $DIAG_CODE/newpage/webpage7.sh
 fi
 # Closing the webpage
 echo "</BODY>" >> $WEBDIR/index.html
 echo "</HTML>" >> $WEBDIR/index.html
+# new index page
+cat $DIAG_HTML/index2.html >> $WEBDIR/indexnew.html
 # Making tar file
 echo " "
 echo "****************************************************"
@@ -1064,6 +1151,7 @@ if [ $? -eq 0 ] && [ $publish_html -eq 1 ]; then
             echo "URL:"
             echo "***********************************************************************************"
             echo "${full_url}"
+            echo "${web_server}/${path_suff}/${WEBFOLDER}/indexnew.html"
             echo "***********************************************************************************"
             echo "Copy and paste the URL into the address bar of your web browser to view the results"
         else
