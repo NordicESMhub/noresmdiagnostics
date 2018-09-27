@@ -1,6 +1,7 @@
 ; NCL script (MICOM diagnostics package)
 ; plot_ann_time_series.ncl
 ; Johan Liakka, Dec 2017
+; Yanchun He, updated Sept. 2018
 load "$DIAG_CODE/functions_time_series.ncl"
 
 begin
@@ -135,7 +136,7 @@ do i = 0, nvars-1
    data = new((/ncases,ntimes_tot/),float)
    data(0,0:ntimes1-1) = A
    if (compare .eq. "USER") then
-      data(1,0:ntimes2-1) = B
+      data(1,0:ntimes2-1) = (/B/)
    end if
    plot = gsn_csm_xy(wks,pyrs,data,res)
 

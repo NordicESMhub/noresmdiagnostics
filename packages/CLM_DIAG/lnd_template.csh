@@ -377,7 +377,7 @@ endif
 # Set directory to ncclimo.
 # This is changed by diag_run when running with crontab
 #setenv ncclimo_dir /opt/nco-4.7.6-intel/bin
-setenv ncclimo_dir $DIAG_HOME/code/shared
+setenv ncclimo_dir $DIAG_HOME/../../bin/crontab
 
 #**************************************************
 # 19:  Use Swift?

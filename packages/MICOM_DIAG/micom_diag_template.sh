@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+#
 # MICOM DIAGNOSTICS package
 # Johan Liakka, NERSC
 # Yanchun He, NERSC, yanchun.he@nersc.no
