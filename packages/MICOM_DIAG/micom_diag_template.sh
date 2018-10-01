@@ -1028,7 +1028,7 @@ if [ $set_5 -eq 1 ]; then
     if [ $? -ne 0 ]; then
         "ERROR occurred in ps2png.sh (set5)"
         "*** EXITING THE SCRIPT ***"
-        exit 1
+        #exit 1
     fi
     $DIAG_CODE/webpage5.sh
 
