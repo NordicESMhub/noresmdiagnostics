@@ -683,33 +683,33 @@ if [ $CNTL == USER ]; then
     cinfo=2models
 fi
 
-cp $DIAG_HTML/index.html $WEBDIR/index.html
+cp $DIAG_HTML/indexold.html $WEBDIR/indexold.html
+cdate=`date`
+sed -i "s/test_run/$CASENAME1/g" $WEBDIR/indexold.html
+sed -i "s/FY1/$FIRST_YR_CLIMO1/g" $WEBDIR/indexold.html
+sed -i "s/LY1/$LAST_YR_CLIMO1/g" $WEBDIR/indexold.html
+sed -i "s/date_and_time/$cdate/g" $WEBDIR/indexold.html
+if [ $CNTL == USER ]; then
+    sed -i "17i<br>and $CASENAME2 yrs${FIRST_YR_CLIMO2}to${LAST_YR_CLIMO2}" $WEBDIR/indexold.html
+fi
+if [ $set_1 -eq 1 ] || [ $set_2 -eq 1 ]; then
+    echo "<font color=maroon size=+1><b><u>Time series plots</u></b></font><br>" >> $WEBDIR/indexold.html
+    echo "<br>" >> $WEBDIR/indexold.html
+fi
+
+# new index page
+cp -r $DIAG_HTML/images/ $WEBDIR/
+cp $DIAG_HTML/index1.html $WEBDIR/index.html
 cdate=`date`
 sed -i "s/test_run/$CASENAME1/g" $WEBDIR/index.html
 sed -i "s/FY1/$FIRST_YR_CLIMO1/g" $WEBDIR/index.html
 sed -i "s/LY1/$LAST_YR_CLIMO1/g" $WEBDIR/index.html
 sed -i "s/date_and_time/$cdate/g" $WEBDIR/index.html
 if [ $CNTL == USER ]; then
-    sed -i "17i<br>and $CASENAME2 yrs${FIRST_YR_CLIMO2}to${LAST_YR_CLIMO2}" $WEBDIR/index.html
+    sed -i "12i<br>and $CASENAME2 yrs${LAST_YR_CLIMO2}to${LAST_YR_CLIMO2}<br>" $WEBDIR/index.html
 fi
 if [ $set_1 -eq 1 ] || [ $set_2 -eq 1 ]; then
-    echo "<font color=maroon size=+1><b><u>Time series plots</u></b></font><br>" >> $WEBDIR/index.html
-    echo "<br>" >> $WEBDIR/index.html
-fi
-
-# new index page
-cp -r $DIAG_HTML/images/ $WEBDIR/
-cp $DIAG_HTML/index1.html $WEBDIR/indexnew.html
-cdate=`date`
-sed -i "s/test_run/$CASENAME1/g" $WEBDIR/indexnew.html
-sed -i "s/FY1/$FIRST_YR_CLIMO1/g" $WEBDIR/indexnew.html
-sed -i "s/LY1/$LAST_YR_CLIMO1/g" $WEBDIR/indexnew.html
-sed -i "s/date_and_time/$cdate/g" $WEBDIR/indexnew.html
-if [ $CNTL == USER ]; then
-    sed -i "12i<br>and $CASENAME2 yrs${LAST_YR_CLIMO2}to${LAST_YR_CLIMO2}<br>" $WEBDIR/indexnew.html
-fi
-if [ $set_1 -eq 1 ] || [ $set_2 -eq 1 ]; then
-    echo '<h2 id="Time-series-plots">Time series plots</h2>' >> $WEBDIR/indexnew.html
+    echo '<h2 id="Time-series-plots">Time series plots</h2>' >> $WEBDIR/index.html
 fi
 
 cd $WKDIR
@@ -752,7 +752,7 @@ if [ $set_1 -eq 1 ]; then
     echo "Generating html for set1 plots"
     echo "-----------------------"
     echo " "
-    cat $DIAG_HTML/webpage1.html | sed "s/CINFO.png/${cinfo}.png/g" >> $WEBDIR/indexnew.html
+    cat $DIAG_HTML/webpage1.html | sed "s/CINFO.png/${cinfo}.png/g" >> $WEBDIR/index.html
 
 fi
 # ---------------------------------
@@ -805,18 +805,18 @@ if [ $set_2 -eq 1 ]; then
     echo "Generating html for set2 plots"
     echo "-----------------------"
     echo " "
-    cat $DIAG_HTML/webpage2.html | sed "s/CINFO.png/${cinfo}.png/g" >> $WEBDIR/indexnew.html
+    cat $DIAG_HTML/webpage2.html | sed "s/CINFO.png/${cinfo}.png/g" >> $WEBDIR/index.html
 
 fi
 
 if [ $set_3 -eq 1 ] || [ $set_4 -eq 1 ] || [ $set_5 -eq 1 ] || [ $set_6 -eq 1 ]; then
     if [ $set_1 -eq 1 ] || [ $set_2 -eq 1 ]; then
-        echo "<br>" >> $WEBDIR/index.html
+        echo "<br>" >> $WEBDIR/indexold.html
     fi
-    echo "<font color=maroon size=+1><b><u>Climatology plots</u></b></font><br>" >> $WEBDIR/index.html
+    echo "<font color=maroon size=+1><b><u>Climatology plots</u></b></font><br>" >> $WEBDIR/indexold.html
 # new index page
-    echo '<hr noshade size=2 width="62.8%"><br>' >> $WEBDIR/indexnew.html
-    echo '<h2 id="Climatology-plots">Climatology plots</h2>' >> $WEBDIR/indexnew.html
+    echo '<hr noshade size=2 width="62.8%"><br>' >> $WEBDIR/index.html
+    echo '<h2 id="Climatology-plots">Climatology plots</h2>' >> $WEBDIR/index.html
 fi
 # ---------------------------------
 # set 3: lat/lon plots
@@ -954,7 +954,7 @@ if [ $set_3 -eq 1 ]; then
     echo "Generating html for set3 plots"
     echo "-----------------------"
     echo " "
-    cat $DIAG_HTML/webpage3.html | sed "s/CINFO.png/${cinfo}.png/g" >> $WEBDIR/indexnew.html
+    cat $DIAG_HTML/webpage3.html | sed "s/CINFO.png/${cinfo}.png/g" >> $WEBDIR/index.html
 
 fi
 # ---------------------------------
@@ -993,7 +993,7 @@ if [ $set_4 -eq 1 ]; then
     echo "Generating html for set4 plots"
     echo "-----------------------"
     echo " "
-    cat $DIAG_HTML/webpage4.html | sed "s/CINFO.png/${cinfo}.png/g" >> $WEBDIR/indexnew.html
+    cat $DIAG_HTML/webpage4.html | sed "s/CINFO.png/${cinfo}.png/g" >> $WEBDIR/index.html
 fi
 # ---------------------------------
 # set 5: Zonal means
@@ -1038,7 +1038,7 @@ if [ $set_5 -eq 1 ]; then
     echo "Generating html for set5 plots"
     echo "-----------------------"
     echo " "
-    cat $DIAG_HTML/webpage5.html | sed "s/CINFO.png/${cinfo}.png/g" >> $WEBDIR/indexnew.html
+    cat $DIAG_HTML/webpage5.html | sed "s/CINFO.png/${cinfo}.png/g" >> $WEBDIR/index.html
 fi
 # ---------------------------------
 # set 6: Equatorial plots
@@ -1077,8 +1077,7 @@ if [ $set_6 -eq 1 ]; then
     echo "Generating html for set6 plots"
     echo "-----------------------"
     echo " "
-    #$DIAG_CODE/newpage/webpage6.sh
-    cat $DIAG_HTML/webpage6.html | sed "s/CINFO.png/${cinfo}.png/g" >> $WEBDIR/indexnew.html
+    cat $DIAG_HTML/webpage6.html | sed "s/CINFO.png/${cinfo}.png/g" >> $WEBDIR/index.html
 fi
 # ---------------------------------
 # set 7: Meridional fluxes
@@ -1116,14 +1115,13 @@ if [ $set_7 -eq 1 ]; then
     echo "Generating html for set7 plots"
     echo "-----------------------"
     echo " "
-    #$DIAG_CODE/newpage/webpage7.sh
-    cat $DIAG_HTML/webpage7.html | sed "s/CINFO.png/${cinfo}.png/g" >> $WEBDIR/indexnew.html
+    cat $DIAG_HTML/webpage7.html | sed "s/CINFO.png/${cinfo}.png/g" >> $WEBDIR/index.html
 fi
 # Closing the webpage
-echo "</BODY>" >> $WEBDIR/index.html
-echo "</HTML>" >> $WEBDIR/index.html
+echo "</BODY>" >> $WEBDIR/indexold.html
+echo "</HTML>" >> $WEBDIR/indexold.html
 # new index page
-cat $DIAG_HTML/index2.html >> $WEBDIR/indexnew.html
+cat $DIAG_HTML/index2.html >> $WEBDIR/index.html
 # Making tar file
 echo " "
 echo "****************************************************"
@@ -1152,7 +1150,7 @@ if [ $? -eq 0 ] && [ $publish_html -eq 1 ]; then
             echo "URL:"
             echo "***********************************************************************************"
             echo "${full_url}"
-            echo "${web_server}/${path_suff}/${WEBFOLDER}/indexnew.html"
+            echo "${web_server}/${path_suff}/${WEBFOLDER}/index.html"
             echo "***********************************************************************************"
             echo "Copy and paste the URL into the address bar of your web browser to view the results"
         else
