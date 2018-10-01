@@ -303,7 +303,7 @@ do i = 0, nvars-1
         end if
 
         if (vars(i) .eq. "ppint") then
-          B = get_ppint (inptr1)
+          B = get_ppint (inptr2)
         end if
 
         if (vars(i) .eq. "srfo2") then
@@ -323,13 +323,13 @@ do i = 0, nvars-1
         end if
 
         if (vars(i) .eq. "sst") then
-          B = get_sst (inptr1)
+          B = get_sst (inptr2)
         end if
         if (vars(i) .eq. "sss") then
-          B = get_sss (inptr1)
+          B = get_sss (inptr2)
         end if
         if (vars(i) .eq. "mld") then
-          B = get_mld (inptr1)
+          B = get_mld (inptr2)
         end if
 
       if (all(B.eq.-999.)) then

@@ -706,11 +706,10 @@ sed -i "s/FY1/$FIRST_YR_CLIMO1/g" $WEBDIR/indexnew.html
 sed -i "s/LY1/$LAST_YR_CLIMO1/g" $WEBDIR/indexnew.html
 sed -i "s/date_and_time/$cdate/g" $WEBDIR/indexnew.html
 if [ $CNTL == USER ]; then
-    sed -i "12i<br>and $CASENAME2 yrs${LAST_YR_CLIMO2}to${LAST_YR_CLIMO2}" $WEBDIR/indexnew.html
+    sed -i "12i<br>and $CASENAME2 yrs${LAST_YR_CLIMO2}to${LAST_YR_CLIMO2}<br>" $WEBDIR/indexnew.html
 fi
 if [ $set_1 -eq 1 ] || [ $set_2 -eq 1 ]; then
     echo '<h2 id="Time-series-plots">Time series plots</h2>' >> $WEBDIR/indexnew.html
-    echo "<br>" >> $WEBDIR/indexnew.html
 fi
 
 cd $WKDIR
