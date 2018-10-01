@@ -741,8 +741,8 @@ if [ $set_1 -eq 1 ]; then
     $DIAG_CODE/ps2png.sh set1 $density
     if [ $? -ne 0 ]; then
         "ERROR occurred in ps2png.sh (set1)"
-        "*** EXITING THE SCRIPT ***"
-        exit 1
+        #"*** EXITING THE SCRIPT ***"
+        #exit 1
     fi
     $DIAG_CODE/webpage1.sh
 
@@ -794,8 +794,8 @@ if [ $set_2 -eq 1 ]; then
     $DIAG_CODE/ps2png.sh set2 $density
     if [ $? -ne 0 ]; then
         echo "ERROR occurred in ps2png.sh (set2)"
-        echo "*** EXITING THE SCRIPT ***"
-        exit 1
+        #echo "*** EXITING THE SCRIPT ***"
+        #exit 1
     fi
     $DIAG_CODE/webpage2.sh
 
@@ -893,8 +893,8 @@ if [ $set_3 -eq 1 ]; then
             wait ${pid[$m]}
             if [ $? -ne 0 ]; then
                 echo "ERROR in computation of monthly MLD: $NCL -Q < $DIAG_CODE/plot_mld_monthly.ncl" 
-                echo "*** EXITING THE SCRIPT ***"
-                exit 1
+                #echo "*** EXITING THE SCRIPT ***"
+                #exit 1
             fi
         done
         wait
@@ -908,8 +908,8 @@ if [ $set_3 -eq 1 ]; then
                 mld_files1+=($mld_file1)
             else
                 echo "ERROR: cannot find $MLD_CLIM_DIR1/mld_${FYR_PRNT_CLIMO1}-${LYR_PRNT_CLIMO1}_${month}.nc"
-                echo "*** EXITING THE SCRIPT ***"
-                exit 1
+                #echo "*** EXITING THE SCRIPT ***"
+                #exit 1
             fi
             if [ $CNTL == USER ]; then
                 mld_file2=mld_${FYR_PRNT_CLIMO2}-${LYR_PRNT_CLIMO2}_${month}.nc
@@ -917,8 +917,8 @@ if [ $set_3 -eq 1 ]; then
                     mld_files2+=($mld_file2)
                 else
                     echo "ERROR: cannot find $MLD_CLIM_DIR2/mld_${FYR_PRNT_CLIMO2}-${LYR_PRNT_CLIMO2}_${month}.nc"
-                    echo "*** EXITING THE SCRIPT ***"
-                    exit 1
+                    #echo "*** EXITING THE SCRIPT ***"
+                    #exit 1
                 fi
             fi
         done
@@ -943,8 +943,8 @@ if [ $set_3 -eq 1 ]; then
     $DIAG_CODE/ps2png.sh set3 $density
     if [ $? -ne 0 ]; then
         echo "ERROR occurred in ps2png.sh (set3)"
-        echo "*** EXITING THE SCRIPT ***"
-        exit 1
+        #echo "*** EXITING THE SCRIPT ***"
+        #exit 1
     fi
     $DIAG_CODE/webpage3.sh
 
@@ -982,8 +982,8 @@ if [ $set_4 -eq 1 ]; then
     $DIAG_CODE/ps2png.sh set4 $density
     if [ $? -ne 0 ]; then
         echo "ERROR occurred in ps2png.sh (set4)"
-        echo "*** EXITING THE SCRIPT ***"
-        exit 1
+        #echo "*** EXITING THE SCRIPT ***"
+        #exit 1
     fi
     $DIAG_CODE/webpage4.sh
 
@@ -1027,7 +1027,7 @@ if [ $set_5 -eq 1 ]; then
     $DIAG_CODE/ps2png.sh set5 $density
     if [ $? -ne 0 ]; then
         echo "ERROR occurred in ps2png.sh (set5)"
-        echo "*** EXITING THE SCRIPT ***"
+        #echo "*** EXITING THE SCRIPT ***"
         #exit 1
     fi
     $DIAG_CODE/webpage5.sh
@@ -1066,8 +1066,8 @@ if [ $set_6 -eq 1 ]; then
     $DIAG_CODE/ps2png.sh set6 $density
     if [ $? -ne 0 ]; then
         echo "ERROR occurred in ps2png.sh (set6)"
-        echo "*** EXITING THE SCRIPT ***"
-        exit 1
+        #echo "*** EXITING THE SCRIPT ***"
+        #exit 1
     fi
     $DIAG_CODE/webpage6.sh
 
@@ -1105,8 +1105,8 @@ if [ $set_7 -eq 1 ]; then
     $DIAG_CODE/ps2png.sh set7 $density
     if [ $? -ne 0 ]; then
         echo "ERROR occurred in ps2png.sh (set7)"
-        echo "*** EXITING THE SCRIPT ***"
-        exit 1
+        #echo "*** EXITING THE SCRIPT ***"
+        #exit 1
     fi
     $DIAG_CODE/webpage7.sh
 
