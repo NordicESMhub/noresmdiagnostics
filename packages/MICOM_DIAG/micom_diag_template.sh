@@ -1026,9 +1026,9 @@ if [ $set_5 -eq 1 ]; then
     
     $DIAG_CODE/ps2png.sh set5 $density
     if [ $? -ne 0 ]; then
-        "ERROR occurred in ps2png.sh (set5)"
-        "*** EXITING THE SCRIPT ***"
-        exit 1
+        echo "ERROR occurred in ps2png.sh (set5)"
+        echo "*** EXITING THE SCRIPT ***"
+        #exit 1
     fi
     $DIAG_CODE/webpage5.sh
 
