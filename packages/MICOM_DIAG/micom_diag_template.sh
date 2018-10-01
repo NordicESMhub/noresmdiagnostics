@@ -993,7 +993,7 @@ if [ $set_4 -eq 1 ]; then
     echo "Generating html for set4 plots"
     echo "-----------------------"
     echo " "
-    $DIAG_CODE/newpage/webpage4.sh
+    cat $DIAG_HTML/webpage4.html | sed "s/CINFO.png/${cinfo}.png/g" >> $WEBDIR/indexnew.html
 fi
 # ---------------------------------
 # set 5: Zonal means
@@ -1038,7 +1038,7 @@ if [ $set_5 -eq 1 ]; then
     echo "Generating html for set5 plots"
     echo "-----------------------"
     echo " "
-    $DIAG_CODE/newpage/webpage5.sh
+    cat $DIAG_HTML/webpage5.html | sed "s/CINFO.png/${cinfo}.png/g" >> $WEBDIR/indexnew.html
 fi
 # ---------------------------------
 # set 6: Equatorial plots
@@ -1077,7 +1077,8 @@ if [ $set_6 -eq 1 ]; then
     echo "Generating html for set6 plots"
     echo "-----------------------"
     echo " "
-    $DIAG_CODE/newpage/webpage6.sh
+    #$DIAG_CODE/newpage/webpage6.sh
+    cat $DIAG_HTML/webpage6.html | sed "s/CINFO.png/${cinfo}.png/g" >> $WEBDIR/indexnew.html
 fi
 # ---------------------------------
 # set 7: Meridional fluxes
@@ -1115,7 +1116,8 @@ if [ $set_7 -eq 1 ]; then
     echo "Generating html for set7 plots"
     echo "-----------------------"
     echo " "
-    $DIAG_CODE/newpage/webpage7.sh
+    #$DIAG_CODE/newpage/webpage7.sh
+    cat $DIAG_HTML/webpage7.html | sed "s/CINFO.png/${cinfo}.png/g" >> $WEBDIR/indexnew.html
 fi
 # Closing the webpage
 echo "</BODY>" >> $WEBDIR/index.html
