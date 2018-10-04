@@ -1122,6 +1122,8 @@ echo "</BODY>" >> $WEBDIR/index.html
 echo "</HTML>" >> $WEBDIR/index.html
 # new index page
 cat $DIAG_HTML/index2.html >> $WEBDIR/indexnew.html
+# cleanup orphan links
+$DIAG_CODE/webpage_rmorphan.sh $WEBDIR/indexnew.html
 # Making tar file
 echo " "
 echo "****************************************************"
