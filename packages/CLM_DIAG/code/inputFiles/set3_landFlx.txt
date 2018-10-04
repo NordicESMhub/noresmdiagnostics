@@ -5,3 +5,12 @@ globalMeanNat   SNOWDP
 globalMeanNat   LHEAT
 globalMeanDay   FPSN
 globalMeanNat   TLAI
+globalMeanDay   SNOBCMCL
+globalMeanDay   SNOBCMSL
+globalMeanDay   SNODSTMCL
+globalMeanDay   SNODSTMSL
+globalMeanDay   SNOOCMCL
+globalMeanDay   SNOOCMSL
+globalMeanDay   BCDEP
+globalMeanDay   DSTDEP
+globalMeanDay   OCDEP

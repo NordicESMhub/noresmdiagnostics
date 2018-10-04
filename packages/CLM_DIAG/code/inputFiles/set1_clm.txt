@@ -29,3 +29,12 @@ globalMeanNat   ZWT
 globalMeanDay   QCHARGE
 globalMeanNat   FCOV
 globalMeanNat   CO2_PPMV
+globalMeanNat   SNOBCMCL
+globalMeanNat   SNOBCMSL
+globalMeanNat   SNODSTMCL
+globalMeanNat   SNODSTMSL
+globalMeanNat   SNOOCMCL
+globalMeanNat   SNOOCMSL
+globalMeanNat   BCDEP
+globalMeanNat   DSTDEP
+globalMeanNat   OCDEP

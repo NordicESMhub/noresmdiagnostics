@@ -792,9 +792,9 @@ sub set4Page()
 	@regions = ("ARCTIC","NORTHERN MIDLATITUDES","TROPICS","SOUTHERN MIDLATITUDES","ANTARCTICA", "NO OBSERVATIONS");
 
 	printf fp_wp "  <TH ALIGN=LEFT>All Station Locations\n";	
-	$n1 = "set_4_stationMap".$sfx;
+	$n1 = "set4_stationMap".$sfx;
 	printf fp_wp "  <TH><A HREF=\"$n1\">map</A>\n";
-	#  printf fp_wp "  <TH><A HREF=\"set_4_stationMap.gif\">map</A>\n";
+	#  printf fp_wp "  <TH><A HREF=\"set4_stationMap.gif\">map</A>\n";
 	printf fp_wp "<TR>\n";
 	printf fp_wp "  <TH ALIGN=LEFT><font color=red>STATION NAME</font>\n";	
 	printf fp_wp "  <TH>T [K]\n";

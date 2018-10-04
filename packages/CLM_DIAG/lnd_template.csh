@@ -275,7 +275,7 @@ setenv exit_after_MSS            0      # (1=ON;0=OFF)              (default = 0
 #**************************************************
 # 12a:  Is the Carbon/Nitrogen model active?
 #**************************************************
-setenv CN      0  # (1=CN model active,0=CN model inactive)  
+setenv CN      1  # (1=CN model active,0=CN model inactive)  
 setenv C13     0  # (1=C13 Istotopes active,0=C13 isotopes inactive)  NOT TESTED!
 setenv CLAMP   0  # (1=CLAMP terminology,0=CLM-CN terminology)        NOT TESTED!
 setenv CASA    0  # (1=CASA terminology,0=CLM-CN terminology)         NOT TESTED!

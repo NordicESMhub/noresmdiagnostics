@@ -94,3 +94,12 @@ globalMeanNat0  ZWT
 globalMeanDay0  QCHARGE
 globalMeanNat0  FCOV
 globalMeanNat0  PCO2
+globalMeanNat0  SNOBCMCL
+globalMeanNat0  SNOBCMSL
+globalMeanNat0  SNODSTMCL
+globalMeanNat0  SNODSTMSL
+globalMeanNat0  SNOOCMCL
+globalMeanNat0  SNOOCMSL
+globalMeanNat0  BCDEP
+globalMeanNat0  DSTDEP
+globalMeanNat0  OCDEP

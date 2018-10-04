@@ -9983,8 +9983,260 @@ if (varName .eq. "LITTERC_HR") then
     return(info)
   end if
 
+  if (varName .eq. "SNOBCMCL") then    
+    info@flux=True
+    info@longName="mass of BC in snow column"
+    info@nativeUnits = "kg/m2"
+    ; -- global Total
+    info@globalTotal__units        = "NA"
+    info@globalTotal__SF           = -999.
+    info@globalTotal_Annual__units = "NA"
+    info@globalTotal_Annual__SF    = -999.
+    ; -- global Mean
+    info@globalMean__units         = "kg/m2"
+    info@globalMean__SF            =  -999.
+    info@globalMean_Annual__units  = "kg/m2"
+    info@globalMean_Annual__SF     =  -999.
+    info@globalMean_Daily__units   = "kg/m2/d"
+    info@globalMean_Daily__SF      =  -999.
+    ; -- Origin
+    info@model                     = "CN"
+    info@derivedVariable           = False
+    info@clampVariable             = True
+    ; -- contour intervals
+    info@cn_Explicit               = True
+    info@cn_Min                    = -999
+    info@cn_Max                    = -999
+    info@cn_Levels                 = -999.
+    info@cn_LevelsDiff             = -999
+    return(info)
+  end if
 
+  if (varName .eq. "SNOBCMSL") then    
+    info@flux=True
+    info@longName="mass of BC in top snow layer"
+    info@nativeUnits = "kg/m2"
+    ; -- global Total
+    info@globalTotal__units        = "NA"
+    info@globalTotal__SF           = -999.
+    info@globalTotal_Annual__units = "NA"
+    info@globalTotal_Annual__SF    = -999.
+    ; -- global Mean
+    info@globalMean__units         = "kg/m2"
+    info@globalMean__SF            =  -999.
+    info@globalMean_Annual__units  = "kg/m2"
+    info@globalMean_Annual__SF     =  -999.
+    info@globalMean_Daily__units   = "kg/m2/d"
+    info@globalMean_Daily__SF      =  -999.
+    ; -- Origin
+    info@model                     = "CN"
+    info@derivedVariable           = False
+    info@clampVariable             = True
+    ; -- contour intervals
+    info@cn_Explicit               = True
+    info@cn_Min                    = -999
+    info@cn_Max                    = -999
+    info@cn_Levels                 = -999.
+    info@cn_LevelsDiff             = -999
+    return(info)
+  end if
+  if (varName .eq. "SNODSTMCL") then    
+    info@flux=True
+    info@longName="mass of dust in snow column"
+    info@nativeUnits = "kg/m2"
+    ; -- global Total
+    info@globalTotal__units        = "NA"
+    info@globalTotal__SF           = -999.
+    info@globalTotal_Annual__units = "NA"
+    info@globalTotal_Annual__SF    = -999.
+    ; -- global Mean
+    info@globalMean__units         = "kg/m2"
+    info@globalMean__SF            =  -999.
+    info@globalMean_Annual__units  = "kg/m2"
+    info@globalMean_Annual__SF     =  -999.
+    info@globalMean_Daily__units   = "kg/m2/d"
+    info@globalMean_Daily__SF      =  -999.
+    ; -- Origin
+    info@model                     = "CN"
+    info@derivedVariable           = False
+    info@clampVariable             = True
+    ; -- contour intervals
+    info@cn_Explicit               = True
+    info@cn_Min                    = -999
+    info@cn_Max                    = -999
+    info@cn_Levels                 = -999.
+    info@cn_LevelsDiff             = -999
+    return(info)
+  end if
 
+  if (varName .eq. "SNODSTMSL") then    
+    info@flux=True
+    info@longName="mass of dust in top snow layer"
+    info@nativeUnits = "kg/m2"
+    ; -- global Total
+    info@globalTotal__units        = "NA"
+    info@globalTotal__SF           = -999.
+    info@globalTotal_Annual__units = "NA"
+    info@globalTotal_Annual__SF    = -999.
+    ; -- global Mean
+    info@globalMean__units         = "kg/m2"
+    info@globalMean__SF            =  -999.
+    info@globalMean_Annual__units  = "kg/m2"
+    info@globalMean_Annual__SF     =  -999.
+    info@globalMean_Daily__units   = "kg/m2/d"
+    info@globalMean_Daily__SF      =  -999.
+    ; -- Origin
+    info@model                     = "CN"
+    info@derivedVariable           = False
+    info@clampVariable             = True
+    ; -- contour intervals
+    info@cn_Explicit               = True
+    info@cn_Min                    = -999
+    info@cn_Max                    = -999
+    info@cn_Levels                 = -999.
+    info@cn_LevelsDiff             = -999
+    return(info)
+  end if
+  if (varName .eq. "SNOOCMCL") then    
+    info@flux=True
+    info@longName="mass of OC in snow column"
+    info@nativeUnits = "kg/m2"
+    ; -- global Total
+    info@globalTotal__units        = "NA"
+    info@globalTotal__SF           = -999.
+    info@globalTotal_Annual__units = "NA"
+    info@globalTotal_Annual__SF    = -999.
+    ; -- global Mean
+    info@globalMean__units         = "kg/m2"
+    info@globalMean__SF            =  -999.
+    info@globalMean_Annual__units  = "kg/m2"
+    info@globalMean_Annual__SF     =  -999.
+    info@globalMean_Daily__units   = "kg/m2/d"
+    info@globalMean_Daily__SF      =  -999.
+    ; -- Origin
+    info@model                     = "CN"
+    info@derivedVariable           = False
+    info@clampVariable             = True
+    ; -- contour intervals
+    info@cn_Explicit               = True
+    info@cn_Min                    = -999
+    info@cn_Max                    = -999
+    info@cn_Levels                 = -999.
+    info@cn_LevelsDiff             = -999
+    return(info)
+  end if
+  if (varName .eq. "SNOOCMSL") then    
+    info@flux=True
+    info@longName="mass of OC in top snow layer"
+    info@nativeUnits = "kg/m2"
+    ; -- global Total
+    info@globalTotal__units        = "NA"
+    info@globalTotal__SF           = -999.
+    info@globalTotal_Annual__units = "NA"
+    info@globalTotal_Annual__SF    = -999.
+    ; -- global Mean
+    info@globalMean__units         = "kg/m2"
+    info@globalMean__SF            =  -999.
+    info@globalMean_Annual__units  = "kg/m2"
+    info@globalMean_Annual__SF     =  -999.
+    info@globalMean_Daily__units   = "kg/m2/d"
+    info@globalMean_Daily__SF      =  -999.
+    ; -- Origin
+    info@model                     = "CN"
+    info@derivedVariable           = False
+    info@clampVariable             = True
+    ; -- contour intervals
+    info@cn_Explicit               = True
+    info@cn_Min                    = -999
+    info@cn_Max                    = -999
+    info@cn_Levels                 = -999.
+    info@cn_LevelsDiff             = -999
+    return(info)
+  end if
+  if (varName .eq. "BCDEP") then    
+    info@flux=True
+    info@longName="total BC deposition (dry+wet) from atmosphere"
+    info@nativeUnits = "kg/m2/s"
+    ; -- global Total
+    info@globalTotal__units        = "NA"
+    info@globalTotal__SF           = -999.
+    info@globalTotal_Annual__units = "NA"
+    info@globalTotal_Annual__SF    = -999.
+    ; -- global Mean
+    info@globalMean__units         = "kg/m2/s"
+    info@globalMean__SF            =  -999.
+    info@globalMean_Annual__units  = "kg/m2/s"
+    info@globalMean_Annual__SF     =  -999.
+    info@globalMean_Daily__units   = "kg/m2/d"
+    info@globalMean_Daily__SF      =  -999.
+    ; -- Origin
+    info@model                     = "CN"
+    info@derivedVariable           = False
+    info@clampVariable             = True
+    ; -- contour intervals
+    info@cn_Explicit               = True
+    info@cn_Min                    = -999
+    info@cn_Max                    = -999
+    info@cn_Levels                 = -999.
+    info@cn_LevelsDiff             = -999
+    return(info)
+  end if
+  if (varName .eq. "DSTDEP") then    
+    info@flux=True
+    info@longName="total dust deposition (dry+wet) from atmosphere"
+    info@nativeUnits = "kg/m2/s"
+    ; -- global Total
+    info@globalTotal__units        = "NA"
+    info@globalTotal__SF           = -999.
+    info@globalTotal_Annual__units = "NA"
+    info@globalTotal_Annual__SF    = -999.
+    ; -- global Mean
+    info@globalMean__units         = "kg/m2/s"
+    info@globalMean__SF            =  -999.
+    info@globalMean_Annual__units  = "kg/m2/y"
+    info@globalMean_Annual__SF     =  -999.
+    info@globalMean_Daily__units   = "kg/m2/d"
+    info@globalMean_Daily__SF      =  -999.
+    ; -- Origin
+    info@model                     = "CN"
+    info@derivedVariable           = False
+    info@clampVariable             = True
+    ; -- contour intervals
+    info@cn_Explicit               = True
+    info@cn_Min                    = -999
+    info@cn_Max                    = -999
+    info@cn_Levels                 = -999.
+    info@cn_LevelsDiff             = -999
+    return(info)
+  end if
+  if (varName .eq. "OCDEP") then    
+    info@flux=True
+    info@longName="total OC deposition (dry+wet) from atmosphere"
+    info@nativeUnits = "kg/m2/s"
+    ; -- global Total
+    info@globalTotal__units        = "NA"
+    info@globalTotal__SF           = -999.
+    info@globalTotal_Annual__units = "NA"
+    info@globalTotal_Annual__SF    = -999.
+    ; -- global Mean
+    info@globalMean__units         = "kg/m2/s"
+    info@globalMean__SF            =  -999.
+    info@globalMean_Annual__units  = "kg/m2/y"
+    info@globalMean_Annual__SF     =  -999.
+    info@globalMean_Daily__units   = "kg/m2/d"
+    info@globalMean_Daily__SF      =  -999.
+    ; -- Origin
+    info@model                     = "CN"
+    info@derivedVariable           = False
+    info@clampVariable             = True
+    ; -- contour intervals
+    info@cn_Explicit               = True
+    info@cn_Min                    = -999
+    info@cn_Max                    = -999
+    info@cn_Levels                 = -999.
+    info@cn_LevelsDiff             = -999
+    return(info)
+  end if
     print("no variable info for variable "+ varName)
     info = False
     return(info)
