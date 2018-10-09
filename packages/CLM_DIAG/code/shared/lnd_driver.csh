@@ -706,7 +706,7 @@ if ($web_pages == 1) then
     	echo 'WEBDIR = ' $WEBDIR
 	if (! -e $WEBDIR) then
 		echo 'creating new webdir'
-    		mkdir $WEBDIR || exit 1
+    		mkdir -m 775 $WEBDIR || exit 1
 	endif
 	cd $WEBDIR
 
@@ -718,7 +718,7 @@ if ($web_pages == 1) then
   		if ($sets == 1) then		# is set active? 1 == active
     		    if (! -e set$ctr) then
  			echo 'Note: ' set$ctr 'directory does not exist: Creating'
-    			mkdir set$ctr
+    			mkdir -m 775 set$ctr
     		    else 
 			set webpage = set$ctr/set$ctr.html
 			if (-e $webpage) then
@@ -850,7 +850,7 @@ if($web_pages == 1) then
       endif
       set publish_html_path = ${publish_html_root}/${caseid_1}/CLM_DIAG
       if (! -e ${publish_html_path}) then
-         mkdir -p ${publish_html_path}
+         mkdir -m 775 -p ${publish_html_path}
          if (! -e ${publish_html_path}) then
             echo ERROR: Unable to create \$publish_html_path : ${publish_html_path}
             exit

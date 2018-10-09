@@ -616,10 +616,10 @@ export WEBDIR=$WKDIR/$WEBFOLDER
 if [ -d $WEBDIR ]; then
     rm -rf $WEBDIR
 fi
-mkdir -p $WEBDIR/set1
-mkdir -p $WEBDIR/set2
-mkdir -p $WEBDIR/set3
-mkdir -p $WEBDIR/set4
+mkdir -m 775 -p $WEBDIR/set1
+mkdir -m 775 -p $WEBDIR/set2
+mkdir -m 775 -p $WEBDIR/set3
+mkdir -m 775 -p $WEBDIR/set4
 cp $DIAG_HTML/index.html $WEBDIR
 cdate=`date`
 sed -i "s/test_run/$CASENAME1/g" $WEBDIR/index.html
@@ -803,7 +803,7 @@ if [ $? -eq 0 ] && [ $publish_html -eq 1 ]; then
     fi
     publish_html_path=$publish_html_root/$CASENAME1/HAMOCC_DIAG
     if [ ! -d $publish_html_path ]; then
-        mkdir -p $publish_html_path
+        mkdir -m 775 -p $publish_html_path
     fi
     web_server=ns2345k.web.sigma2.no
     path_pref=`echo ${publish_html_path} | cut -c -21`

@@ -12,32 +12,32 @@ if ($#argv != 3) then
   exit
 endif
 # create the needed subdirectories
-if (! -e set1) mkdir set1
-if (! -e set2) mkdir set2
-if (! -e set3) mkdir set3
-if (! -e set4) mkdir set4
-if (! -e set4a) mkdir set4a
-if (! -e set5_6) mkdir set5_6
-if (! -e set7) mkdir set7
-if (! -e set8) mkdir set8
-if (! -e set9) mkdir set9
-if (! -e set10) mkdir set10 
-if (! -e set11) mkdir set11 
-if (! -e set12) mkdir set12 
-if (! -e set13) mkdir set13 
-if (! -e set14) mkdir set14
-if (! -e set15) mkdir set15
-if (! -e set16) mkdir set16
-if (! -e tset1) mkdir tset1
-#if (! -e wset1) mkdir wset1
-if (! -e cset1) mkdir cset1
-#if (! -e cset2) mkdir cset2
-if (! -e cset3) mkdir cset3
-if (! -e cset4) mkdir cset4
-if (! -e cset5) mkdir cset5
-if (! -e cset6) mkdir cset6
-if (! -e cset7) mkdir cset7
-if (! -e images) mkdir images
+if (! -e set1) mkdir -m 775 set1
+if (! -e set2) mkdir -m 775 set2
+if (! -e set3) mkdir -m 775 set3
+if (! -e set4) mkdir -m 775 set4
+if (! -e set4a) mkdir -m 775 set4a
+if (! -e set5_6) mkdir -m 775 set5_6
+if (! -e set7) mkdir -m 775 set7
+if (! -e set8) mkdir -m 775 set8
+if (! -e set9) mkdir -m 775 set9
+if (! -e set10) mkdir -m 775 set10 
+if (! -e set11) mkdir -m 775 set11 
+if (! -e set12) mkdir -m 775 set12 
+if (! -e set13) mkdir -m 775 set13 
+if (! -e set14) mkdir -m 775 set14
+if (! -e set15) mkdir -m 775 set15
+if (! -e set16) mkdir -m 775 set16
+if (! -e tset1) mkdir -m 775 tset1
+#if (! -e wset1) mkdir -m 775 wset1
+if (! -e cset1) mkdir -m 775 cset1
+#if (! -e cset2) mkdir -m 775 cset2
+if (! -e cset3) mkdir -m 775 cset3
+if (! -e cset4) mkdir -m 775 cset4
+if (! -e cset5) mkdir -m 775 cset5
+if (! -e cset6) mkdir -m 775 cset6
+if (! -e cset7) mkdir -m 775 cset7
+if (! -e images) mkdir -m 775 images
 
 cp $DIAG_HOME/html/images/* images/
 

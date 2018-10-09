@@ -841,7 +841,7 @@ if ($web_pages == 1 && $publish_html == 1) then
    endif
    set publish_html_path = ${publish_html_root}/${CASE_TO_CONT}/CICE_DIAG
    if (! -e ${publish_html_path}) then
-      mkdir -p ${publish_html_path}
+      mkdir -m 775 -p ${publish_html_path}
       if (! -e ${publish_html_path}) then
          echo ERROR: Unable to create \$publish_html_path : ${publish_html_path}
          echo "***EXITING THE SCRIPT"

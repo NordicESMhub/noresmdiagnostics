@@ -1511,7 +1511,7 @@ if ($web_pages == 0) then
     @ test_end = $test_first_yr + $test_nyrs - 1
     if ($CNTL == OBS) then
       setenv WEBDIR ${test_path_diag}/yrs${test_first_yr}to${test_end}-obs
-      if (! -e $WEBDIR) mkdir $WEBDIR
+      if (! -e $WEBDIR) mkdir -m 775 $WEBDIR
       cd $WEBDIR
       $HTML_HOME/setup_obs $test_casename $image $time_series_obs
       cd $test_path_diag
@@ -1522,7 +1522,7 @@ if ($web_pages == 0) then
       if ($test_casename == $cntl_casename) then
         setenv WEBDIR ${test_path_diag}/yrs${test_first_yr}to${test_end}-yrs${cntl_first_yr}to${cntl_end}
       endif
-      if (! -e $WEBDIR) mkdir $WEBDIR
+      if (! -e $WEBDIR) mkdir -m 775 $WEBDIR
       cd $WEBDIR
       $HTML_HOME/setup_2models $test_casename $cntl_casename $image yrs${test_first_yr}to${test_end} yrs${cntl_first_yr}to${cntl_end}
       cd $test_path_diag
@@ -1535,14 +1535,14 @@ if ($web_pages == 0) then
   else # time series
     if ($CNTL == OBS) then
       setenv WEBDIR ${test_path_diag}/ts${BEGYRS[1]}to${ENDYRS[1]}
-      if (! -e $WEBDIR) mkdir $WEBDIR
+      if (! -e $WEBDIR) mkdir -m 775 $WEBDIR
       cd $WEBDIR
       $HTML_HOME/setup_obs $test_casename $image $time_series_obs
       cd $test_path_diag
       set tarfile = ts${BEGYRS[1]}to${ENDYRS[1]}.tar
     else          # model-to-model
       setenv WEBDIR ${test_path_diag}/ts${BEGYRS[1]}to${ENDYRS[1]}-${cntl_casename}
-      if (! -e $WEBDIR) mkdir $WEBDIR
+      if (! -e $WEBDIR) mkdir -m 775 $WEBDIR
       cd $WEBDIR
       $HTML_HOME/setup_2models $test_casename $cntl_casename $image yrs${test_first_yr}to${test_end} yrs${cntl_first_yr}to${cntl_end}
       cd $test_path_diag
@@ -2833,14 +2833,14 @@ if ($web_pages == 0) then
   endif
   if ($CNTL == OBS) then
     setenv WEBDIR ${test_path_diag}/$test_casename-obs
-    if (! -e $WEBDIR) mkdir $WEBDIR
+    if (! -e $WEBDIR) mkdir -m 775 $WEBDIR
     cd $WEBDIR
     $HTML_HOME/setup_obs $test_casename $image
     cd $test_path_diag
     set tarfile = ${test_casename}-obs.tar
   else          # model-to-model 
     setenv WEBDIR ${test_path_diag}/$test_casename-$cntl_casename
-    if (! -e $WEBDIR) mkdir $WEBDIR
+    if (! -e $WEBDIR) mkdir -m 775 $WEBDIR
     cd $WEBDIR
     $HTML_HOME/setup_2models $test_casename $cntl_casename $image yrs${test_first_yr}to${test_end} yrs${cntl_first_yr}to${cntl_end}
     cd $test_path_diag
@@ -3145,14 +3145,14 @@ if ($web_pages == 0) then
   endif
   if ($CNTL == OBS) then
     setenv WEBDIR ${WKDIR}/$test_casename-obs
-    if (! -e $WEBDIR) mkdir $WEBDIR
+    if (! -e $WEBDIR) mkdir -m 775 $WEBDIR
     cd $WEBDIR
     $HTML_HOME/setup_obs $test_casename $image
     cd $WKDIR
     set tarfile = ${test_casename}-obs.tar
   else          # model-to-model 
     setenv WEBDIR ${WKDIR}/$test_casename-$cntl_casename
-    if (! -e $WEBDIR) mkdir $WEBDIR
+    if (! -e $WEBDIR) mkdir -m 775 $WEBDIR
     cd $WEBDIR
     $HTML_HOME/setup_2models $test_casename $cntl_casename $image  yrs${test_first_yr}to${test_end} yrs${cntl_first_yr}to${cntl_end}
     cd $WKDIR
@@ -3347,7 +3347,7 @@ if ($web_pages == 0 && $publish_html == 0) then
    endif
    set publish_html_path = $publish_html_root/$test_casename/CAM_DIAG
    if (! -e ${publish_html_path}) then
-      mkdir -p ${publish_html_path}
+      mkdir -m 775 -p ${publish_html_path}
       if (! -e ${publish_html_path}) then
          echo ERROR: Unable to create \$publish_html_path : ${publish_html_path}
          exit 1
