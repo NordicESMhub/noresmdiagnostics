@@ -9988,13 +9988,13 @@ if (varName .eq. "LITTERC_HR") then
     info@longName="mass of BC in snow column"
     info@nativeUnits = "kg/m2"
     ; -- global Total
-    info@globalTotal__units        = "NA"
-    info@globalTotal__SF           = -999.
+    info@globalTotal__units        = "PgC"
+    info@globalTotal__SF           = grams2Pgrams*1000
     info@globalTotal_Annual__units = "NA"
     info@globalTotal_Annual__SF    = -999.
     ; -- global Mean
     info@globalMean__units         = "kg/m2"
-    info@globalMean__SF            =  -999.
+    info@globalMean__SF            =  1.0
     info@globalMean_Annual__units  = "kg/m2"
     info@globalMean_Annual__SF     =  -999.
     info@globalMean_Daily__units   = "kg/m2/d"
@@ -10017,13 +10017,13 @@ if (varName .eq. "LITTERC_HR") then
     info@longName="mass of BC in top snow layer"
     info@nativeUnits = "kg/m2"
     ; -- global Total
-    info@globalTotal__units        = "NA"
-    info@globalTotal__SF           = -999.
+    info@globalTotal__units        = "PgC"
+    info@globalTotal__SF           = grams2Pgrams*1000
     info@globalTotal_Annual__units = "NA"
     info@globalTotal_Annual__SF    = -999.
     ; -- global Mean
     info@globalMean__units         = "kg/m2"
-    info@globalMean__SF            =  -999.
+    info@globalMean__SF            =  1.
     info@globalMean_Annual__units  = "kg/m2"
     info@globalMean_Annual__SF     =  -999.
     info@globalMean_Daily__units   = "kg/m2/d"
@@ -10045,13 +10045,13 @@ if (varName .eq. "LITTERC_HR") then
     info@longName="mass of dust in snow column"
     info@nativeUnits = "kg/m2"
     ; -- global Total
-    info@globalTotal__units        = "NA"
-    info@globalTotal__SF           = -999.
+    info@globalTotal__units        = "PgC"
+    info@globalTotal__SF           = grams2Pgrams*1000
     info@globalTotal_Annual__units = "NA"
     info@globalTotal_Annual__SF    = -999.
     ; -- global Mean
     info@globalMean__units         = "kg/m2"
-    info@globalMean__SF            =  -999.
+    info@globalMean__SF            =  1.0
     info@globalMean_Annual__units  = "kg/m2"
     info@globalMean_Annual__SF     =  -999.
     info@globalMean_Daily__units   = "kg/m2/d"
@@ -10074,13 +10074,13 @@ if (varName .eq. "LITTERC_HR") then
     info@longName="mass of dust in top snow layer"
     info@nativeUnits = "kg/m2"
     ; -- global Total
-    info@globalTotal__units        = "NA"
-    info@globalTotal__SF           = -999.
+    info@globalTotal__units        = "PgC"
+    info@globalTotal__SF           = grams2Pgrams*1000
     info@globalTotal_Annual__units = "NA"
     info@globalTotal_Annual__SF    = -999.
     ; -- global Mean
     info@globalMean__units         = "kg/m2"
-    info@globalMean__SF            =  -999.
+    info@globalMean__SF            =  1.0
     info@globalMean_Annual__units  = "kg/m2"
     info@globalMean_Annual__SF     =  -999.
     info@globalMean_Daily__units   = "kg/m2/d"
@@ -10102,13 +10102,13 @@ if (varName .eq. "LITTERC_HR") then
     info@longName="mass of OC in snow column"
     info@nativeUnits = "kg/m2"
     ; -- global Total
-    info@globalTotal__units        = "NA"
-    info@globalTotal__SF           = -999.
+    info@globalTotal__units        = "PgC"
+    info@globalTotal__SF           = grams2Pgrams*1000
     info@globalTotal_Annual__units = "NA"
     info@globalTotal_Annual__SF    = -999.
     ; -- global Mean
     info@globalMean__units         = "kg/m2"
-    info@globalMean__SF            =  -999.
+    info@globalMean__SF            =  1.0
     info@globalMean_Annual__units  = "kg/m2"
     info@globalMean_Annual__SF     =  -999.
     info@globalMean_Daily__units   = "kg/m2/d"
@@ -10130,13 +10130,13 @@ if (varName .eq. "LITTERC_HR") then
     info@longName="mass of OC in top snow layer"
     info@nativeUnits = "kg/m2"
     ; -- global Total
-    info@globalTotal__units        = "NA"
-    info@globalTotal__SF           = -999.
+    info@globalTotal__units        = "PgC"
+    info@globalTotal__SF           = grams2Pgrams*1000
     info@globalTotal_Annual__units = "NA"
     info@globalTotal_Annual__SF    = -999.
     ; -- global Mean
     info@globalMean__units         = "kg/m2"
-    info@globalMean__SF            =  -999.
+    info@globalMean__SF            =  1.0
     info@globalMean_Annual__units  = "kg/m2"
     info@globalMean_Annual__SF     =  -999.
     info@globalMean_Daily__units   = "kg/m2/d"
@@ -10160,13 +10160,13 @@ if (varName .eq. "LITTERC_HR") then
     ; -- global Total
     info@globalTotal__units        = "NA"
     info@globalTotal__SF           = -999.
-    info@globalTotal_Annual__units = "NA"
-    info@globalTotal_Annual__SF    = -999.
+    info@globalTotal_Annual__units = "PgC/yr"
+    info@globalTotal_Annual__SF    = secondsInYear*grams2Pgrams*1000
     ; -- global Mean
     info@globalMean__units         = "kg/m2/s"
-    info@globalMean__SF            =  -999.
-    info@globalMean_Annual__units  = "kg/m2/s"
-    info@globalMean_Annual__SF     =  -999.
+    info@globalMean__SF            =  1.0
+    info@globalMean_Annual__units  = "kg/m2/yr"
+    info@globalMean_Annual__SF     =  secondsInYear
     info@globalMean_Daily__units   = "kg/m2/d"
     info@globalMean_Daily__SF      =  -999.
     ; -- Origin
@@ -10188,13 +10188,13 @@ if (varName .eq. "LITTERC_HR") then
     ; -- global Total
     info@globalTotal__units        = "NA"
     info@globalTotal__SF           = -999.
-    info@globalTotal_Annual__units = "NA"
-    info@globalTotal_Annual__SF    = -999.
+    info@globalTotal_Annual__units = "PgC/yr"
+    info@globalTotal_Annual__SF    = secondsInYear*grams2Pgrams*1000
     ; -- global Mean
     info@globalMean__units         = "kg/m2/s"
-    info@globalMean__SF            =  -999.
-    info@globalMean_Annual__units  = "kg/m2/y"
-    info@globalMean_Annual__SF     =  -999.
+    info@globalMean__SF            =  1.0
+    info@globalMean_Annual__units  = "kg/m2/yr"
+    info@globalMean_Annual__SF     =  secondsInYear
     info@globalMean_Daily__units   = "kg/m2/d"
     info@globalMean_Daily__SF      =  -999.
     ; -- Origin
@@ -10216,13 +10216,13 @@ if (varName .eq. "LITTERC_HR") then
     ; -- global Total
     info@globalTotal__units        = "NA"
     info@globalTotal__SF           = -999.
-    info@globalTotal_Annual__units = "NA"
-    info@globalTotal_Annual__SF    = -999.
+    info@globalTotal_Annual__units = "PgC/yr"
+    info@globalTotal_Annual__SF    = secondsInYear*grams2Pgrams*1000
     ; -- global Mean
     info@globalMean__units         = "kg/m2/s"
-    info@globalMean__SF            =  -999.
-    info@globalMean_Annual__units  = "kg/m2/y"
-    info@globalMean_Annual__SF     =  -999.
+    info@globalMean__SF            =  1.0
+    info@globalMean_Annual__units  = "kg/m2/yr"
+    info@globalMean_Annual__SF     =  secondsInYear
     info@globalMean_Daily__units   = "kg/m2/d"
     info@globalMean_Daily__SF      =  -999.
     ; -- Origin
