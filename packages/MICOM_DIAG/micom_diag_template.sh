@@ -122,6 +122,7 @@ CLIMO_TIME_SERIES_SWITCH=SWITCHED_OFF
 # package (including all grid files and observational data)
 # to another directory.
 export DIAG_HOME=/path/to/code/and/data
+export NCARG_USRRESFILE=${DIAG_HOME}/../../bin/.hluresfile
 
 #**********************************
 #*** END OF USER MODIFY SECTION ***

@@ -53,6 +53,7 @@ setenv LOCAL_LN           0     #1=soft link; 0=copy
 #setenv DIAG_HOME /projects/NS2345K/noresm_diagnostics/CLM_DIAG/lnd_diag4.2.25 # Nird
 # NIRD (do not change this! -JL, Nov 2017)
 setenv DIAG_HOME /path/to/code/and/data
+setenv NCARG_USRRESFILE ${DIAG_HOME}../../bin/.hluresfile
 
 #*****************************************************************
 # 2b:  Path to observational datasets

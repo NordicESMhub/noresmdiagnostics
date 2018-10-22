@@ -118,6 +118,7 @@ CLIMO_TIME_SERIES_SWITCH=SWITCHED_OFF
 # package (including all grid files and observational data)
 # to another directory.
 export DIAG_HOME=/path/to/code/and/data
+export NCARG_USRRESFILE=${DIAG_HOME}/../../bin/.hluresfile
 
 #**********************************
 #*** END OF USER MODIFY SECTION ***
@@ -145,11 +146,11 @@ else
 fi
 
 # Check for .hluresfile in $HOME
-if [ ! -e $HOME/.hluresfile ]; then
-    echo "No .hluresfile present in $HOME"
-    echo "Copying .hluresfile to $HOME"
-    cp $DIAG_CODE/.hluresfile $HOME
-fi
+#if [ ! -e $HOME/.hluresfile ]; then
+    #echo "No .hluresfile present in $HOME"
+    #echo "Copying .hluresfile to $HOME"
+    #cp $DIAG_CODE/.hluresfile $HOME
+#fi
 
 # Check for CDO
 export CDO=`which cdo`

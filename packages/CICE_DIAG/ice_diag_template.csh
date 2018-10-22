@@ -82,6 +82,7 @@ set SCRIPT_HOME = /path/to/your/diagnostics
 #--- Set DIAG_HOME to the root location of the diagnostic code.
 
 setenv DIAG_HOME /path/to/code/and/data
+setenv NCARG_USRRESFILE ${DIAG_HOME}../../bin/.hluresfile
 
 #--- setenv SCRATCH /work/$LOGNAME/noresm/cice_diag
 setenv SCRATCH $SCRIPT_HOME

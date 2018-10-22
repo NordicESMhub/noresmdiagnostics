@@ -423,6 +423,7 @@ set sig_lvl = 0.05           # level of significance
 
 # NIRD
 setenv DIAG_HOME /path/to/code/and/data
+setenv NCARG_USRRESFILE ${DIAG_HOME}../../bin/.hluresfile
 
 
 #*****************************************************************
