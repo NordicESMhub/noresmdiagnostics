@@ -1513,6 +1513,7 @@ if ($web_pages == 0) then
     if ($CNTL == OBS) then
       setenv WEBDIR ${test_path_diag}/yrs${test_first_yr}to${test_end}-obs
       if (! -e $WEBDIR) mkdir -m 775 $WEBDIR
+      if (-e $WEBDIR && `stat -c %a $WEBDIR` != 775 ) chmod 775 $WEBDIR
       cd $WEBDIR
       $HTML_HOME/setup_obs $test_casename $image $time_series_obs
       cd $test_path_diag
@@ -1524,6 +1525,7 @@ if ($web_pages == 0) then
         setenv WEBDIR ${test_path_diag}/yrs${test_first_yr}to${test_end}-yrs${cntl_first_yr}to${cntl_end}
       endif
       if (! -e $WEBDIR) mkdir -m 775 $WEBDIR
+      if (-e $WEBDIR && `stat -c %a $WEBDIR` != 775 ) chmod 775 $WEBDIR
       cd $WEBDIR
       $HTML_HOME/setup_2models $test_casename $cntl_casename $image yrs${test_first_yr}to${test_end} yrs${cntl_first_yr}to${cntl_end}
       cd $test_path_diag
@@ -1537,6 +1539,7 @@ if ($web_pages == 0) then
     if ($CNTL == OBS) then
       setenv WEBDIR ${test_path_diag}/ts${BEGYRS[1]}to${ENDYRS[1]}
       if (! -e $WEBDIR) mkdir -m 775 $WEBDIR
+      if (-e $WEBDIR && `stat -c %a $WEBDIR` != 775 ) chmod 775 $WEBDIR
       cd $WEBDIR
       $HTML_HOME/setup_obs $test_casename $image $time_series_obs
       cd $test_path_diag
@@ -1544,6 +1547,7 @@ if ($web_pages == 0) then
     else          # model-to-model
       setenv WEBDIR ${test_path_diag}/ts${BEGYRS[1]}to${ENDYRS[1]}-${cntl_casename}
       if (! -e $WEBDIR) mkdir -m 775 $WEBDIR
+      if (-e $WEBDIR && `stat -c %a $WEBDIR` != 775 ) chmod 775 $WEBDIR
       cd $WEBDIR
       $HTML_HOME/setup_2models $test_casename $cntl_casename $image yrs${test_first_yr}to${test_end} yrs${cntl_first_yr}to${cntl_end}
       cd $test_path_diag
@@ -2835,6 +2839,7 @@ if ($web_pages == 0) then
   if ($CNTL == OBS) then
     setenv WEBDIR ${test_path_diag}/$test_casename-obs
     if (! -e $WEBDIR) mkdir -m 775 $WEBDIR
+    if (-e $WEBDIR && `stat -c %a $WEBDIR` != 775 ) chmod 775 $WEBDIR
     cd $WEBDIR
     $HTML_HOME/setup_obs $test_casename $image
     cd $test_path_diag
@@ -2842,6 +2847,7 @@ if ($web_pages == 0) then
   else          # model-to-model 
     setenv WEBDIR ${test_path_diag}/$test_casename-$cntl_casename
     if (! -e $WEBDIR) mkdir -m 775 $WEBDIR
+    if (-e $WEBDIR && `stat -c %a $WEBDIR` != 775 ) chmod 775 $WEBDIR
     cd $WEBDIR
     $HTML_HOME/setup_2models $test_casename $cntl_casename $image yrs${test_first_yr}to${test_end} yrs${cntl_first_yr}to${cntl_end}
     cd $test_path_diag
@@ -3147,6 +3153,7 @@ if ($web_pages == 0) then
   if ($CNTL == OBS) then
     setenv WEBDIR ${WKDIR}/$test_casename-obs
     if (! -e $WEBDIR) mkdir -m 775 $WEBDIR
+    if (-e $WEBDIR && `stat -c %a $WEBDIR` != 775 ) chmod 775 $WEBDIR
     cd $WEBDIR
     $HTML_HOME/setup_obs $test_casename $image
     cd $WKDIR
@@ -3154,6 +3161,7 @@ if ($web_pages == 0) then
   else          # model-to-model 
     setenv WEBDIR ${WKDIR}/$test_casename-$cntl_casename
     if (! -e $WEBDIR) mkdir -m 775 $WEBDIR
+    if (-e $WEBDIR && `stat -c %a $WEBDIR` != 775 ) chmod 775 $WEBDIR
     cd $WEBDIR
     $HTML_HOME/setup_2models $test_casename $cntl_casename $image  yrs${test_first_yr}to${test_end} yrs${cntl_first_yr}to${cntl_end}
     cd $WKDIR
@@ -3353,6 +3361,9 @@ if ($web_pages == 0 && $publish_html == 0) then
          echo ERROR: Unable to create \$publish_html_path : ${publish_html_path}
          exit 1
       endif
+   endif
+   if (-e ${publish_html_path} && `stat -c %a ${publish_html_path}` != 775 ) then
+      chmod 775 ${publish_html_path}
    endif
    set web_server      = ns2345k.web.sigma2.no
    set path_pref       = `echo ${publish_html_path} | cut -c -21`

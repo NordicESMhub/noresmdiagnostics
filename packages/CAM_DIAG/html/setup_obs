@@ -39,6 +39,33 @@ if (! -e cset6) mkdir -m 775 cset6
 if (! -e cset7) mkdir -m 775 cset7
 if (! -e images) mkdir -m 775 images
 
+if (-e set1   && `stat -c %a set1` != 775) chmod 775 set1
+if (-e set2   && `stat -c %a set1` != 775) chmod 775 set2
+if (-e set3   && `stat -c %a set1` != 775) chmod 775 set3
+if (-e set4   && `stat -c %a set1` != 775) chmod 775 set4
+if (-e set4a  && `stat -c %a set1` != 775) chmod 775 set4a
+if (-e set5_6 && `stat -c %a set1` != 775) chmod 775 set5_6
+if (-e set7   && `stat -c %a set1` != 775) chmod 775 set7
+if (-e set8   && `stat -c %a set1` != 775) chmod 775 set8
+if (-e set9   && `stat -c %a set1` != 775) chmod 775 set9
+if (-e set10  && `stat -c %a set1` != 775) chmod 775 set10
+if (-e set11  && `stat -c %a set1` != 775) chmod 775 set11
+if (-e set12  && `stat -c %a set1` != 775) chmod 775 set12
+if (-e set13  && `stat -c %a set1` != 775) chmod 775 set13
+if (-e set14  && `stat -c %a set1` != 775) chmod 775 set14
+if (-e set15  && `stat -c %a set1` != 775) chmod 775 set15
+if (-e set16  && `stat -c %a set1` != 775) chmod 775 set16
+if (-e tset1  && `stat -c %a set1` != 775) chmod 775 tset1
+#if (-e wset1  && `stat -c %a set1` != 775) chmod 775 wset1
+if (-e cset1  && `stat -c %a set1` != 775) chmod 775 cset1
+#if (-e cset2  && `stat -c %a set1` != 775) chmod 775 cset2
+if (-e cset3  && `stat -c %a set1` != 775) chmod 775 cset3
+if (-e cset4  && `stat -c %a set1` != 775) chmod 775 cset4
+if (-e cset5  && `stat -c %a set1` != 775) chmod 775 cset5
+if (-e cset6  && `stat -c %a set1` != 775) chmod 775 cset6
+if (-e cset7  && `stat -c %a set1` != 775) chmod 775 cset7
+if (-e images && `stat -c %a set1` != 775) chmod 775 images
+
 cp $DIAG_HOME/html/images/* images/
 
 cp $HTML/sets*.htm .

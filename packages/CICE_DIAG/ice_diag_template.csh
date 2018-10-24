@@ -849,6 +849,10 @@ if ($web_pages == 1 && $publish_html == 1) then
          exit 1
       endif
    endif
+   if (-e ${publish_html_path} && `stat -c %a ${publish_html_path}` != 775 ) then
+      chmod 775 ${publish_html_path}
+   endif
+
    set web_server      = ns2345k.web.sigma2.no
    set path_pref       = `echo ${publish_html_path} | cut -c -21`
    set path_suff       = `echo ${publish_html_path} | cut -c 23-`

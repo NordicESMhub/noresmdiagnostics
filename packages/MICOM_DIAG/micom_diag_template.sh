@@ -1140,6 +1140,10 @@ if [ $? -eq 0 ] && [ $publish_html -eq 1 ]; then
     publish_html_path=$publish_html_root/$CASENAME1/MICOM_DIAG
     if [ ! -d $publish_html_path ]; then
         mkdir -m 775 -p $publish_html_path
+    else
+        if [ $(stat -c %a ${publish_html_path}) != 775 ];then
+            chmod 775 ${publish_html_path}
+        fi
     fi
     web_server=ns2345k.web.sigma2.no
     path_pref=`echo ${publish_html_path} | cut -c -21`

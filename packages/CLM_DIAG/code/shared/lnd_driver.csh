@@ -708,6 +708,7 @@ if ($web_pages == 1) then
 		echo 'creating new webdir'
     		mkdir -m 775 $WEBDIR || exit 1
 	endif
+    if (-e $WEBDIR && `stat -c %a $WEBDIR` != 775 ) chmod 775 $WEBDIR
 	cd $WEBDIR
 
 	#--------------------------
@@ -717,14 +718,15 @@ if ($web_pages == 1) then
 	foreach sets ($set1 $set2 $set3 $set4 $set5 $set6 $set7 $set8 $set9)
   		if ($sets == 1) then		# is set active? 1 == active
     		    if (! -e set$ctr) then
- 			echo 'Note: ' set$ctr 'directory does not exist: Creating'
-    			mkdir -m 775 set$ctr
+ 			        echo 'Note: ' set$ctr 'directory does not exist: Creating'
+    			    mkdir -m 775 set$ctr
     		    else 
-			set webpage = set$ctr/set$ctr.html
-			if (-e $webpage) then
- 				echo 'removing' $webpage
-    				rm $webpage
-			endif
+                    if (`stat -c %a set$ctr` != 775 ) chmod 775 set$ctr
+			        set webpage = set$ctr/set$ctr.html
+			        if (-e $webpage) then
+ 				        echo 'removing' $webpage
+    				    rm $webpage
+			        endif
     		    endif
   		endif
   		@ ctr++
@@ -855,6 +857,9 @@ if($web_pages == 1) then
             echo ERROR: Unable to create \$publish_html_path : ${publish_html_path}
             exit
          endif
+      endif
+      if (-e ${publish_html_path} && `stat -c %a ${publish_html_path}` != 775 ) then
+         chmod 775 ${publish_html_path}
       endif
       set web_server      = ns2345k.web.sigma2.no
       set path_pref       = `echo ${publish_html_path} | cut -c -21`
