@@ -70,21 +70,21 @@ do i = 0, nvars-1
       A = get_dissic (inptr1)
    end if
 
-   if (vars(i).eq."co2fxd") then
-      A = get_co2fxd (inptr1)
-   end if
+;   if (vars(i).eq."co2fxd") then
+;      A = get_co2fxd (inptr1)
+;   end if
 
-   if (vars(i).eq."co2fxu") then
-      A = get_co2fxu (inptr1)
-   end if
+;   if (vars(i).eq."co2fxu") then
+;      A = get_co2fxu (inptr1)
+;   end if
 
-   if (vars(i).eq."co2fxn") then
-      A = get_co2fxn (inptr1)
-   end if
+;   if (vars(i).eq."co2fxn") then
+;      A = get_co2fxn (inptr1)
+;   end if
 
-   if (vars(i).eq."pp") then
-      A = get_pp (inptr1)
-   end if
+;   if (vars(i).eq."pp") then
+;      A = get_pp (inptr1)
+;   end if
    
    if (all(A.eq.-999.)) then
       print (vars(i)+" is not present in case1 input file.")
@@ -129,9 +129,9 @@ do i = 0, nvars-1
          B = get_co2fxn (inptr2)
       end if
 
-      if (vars(i).eq."pp") then
-         B = get_pp (inptr2)
-      end if
+;      if (vars(i).eq."pp") then
+;         B = get_pp (inptr2)
+;      end if
    
       if (all(B.eq.-999.)) then
          print (vars(i)+" is not present in case2 input file.")

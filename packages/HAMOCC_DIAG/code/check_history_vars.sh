@@ -129,6 +129,13 @@ do
                 fi
             fi
         done
+        # only keep vars on sigma if both lvl and sigma vars exist
+        for var in $(echo $var_list | sed 's/,/ /g'); do
+            if [ ${var_list/${var}lvl} != ${var_list} ]; then
+                var_list=${var_list//,${var},/,}
+            fi
+        done
+
         echo "Variables in $filetype history files: $var_list"
         if [ $find_any -eq 1 ]; then
             var_flag=1

@@ -237,9 +237,8 @@ fi
 required_vars_climo_ann="depth_bnds,o2lvl,silvl,po4lvl,no3lvl,dissiclvl,talklvl,delta13clvl,pp_tot,ppint,epc100,pco2,co2fxd,co2fxu,dmsflux"
 required_vars_climo_mon="depth_bnds,pp,ppint,pddpo,pco2,co2fxd,co2fxu,srfpo4,srfo2,srfno3,srfsi"
 required_vars_climo_zm="o2lvl,silvl,po4lvl,no3lvl,dissiclvl,talklvl,delta13clvl"
-required_vars_ts_ann="co2fxd,co2fxu,epc100,epcalc100,ppint,dmsflux,o2,si,po4,no3,dissic,pp,pddpo"
-required_vars_ts_mon="pp,pddpo"
-
+required_vars_ts_ann="co2fxd,co2fxu,epc100,epcalc100,ppint,dmsflux,o2,si,po4,no3,dissic,pddpo,depth_bnds,o2lvl,silvl,po4lvl,no3lvl,dissiclvl"
+#required_vars_ts_mon="pp,pddpo"
 
 # Check which sets should be plotted based on CLIMO_TIME_SERIES_SWITCH
 if [ $CLIMO_TIME_SERIES_SWITCH == ONLY_CLIMO ]; then
@@ -514,25 +513,25 @@ do
                 echo "$CLIMO_TS_DIR/$ANN_TS_FILE_ANN already exists."
                 echo "-> SKIPPING COMPUTING ANNUAL TIME SERIES FROM ANNUAL FILES"
             fi
-            if [ ! -f $CLIMO_TS_DIR/$ANN_TS_FILE_MON ]; then
-                ANN_TS_FILE_MON1=${CASENAME}_ANN_${FYR_PRNT_TS}-${LYR_PRNT_TS}_ts_mon_others.nc
-                ANN_TS_FILE_MON2=${CASENAME}_ANN_${FYR_PRNT_TS}-${LYR_PRNT_TS}_ts_mon_pp.nc
-                echo $required_vars_ts_mon > $WKDIR/attributes/required_vars
-                $DIAG_CODE/check_history_vars.sh $CASENAME $FIRST_YR_TS $LAST_YR_TS $PATHDAT ts_mon
-                if [ ! -f $WKDIR/attributes/grid_${CASENAME} ] && [ -z $PGRIDPATH ]; then
-                    $DIAG_CODE/determine_grid_type.sh $CASENAME
-                fi
-                if [ -f $WKDIR/attributes/vars_ts_mon_${CASENAME}_hbgcm ]; then
-                    $DIAG_CODE/compute_ann_time_series_mon.sh $CASENAME $FIRST_YR_TS $LAST_YR_TS $PATHDAT $CLIMO_TS_DIR
-                    $DIAG_CODE/merge_files.sh $CLIMO_TS_DIR $ANN_TS_FILE_MON1 $ANN_TS_FILE_MON2 $ANN_TS_FILE_MON
-                else
-                    echo "WARNING: could not find required variables ($required_vars_ts_mon) for annual time series."
-                    echo "-> SKIPPING COMPUTING ANNUAL TIME SERIES FROM MONTHLY FILES"
-                fi
-            else
-                echo "$CLIMO_TS_DIR/$ANN_TS_FILE_MON already exists."
-                echo "-> SKIPPING COMPUTING ANNUAL TIME SERIES FROM MONTHLY FILES"
-            fi
+            #if [ ! -f $CLIMO_TS_DIR/$ANN_TS_FILE_MON ]; then
+                #ANN_TS_FILE_MON1=${CASENAME}_ANN_${FYR_PRNT_TS}-${LYR_PRNT_TS}_ts_mon_others.nc
+                #ANN_TS_FILE_MON2=${CASENAME}_ANN_${FYR_PRNT_TS}-${LYR_PRNT_TS}_ts_mon_pp.nc
+                #echo $required_vars_ts_mon > $WKDIR/attributes/required_vars
+                #$DIAG_CODE/check_history_vars.sh $CASENAME $FIRST_YR_TS $LAST_YR_TS $PATHDAT ts_mon
+                #if [ ! -f $WKDIR/attributes/grid_${CASENAME} ] && [ -z $PGRIDPATH ]; then
+                    #$DIAG_CODE/determine_grid_type.sh $CASENAME
+                #fi
+                #if [ -f $WKDIR/attributes/vars_ts_mon_${CASENAME}_hbgcm ]; then
+                    #$DIAG_CODE/compute_ann_time_series_mon.sh $CASENAME $FIRST_YR_TS $LAST_YR_TS $PATHDAT $CLIMO_TS_DIR
+                    #$DIAG_CODE/merge_files.sh $CLIMO_TS_DIR $ANN_TS_FILE_MON1 $ANN_TS_FILE_MON2 $ANN_TS_FILE_MON
+                #else
+                    #echo "WARNING: could not find required variables ($required_vars_ts_mon) for annual time series."
+                    #echo "-> SKIPPING COMPUTING ANNUAL TIME SERIES FROM MONTHLY FILES"
+                #fi
+            #else
+                #echo "$CLIMO_TS_DIR/$ANN_TS_FILE_MON already exists."
+                #echo "-> SKIPPING COMPUTING ANNUAL TIME SERIES FROM MONTHLY FILES"
+            #fi
             # Merge ts files
             if [ -f $CLIMO_TS_DIR/$ANN_TS_FILE_ANN ] || [ -f $CLIMO_TS_DIR/$ANN_TS_FILE_MON ]; then
                 $DIAG_CODE/merge_files.sh $CLIMO_TS_DIR $ANN_TS_FILE_ANN $ANN_TS_FILE_MON $ANN_TS_FILE

@@ -93,16 +93,17 @@ do
             filename=${casename}.micom.hbgcy.${yr_prnt}.nc
 
             fflag=1     #check if all required annual ts files exist
-            for var in $(echo $var_list | sed 's/,/ /g'|sed 's/pddpo//') ; do
+            for var in $(echo $var_list | sed 's/,/ /g'|sed 's/pddpo//'|sed 's/depth_bnds//') ; do
                 tsfile=${var}_${casename}_ANN_${filetype}_${yr_prnt}.nc
                 if [ ! -f  $tsdir/ann_ts/${tsfile} ]; then
-                    echo "$tsdir/ann_ts/${tsfile} does not exist, ncks required variables..."
+                    #echo "$tsdir/ann_ts/${tsfile} does not exist, ncks required variables..."
                     fflag=0
                     break
                 fi
             done
             if [ $fflag  = 0 ]; then
-                eval $NCKS -O -v $var_list --no_tmp_fl $pathdat/$filename $WKDIR/${casename}_ANN_${yr_prnt}.nc &
+                # use -3 to avoid write _fillvalue conflict
+                eval $NCKS -3 -O -v $var_list --no_tmp_fl $pathdat/$filename $WKDIR/${casename}_ANN_${yr_prnt}.nc &
                 pid+=($!)
             else
                 echo Skip computing year ${yr_prnt}, time-series variables already exist.
@@ -205,6 +206,38 @@ do
                 wait ${pid[$m]}
                 if [ $? -ne 0 ]; then
                     echo "ERROR in calculating mass weighted global average: $NCWA --no_tmp_fl -O -v $var -w pddpo -a sigma,y,x $WKDIR/$infile $WKDIR/$outfile"
+                    echo "*** EXITING THE SCRIPT ***"
+                    exit 1
+                fi
+            done
+            wait
+        fi
+        if [ $var == o2lvl ] || [ $var == silvl ] || [ $var == po4lvl ] || \
+           [ $var == no3lvl ] || [ $var == dissiclvl ]; then
+            echo "Mass weighted global average of $var (yrs ${YR_start}-${YR_end})"
+            pid=()
+            iproc=1
+            while [ $iproc -le $nyrs ]
+            do
+                let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
+                yr_prnt=`printf "%04d" ${YR}`
+                infile=${casename}_ANN_${yr_prnt}.nc
+                outfile=${var}_${casename}_ANN_${filetype}_${yr_prnt}.nc
+                # get dz
+                ncap2 -O -s 'dz=depth_bnds(:,1)-depth_bnds(:,0)' $WKDIR/$infile -o $WKDIR/dz.nc
+                ncatted -a _FillValue,depth,d,, $WKDIR/dz.nc
+                ncks -A -v dz $WKDIR/dz.nc $WKDIR/$infile
+                if [ -f $WKDIR/$infile ] && [ ! -f $tsdir/ann_ts/$outfile ]; then
+                    eval $NCWA --no_tmp_fl -O -v $var -w dz -a depth,y,x $WKDIR/$infile $WKDIR/$outfile &
+                    pid+=($!)
+                fi
+                let iproc++
+            done
+            for ((m=0;m<${#pid[*]};m++))
+            do
+                wait ${pid[$m]}
+                if [ $? -ne 0 ]; then
+                    echo "ERROR in calculating mass weighted global average: $NCWA --no_tmp_fl -O -v $var -w dz -a depth,y,x $WKDIR/$infile $WKDIR/$outfile"
                     echo "*** EXITING THE SCRIPT ***"
                     exit 1
                 fi
