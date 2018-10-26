@@ -187,6 +187,7 @@ do
         fi
         let iproc++
     done
+    wait
     # Loop over variables and do some averaging...
     for var in `echo $var_list | sed 's/,/ /g'`
     do
