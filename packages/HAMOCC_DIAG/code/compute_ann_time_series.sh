@@ -44,12 +44,6 @@ first_yr_prnt=`printf "%04d" ${first_yr}`
 last_yr_prnt=`printf "%04d" ${last_yr}`
 ann_ts_file=${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}_ts_ann_${filetype}.nc
 
-# Calculate number of chunks and the residual
-nproc=10
-let "nyrs = $last_yr - $first_yr + 1"
-let "nchunks = $nyrs / $nproc"
-let "residual = $nyrs % $nproc"
-
 if [ -z $PGRIDPATH ]; then
     grid_file=$DIAG_GRID/`cat $WKDIR/attributes/grid_${casename}`/grid.nc
 else
@@ -60,6 +54,25 @@ if [ ! -f $grid_file ]; then
     echo "*** EXITING THE SCRIPT ***"
     exit 1
 fi
+
+# generate volume (mass) data for weighting
+if [ $filetype == hbgcy ]; then
+    filename=${casename}.micom.hbgcy.$(printf "%04d" ${first_yr}).nc
+else
+    filename=${casename}.micom.hbgcm.$(printf "%04d" ${first_yr})-01.nc
+fi
+
+ncks -O --quiet -v depth_bnds $pathdat/$filename -o $WKDIR/depth_bnds.nc
+ncap2 -O -s 'dz=depth_bnds(:,1)-depth_bnds(:,0)' $WKDIR/depth_bnds.nc -o $WKDIR/dz.nc
+ncks --quiet -A -v parea $grid_file $WKDIR/dz.nc
+ncap2 -O -s 'dz3d($depth,$y,$x)=dz' $WKDIR/dz.nc $WKDIR/dz3d.nc
+ncap2 -O -s 'dvol=dz3d*parea' $WKDIR/dz3d.nc $WKDIR/dvol.nc
+
+# Calculate number of chunks and the residual
+nproc=10
+let "nyrs = $last_yr - $first_yr + 1"
+let "nchunks = $nyrs / $nproc"
+let "residual = $nyrs % $nproc"
 
 if [ $residual -gt 0 ]; then
     let "nchunkp = $nchunks + 1"
@@ -146,7 +159,7 @@ do
                 fi
             done
             if [ $fflag  = 0 ]; then
-                eval $NCRA -O --no_tmp_fl --hdr_pad=10000 -w 31,28,31,30,31,30,31,31,30,31,30,31 -v $var_list -p $pathdat ${filenames[*]} $WKDIR/${casename}_ANN_${yr_prnt}.nc &
+                eval $NCRA -3 -O --no_tmp_fl --hdr_pad=10000 -w 31,28,31,30,31,30,31,31,30,31,30,31 -v $var_list -p $pathdat ${filenames[*]} $WKDIR/${casename}_ANN_${yr_prnt}.nc &
                 pid+=($!)
             else
                 echo Skip computing year ${yr_prnt}, time-series variables already exist.
@@ -157,7 +170,7 @@ do
         do
             wait ${pid[$m]}
             if [ $? -ne 0 ]; then
-                echo "ERROR in computing annual means from monthly history files: $NCRA -O --no_tmp_fl --hdr_pad=10000 -w 31,28,31,30,31,30,31,31,30,31,30,31 -v $var_list -p $pathdat $filenames $WKDIR/${casename}_ANN_${yr_prnt}.nc"
+                echo "ERROR in computing annual means from monthly history files: $NCRA -3 -O --no_tmp_fl --hdr_pad=10000 -w 31,28,31,30,31,30,31,31,30,31,30,31 -v $var_list -p $pathdat $filenames $WKDIR/${casename}_ANN_${yr_prnt}.nc"
                 echo "*** EXITING THE SCRIPT ***"
                 exit 1
             fi
@@ -173,13 +186,21 @@ do
         yr_prnt=`printf "%04d" ${YR}`
         filename=${casename}_ANN_${yr_prnt}.nc
         if [ -f $WKDIR/$filename ]; then
-            $NCKS --quiet -d depth,0 -d x,0 -d y,0 -v parea $WKDIR/$filename >/dev/null 2>&1
+            $NCKS --quiet -d depth,0 -d x,0 -d y,0 -v parea,dvol,dmass $WKDIR/$filename >/dev/null 2>&1
         fi
         if [ $? -ne 0 ]; then
             $NCKS -A -v parea -o $WKDIR/$filename $grid_file
+            $NCKS --quiet -d depth,0 -d x,0 -d y,0 -v pddpo $WKDIR/$filename >/dev/null 2>&1
+            if [ $? -eq 0 ]; then
+                $NCAP2 -O -s 'dmass=pddpo*parea' $WKDIR/$filename  -o $WKDIR/dmass_${yr_prnt}.nc >/dev/null
+                $NCKS --quiet -A -v dmass $WKDIR/dmass_${yr_prnt}.nc -o $WKDIR/$filename >/dev/null 2>&1
+            fi
+            $NCKS --quiet -A -v dvol $WKDIR/dvol.nc -o $WKDIR/$filename >/dev/null 2>&1
         fi
         let iproc++
     done
+    wait
+    #rm -f $WKDIR/dmass_*.nc
     # Loop over variables and do some averaging...
     for var in `echo $var_list | sed 's/,/ /g'`
     do
@@ -196,7 +217,7 @@ do
                 infile=${casename}_ANN_${yr_prnt}.nc
                 outfile=${var}_${casename}_ANN_${filetype}_${yr_prnt}.nc
                 if [ -f $WKDIR/$infile ] && [ ! -f $tsdir/ann_ts/$outfile ]; then
-                    eval $NCWA --no_tmp_fl -O -v $var -w pddpo -a sigma,y,x $WKDIR/$infile $WKDIR/$outfile &
+                    eval $NCWA --no_tmp_fl -O -v $var -w dmass -a sigma,y,x $WKDIR/$infile $WKDIR/$outfile &
                     pid+=($!)
                 fi
                 let iproc++
@@ -205,7 +226,7 @@ do
             do
                 wait ${pid[$m]}
                 if [ $? -ne 0 ]; then
-                    echo "ERROR in calculating mass weighted global average: $NCWA --no_tmp_fl -O -v $var -w pddpo -a sigma,y,x $WKDIR/$infile $WKDIR/$outfile"
+                    echo "ERROR in calculating mass weighted global average: $NCWA --no_tmp_fl -O -v $var -w dmass -a sigma,y,x $WKDIR/$infile $WKDIR/$outfile"
                     echo "*** EXITING THE SCRIPT ***"
                     exit 1
                 fi
@@ -223,12 +244,8 @@ do
                 yr_prnt=`printf "%04d" ${YR}`
                 infile=${casename}_ANN_${yr_prnt}.nc
                 outfile=${var}_${casename}_ANN_${filetype}_${yr_prnt}.nc
-                # get dz
-                ncap2 -O -s 'dz=depth_bnds(:,1)-depth_bnds(:,0)' $WKDIR/$infile -o $WKDIR/dz.nc
-                ncatted -a _FillValue,depth,d,, $WKDIR/dz.nc
-                ncks -A -v dz $WKDIR/dz.nc $WKDIR/$infile
                 if [ -f $WKDIR/$infile ] && [ ! -f $tsdir/ann_ts/$outfile ]; then
-                    eval $NCWA --no_tmp_fl -O -v $var -w dz -a depth,y,x $WKDIR/$infile $WKDIR/$outfile &
+                    eval $NCWA --no_tmp_fl -O -v $var -w dvol -a depth,y,x $WKDIR/$infile $WKDIR/$outfile &
                     pid+=($!)
                 fi
                 let iproc++
@@ -237,7 +254,7 @@ do
             do
                 wait ${pid[$m]}
                 if [ $? -ne 0 ]; then
-                    echo "ERROR in calculating mass weighted global average: $NCWA --no_tmp_fl -O -v $var -w dz -a depth,y,x $WKDIR/$infile $WKDIR/$outfile"
+                    echo "ERROR in calculating mass weighted global average: $NCWA --no_tmp_fl -O -v $var -w dvol -a depth,y,x $WKDIR/$infile $WKDIR/$outfile"
                     echo "*** EXITING THE SCRIPT ***"
                     exit 1
                 fi
@@ -495,6 +512,7 @@ do
         rm -f $WKDIR/${var}_${casename}_ANN_*.nc
     fi
 done
+rm -f $WKDIR/{depth_bnds.nc,dz.nc,dz3d.nc,dvol.nc}
 
 script_end=`date +%s`
 runtime_s=`expr ${script_end} - ${script_start}`
