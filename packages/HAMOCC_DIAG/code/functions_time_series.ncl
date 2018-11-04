@@ -132,6 +132,69 @@ begin
    return (xvar)
 end
 
+function get_talk (inptr:file) 
+begin
+   if (isfilevar(inptr,"talk") .or. isfilevar(inptr,"talklvl")) then
+      if (isfilevar(inptr,"talklvl")) then
+          tmp = inptr->talklvl
+          coords=" (depth)"
+      else
+          tmp = inptr->talk
+          coords=" (sigma)"
+      end if
+      if (typeof(tmp).eq."double") then
+         xvar = dble2flt(tmp)
+      else
+         xvar = tmp
+      end if
+      xvar@long_name = "Alkalinity"+coords
+      xvar@units = "eq m-3"
+      assignFillValue(xvar,xvar)
+   else
+      print("get_talk: no talk/talklvl variable present")
+      xvar = -999.0
+   end if
+   return (xvar)
+end
+
+function get_dissiclvl100m (inptr:file) 
+begin
+   if (isfilevar(inptr,"dissiclvl100m")) then
+      tmp = inptr->dissiclvl100m
+      if (typeof(tmp).eq."double") then
+         xvar = dble2flt(tmp)
+      else
+         xvar = tmp
+      end if
+      xvar@long_name = "DIC (0-100m)"
+      xvar@units = "mol m-3"
+      assignFillValue(xvar,xvar)
+   else
+      print("get_dissic: no dissiclvl100m variable present")
+      xvar = -999.0
+   end if
+   return (xvar)
+end
+
+function get_talklvl100m (inptr:file) 
+begin
+   if (isfilevar(inptr,"talklvl")) then
+      tmp = inptr->talklvl100m
+      if (typeof(tmp).eq."double") then
+         xvar = dble2flt(tmp)
+      else
+         xvar = tmp
+      end if
+      xvar@long_name = "Alkalinity (0-100m)"
+      xvar@units = "eq m-3"
+      assignFillValue(xvar,xvar)
+   else
+      print("get_talk: no talklvl100m variable present")
+      xvar = -999.0
+   end if
+   return (xvar)
+end
+
 function get_co2fxd (inptr:file) 
 begin
    if (isfilevar(inptr,"co2fxd_tot")) then

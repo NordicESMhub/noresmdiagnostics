@@ -27,7 +27,7 @@ if (compare.eq."USER") then
    ncases  = 2
 end if
 
-vars   = (/"o2","si","po4","no3","dissic"/)
+vars   = (/"o2","si","po4","no3","dissic","talk","dissiclvl100m","talklvl100m"/)
 nvars  = dimsizes(vars)
 
 if (compare.eq."OBS") then
@@ -68,6 +68,18 @@ do i = 0, nvars-1
 
    if (vars(i).eq."dissic") then
       A = get_dissic (inptr1)
+   end if
+
+   if (vars(i).eq."talk") then
+      A = get_talk (inptr1)
+   end if
+
+   if (vars(i).eq."dissiclvl100m") then
+      A = get_dissiclvl100m (inptr1)
+   end if
+
+   if (vars(i).eq."talklvl100m") then
+      A = get_talklvl100m (inptr1)
    end if
 
 ;   if (vars(i).eq."co2fxd") then
@@ -115,6 +127,18 @@ do i = 0, nvars-1
 
       if (vars(i).eq."dissic") then
          B = get_dissic (inptr2)
+      end if
+
+      if (vars(i).eq."talk") then
+         B = get_talk (inptr2)
+      end if
+
+      if (vars(i).eq."dissiclvl100m") then
+         B = get_dissiclvl100m (inptr2)
+      end if
+
+      if (vars(i).eq."talklvl100m") then
+         B = get_talklvl100m (inptr2)
       end if
 
 ;      if (vars(i).eq."co2fxd") then
@@ -194,17 +218,17 @@ pan@gsnMaximize = True
 pan@gsnPaperOrientation = "portrait"
 pan@gsnFrame = False
 pan@gsnPanelXWhiteSpacePercent = 3
-gsn_panel(wks,(/plot/),(/2,3/),pan)
+gsn_panel(wks,(/plot/),(/3,3/),pan)
 
 ; Draw a text string at the bottom
 txres               = True
 txres@txFontHeightF = 0.018
 txres@txFontColor   = "blue"
 txres@txJust        = "centerright"
-gsn_text_ndc(wks,case1,0.99,0.14,txres)
+gsn_text_ndc(wks,case1,0.99,0.08,txres)
 if (compare.eq."USER") then
    txres@txFontColor   = "red"
-   gsn_text_ndc(wks,case2,0.99,0.1,txres)
+   gsn_text_ndc(wks,case2,0.99,0.4,txres)
 end if
 
 

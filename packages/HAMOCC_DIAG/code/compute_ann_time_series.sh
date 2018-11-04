@@ -200,13 +200,13 @@ do
         let iproc++
     done
     wait
-    #rm -f $WKDIR/dmass_*.nc
+    rm -f $WKDIR/dmass_*.nc
     # Loop over variables and do some averaging...
     for var in `echo $var_list | sed 's/,/ /g'`
     do
         # Mass weighted 3D averaging of nutrients
         if [ $var == o2 ] || [ $var == si ] || [ $var == po4 ] || \
-           [ $var == no3 ] || [ $var == dissic ]; then
+           [ $var == no3 ] || [ $var == dissic ] || [ $var == talk ]; then
             echo "Mass weighted global average of $var (yrs ${YR_start}-${YR_end})"
             pid=()
             iproc=1
@@ -234,7 +234,7 @@ do
             wait
         fi
         if [ $var == o2lvl ] || [ $var == silvl ] || [ $var == po4lvl ] || \
-           [ $var == no3lvl ] || [ $var == dissiclvl ]; then
+           [ $var == no3lvl ] || [ $var == dissiclvl ] || [ $var == talklvl ]; then
             echo "Mass weighted global average of $var (yrs ${YR_start}-${YR_end})"
             pid=()
             iproc=1
@@ -244,9 +244,14 @@ do
                 yr_prnt=`printf "%04d" ${YR}`
                 infile=${casename}_ANN_${yr_prnt}.nc
                 outfile=${var}_${casename}_ANN_${filetype}_${yr_prnt}.nc
+                outfile2=${var}100m_${casename}_ANN_${filetype}_${yr_prnt}.nc
                 if [ -f $WKDIR/$infile ] && [ ! -f $tsdir/ann_ts/$outfile ]; then
                     eval $NCWA --no_tmp_fl -O -v $var -w dvol -a depth,y,x $WKDIR/$infile $WKDIR/$outfile &
                     pid+=($!)
+                    if [ $var == dissiclvl ] || [ $var == talklvl ]; then
+                        eval $NCWA --no_tmp_fl -O -v $var -d depth,0,12,1 -w dvol -a depth,y,x $WKDIR/$infile $WKDIR/${outfile2} && ncrename -v ${var},${var}100m $WKDIR/${outfile2} &
+                        pid+=($!)
+                    fi 
                 fi
                 let iproc++
             done
@@ -488,13 +493,25 @@ if [ ! -d $tsdir/ann_ts ]; then
 fi
 let "nyrs = $last_yr - $first_yr + 1"
 first_var=1
+# add dissiclvl100m and talklvl100m
+ls $WKDIR/dissiclvl100m_${casename}_ANN_${filetype}_*.nc >/dev/null 2>&1
+if [ $? -eq 0 ]
+then
+    var_list=${var_list},dissiclvl100m
+fi
+ls $WKDIR/talklvl100m_${casename}_ANN_${filetype}_*.nc >/dev/null 2>&1
+if [ $? -eq 0 ]
+then
+    var_list=${var_list},talklvl100m
+fi
+echo $var_list
+
 for var in `echo $var_list | sed 's/,/ /g'`
 do
     mv $WKDIR/${var}_${casename}_ANN_${filetype}_*.nc $tsdir/ann_ts/ >/dev/null 2>&1
     first_file=${var}_${casename}_ANN_${filetype}_${first_yr_prnt}.nc
     if [ -f $tsdir/ann_ts/$first_file ]; then
         echo "Merging all $var time series files..."
-        #$NCRCAT -3 --no_tmp_fl -O $WKDIR/${var}_${casename}_ANN_????.nc $WKDIR/${var}_${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}.nc
         $NCRCAT -3 --no_tmp_fl -O -p $tsdir/ann_ts -n ${nyrs},4,1 ${first_file} -o $WKDIR/${var}_${casename}_ANN_${filetype}_${first_yr_prnt}-${last_yr_prnt}.nc
         if [ $? -eq 0 ]; then
             if [ $first_var -eq 1 ]; then

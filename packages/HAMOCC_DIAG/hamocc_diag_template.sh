@@ -6,7 +6,7 @@
 #set -e
 export NCARG_ROOT=/opt/ncl65
 #export PATH=/opt/ncl64/bin/:/usr/local/bin:/usr/bin
-export PATH=/opt/ncl65/bin/:/opt/nco-4.7.6-intel/bin/:/usr/local/bin:/usr/bin
+export PATH=/opt/ncl65/bin/:/opt/nco-4.7.6-intel/bin/:/opt/cdo195/bin:/usr/local/bin:/usr/bin
 source /opt/intel/compilers_and_libraries/linux/bin/compilervars.sh -arch intel64 -platform linux
 #***************************
 #*** USER MODIFY SECTION ***
@@ -237,7 +237,7 @@ fi
 required_vars_climo_ann="depth_bnds,o2lvl,silvl,po4lvl,no3lvl,dissiclvl,talklvl,delta13clvl,pp_tot,ppint,epc100,pco2,co2fxd,co2fxu,dmsflux"
 required_vars_climo_mon="depth_bnds,pp,ppint,pddpo,pco2,co2fxd,co2fxu,srfpo4,srfo2,srfno3,srfsi"
 required_vars_climo_zm="o2lvl,silvl,po4lvl,no3lvl,dissiclvl,talklvl,delta13clvl"
-required_vars_ts_ann="co2fxd,co2fxu,epc100,epcalc100,ppint,dmsflux,o2,si,po4,no3,dissic,pddpo,depth_bnds,o2lvl,silvl,po4lvl,no3lvl,dissiclvl"
+required_vars_ts_ann="co2fxd,co2fxu,epc100,epcalc100,ppint,dmsflux,o2,si,po4,no3,dissic,talk,pddpo,depth_bnds,o2lvl,silvl,po4lvl,no3lvl,dissiclvl,talklvl"
 #required_vars_ts_mon="pp,pddpo"
 
 # Check which sets should be plotted based on CLIMO_TIME_SERIES_SWITCH
