@@ -52,9 +52,9 @@ if [ $filetype == hbgcy ]; then
         let YR++
     done
     echo "Climatological annual mean of $var_list"
-    $NCRA -O --no_tmp_fl --hdr_pad=10000 -v $var_list -p $pathdat ${filenames[*]} $ann_avg_file
+    $NCRA -3 -O --no_tmp_fl --hdr_pad=10000 -v $var_list -p $pathdat ${filenames[*]} $ann_avg_file
     if [ $? -ne 0 ]; then
-        echo "ERROR in computation of climatological annual mean: $NCRA -O --no_tmp_fl --hdr_pad=10000 -v $var_list -p $pathdat ${filenames[*]} $ann_avg_file"
+        echo "ERROR in computation of climatological annual mean: $NCRA -3 -O --no_tmp_fl --hdr_pad=10000 -v $var_list -p $pathdat ${filenames[*]} $ann_avg_file"
         echo "*** EXITING THE SCRIPT ***"
         exit 1
     fi
@@ -84,14 +84,14 @@ if [ $filetype == hbgcm ]; then
         done
         mon_avg_file=${casename}_${month}_${first_yr_prnt}-${last_yr_prnt}_climo.nc
         mon_avg_files+=($mon_avg_file)
-        eval $NCRA -O --no_tmp_fl --hdr_pad=10000 -v $var_list -p $pathdat ${filenames[*]} $climodir/$mon_avg_file &
+        eval $NCRA -3 -O --no_tmp_fl --hdr_pad=10000 -v $var_list -p $pathdat ${filenames[*]} $climodir/$mon_avg_file &
         pid+=($!)
     done
     for ((m=0;m<=11;m++))
     do
         wait ${pid[$m]}
         if [ $? -ne 0 ]; then
-            echo "ERROR in computation of climatological monthly mean: $NCRA -O --no_tmp_fl --hdr_pad=10000 -v $var_list -p $pathdat ${filenames[*]} $mon_avg_file"
+            echo "ERROR in computation of climatological monthly mean: $NCRA -3 -O --no_tmp_fl --hdr_pad=10000 -v $var_list -p $pathdat ${filenames[*]} $mon_avg_file"
             echo "*** EXITING THE SCRIPT ***"
             exit 1
         fi
@@ -99,9 +99,9 @@ if [ $filetype == hbgcm ]; then
     wait
     # COMPUTE ANNUAL MEAN
     echo "Climatological weighted annual mean of $var_list"
-    $NCRA -O -w 31,28,31,30,31,30,31,31,30,31,30,31 --no_tmp_fl --hdr_pad=10000 -p $climodir ${mon_avg_files[*]} $ann_avg_file
+    $NCRA -3 -O -w 31,28,31,30,31,30,31,31,30,31,30,31 --no_tmp_fl --hdr_pad=10000 -p $climodir ${mon_avg_files[*]} $ann_avg_file
     if [ $? -ne 0 ]; then
-        echo "ERROR in computation of climatological annual mean: $NCRA -O -w 31,28,31,30,31,30,31,31,30,31,30,31 --no_tmp_fl --hdr_pad=10000 -p $climodir ${mon_avg_files[*]} $ann_avg_file"
+        echo "ERROR in computation of climatological annual mean: $NCRA -3 -O -w 31,28,31,30,31,30,31,31,30,31,30,31 --no_tmp_fl --hdr_pad=10000 -p $climodir ${mon_avg_files[*]} $ann_avg_file"
         echo "*** EXITING THE SCRIPT ***"
         exit 1
     fi

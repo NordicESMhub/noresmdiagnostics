@@ -37,7 +37,7 @@ infile=$climodir/${casename}_01_${first_yr_prnt}-${last_yr_prnt}_climo.nc
 pp_avail=0
 pddpo_avail=0
 po4_avail=0
-$NCKS --quiet -d y,0 -d x,0 -sigma,0 -v pp,pddpo $infile >/dev/null 2>&1
+$NCKS -3 --quiet -d y,0 -d x,0 -sigma,0 -v pp,pddpo $infile >/dev/null 2>&1
 if [ $? -eq 0 ]; then
     pp_avail=1
 fi
@@ -83,7 +83,7 @@ if [ $pp_avail -eq 1 ]; then
     do
         infile=$climodir/${casename}_${mon}_${first_yr_prnt}-${last_yr_prnt}_climo.nc
         $NCATTED -O -a units,pp_tot,m,c,"mol C m-2 yr-1" $infile
-        $NCKS -O --no_tmp_fl -C -x -v sigma,pp,pddpo,pp_z $infile $tmpfile
+        $NCKS -3 -O --no_tmp_fl -C -x -v sigma,pp,pddpo,pp_z $infile $tmpfile
         mv $tmpfile $infile
     done
     sed -i "s/pp/pp_tot/g" $WKDIR/attributes/vars_climo_mon_$casename

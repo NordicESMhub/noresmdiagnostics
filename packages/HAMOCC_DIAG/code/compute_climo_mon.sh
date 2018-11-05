@@ -59,14 +59,14 @@ do
     done
     mon_avg_file=${casename}_${month}_${first_yr_prnt}-${last_yr_prnt}_climo.nc
     mon_avg_files+=($mon_avg_file)
-    eval $NCRA -O --no_tmp_fl --hdr_pad=10000 -v $var_list -p $pathdat ${filenames[*]} $climodir/$mon_avg_file &
+    eval $NCRA -3 -O --no_tmp_fl --hdr_pad=10000 -v $var_list -p $pathdat ${filenames[*]} $climodir/$mon_avg_file &
     pid+=($!)
 done
 for ((m=0;m<=11;m++))
 do
     wait ${pid[$m]}
     if [ $? -ne 0 ]; then
-        echo "ERROR in computation of climatological monthly mean: $NCRA -O --no_tmp_fl --hdr_pad=10000 -v $var_list -p $pathdat ${filenames[*]} $mon_avg_file"
+        echo "ERROR in computation of climatological monthly mean: $NCRA -3 -O --no_tmp_fl --hdr_pad=10000 -v $var_list -p $pathdat ${filenames[*]} $mon_avg_file"
         echo "*** EXITING THE SCRIPT ***"
         exit 1
     fi

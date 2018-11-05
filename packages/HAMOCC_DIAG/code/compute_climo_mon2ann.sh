@@ -45,9 +45,9 @@ first_find=1
 for var in $var_list_tot
 do
     if [ $mode == remap ]; then
-        $NCKS --quiet -d lon,0 -d lat,0 -v $var $mon_file >/dev/null 2>&1
+        $NCKS -3 --quiet -d lon,0 -d lat,0 -v $var $mon_file >/dev/null 2>&1
     else
-        $NCKS --quiet -d x,0 -d y,0 -v $var $mon_file >/dev/null 2>&1
+        $NCKS -3 --quiet -d x,0 -d y,0 -v $var $mon_file >/dev/null 2>&1
     fi
     if [ $? -eq 0 ]; then
         echo "$var exists in monthly climatology"
@@ -77,7 +77,7 @@ do
     fi
     mon_avg_files+=($mon_avg_file)
 done
-$NCRA -O -w 31,28,31,30,31,30,31,31,30,31,30,31 --no_tmp_fl --hdr_pad=10000 -v $var_list -p $climodir ${mon_avg_files[*]} $ann_file
+$NCRA -3 -O -w 31,28,31,30,31,30,31,31,30,31,30,31 --no_tmp_fl --hdr_pad=10000 -v $var_list -p $climodir ${mon_avg_files[*]} $ann_file
 if [ $? -ne 0 ]; then
     echo "ERROR in calculating annual climo from monthly climo: $NCRA -O -w 31,28,31,30,31,30,31,31,30,31,30,31 --no_tmp_fl --hdr_pad=10000 -v $var_list -p $climodir ${mon_avg_files[*]} $ann_file"
     exit 1

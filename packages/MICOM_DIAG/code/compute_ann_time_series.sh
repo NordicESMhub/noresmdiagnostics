@@ -179,7 +179,7 @@ do
         yr_prnt=`printf "%04d" ${YR}`
         filename=${casename}_ANN_${yr_prnt}.nc
         if [ -f $WKDIR/$filename ]; then
-            $NCKS --quiet -d depth,0 -d x,0 -d y,0 -v parea $WKDIR/$filename >/dev/null 2>&1
+            $NCKS --quiet -d depth,0 -d x,0 -d y,0 -v parea,dmass $WKDIR/$filename >/dev/null 2>&1
             if [ $? -ne 0 ]; then
                 $NCKS --quiet -A -v parea -o $WKDIR/$filename $grid_file
                 $NCAP2 -O -s 'dmass=dp*parea' $WKDIR/$filename  -o $WKDIR/$filename >/dev/null 2>&1
