@@ -67,7 +67,7 @@ if [ $? -eq 0 ]; then
         fi
    elif [ $gp -eq $gp_tn1 ]; then
         grid_type=tnx1
-        nmiss=`/usr/bin/cdo -s info $WKDIR/co2fxd_tmp.nc | awk '{print $7}' | tail -n 1`
+        nmiss=`$CDO -s info $WKDIR/co2fxd_tmp.nc | awk '{print $7}' | tail -n 1`
         if [ $nmiss -eq $nmiss_tn1v1 ]; then
             grid_ver=1
         elif [ $nmiss -eq $nmiss_tn1v2 ]; then
