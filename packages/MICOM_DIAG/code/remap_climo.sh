@@ -76,13 +76,13 @@ do
     fi
 
     # only variables that should be remapped
-    vars=`cdo -s showname $climodir/$infile 2>/dev/null`
+    vars=`$CDO -s showname $climodir/$infile 2>/dev/null`
     vars=${vars//mmflxd};vars=${vars//mhflx};vars=${vars//msflx};
     vars=`echo $vars |sed 's/ /,/g'`
 
     # Append grid file if necessary
     echo "Remapping $climodir/$infile to a regular 1x1 grid"
-    eval cdo remapbil,global_1 -selname,$vars $climodir/$infile $climodir/$outfile>/dev/null 2>&1
+    eval $CDO remapbil,global_1 -selname,$vars $climodir/$infile $climodir/$outfile>/dev/null 2>&1
     pid+=($!)
 done
 for ((m=0;m<=${max_proc};m++))
