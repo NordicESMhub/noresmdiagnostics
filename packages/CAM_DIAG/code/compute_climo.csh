@@ -10,6 +10,7 @@ unset echo verbose
 # Please use the old version for $filetype=time_series.
 #
 # Johan Liakka, 26/09/17
+# Add AODVIS, Yanchun He, 12/12/2018
 #*******************************************************************
 
 # This file reads in files from HPSS
@@ -76,6 +77,27 @@ if ( $strip_off_vars == 0 ) then
    $nco_dir/ncclimo --clm_md=mth -m $modelname -v $var_list -a $djf_md -c $casename -s $first_yr -e $yr_end -i $path_history -o $path_climo
 else
    $nco_dir/ncclimo --clm_md=mth -m $modelname              -a $djf_md -c $casename -s $first_yr -e $yr_end -i $path_history -o $path_climo
+endif
+
+# make climatology for AODVIS and append
+if ( -e $path_climo/derived/${rootname}`printf "%04d" ${first_yr}`-01.nc ) then
+   @ prev_yri = $first_yr - 1
+   set filename_prev_year = ${rootname}`printf "%04d" ${prev_yri}`
+   if ( -e $path_climo/derived/${filename_prev_year}-12.nc ) then
+     set djf_md = SCD # Seasonally Continuous DJF
+   else
+     set djf_md = SDD # Seasonally Discontinuous DJF
+   endif
+   $nco_dir/ncclimo --clm_md=mth -m $modelname -v AODVIS    -a $djf_md -c $casename -s $first_yr -e $yr_end -i $path_climo/derived -o $path_climo/derived_climo
+    foreach mth ( 01 02 03 04 05 06 07 08 09 10 11 12 DJF MAM JJA SON ANN )
+        # delete fill value attributes to make ncks work
+        $nco_dir/ncatted -h -a _FillValue,lat,d,, $path_climo/${casename}_${mth}_climo.nc
+        $nco_dir/ncatted -h -a _FillValue,lon,d,, $path_climo/${casename}_${mth}_climo.nc
+        $nco_dir/ncatted -h -a _FillValue,gw,d,, $path_climo/${casename}_${mth}_climo.nc
+        $nco_dir/ncatted -h -a _FillValue,AODVIS,d,, $path_climo/derived_climo/${casename}_${mth}_climo.nc
+        $nco_dir/ncatted -h -a _missing_value,AODVIS,d,, $path_climo/derived_climo/${casename}_${mth}_climo.nc
+        $nco_dir/ncks -h --no_tmp_fl -A -v AODVIS $path_climo/derived_climo/${casename}_${mth}_climo.nc $path_climo/${casename}_${mth}_climo.nc
+    end
 endif
 # Add time stamp
 set first_yr_prnt = `printf "%04d" ${first_yr}`

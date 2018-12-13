@@ -276,6 +276,7 @@ if (compare .eq. "OBS") then
                      "PCTMODIS"/) 
   calipsocosp_vars = (/"CLDTOT_CAL","CLDLOW_CAL","CLDMED_CAL","CLDHGH_CAL"/) 
   cloudsatcosp_vars = (/"CLDTOT_CS2","CLDTOT_CS2"/) 
+  aod_vars = (/"AODVIS_NULL","AODDUST"/) 
 
 
   ; contours definition (global)
@@ -307,6 +308,10 @@ if (compare .eq. "OBS") then
   dcntrs_LWCF=(/-35,-30,-15,-10,-6,-4,-2, 0, 2,4,6,10,15,30,35/) 
   cntrs_SWCF=(/-170,-150,-135,-120,-105,-90,-75,-60,-45,-30,-15,0,15,30,45/)
   dcntrs_SWCF=(/-80,-60,-50,-40,-30,-20,-10,0,10,20,30,40,50,60,80/) 
+  cntrs_AODVIS=(/0.005,0.01,0.02,0.03,0.04,0.05,0.06,0.07,0.08,0.12,0.15,0.20,0.25,0.30,0.40/)
+  dcntrs_AODVIS=(/-0.1,-0.05,-0.04,-0.03,-0.02,-0.01,-0.005,0,0.005,0.01,0.02,0.03,0.04,0.05,0.1/) ; AODVIS
+  cntrs_AODDUST=(/0.005,0.01,0.02,0.03,0.04,0.05,0.06,0.07,0.08,0.12,0.15,0.20,0.25,0.30,0.40/)
+  dcntrs_AODDUST=(/-0.1,-0.05,-0.04,-0.03,-0.02,-0.01,-0.005,0,0.005,0.01,0.02,0.03,0.04,0.05,0.1/) ; AODDUST
   cntrs_SHFLX=(/-100,-75,-50,-25,-10,0,10,25,50,75,100,125,150,175,200/) 
   dcntrs_SHFLX=(/-100,-80,-60,-40,-20,-10,-5,0,5,10,20,40,60,80,100/)
   cntrs_LHFLX=(/0,15,30,60,90,120,150,180,210,240,270,300,330,360,390/) 
@@ -407,6 +412,7 @@ if (compare .eq. "OBS") then
   obsvars = (/"FSNTOA_ERBE","FLUT_ERBE","SHFLX_NCEP","PRECT_XA", "PSL_NCEP","TS_NCEP","TREFHT_LEGATES", \
               "PREH2O_NCEP","PREH2O_NVAP", "PREH2O_ERAI","PREH2O_ERA40", \
               "LWCF_ERBE","SWCF_ERBE", \
+              "AODVIS_NULL","AODDUST_NULL", \
               "T_850_NCEP", "T_850_ERAI","T_850_ERA40", \
               "U_200_NCEP","U_200_ERAI","U_200_ERA40", \
               "Z3_500_NCEP", "Z3_500_ERAI","Z3_500_ERA40","Z3_300_NCEP","Z3_300_ERAI","Z3_300_ERA40", \
@@ -456,6 +462,7 @@ if (compare .eq. "OBS") then
   vars = (/"FSNTOA","FLUT","SHFLX","PRECT","PSL","TS","TREFHT", \
            "PREH2O","PREH2O","PREH2O","PREH2O",\
            "LWCF","SWCF", \
+           "AODVIS","AODDUST", \
            "T_850","T_850","T_850", \
            "U_200","U_200","U_200", \
            "Z3_500","Z3_500","Z3_500","Z3_300","Z3_300","Z3_300", \
@@ -496,6 +503,7 @@ if (compare .eq. "OBS") then
   cntrs = (/cntrs_FSNTOA, cntrs_FLUT, cntrs_SHFLX, cntrs_PRECT, cntrs_PSL, cntrs_TS, cntrs_TREFHT, \
            cntrs_PREH2O, cntrs_PREH2O, cntrs_PREH2O, \
            cntrs_PREH2O, cntrs_LWCF, cntrs_SWCF, \
+           cntrs_AODVIS, cntrs_AODDUST,\
            cntrs_T_850, cntrs_T_850, cntrs_T_850, \
            cntrs_U_200, cntrs_U_200, cntrs_U_200, \
            cntrs_Z3_500, cntrs_Z3_500, cntrs_Z3_500, cntrs_Z3_300, cntrs_Z3_300, cntrs_Z3_300, \
@@ -536,6 +544,7 @@ if (compare .eq. "OBS") then
   dcntrs = (/dcntrs_FSNTOA, dcntrs_FLUT, dcntrs_SHFLX, dcntrs_PRECT, dcntrs_PSL, dcntrs_TS, dcntrs_TREFHT, \
            dcntrs_PREH2O, dcntrs_PREH2O, dcntrs_PREH2O, dcntrs_PREH2O, \
            dcntrs_LWCF, dcntrs_SWCF, \
+           dcntrs_AODVIS, dcntrs_AODDUST,\
            dcntrs_T_850, dcntrs_T_850, dcntrs_T_850, \
            dcntrs_U_200, dcntrs_U_200, dcntrs_U_200, \
            dcntrs_Z3_500, dcntrs_Z3_500, dcntrs_Z3_500, dcntrs_Z3_300, dcntrs_Z3_300, dcntrs_Z3_300, \
@@ -2092,6 +2101,10 @@ do i = 0, nvars-1
     if (any(obsvars(i) .eq. cloudsatcosp_vars)) then
       inptr2 = ptr_cloudsatcosp
       case2 = "CLOUDSAT-COSP"
+    end if
+    if (any(obsvars(i) .eq. aod_vars)) then
+      inptr2 = inptr1
+      case2 = case1
     end if
  
 ;   get latitudes,longitudes, and weights

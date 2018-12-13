@@ -184,6 +184,7 @@ begin
        "TAUILOGMODIS","TAUWLOGMODIS","TAUTLOGMODIS", \
        "TAUIMODIS","TAUWMODIS","TAUTMODIS", \
        "PCTMODIS", \
+       "AODVIS_NULL","AODDUST_NULL",\
        "CLDTOT_CAL","CLDLOW_CAL","CLDMED_CAL","CLDHGH_CAL", \
        "CLDTOT_CS2", "TGCLDLWP_UWISC" /)
 ;  end BRH edit
@@ -223,6 +224,7 @@ begin
             "TAUILOGMODIS","TAUWLOGMODIS","TAUTLOGMODIS", \
             "TAUIMODIS","TAUWMODIS","TAUTMODIS", \
             "PCTMODIS", \
+            "AODVIS","AODDUST", \
             "CLDTOT_CAL","CLDLOW_CAL","CLDMED_CAL","CLDHGH_CAL", \
             "CLDTOT_CS2", "TGCLDLWP_OCEAN" /)
 ;  end BRH edit
@@ -802,8 +804,16 @@ do i = 0, nvars-1
       lat2 = ptr_cloudsatcosp->lat
       nlat2 = dimsizes(lat2)
     end if
+    if (vars(i).eq."AODVIS" .or. vars(i).eq."AODDUST" ) then
+      inptr2 = inptr1
+      case2 = case1
+      delete(lat2)
+      lat2 = lat1
+      nlat2 = nlat1
+    end if
 ;   end BRH additions for COSP
     if (vars(i).eq."TREFHT_LAND" .or. obsvars(i).eq."CLDLOW_WARREN" \
+        .or. vars(i).eq."AODVIS" .or. vars(i).eq."AODDUST" \
         .or. obsvars(i).eq."CLDTOT_WARREN"    \
         .or. obsvars(i).eq."CLDLOW_CLOUDSAT"  \
         .or. obsvars(i).eq."CLDMED_CLOUDSAT"  \

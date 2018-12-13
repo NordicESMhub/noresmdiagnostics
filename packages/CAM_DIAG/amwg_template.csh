@@ -8,7 +8,7 @@
 unset echo verbose
 setenv DIAG_VERSION 140207  # version number YYMMDD
 setenv NCARG_ROOT /opt/ncl65
-setenv PATH /opt/ncl65/bin/:/opt/nco-4.7.6-intel/bin/:/usr/local/bin:/usr/bin
+setenv PATH /opt/ncl65/bin/:/opt/nco-4.7.6-intel/bin/:/opt/cdo195/bin:/usr/local/bin:/usr/bin
 source /opt/intel/compilers_and_libraries/linux/bin/compilervars.csh -arch intel64 -platform linux
 
 #******************************************************************
@@ -1048,7 +1048,8 @@ if ($CLIMO_TIME_SERIES_SWITCH != ONLY_TIME_SERIES) then
                                             $test_first_yr \
                                             $test_nyrs \
                                             $test_rootname \
-                                            $test_casename  
+                                            $test_casename \
+                                            $test_path_climo
 
       if ($status > 0) then
         echo "*** CRASH IN check_history_present.csh (test)"
@@ -1101,7 +1102,8 @@ if ($CLIMO_TIME_SERIES_SWITCH != ONLY_TIME_SERIES) then
                                             $cntl_first_yr \
                                             $cntl_nyrs \
                                             $cntl_rootname \
-                                            $cntl_casename  
+                                            $cntl_casename \
+                                            $cntl_path_climo
 
       if ($status > 0) then
         echo "*** CRASH IN check_history_present.csh (cntl)"

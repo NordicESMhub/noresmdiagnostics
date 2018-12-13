@@ -49,7 +49,7 @@ do
     fi
     $NCRA -O -w $wgts --no_tmp_fl --hdr_pad=10000 -v $season_vars -p $climodir ${infiles[*]} $seas_avg_file
     if [ $? -ne 0 ]; then
-        echo "ERROR in computation of climatological annual mean: $NCRA -O -w 31,28,31,30,31,30,31,31,30,31,30,31 --no_tmp_fl --hdr_pad=10000 -v $var_list_ann -p $climodir ${mon_tmp_files[*]} $ann_avg_file"
+        echo "ERROR in computation of climatological annual mean: $NCRA -O -w 31,28,31,30,31,30,31,31,30,31,30,31 --no_tmp_fl --hdr_pad=10000 -v $season_vars -p $climodir ${infiles[*]} $seas_avg_file"
         echo "*** EXITING THE SCRIPT ***"
         exit 1
     fi
