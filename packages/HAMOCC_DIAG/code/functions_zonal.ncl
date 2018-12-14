@@ -23,6 +23,35 @@ begin
    return (xvar)
 end
 
+function get_aou (inptr:file) 
+begin
+   if (isfilevar(inptr,"o2lvl").and.isfilevar(inptr,"p_o2lvl")) then
+      tmp = inptr->o2lvl
+      if (typeof(tmp).eq."double") then
+         xvar1 = dble2flt(tmp)
+      else
+         xvar1 = tmp
+      end if
+      delete(tmp)
+      tmp = inptr->p_o2lvl
+      if (typeof(tmp).eq."double") then
+         xvar2 = dble2flt(tmp)
+      else
+         xvar2 = tmp
+      end if
+      xvar = xvar2-xvar1
+      copy_VarCoords(xvar1,xvar)
+      xvar = (/xvar*1.0e+3/)
+      xvar@long_name = "AOU"
+      xvar@units = "mmol m-3"
+      assignFillValue(xvar,xvar)
+   else
+      print("get_aou: no o2lvl/p_o2lvl variable present")
+      xvar = -999.0
+   end if
+   return (xvar)
+end
+
 function get_si (inptr:file)
 begin
    if (isfilevar(inptr,"silvl")) then

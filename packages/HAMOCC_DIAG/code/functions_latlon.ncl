@@ -26,6 +26,42 @@ begin
    return (xvar)
 end
 
+function get_aou (inptr:file,z:numeric,z0:numeric) 
+begin
+   if (isfilevar(inptr,"o2lvl") .and. isfilevar(inptr,"p_o2lvl")) then
+      tmp3d = inptr->o2lvl
+      iz=ind(z.eq.z0)
+      tmp = tmp3d(0,iz,:,:)
+      if (typeof(tmp).eq."double") then
+         xvar1 = dble2flt(tmp)
+      else
+         xvar1 = tmp
+      end if
+      delete([/tmp3d,iz,tmp/])
+
+      tmp3d = inptr->p_o2lvl
+      iz=ind(z.eq.z0)
+      tmp = tmp3d(0,iz,:,:)
+      if (typeof(tmp).eq."double") then
+         xvar2 = dble2flt(tmp)
+      else
+         xvar2 = tmp
+      end if
+      xvar  = xvar2-xvar1
+      xvar = (/xvar*1.0e+3/)
+      copy_VarCoords(xvar1,xvar)
+      xvar@long_name = "AOU z="+flt2string(z0)+"m"
+      print(xvar@long_name)
+      xvar@units = "mmol m-3"
+      assignFillValue(xvar1,xvar)
+
+   else
+      print("get_aou: no o2lvl or p_o2lvl variables present")
+      xvar = -999.0
+   end if
+   return (xvar)
+end
+
 function get_si (inptr:file,z:numeric,z0:numeric)
 begin
    if (isfilevar(inptr,"silvl")) then

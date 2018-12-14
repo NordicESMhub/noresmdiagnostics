@@ -40,6 +40,26 @@ else
     echo "<TD><I>4000m</I>" >> $WEBDIR/index.html
 fi
 echo "<TR>" >> $WEBDIR/index.html
+echo "<TD>AOU (p_o2lvl-o2lvl)" >> $WEBDIR/index.html
+if ls $WEBDIR/set2/set2_ann_aoulvl_*_${cinfo}.png >/dev/null 2>&1
+then
+    echo "<TD><a href='set2/set2_ann_aoulvl_0_${cinfo}.png'>0m</a>" >> $WEBDIR/index.html
+    echo "<TD><a href='set2/set2_ann_aoulvl_100_${cinfo}.png'>100m</a>" >> $WEBDIR/index.html
+    echo "<TD><a href='set2/set2_ann_aoulvl_500_${cinfo}.png'>500m</a>" >> $WEBDIR/index.html
+    echo "<TD><a href='set2/set2_ann_aoulvl_1000_${cinfo}.png'>1000m</a>" >> $WEBDIR/index.html
+    echo "<TD><a href='set2/set2_ann_aoulvl_2000_${cinfo}.png'>2000m</a>" >> $WEBDIR/index.html
+    echo "<TD><a href='set2/set2_ann_aoulvl_3000_${cinfo}.png'>3000m</a>" >> $WEBDIR/index.html
+    echo "<TD><a href='set2/set2_ann_aoulvl_4000_${cinfo}.png'>4000m</a>" >> $WEBDIR/index.html
+else
+    echo "<TD><I>0m</I>" >> $WEBDIR/index.html
+    echo "<TD><I>100m</I>" >> $WEBDIR/index.html
+    echo "<TD><I>500m</I>" >> $WEBDIR/index.html
+    echo "<TD><I>1000m</I>" >> $WEBDIR/index.html
+    echo "<TD><I>2000m</I>" >> $WEBDIR/index.html
+    echo "<TD><I>3000m</I>" >> $WEBDIR/index.html
+    echo "<TD><I>4000m</I>" >> $WEBDIR/index.html
+fi
+echo "<TR>" >> $WEBDIR/index.html
 echo "<TD>Silicate (silvl)" >> $WEBDIR/index.html
 if ls $WEBDIR/set2/set2_ann_silvl_*_${cinfo}.png >/dev/null 2>&1
 then

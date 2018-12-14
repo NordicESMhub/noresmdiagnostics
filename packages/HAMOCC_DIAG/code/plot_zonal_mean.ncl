@@ -83,6 +83,9 @@ end if
 cntrs_o2=(/20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,320,340,360,380,400/)
 dcntrs_o2=(/-45,-40,-35,-30,-25,-20,-15,-10,-5,5,10,15,20,25,30,35,40,45/)
 
+cntrs_aou=(/-300,-280,-260,-240,-220,-200,-180,-160,-140,-120,-100,-80,-60,-40,-20,0,20,40,60,80/)
+dcntrs_aou=(/-170,-150,-130,-110,-90,-70,-50,-30,-10,10,30,50,70,90,110,130,150,170/)
+
 cntrs_si=(/12.5,25,37.5,50,62.5,75,87.5,100,112.5,125,137.5,150,162.5,175,187.5,200,212.5,225,237.5,250/)
 dcntrs_si=(/-27,-24,-21,-18,-15,-12,-9,-6,-3,3,6,9,12,15,18,21,24,27/)
 
@@ -102,11 +105,11 @@ cntrs_d13clvl=(/0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4,1.5,1.6,
 dcntrs_d13clvl=(/-0.85,-0.75,-0.65,-0.55,-0.45,-0.35,-0.25,-0.15,-0.05,0.05,0.15,0.25,0.35,0.45,0.55,0.65,0.75,0.85/)
 
 ; model variables
-vars = (/"o2lvl","silvl","po4lvl","no3lvl","dissiclvl","talklvl","delta13clvl"/)
+vars = (/"o2lvl","aoulvl","silvl","po4lvl","no3lvl","dissiclvl","talklvl","delta13clvl"/)
 
 ; define contour intervals
-cntrs = (/cntrs_o2,cntrs_si,cntrs_po4,cntrs_no3,cntrs_dissic,cntrs_talklvl,cntrs_d13clvl/)
-dcntrs = (/dcntrs_o2,dcntrs_si,dcntrs_po4,dcntrs_no3,dcntrs_dissic,dcntrs_talklvl,dcntrs_d13clvl/)
+cntrs = (/cntrs_o2,cntrs_aou,cntrs_si,cntrs_po4,cntrs_no3,cntrs_dissic,cntrs_talklvl,cntrs_d13clvl/)
+dcntrs = (/dcntrs_o2,dcntrs_aou,dcntrs_si,dcntrs_po4,dcntrs_no3,dcntrs_dissic,dcntrs_talklvl,dcntrs_d13clvl/)
 
 nvars = dimsizes(vars)
 
@@ -123,7 +126,7 @@ if (compare .eq. "OBS") then
   d13c_vars    = (/"c13_pi"/)
 
   ; observations: list of variables to plot
-  obsvars = (/"o_an","i_an","p_an","n_an","TCO2","TAlk","c13_pi"/)
+  obsvars = (/"o_an","o_an","i_an","p_an","n_an","TCO2","TAlk","c13_pi"/)
   
 end if
 ;-------------------------------------------------------------
@@ -167,6 +170,10 @@ do i = 0, nvars-1
 
   if (vars(i).eq."o2lvl") then
     A = get_o2(inptr1)
+  end if
+
+  if (vars(i).eq."aoulvl") then
+    A = get_aou(inptr1)
   end if
 
   if (vars(i).eq."silvl") then
@@ -263,6 +270,18 @@ do i = 0, nvars-1
      end if
    end if
 
+   if (vars(i) .eq. "aoulvl") then
+     if (isfilevar(inptr2,"o_an")) then
+       B = inptr2->o_an
+       B = (/B*44.661/)
+       B@long_name = "Oxygen"
+       B@units = "mmol m-3"
+       assignFillValue(B,B)
+     else
+       B = -999.
+     end if
+   end if
+
    if (vars(i) .eq. "silvl") then
      if (isfilevar(inptr2,"i_an")) then
        B = inptr2->i_an
@@ -344,6 +363,10 @@ do i = 0, nvars-1
 
     if (vars(i).eq."o2lvl") then
       B = get_o2(inptr2)
+    end if
+
+    if (vars(i).eq."aoulvl") then
+      B = get_aou(inptr2)
     end if
 
     if (vars(i).eq."silvl") then

@@ -36,6 +36,22 @@ else
     echo "<TD><I>Southern</I>" >> $WEBDIR/index.html
 fi
 echo "<TR>" >> $WEBDIR/index.html
+echo "<TD>AOU (p_o2lvl-o2lvl)" >> $WEBDIR/index.html
+if ls $WEBDIR/set3/set3_ann_aoulvl_*_${cinfo}.png >/dev/null 2>&1
+then
+    echo "<TD><a href='set3/set3_ann_aoulvl_glb_${cinfo}.png'>Global</a>" >> $WEBDIR/index.html
+    echo "<TD><a href='set3/set3_ann_aoulvl_atl_${cinfo}.png'>Atlantic</a>" >> $WEBDIR/index.html
+    echo "<TD><a href='set3/set3_ann_aoulvl_pac_${cinfo}.png'>Pacific</a>" >> $WEBDIR/index.html
+    echo "<TD><a href='set3/set3_ann_aoulvl_ind_${cinfo}.png'>Indian</a>" >> $WEBDIR/index.html
+    echo "<TD><a href='set3/set3_ann_aoulvl_so_${cinfo}.png'>Southern</a>" >> $WEBDIR/index.html
+else
+    echo "<TD><I>Global</I>" >> $WEBDIR/index.html
+    echo "<TD><I>Atlantic</I>" >> $WEBDIR/index.html
+    echo "<TD><I>Pacific</I>" >> $WEBDIR/index.html
+    echo "<TD><I>Indian</I>" >> $WEBDIR/index.html
+    echo "<TD><I>Southern</I>" >> $WEBDIR/index.html
+fi
+echo "<TR>" >> $WEBDIR/index.html
 echo "<TD>Silicate (silvl)" >> $WEBDIR/index.html
 if ls $WEBDIR/set3/set3_ann_silvl_*_${cinfo}.png >/dev/null 2>&1
 then

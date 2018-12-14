@@ -114,6 +114,9 @@ end if
 cntrs_o2lvl=(/25,50,75,100,125,150,175,200,225,250,275,300,325,350,375,400,425,450,475,500/)
 dcntrs_o2lvl=(/-170,-150,-130,-110,-90,-70,-50,-30,-10,10,30,50,70,90,110,130,150,170/)
 
+cntrs_aoulvl=(/-300,-280,-260,-240,-220,-200,-180,-160,-140,-120,-100,-80,-60,-40,-20,0,20,40,60,80/)
+dcntrs_aoulvl=(/-170,-150,-130,-110,-90,-70,-50,-30,-10,10,30,50,70,90,110,130,150,170/)
+
 cntrs_silvl=(/10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200/)
 dcntrs_silvl=(/-45,-40,-35,-30,-25,-20,-15,-10,-5,5,10,15,20,25,30,35,40,45/)
 
@@ -133,11 +136,11 @@ cntrs_d13clvl=(/0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4,1.5,1.6,
 dcntrs_d13clvl=(/-0.85,-0.75,-0.65,-0.55,-0.45,-0.35,-0.25,-0.15,-0.05,0.05,0.15,0.25,0.35,0.45,0.55,0.65,0.75,0.85/)
 
 ; model variables
-vars = (/"o2lvl","silvl","po4lvl","no3lvl","dissiclvl","talklvl","delta13clvl"/)
+vars = (/"o2lvl","aoulvl","silvl","po4lvl","no3lvl","dissiclvl","talklvl","delta13clvl"/)
 
 ; define contour intervals
-cntrs = (/cntrs_o2lvl,cntrs_silvl,cntrs_po4lvl,cntrs_no3lvl,cntrs_dissiclvl,cntrs_talklvl,cntrs_d13clvl/)
-dcntrs = (/dcntrs_o2lvl,dcntrs_silvl,dcntrs_po4lvl,dcntrs_no3lvl,dcntrs_dissiclvl,dcntrs_talklvl,dcntrs_d13clvl/)
+cntrs = (/cntrs_o2lvl,cntrs_aoulvl,cntrs_silvl,cntrs_po4lvl,cntrs_no3lvl,cntrs_dissiclvl,cntrs_talklvl,cntrs_d13clvl/)
+dcntrs = (/dcntrs_o2lvl,dcntrs_aoulvl,dcntrs_silvl,dcntrs_po4lvl,dcntrs_no3lvl,dcntrs_dissiclvl,dcntrs_talklvl,dcntrs_d13clvl/)
 
 nvars = dimsizes(vars)
 
@@ -154,7 +157,7 @@ if (compare .eq. "OBS") then
   d13c_vars    = (/"c13_pi"/)
 
   ; observations: list of variables to plot
-  obsvars = (/"o_an","i_an","p_an","n_an","TCO2","TAlk","c13_pi"/)
+  obsvars = (/"o_an","o_an","i_an","p_an","n_an","TCO2","TAlk","c13_pi"/)
   
 end if
 ;-------------------------------------------------------------
@@ -211,6 +214,10 @@ do i = 0, nvars-1
   
     if (vars(i) .eq. "o2lvl") then
       A = get_o2 (inptr1,depth1,depth_plot(iz))
+    end if
+
+    if (vars(i) .eq. "aoulvl") then
+      A = get_aou (inptr1,depth1,depth_plot(iz))
     end if
 
     if (vars(i) .eq. "silvl") then
@@ -297,7 +304,7 @@ do i = 0, nvars-1
 ;     get the variable
 
       B = -999.
-      if (vars(i) .eq. "o2lvl") then
+      if (vars(i) .eq. "o2lvl" .or. vars(i).eq."aoulvl") then
         delete(B)
         B = inptr2->o_an(0,{depth_plot(iz)},:,:)
         B = (/B*44.661/)
@@ -363,6 +370,10 @@ do i = 0, nvars-1
 
       if (vars(i) .eq. "o2lvl") then
         B = get_o2 (inptr2,depth2,depth_plot(iz))
+      end if
+
+      if (vars(i) .eq. "aoulvl") then
+        B = get_aou (inptr2,depth2,depth_plot(iz))
       end if
       
       if (vars(i) .eq. "silvl") then
