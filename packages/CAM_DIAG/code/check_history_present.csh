@@ -76,11 +76,13 @@ while ( $yri <= $yr_end )    # loop over yrs
             endif
             $nco_dir/ncks --quiet -d lat,0 -d lon,0 -d time,0 -v AOD_VIS,AODVVOLC,DAYFOC ${path_local}/${filename}.nc >/dev/null
             if ($? == 0) then
-               cdo --history -s expr,'AODVIS=(AOD_VIS+AODVVOLC)/DAYFOC' ${path_local}/${filename}.nc ${path_climo}/derived/${filename}.nc
+               cdo --history -O -s expr,'DAYFOC2=DAYFOC+1.e-15;AODVIS=(AOD_VIS+AODVVOLC)/DAYFOC2' ${path_local}/${filename}.nc ${path_climo}/derived/AODVIS_tmp.nc
+               cdo --history -O -s delvar,DAYFOC2 ${path_climo}/derived/AODVIS_tmp.nc ${path_climo}/derived/${filename}.nc 
             else
                $nco_dir/ncks --quiet -d lat,0 -d lon,0 -d time,0 -v AOD_VIS,DAYFOC ${path_local}/${filename}.nc >/dev/null
                if ($? == 0) then
-                   cdo --history -s expr,'AODVIS=AOD_VIS/DAYFOC' ${path_local}/${filename}.nc ${path_climo}/derived/${filename}.nc
+                   cdo --history -O -s expr,'DAYFOC2=DAYFOC+1.e-15;AODVIS=AOD_VIS/DAYFOC2' ${path_local}/${filename}.nc ${path_climo}/derived/AODVIS_tmp.nc
+                   cdo --history -O -s delvar,DAYFOC2 ${path_climo}/derived/AODVIS_tmp.nc ${path_climo}/derived/${filename}.nc
                endif
             endif
             if ($? == 0) then
@@ -96,4 +98,5 @@ while ( $yri <= $yr_end )    # loop over yrs
    end
    @ yri++
 end
+rm -f ${path_climo}/derived/AODVIS_tmp.nc
 echo "-->ALL $casename $MONTH FILES FOUND"
