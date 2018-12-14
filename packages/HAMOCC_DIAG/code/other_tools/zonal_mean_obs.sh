@@ -14,22 +14,25 @@ echo "-----------------------"
 
 CDO=`which cdo`
 # Zonal mean variables
-#var=i
 #datadir=/projects/NS2345K/noresm_diagnostics_dev/packages/HAMOCC_DIAG/obs_data/GLODAPv2
-datadir=/projects/NS2345K/noresm_diagnostics_dev/packages/HAMOCC_DIAG/obs_data/EideM-etal_2017
-#infile=$datadir/woa13_all_${var}00_01.nc
+#datadir=/projects/NS2345K/noresm_diagnostics_dev/packages/HAMOCC_DIAG/obs_data/EideM-etal_2017
+datadir=/projects/NS2345K/noresm_diagnostics_dev/packages/HAMOCC_DIAG/obs_data/WOA13
+
+#var=i
+var=A
+infile=$datadir/woa13_all_${var}00_01.nc
 #infile=$datadir/GLODAPv2.2016b.TAlk_reordered.nc
-infile=$datadir/C13_Climatology.nc
+#infile=$datadir/C13_Climatology.nc
 
 for region in glb pac atl ind so
 do
     maskfile=/projects/NS2345K/noresm_diagnostics_dev/packages/HAMOCC_DIAG/grid_files/1x1d/generic/region_mask_1x1_${region}.nc
-#    outfile=$datadir/woa13_all_${var}00_01_zm_${region}.nc
+    outfile=$datadir/woa13_all_${var}00_01_zm_${region}.nc
     #outfile=$datadir/GLODAPv2.2016b.TAlk_reordered_zm_${region}.nc
-    outfile=$datadir/C13_Climatology_zm_${region}.nc
-#    tmpfile=$datadir/woa13_all_${var}00_tmp.nc
+    #outfile=$datadir/C13_Climatology_zm_${region}.nc
+    tmpfile=$datadir/woa13_all_${var}00_tmp.nc
     #tmpfile=$datadir/GLODAPv2.2016b.TAlk_reordered_tmp.nc
-    tmpfile=$datadir/C13_Climatology_tmp.nc
+    #tmpfile=$datadir/C13_Climatology_tmp.nc
 
     echo "Taking zonal mean over $region"
     $CDO ifthen $maskfile $infile $tmpfile

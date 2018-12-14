@@ -46,6 +46,7 @@ nz1 = dimsizes(depth1)       ; number vertical levels
 ; CASE 2 MODEL OR OBS
 if (compare .eq. "OBS") then
   ptr_woa13o  = addfile(infile2+"/WOA13/woa13_all_o00_01_zm_"+region+".nc","r")
+  ptr_woa13A  = addfile(infile2+"/WOA13/woa13_all_A00_01_zm_"+region+".nc","r")
   ptr_woa13i  = addfile(infile2+"/WOA13/woa13_all_i00_01_zm_"+region+".nc","r")
   ptr_woa13p  = addfile(infile2+"/WOA13/woa13_all_p00_01_zm_"+region+".nc","r")
   ptr_woa13n  = addfile(infile2+"/WOA13/woa13_all_n00_01_zm_"+region+".nc","r")
@@ -83,7 +84,7 @@ end if
 cntrs_o2=(/20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,320,340,360,380,400/)
 dcntrs_o2=(/-45,-40,-35,-30,-25,-20,-15,-10,-5,5,10,15,20,25,30,35,40,45/)
 
-cntrs_aou=(/-300,-280,-260,-240,-220,-200,-180,-160,-140,-120,-100,-80,-60,-40,-20,0,20,40,60,80/)
+cntrs_aou=(/0,20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,320,340,360,380/)
 dcntrs_aou=(/-170,-150,-130,-110,-90,-70,-50,-30,-10,10,30,50,70,90,110,130,150,170/)
 
 cntrs_si=(/12.5,25,37.5,50,62.5,75,87.5,100,112.5,125,137.5,150,162.5,175,187.5,200,212.5,225,237.5,250/)
@@ -118,6 +119,7 @@ nvars = dimsizes(vars)
 if (compare .eq. "OBS") then
 
   woa13o_vars  = (/"o_an"/)
+  woa13A_vars  = (/"A_an"/)
   woa13i_vars  = (/"i_an"/)
   woa13p_vars  = (/"p_an"/)
   woa13n_vars  = (/"n_an"/)
@@ -126,7 +128,7 @@ if (compare .eq. "OBS") then
   d13c_vars    = (/"c13_pi"/)
 
   ; observations: list of variables to plot
-  obsvars = (/"o_an","o_an","i_an","p_an","n_an","TCO2","TAlk","c13_pi"/)
+  obsvars = (/"o_an","A_an","i_an","p_an","n_an","TCO2","TAlk","c13_pi"/)
   
 end if
 ;-------------------------------------------------------------
@@ -220,6 +222,11 @@ do i = 0, nvars-1
      case2 = "WOA13"
    end if
 
+   if (any(obsvars(i) .eq. woa13A_vars)) then
+     inptr2 = ptr_woa13A
+     case2 = "WOA13"
+   end if
+
    if (any(obsvars(i) .eq. woa13i_vars)) then
      inptr2 = ptr_woa13i
      case2 = "WOA13"
@@ -271,8 +278,8 @@ do i = 0, nvars-1
    end if
 
    if (vars(i) .eq. "aoulvl") then
-     if (isfilevar(inptr2,"o_an")) then
-       B = inptr2->o_an
+     if (isfilevar(inptr2,"A_an")) then
+       B = inptr2->A_an
        B = (/B*44.661/)
        B@long_name = "Oxygen"
        B@units = "mmol m-3"
