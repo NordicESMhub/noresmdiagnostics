@@ -17,14 +17,14 @@
 # along with the diagnostic package.  If not, see <http://www.gnu.org/licenses/>.
 
 VERSION=5.1
-BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
+BIN_DIR=/projects/NS2345K/FRAM/noresm_diagnostics/bin
+ROOT_DIR=/projects/NS2345K/FRAM/noresm_diagnostics
 ETC_DIR=$ROOT_DIR/etc
 ROOT_FOLD=$(basename $ROOT_DIR)
 
 ## Initial values
 THIS_SCRIPT_NAME=`basename "$0"`
-DIAG_PATH=$ROOT_DIR/out/$USER
+DIAG_PATH=/projects/NS2345K/FRAM/noresm_diagnostics/out/$USER
 USER_MODEL=none
 CASE1=none
 SYR1=-1
@@ -32,9 +32,9 @@ EYR1=-1
 CASE2=none
 SYR2=-1
 EYR2=-1
-WEB_PATH=/projects/NS2345K/www/$ROOT_FOLD
-HISTORY_PATH1=/projects/NS2345K/noresm/cases
-HISTORY_PATH2=/projects/NS2345K/noresm/cases
+WEB_PATH=/projects/NS2345K/FRAM/www/$ROOT_FOLD
+HISTORY_PATH1=/projects/NS2345K/FRAM/noresm/cases
+HISTORY_PATH2=/projects/NS2345K/FRAM/noresm/cases
 RUN_DIAG=1
 TYPE_OF_DIAG=both
 RUN_ATM_CLM=1
