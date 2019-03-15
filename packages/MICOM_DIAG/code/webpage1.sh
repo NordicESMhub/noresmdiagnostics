@@ -74,6 +74,16 @@ if [ -f $WEBDIR/set1/set1_ann_saln_${cinfo}.png ]; then
 else
     echo "<TD><I>Salinity</I>" >> $WEBDIR/index.html
 fi
+if [ -f $WEBDIR/set1/set1_ann_sst_${cinfo}.png ]; then
+    echo "<TD><a href='set1/set1_ann_sst_${cinfo}.png'>SST</a>" >> $WEBDIR/index.html
+else
+    echo "<TD><I>SST</I>" >> $WEBDIR/index.html
+fi
+if [ -f $WEBDIR/set1/set1_ann_sss_${cinfo}.png ]; then
+    echo "<TD><a href='set1/set1_ann_sss_${cinfo}.png'>SSS</a>" >> $WEBDIR/index.html
+else
+    echo "<TD><I>SSS</I>" >> $WEBDIR/index.html
+fi
 echo "</TABLE>" >> $WEBDIR/index.html
 # AMOC
 echo "<br>" >> $WEBDIR/index.html
