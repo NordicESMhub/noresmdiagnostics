@@ -1,13 +1,25 @@
 #!/bin/bash
+#set -e
 #
 # HAMOCC DIAGNOSTICS package
 # Johan Liakka, NERSC, johan.liakka@nersc.no
-# Last update Apr 2018
-#set -e
-export NCARG_ROOT=/opt/ncl65
-#export PATH=/opt/ncl64/bin/:/usr/local/bin:/usr/bin
-export PATH=/opt/ncl65/bin/:/opt/nco-4.7.6-intel/bin/:/opt/cdo195/bin:/usr/local/bin:/usr/bin
-source /opt/intel/compilers_and_libraries/linux/bin/compilervars.sh -arch intel64 -platform linux
+# Last Update, Mar 2019, yanchun.he@nersc.no
+
+HOSTNAME=$(hostname -f)
+if [ echo $HOSTNAME |grep "nird" ]; then
+    export NCARG_ROOT=/opt/ncl65
+    #export PATH=/opt/ncl64/bin/:/usr/local/bin:/usr/bin
+    export PATH=/opt/ncl65/bin/:/opt/nco-4.7.6-intel/bin/:/opt/cdo195/bin:/usr/local/bin:/usr/bin
+    source /opt/intel/compilers_and_libraries/linux/bin/compilervars.sh -arch intel64 -platform linux
+elif [ echo $HOSTNAME |grep "fram" ]; then
+    module load NCL/6.5.0-intel-2018a
+    module load NCO/4.7.7-intel-2018b
+    module load CDO/1.9.5-intel-2018b
+else
+    echo "UNKNOW HOSTNAME: $HOSTNAME "
+    echo "*** EXIT ***"
+    exit 1
+fi
 #***************************
 #*** USER MODIFY SECTION ***
 #***************************
