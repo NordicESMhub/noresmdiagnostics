@@ -2,11 +2,11 @@
 
 # Version lnd_template4.2.25.csh
 set HOSTNAME `hostname -f`
-if  ( echo $HOSTNAME |grep 'nird' !="" ) then
+if  ( `echo $HOSTNAME |grep 'nird'` !="" ) then
     setenv NCARG_ROOT /opt/ncl65
     setenv PATH /opt/ncl65/bin/:/opt/nco-4.7.6-intel/bin/:/opt/cdo195/bin:/usr/local/bin:/usr/bin
     source /opt/intel/compilers_and_libraries/linux/bin/compilervars.csh -arch intel64 -platform linux
-else if ( echo $HOSTNAME |grep 'fram' !="" ) then
+else if ( `echo $HOSTNAME |grep 'fram'` !="" ) then
     module load NCL/6.5.0-intel-2018a
     module load NCO/4.7.7-intel-2018b
     module load CDO/1.9.5-intel-2018b
