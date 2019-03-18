@@ -8,7 +8,7 @@
 
 unset echo verbose
 setenv DIAG_VERSION 140207  # version number YYMMDD
-set HOSTNAME `hostname -f`
+setenv HOSTNAME `hostname -f`
 if  ( `echo $HOSTNAME |grep 'nird'` !="" ) then
     setenv NCARG_ROOT /opt/ncl65
     setenv PATH /opt/ncl65/bin/:/opt/nco-4.7.6-intel/bin/:/opt/cdo195/bin:/usr/local/bin:/usr/bin
