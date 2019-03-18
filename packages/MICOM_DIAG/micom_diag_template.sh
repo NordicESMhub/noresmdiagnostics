@@ -10,14 +10,13 @@
 HOSTNAME=$(hostname -f)
 if [ $(echo $HOSTNAME |grep "nird") ]; then
     export NCARG_ROOT=/opt/ncl65
-    #export PATH=/opt/ncl64/bin/:/usr/local/bin:/usr/bin
-    export PATH=/opt/ncl65/bin/:/opt/nco-4.7.6-intel/bin/:/opt/cdo195/bin:/usr/local/bin:/usr/bin
+    export PATH=/opt/ncl65/bin/:/opt/nco475/bin/:/opt/cdo195/bin:/usr/local/bin:/usr/bin
     source /opt/intel/compilers_and_libraries/linux/bin/compilervars.sh -arch intel64 -platform linux
 elif [ $(echo $HOSTNAME |grep "fram") ]; then
-    module load NCO/4.7.7-intel-2018b
-    module load CDO/1.9.5-intel-2018b
-    module load NCL/6.5.0-intel-2018a   # NCL must be loaded after NCO/CDO
-    module unload LibTIFF/4.0.9-GCCcore-6.4.0
+    module -q load NCO/4.7.2-intel-2018a
+    module -q load CDO/1.9.3-intel-2018a
+    module -q load NCL/6.5.0-intel-2018a   # NCL must be loaded after NCO/CDO
+    module -q unload LibTIFF/4.0.9-GCCcore-6.4.0
 else
     echo "UNKNOW HOSTNAME: $HOSTNAME "
     echo "*** EXIT ***"
