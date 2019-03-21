@@ -15,6 +15,7 @@ if  ( `echo $HOSTNAME |grep 'nird'` !="" ) then
     source /opt/intel/compilers_and_libraries/linux/bin/compilervars.csh -arch intel64 -platform linux
     setenv ncclimo_dir  /opt/nco475/bin
 else if ( `echo $HOSTNAME |grep 'fram'` !="" ) then
+    module -q purge
     module -q load NCO/4.7.2-intel-2018a
     module -q load CDO/1.9.3-intel-2018a
     module -q load NCL/6.5.0-intel-2018a   # NCL must be loaded after NCO/CDO
