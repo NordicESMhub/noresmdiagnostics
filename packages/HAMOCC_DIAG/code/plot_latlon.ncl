@@ -18,6 +18,7 @@ infile2    = getenv("INFILE2")     ; case2 climo input filename
 case1      = getenv("CASE1")
 rgb_file   = getenv("RGB_FILE")
 rgb_filed  = getenv("RGB_FILE_DIFF")
+DIAG_HOME  = getenv("DIAG_HOME")
 
 ; CASE 1 Model
 inptr1 = addfile(infile1,"r")
@@ -46,7 +47,7 @@ gw1!0 = "lat"
 gw1&lat = lat1
 
 ; Define RGB files
-rgb_file_co2fxn  = "/projects/NS2345K/noresm_diagnostics_dev/packages/HAMOCC_DIAG/rgb/bluered3.rgb"
+rgb_file_co2fxn  = DIAG_HOME+"/rgb/bluered3.rgb"
 ; rgb_filed = rgb_dir+"/bluered2.rgb"
 
 ; CASE 2 MODEL OR OBS
