@@ -1,13 +1,26 @@
 #!/bin/bash
+#set -e
 #
 # HAMOCC DIAGNOSTICS package
 # Johan Liakka, NERSC, johan.liakka@nersc.no
-# Last update Apr 2018
-#set -e
-export NCARG_ROOT=/opt/ncl65
-#export PATH=/opt/ncl64/bin/:/usr/local/bin:/usr/bin
-export PATH=/opt/ncl65/bin/:/opt/nco-4.7.6-intel/bin/:/opt/cdo195/bin:/usr/local/bin:/usr/bin
-source /opt/intel/compilers_and_libraries/linux/bin/compilervars.sh -arch intel64 -platform linux
+# Last Update, Mar 2019, yanchun.he@nersc.no
+
+HOSTNAME=$(hostname -f)
+if [ $(echo $HOSTNAME |grep "nird") ]; then
+    export NCARG_ROOT=/opt/ncl65
+    export PATH=/opt/ncl65/bin/:/opt/nco475/bin/:/opt/cdo195/bin:/usr/local/bin:/usr/bin
+    source /opt/intel/compilers_and_libraries/linux/bin/compilervars.sh -arch intel64 -platform linux
+elif [ $(echo $HOSTNAME |grep "fram") ]; then
+    module -q purge
+    module -q load NCO/4.7.2-intel-2018a
+    module -q load CDO/1.9.3-intel-2018a
+    module -q load NCL/6.5.0-intel-2018a   # NCL must be loaded after NCO/CDO
+    module -q unload LibTIFF/4.0.9-GCCcore-6.4.0
+else
+    echo "UNKNOW HOSTNAME: $HOSTNAME "
+    echo "*** EXIT ***"
+    exit 1
+fi
 #***************************
 #*** USER MODIFY SECTION ***
 #***************************

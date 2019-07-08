@@ -1,15 +1,31 @@
-#!/bin/csh -f
+#!/bin/csh
 # file: amwg_template.csh
 # Last updated: Johan Liakka, Nov 2017
+# Last updated: Yanchun He, Mar 2019
 #
 # Based on file: diag140207.csh
 # Updated: 2014/02/07
 
 unset echo verbose
 setenv DIAG_VERSION 140207  # version number YYMMDD
-setenv NCARG_ROOT /opt/ncl65
-setenv PATH /opt/ncl65/bin/:/opt/nco-4.7.6-intel/bin/:/opt/cdo195/bin:/usr/local/bin:/usr/bin
-source /opt/intel/compilers_and_libraries/linux/bin/compilervars.csh -arch intel64 -platform linux
+setenv HOSTNAME `hostname -f`
+if  ( `echo $HOSTNAME |grep 'nird'` !="" ) then
+    setenv NCARG_ROOT /opt/ncl65
+    setenv PATH /opt/ncl65/bin/:/opt/nco475/bin/:/opt/cdo195/bin:/usr/local/bin:/usr/bin
+    source /opt/intel/compilers_and_libraries/linux/bin/compilervars.csh -arch intel64 -platform linux
+    setenv nco_dir  /opt/nco475/bin
+else if ( `echo $HOSTNAME |grep 'fram'` !="" ) then
+    module -q purge
+    module -q load NCO/4.7.2-intel-2018a
+    module -q load CDO/1.9.3-intel-2018a
+    module -q load NCL/6.5.0-intel-2018a   # NCL must be loaded after NCO/CDO
+    module -q unload LibTIFF/4.0.9-GCCcore-6.4.0
+    setenv nco_dir  ${EBROOTNCO}/bin
+else
+    echo "UNKNOW HOSTNAME: $HOSTNAME "
+    echo "*** EXIT ***"
+    exit 1
+endif
 
 #******************************************************************
 #  C-shell control script for AMWG Diagnostics Package.           *
@@ -17,8 +33,8 @@ source /opt/intel/compilers_and_libraries/linux/bin/compilervars.csh -arch intel
 #  Updated by many people                                         *                                    
 #                                                                 *
 #  NorESM contact:                                                *
-#  e-mail: johan.liakka@nersc.no                                  *
-#                                                                 *
+#  e-mail: (johan.liakka@nersc.no)                                *
+#           yanchun.he@nersc.no                                   *
 #  For recent changes in the NorESM version, see the README file  *
 #                                                                 *
 #  CESM contact:                                                  *
@@ -602,7 +618,7 @@ endif
 # Set directory to ncclimo.
 # This is changed by diag_run when running with crontab
 #setenv ncclimo_dir  /usr/local/bin
-setenv nco_dir  /opt/nco-4.7.6-intel/bin
+#setenv nco_dir  /opt/nco-4.7.6-intel/bin
 
 
 #******************************************************************

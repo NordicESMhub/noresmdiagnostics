@@ -4253,6 +4253,8 @@ begin
         else
           var = where(cld.gt.0.0,var/cld,var@_FillValue)
           var = 10^var
+          var = where(var.lt.1.e-3,0.,var)
+          var = where(var.gt.999.,999.,var)
           outptr->TAUILOGMODIS = var
         end if
       else
@@ -4295,6 +4297,8 @@ begin
         else
           var = where(cld.gt.0.0,var/cld,var@_FillValue)
           var = 10^var
+          var = where(var.lt.1.e-3,0.,var)
+          var = where(var.gt.999.,999.,var)
           outptr->TAUWLOGMODIS = var
         end if
       else
@@ -4337,6 +4341,8 @@ begin
         else
           var = where(cld.gt.0.0,var/cld,var@_FillValue)
           var = 10^var
+          var = where(var.lt.1.e-3,0.,var)
+          var = where(var.gt.999.,999.,var)
           outptr->TAUTLOGMODIS = var
         end if
       else

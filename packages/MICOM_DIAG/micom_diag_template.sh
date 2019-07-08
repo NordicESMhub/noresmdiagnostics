@@ -1,15 +1,28 @@
 #!/bin/bash
+# set -e
 #
 # MICOM DIAGNOSTICS package
 # Johan Liakka, NERSC
 # Yanchun He, NERSC, yanchun.he@nersc.no
 # built upon previous work by Detelina Ivanova
-# Last update Sept. 2018
-# set -e
-export NCARG_ROOT=/opt/ncl65
-#export PATH=/opt/ncl64/bin/:/usr/local/bin:/usr/bin
-export PATH=/opt/ncl65/bin/:/opt/nco-4.7.6-intel/bin/:/opt/cdo195/bin:/usr/local/bin:/usr/bin
-source /opt/intel/compilers_and_libraries/linux/bin/compilervars.sh -arch intel64 -platform linux
+# Last update Mar. 2019
+
+HOSTNAME=$(hostname -f)
+if [ $(echo $HOSTNAME |grep "nird") ]; then
+    export NCARG_ROOT=/opt/ncl65
+    export PATH=/opt/ncl65/bin/:/opt/nco475/bin/:/opt/cdo195/bin:/usr/local/bin:/usr/bin
+    source /opt/intel/compilers_and_libraries/linux/bin/compilervars.sh -arch intel64 -platform linux
+elif [ $(echo $HOSTNAME |grep "fram") ]; then
+    module -q purge
+    module -q load NCO/4.7.2-intel-2018a
+    module -q load CDO/1.9.3-intel-2018a
+    module -q load NCL/6.5.0-intel-2018a   # NCL must be loaded after NCO/CDO
+    module -q unload LibTIFF/4.0.9-GCCcore-6.4.0
+else
+    echo "UNKNOW HOSTNAME: $HOSTNAME "
+    echo "*** EXIT ***"
+    exit 1
+fi
 #***************************
 #*** USER MODIFY SECTION ***
 #***************************
@@ -242,7 +255,7 @@ fi
 required_vars_climo="depth_bnds,sealv,templvl,salnlvl,mmflxd,region,temp,saln,dz,sst,sss,mhflx,msflx"
 required_vars_climo_ann="depth_bnds,sealv,templvl,salnlvl,mmflxd,region,mhflx,msflx"
 required_vars_climo_mon="temp,saln,dz,sst,sss"
-required_vars_ts_ann="depth_bnds,time,section,mmflxd,voltr,temp,saln,templvl,salnlvl,region,dp"
+required_vars_ts_ann="depth_bnds,time,section,mmflxd,voltr,temp,saln,templvl,salnlvl,region,dp,sst,sss"
 
 # Check which sets should be plotted based on CLIMO_TIME_SERIES_SWITCH
 if [ $CLIMO_TIME_SERIES_SWITCH == ONLY_CLIMO ]; then

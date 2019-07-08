@@ -41,7 +41,7 @@ var_list=`cat $WKDIR/attributes/vars_ts_ann_${casename}_${filetype}`
 first_yr_prnt=`printf "%04d" ${first_yr}`
 last_yr_prnt=`printf "%04d" ${last_yr}`
 ann_ts_file=${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}_ts_${filetype}.nc
-ann_ts_var_list="mmflxd voltr temp saln templvl salnlvl"
+ann_ts_var_list="mmflxd voltr temp saln templvl salnlvl sst sss"
 
 # Calculate number of chunks and the residual
 if [ `cat $WKDIR/attributes/grid_${casename}` == "tnx0.25v4" ]
@@ -96,7 +96,6 @@ do
             yr_prnt=`printf "%04d" ${YR}`
             filename=${casename}.micom.hy.${yr_prnt}.nc
             fflag=1     #check if all required annual ts files exist
-            ann_ts_var_list="mmflxd voltr temp saln templvl salnlvl"
             for var in `echo $var_list | sed 's/,/ /g'` ; do
                 tsfile=${var}_${casename}_ANN_${filetype}_${yr_prnt}.nc
                 if [ "${ann_ts_var_list/$var}" != "${ann_ts_var_list}" ] && [ ! -f  $tsdir/ann_ts/${tsfile} ]; then
@@ -222,7 +221,7 @@ do
             wait
         fi
         # Area weighted horizontal global average of templvl, salnlvl and sst
-        if [ $var == templvl ] || [ $var == salnlvl ] || [ $var == sst ]; then
+        if [ $var == templvl ] || [ $var == salnlvl ] || [ $var == sst ] || [ $var == sss ]; then
             echo "Area weighted global average of $var (yrs ${YR_start}-${YR_end})"
             pid=()
             iproc=1

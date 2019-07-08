@@ -7,8 +7,8 @@
 
 # Input arguments:
 #  $casename   experiment name
-#  $fyr_prnt   file on standard grid
-#  $lyr_prnt   remapped file
+#  $fyr_prnt   first year climo
+#  $lyr_prnt   last year climo
 #  $climodir   directory where the climatology files are located
 #  $ann_mode   0 or 1
 #  $mon_mode   0 or 1

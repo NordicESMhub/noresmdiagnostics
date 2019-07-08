@@ -1,10 +1,24 @@
-#!/bin/csh -f
+#!/bin/csh
 
 # Version lnd_template4.2.25.csh
-setenv NCARG_ROOT /opt/ncl65
-#setenv PATH /opt/ncl64/bin/:/usr/local/bin:/usr/bin
-setenv PATH /opt/ncl65/bin/:/opt/nco-4.7.6-intel/bin/:/usr/local/bin:/usr/bin
-source /opt/intel/compilers_and_libraries/linux/bin/compilervars.csh -arch intel64 -platform linux
+setenv HOSTNAME `hostname -f`
+if  ( `echo $HOSTNAME |grep 'nird'` !="" ) then
+    setenv NCARG_ROOT /opt/ncl65
+    setenv PATH /opt/ncl65/bin/:/opt/nco475/bin/:/opt/cdo195/bin:/usr/local/bin:/usr/bin
+    source /opt/intel/compilers_and_libraries/linux/bin/compilervars.csh -arch intel64 -platform linux
+    setenv ncclimo_dir  /opt/nco475/bin/
+else if ( `echo $HOSTNAME |grep 'fram'` !="" ) then
+    module -q purge
+    module -q load NCO/4.7.2-intel-2018a
+    module -q load CDO/1.9.3-intel-2018a
+    module -q load NCL/6.5.0-intel-2018a   # NCL must be loaded after NCO/CDO
+    module -q unload LibTIFF/4.0.9-GCCcore-6.4.0
+    setenv ncclimo_dir  ${EBROOTNCO}/bin
+else
+    echo "UNKNOW HOSTNAME: $HOSTNAME "
+    echo "*** EXIT ***"
+    exit 1
+endif
 # NOTE: You MUST use ncl/6.2.0 (e.g., module load ncl/6.2.0)
 
 # NOTE: For running the non-swift version of this script, you MUST use
@@ -378,7 +392,6 @@ endif
 # Set directory to ncclimo.
 # This is changed by diag_run when running with crontab
 #setenv ncclimo_dir /opt/nco-4.7.6-intel/bin
-setenv ncclimo_dir $DIAG_HOME/../../bin/crontab
 
 #**************************************************
 # 19:  Use Swift?

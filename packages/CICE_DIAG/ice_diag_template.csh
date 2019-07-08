@@ -1,15 +1,31 @@
-#!/bin/csh -f
+#!/bin/csh
 #set PATH = ($PATH ./ )
 
 unset echo verbose
 # Modified by Johan Liakka, Oct 2017
+# Last Update, Yanchun He, Mar 2019
 # Major updates include:
 # - Better performance climatology computation (ncclimo)
 # - Updated web interface for NIRD
 # - NCL updates to version 4.6.0.
-setenv NCARG_ROOT /opt/ncl65
-setenv PATH /opt/ncl65/bin/:/opt/nco-4.7.6-intel/bin/:/usr/local/bin:/usr/bin
-source /opt/intel/compilers_and_libraries/linux/bin/compilervars.csh -arch intel64 -platform linux
+setenv HOSTNAME `hostname -f`
+if  ( `echo $HOSTNAME |grep 'nird'` !="" ) then
+    setenv NCARG_ROOT /opt/ncl65
+    setenv PATH /opt/ncl65/bin/:/opt/nco475/bin/:/opt/cdo195/bin:/usr/local/bin:/usr/bin
+    source /opt/intel/compilers_and_libraries/linux/bin/compilervars.csh -arch intel64 -platform linux
+    setenv ncclimo_dir  /opt/nco475/bin
+else if ( `echo $HOSTNAME |grep 'fram'` !="" ) then
+    module -q purge
+    module -q load NCO/4.7.2-intel-2018a
+    module -q load CDO/1.9.3-intel-2018a
+    module -q load NCL/6.5.0-intel-2018a   # NCL must be loaded after NCO/CDO
+    module -q unload LibTIFF/4.0.9-GCCcore-6.4.0
+    setenv ncclimo_dir  ${EBROOTNCO}/bin
+else
+    echo "UNKNOW HOSTNAME: $HOSTNAME "
+    echo "*** EXIT ***"
+    exit 1
+endif
 #--------------------------------------------------------------------#
 #----------------- USER DEFINED INPUT -------------------------------#
 #--------------------------------------------------------------------#
@@ -182,7 +198,7 @@ endif
 
 # Set directory to ncclimo.
 # This is changed by diag_run when running with crontab
-setenv ncclimo_dir  /opt/nco-4.7.6-intel/bin
+#setenv ncclimo_dir  /opt/nco-4.7.6-intel/bin
 set NCRCAT = `which ncrcat`
 
 # set c-shell limits
