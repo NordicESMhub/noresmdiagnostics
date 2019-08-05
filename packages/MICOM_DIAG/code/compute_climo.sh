@@ -52,12 +52,17 @@ if [ $filetype == hy ]; then
         filenames+=($filename)
         let YR++
     done
-    echo "Climatological annual mean of $var_list"
-    $NCRA -O --no_tmp_fl --hdr_pad=10000 -v $var_list -p $pathdat ${filenames[*]} $ann_avg_file
-    if [ $? -ne 0 ]; then
-        echo "ERROR in computation of climatological annual mean: $NCRA -O --no_tmp_fl --hdr_pad=10000 -v $var_list -p $pathdat ${filenames[*]} $ann_avg_file"
-        echo "*** EXITING THE SCRIPT ***"
-        exit 1
+    if [ "$var_list" == "depth_bnds" ]
+    then
+        echo "No fields from hy files, skip calculate annual mean from hy files"
+    else
+        echo "Climatological annual mean of $var_list"
+        $NCRA -O --no_tmp_fl --hdr_pad=10000 -v $var_list -p $pathdat ${filenames[*]} $ann_avg_file
+        if [ $? -ne 0 ]; then
+            echo "ERROR in computation of climatological annual mean: $NCRA -O --no_tmp_fl --hdr_pad=10000 -v $var_list -p $pathdat ${filenames[*]} $ann_avg_file"
+            echo "*** EXITING THE SCRIPT ***"
+            exit 1
+        fi
     fi
 fi
 

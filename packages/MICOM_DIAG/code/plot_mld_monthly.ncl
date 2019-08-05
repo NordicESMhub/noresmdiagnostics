@@ -316,7 +316,7 @@ do i = 0, nvars-1
         C = B
         C = (/tmp - B/)
         gblmean_C = wgt_areaave(C,gw2,1.0,0)
-        
+      
       else                                ; interp B to nlat1       
       
         tmp = A
@@ -428,8 +428,8 @@ do i = 0, nvars-1
     max2 = max(B)
   end if
   res@lbLabelStride = 2
-  res@cnLevels = cntrs
-  res@cnFillPalette   = cmap
+  res@cnLevels      = cntrs
+  res@cnFillPalette = cmap
   res@lbTitleString = "Min = "+sprintf("%6.2f",min1)+ \
                      " Max = "+sprintf("%6.2f",max1)
 
@@ -507,8 +507,9 @@ do i = 0, nvars-1
     delete (B)
     gsn_panel(wks,plot,(/3,1/),pan)
   end if
+
   delete(plot)
-  
+
   txres = True
   txres@txFontHeightF = 0.022
   txres@txFont = "helvetica-bold"

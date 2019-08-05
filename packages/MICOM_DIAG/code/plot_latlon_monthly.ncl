@@ -352,8 +352,8 @@ do i = 0, nvars-1
     max2 = max(B)
   end if
   res@lbLabelStride = 2
-  res@cnLevels      = cntrs(i,:)
-  res@cnFillPalette = cmap(i,:)
+  res@cnLevels      = cntrs(:)
+  res@cnFillPalette = cmap
   res@lbTitleString = "Min = "+sprintf("%6.2f",min1)+ \
                      " Max = "+sprintf("%6.2f",max1)
 
@@ -416,7 +416,7 @@ do i = 0, nvars-1
 
     res@lbTitleString = "Min = "+sprintf("%6.2f",mind)+ \
                        " Max = "+sprintf("%6.2f",maxd)
-    res@cnLevels = dcntrs(i,:)
+    res@cnLevels = dcntrs(:)
     plot(2) = gsn_csm_contour_map_ce(wks,C,res)   ; plot differences 
     delete (res@cnLevels)
     delete (res@tiMainString)

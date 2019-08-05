@@ -224,3 +224,22 @@ begin
    end if
    return (xvar)
 end
+
+function get_mlts (inptr:file)
+begin
+   if (isfilevar(inptr,"mlts")) then
+      tmp = inptr->mlts
+      if (typeof(tmp).eq."double") then
+         xvar = dble2flt(tmp(0,:,:))
+      else
+         xvar = tmp(0,:,:)
+      end if
+      xvar@long_name = "Mixed layer depth"
+      xvar@units = "m"
+      assignFillValue(xvar,xvar)
+   else
+      print("get_mlts: no mlts variable present")
+      xvar = -999.0
+   end if
+   return (xvar)
+end

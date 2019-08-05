@@ -33,7 +33,7 @@ echo " ann_mode = $ann_mode"
 echo " mon_mode = $mon_mode"
 
 if [ $ann_mode -eq 1 ]; then
-    var_list=`cat $WKDIR/attributes/vars_climo_ann_${casename} | sed 's/,/ /g'`
+    var_list=`cat $WKDIR/attributes/vars_climo_ann_${casename} | sed 's/,/ /g'|sed 's/depth_bnds //g'`
     ann_file=${casename}_ANN_${fyr_prnt}-${lyr_prnt}_climo.nc
     for var in $var_list
     do

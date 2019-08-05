@@ -3,6 +3,7 @@
 ; Mark Stevens Sept 2001
 ; Rich Neale Jan 2008
 ; Johan Liakka Dec 2017: Update for MICOM
+; Yanchun He Jul 2019: Add mlts
 ;********************************************************
 load "$DIAG_CODE/functions_latlon.ncl"
 ;********************************************************
@@ -115,8 +116,8 @@ dcntrs_salnlvl_top=(/-3.4,-3,-2.6,-2.2,-1.8,-1.4,-1,-0.6,-0.2,0.2,0.6,1,1.4,1.8,
 cntrs_salnlvl_bot=(/33.2,33.4,33.6,33.8,34,34.2,34.4,34.6,34.8,35,35.2,35.4,35.6,35.8,36,36.2,36.4,36.6,36.8,37/)
 dcntrs_salnlvl_bot=(/-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9/)
 
-cntrs_mld=(/10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200/)
-dcntrs_mld=(/-80,-70,-60,-50,-40,-30,-20,-10,-5,5,10,20,30,40,50,60,70,80/)
+cntrs_mlts=(/10,20,30,40,50,60,70,80,90,100,110,125,150,175,200,250,300,400,500,750/)
+dcntrs_mlts=(/-250,-200,-150,-100,-75,-50,-25,-10,-5,5,10,25,50,75,100,150,200,250/)
 
 cntrs_sealv=(/-1.9,-1.7,-1.5,-1.3,-1.1,-0.9,-0.7,-0.5,-0.3,-0.1,0.1,0.3,0.5,0.7,0.9,1.1,1.3,1.5,1.7,1.9/)
 dcntrs_sealv=(/-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9/)
@@ -125,18 +126,18 @@ dcntrs_sealv=(/-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0.1,0.2,0.3,0.4,0.5,
 vars = (/"templvl0","templvl50","templvl100","templvl250","templvl500",\
          "templvl1000","templvl2000","templvl3000","templvl4000",\
          "salnlvl0","salnlvl50","salnlvl100","salnlvl250","salnlvl500",\
-         "salnlvl1000","salnlvl2000","salnlvl3000","salnlvl4000","sealv"/)
+         "salnlvl1000","salnlvl2000","salnlvl3000","salnlvl4000","mlts","sealv"/)
 
 ; define contour intervals
 cntrs = (/cntrs_dummy,cntrs_dummy,cntrs_dummy,cntrs_dummy,cntrs_dummy,\
           cntrs_dummy,cntrs_templvl_bot,cntrs_templvl_bot,cntrs_templvl_bot,\
           cntrs_salnlvl_top,cntrs_salnlvl_top,cntrs_salnlvl_top,cntrs_salnlvl_top,cntrs_salnlvl_top,\
-          cntrs_salnlvl_bot,cntrs_salnlvl_bot,cntrs_salnlvl_bot,cntrs_salnlvl_bot,cntrs_sealv/)
+          cntrs_salnlvl_bot,cntrs_salnlvl_bot,cntrs_salnlvl_bot,cntrs_salnlvl_bot,cntrs_mlts,cntrs_sealv/)
 
 dcntrs = (/dcntrs_templvl_top,dcntrs_templvl_top,dcntrs_templvl_top,dcntrs_templvl_top,dcntrs_templvl_top,\
            dcntrs_templvl_top,dcntrs_templvl_bot,dcntrs_templvl_bot,dcntrs_templvl_bot,\
            dcntrs_salnlvl_top,dcntrs_salnlvl_top,dcntrs_salnlvl_top,dcntrs_salnlvl_top,dcntrs_salnlvl_top,\
-           dcntrs_salnlvl_bot,dcntrs_salnlvl_bot,dcntrs_salnlvl_bot,dcntrs_salnlvl_bot,dcntrs_sealv/)
+           dcntrs_salnlvl_bot,dcntrs_salnlvl_bot,dcntrs_salnlvl_bot,dcntrs_salnlvl_bot,dcntrs_mlts,dcntrs_sealv/)
 
 nvars = dimsizes(vars)
 
@@ -153,7 +154,7 @@ if (compare .eq. "OBS") then
   obsvars = (/"t_an0","t_an50","t_an100","t_an250","t_an500",\
               "t_an1000","t_an2000","t_an3000","t_an4000",\
               "s_an0","s_an50","s_an100","s_an250","s_an500",\
-              "s_an1000","s_an2000","s_an3000","s_an4000","mdot"/) 
+              "s_an1000","s_an2000","s_an3000","s_an4000","mld","mdot"/) 
 end if
 ;-------------------------------------------------------------
 ; common resources for global contour plots 
@@ -207,8 +208,8 @@ do i = 0, nvars-1
 ; Test case: CASE 1 MODEL
 ;----------------------------
 
-  if (vars(i) .eq. "mld") then
-    A = get_mld (inptr1)
+  if (vars(i) .eq. "mlts") then
+    A = get_mlts (inptr1)
   end if
 
   if (vars(i) .eq. "templvl0") then
@@ -526,7 +527,7 @@ do i = 0, nvars-1
       B@units = "g/kg"      
     end if
 
-    if (vars(i).eq."mld") then
+    if (vars(i).eq."mld" .or. vars(i).eq."mlts") then
       delete(B)    
       B = inptr2->mld(0,:,:)
       B@long_name = "Mixed layer depth"
@@ -550,8 +551,8 @@ do i = 0, nvars-1
 
   else                               ; CASE 2 IS MODEL
 
-    if (vars(i) .eq. "mld") then
-      B = get_mld (inptr2)
+    if (vars(i) .eq. "mlts") then
+      B = get_mlts (inptr2)
     end if
 
     if (vars(i) .eq. "templvl0") then

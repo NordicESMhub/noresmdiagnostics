@@ -17,7 +17,7 @@ lyr1    = getenv("LYR1")
 infile2 = getenv("INFILE2")     ; case2 climo input filename
 case1   = getenv("CASE1")
 
-print("Computing annual-mean mld from monthly climatologies...")
+;print("Computing annual-mean mld from monthly climatologies...")
 
 ; Define RGB files
 rgb_file  = rgb_dir+"/blueyellowred2.rgb"

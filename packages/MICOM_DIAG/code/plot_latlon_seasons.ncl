@@ -55,10 +55,10 @@ if (compare .eq. "OBS") then
   ptr_woa13t = addfile(infile2+"/WOA13/1deg/woa13_decav_t"+obsnum+"_01.nc","r")
   ptr_woa13s = addfile(infile2+"/WOA13/1deg/woa13_decav_s"+obsnum+"_01.nc","r")
 else
-  inptr2   = addfile(infile2,"r")
-  case2    = getenv("CASE2")
-  fyr2     = getenv("FYR2")
-  lyr2     = getenv("LYR2")
+  inptr2     = addfile(infile2,"r")
+  case2      = getenv("CASE2")
+  fyr2       = getenv("FYR2")
+  lyr2       = getenv("LYR2")
   yrs_ave2 = fyr2+"-"+lyr2
   tmp = inptr2->lat
   if (typeof(tmp).eq."double") then
@@ -355,7 +355,7 @@ do i = 0, nvars-1
   end if
   res@gsnLeftString = A@long_name
   res@gsnRightString = A@units
-  res@gsnCenterString = "mean= "+sprintf("%6.2f",gblmean_A)
+  res@gsnCenterString = "mean = "+sprintf("%6.2f",gblmean_A)
 ;  gsn_define_colormap (wks,cmap)
 
   if (all(B.eq.-999.)) then
@@ -372,7 +372,7 @@ do i = 0, nvars-1
     else  
       res@tiMainString = case2
     end if
-    res@gsnCenterString = "mean= "+sprintf("%6.2f",gblmean_B)
+    res@gsnCenterString = "mean = "+sprintf("%6.2f",gblmean_B)
     res@lbTitleString = "Min = "+sprintf("%6.2f",min2)+ \
                         " Max = "+sprintf("%6.2f",max2)
 
@@ -407,7 +407,7 @@ do i = 0, nvars-1
 
     res@lbTitleString = "Min = "+sprintf("%6.2f",mind)+ \
                        " Max = "+sprintf("%6.2f",maxd)
-    res@cnLevels = dcntrs(i,:) 
+    res@cnLevels = dcntrs(i,:)
     plot(2) = gsn_csm_contour_map_ce(wks,C,res)   ; plot differences 
     delete (res@cnLevels)
     delete (res@tiMainString)

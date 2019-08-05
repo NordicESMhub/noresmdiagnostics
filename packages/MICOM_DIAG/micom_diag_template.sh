@@ -5,7 +5,7 @@
 # Johan Liakka, NERSC
 # Yanchun He, NERSC, yanchun.he@nersc.no
 # built upon previous work by Detelina Ivanova
-# Last update Mar. 2019
+# Last update Aug. 2019
 
 HOSTNAME=$(hostname -f)
 if [ $(echo $HOSTNAME |grep "nird") ]; then
@@ -252,9 +252,9 @@ if [ $CNTL == USER ]; then
 fi
 
 # Set required variables for climatology and time series
-required_vars_climo="depth_bnds,sealv,templvl,salnlvl,mmflxd,region,temp,saln,dz,sst,sss,mhflx,msflx"
-required_vars_climo_ann="depth_bnds,sealv,templvl,salnlvl,mmflxd,region,mhflx,msflx"
-required_vars_climo_mon="temp,saln,dz,sst,sss"
+required_vars_climo="depth_bnds,sealv,templvl,salnlvl,mmflxd,region,temp,saln,dz,sst,sss,mlts,mhflx,msflx"
+required_vars_climo_ann="depth_bnds,sealv,templvl,salnlvl,mmflxd,region,mhflx,msflx,mlts"
+required_vars_climo_mon="temp,saln,dz,sst,sss,mlts"
 required_vars_ts_ann="depth_bnds,time,section,mmflxd,voltr,temp,saln,templvl,salnlvl,region,dp,sst,sss"
 
 # Check which sets should be plotted based on CLIMO_TIME_SERIES_SWITCH
@@ -403,7 +403,7 @@ do
             echo "$CLIMO_TS_DIR/$ANN_AVG_FILE and $CLIMO_TS_DIR/$MON_AVG_FILE already exist."
             echo "-> SKIPPING COMPUTING CLIMATOLOGY"
         else
-               echo $required_vars_climo_ann > $WKDIR/attributes/required_vars
+            echo $required_vars_climo_ann > $WKDIR/attributes/required_vars
             $DIAG_CODE/check_history_vars.sh $CASENAME $FIRST_YR_CLIMO $LAST_YR_CLIMO $PATHDAT climo_ann
             echo $required_vars_climo_mon > $WKDIR/attributes/required_vars
             $DIAG_CODE/check_history_vars.sh $CASENAME $FIRST_YR_CLIMO $LAST_YR_CLIMO $PATHDAT climo_mon
@@ -870,11 +870,26 @@ if [ $set_3 -eq 1 ]; then
         $NCL -Q < $DIAG_CODE/plot_latlon_seasons.ncl
         let m++
     done
-    # Plot monthly MLD
-    # Check if temp, saln and dz are in monthly climotology files
+    # Plot monthly climatology
+    echo "2D monthly plots (plot_latlon_monthly.ncl)..."
+    for month in 01 02 03 04 05 06 07 08 09 10 11 12
+    do
+        export INFILE1=$CLIMO_TS_DIR1/${CASENAME1}_${month}_${FYR_PRNT_CLIMO1}-${LYR_PRNT_CLIMO1}_climo_remap.nc
+        export INFILE2=$DIAG_OBS
+        export CMONTH=$month
+        if [ $CNTL == USER ]; then
+            export INFILE2=$CLIMO_TS_DIR2/${CASENAME2}_${month}_${FYR_PRNT_CLIMO2}-${LYR_PRNT_CLIMO2}_climo_remap.nc
+        fi
+        $NCL -Q < $DIAG_CODE/plot_latlon_monthly.ncl
+    done
+
+    # Compute and plot monthly MLD if 'mlts' is not presented on model output
     TEST_FILE=$CLIMO_TS_DIR1/${CASENAME1}_01_${FYR_PRNT_CLIMO1}-${LYR_PRNT_CLIMO1}_climo_remap.nc
+    $NCKS --quiet -d lon,0 -d lat,0 -d time,0 -v mlts $TEST_FILE >/dev/null 2>&1
+    IFMLTS=$?
     $NCKS --quiet -d lon,0 -d lat,0 -d sigma,0 -v temp,saln,dz $TEST_FILE >/dev/null 2>&1
-    if [ $? -eq 0 ]; then
+    IFTS=$?
+    if [ "$IFMLTS3D" != 0 ] && [ "$IFTS3D" == 0 ]; then
         echo "2D monthly MLD plots (plot_mld_monthly.ncl)..."
         MLD_CLIM_DIR1=$CLIMO_TS_DIR1/MLD
         if [ -d $MLD_CLIM_DIR1 ]; then
@@ -951,6 +966,7 @@ if [ $set_3 -eq 1 ]; then
         fi
         $NCL -Q < $DIAG_CODE/plot_mld_annual.ncl
     else
+        echo "Variables mlts already exists, or..."
         echo "Variables temp, saln or dz not found in ${TEST_FILE}: SKIPPING MLD PLOTS"
     fi
     # Convert time series figure to png
@@ -968,7 +984,13 @@ if [ $set_3 -eq 1 ]; then
     echo "Generating html for set3 plots"
     echo "-----------------------"
     echo " "
-    cat $DIAG_HTML/webpage3.html | sed "s/CINFO.png/${cinfo}.png/g" >> $WEBDIR/indexnew.html
+    if ls $WEBDIR/set3/set3_*_mlts_${cinfo}.png >/dev/null 2>&1
+    then
+        cat $DIAG_HTML/webpage3.html | sed "s/_mld_CINFO/_mlts_CINFO/g" | sed "s/MLD/MLD <br> (TS derived)/g" \
+                                     | sed "s/CINFO.png/${cinfo}.png/g" >> $WEBDIR/indexnew.html
+    else
+        cat $DIAG_HTML/webpage3.html | sed "s/CINFO.png/${cinfo}.png/g" >> $WEBDIR/indexnew.html
+    fi
 
 fi
 # ---------------------------------
