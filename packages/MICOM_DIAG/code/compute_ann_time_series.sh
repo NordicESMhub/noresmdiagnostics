@@ -3,7 +3,10 @@ script_start=`date +%s`
 #
 # MICOM DIAGNOSTICS package: compute_ann_time_series.sh
 # PURPOSE: computes annual time series from annual or monthly history files
-# Johan Liakka, NERSC, johan.liakka@nersc.no
+# Yanchun He, NERSC, yanchun.he@nersc.no
+# Aug 2019
+
+# Johan Liakka, NERSC
 # Last update Dec 2017
 
 # STRATEGY: Split the data into chucks of 10 years each.
@@ -37,11 +40,20 @@ echo " pathdat  = $pathdat"
 echo " tsdir    = $tsdir"
 echo " "
 
-var_list=`cat $WKDIR/attributes/vars_ts_ann_${casename}_${filetype}`
+var_list=$(cat $WKDIR/attributes/vars_ts_ann_${casename}_${filetype})
+# remove xxx if xxxga exists
+var_list_ga="tempga salnga sstga sssga"
+for var in temp saln sst sss
+do
+    if [ ${var_list//${var}ga} != ${var_list} ]
+    then
+        var_list=${var_list/,${var},/,}
+    fi
+done
 first_yr_prnt=`printf "%04d" ${first_yr}`
 last_yr_prnt=`printf "%04d" ${last_yr}`
 ann_ts_file=${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}_ts_${filetype}.nc
-ann_ts_var_list="mmflxd voltr temp saln templvl salnlvl sst sss"
+ann_ts_var_list="mmflxd voltr temp saln templvl salnlvl sst sss tempga salnga sstga sssga"
 
 # Calculate number of chunks and the residual
 if [ `cat $WKDIR/attributes/grid_${casename}` == "tnx0.25v4" ]
@@ -99,12 +111,12 @@ do
             for var in `echo $var_list | sed 's/,/ /g'` ; do
                 tsfile=${var}_${casename}_ANN_${filetype}_${yr_prnt}.nc
                 if [ "${ann_ts_var_list/$var}" != "${ann_ts_var_list}" ] && [ ! -f  $tsdir/ann_ts/${tsfile} ]; then
-                    echo $tsdir/ann_ts/${tsfile}
+                    echo '$tsdir'"/ann_ts/${tsfile} will be computed"
                     fflag=0
                     break
                 fi
             done
-            if [ $fflag  = 0 ]; then
+            if [ $fflag  == 0 ]; then
                 eval $NCKS -O -v $var_list --no_tmp_fl $pathdat/$filename $WKDIR/${casename}_ANN_${yr_prnt}.nc &
                 pid+=($!)
             else
@@ -143,7 +155,7 @@ do
             for var in `echo $var_list | sed 's/,/ /g'` ; do
                 tsfile=${var}_${casename}_ANN_${filetype}_${yr_prnt}.nc
                 if [ "${ann_ts_var_list/$var}" != "${ann_ts_var_list}" ] && [ ! -f $tsdir/ann_ts/${tsfile} ]; then
-                    echo $tsdir/ann_ts/${tsfile}
+                    echo '$tsdir'"/ann_ts/${tsfile} will be computed"
                     fflag=0
                     break
                 fi
@@ -171,13 +183,14 @@ do
     fi
     # Append parea if necessary
     iproc=1
-    echo "Appending parea to annual files (yrs ${YR_start}-${YR_end})"
+    echo "Appending parea to annual files (yrs ${YR_start}-${YR_end}):"
     while [ $iproc -le $nyrs ]
     do
         let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
         yr_prnt=`printf "%04d" ${YR}`
         filename=${casename}_ANN_${yr_prnt}.nc
         if [ -f $WKDIR/$filename ]; then
+            echo $WKDIR/$filename
             $NCKS --quiet -d depth,0 -d x,0 -d y,0 -v parea,dmass $WKDIR/$filename >/dev/null 2>&1
             if [ $? -ne 0 ]; then
                 $NCKS --quiet -A -v parea -o $WKDIR/$filename $grid_file
@@ -291,6 +304,22 @@ do
                 outfile=${var}_${casename}_ANN_${filetype}_${yr_prnt}.nc
                 if [ ! -f $tsdir/ann_ts/$outfile ]; then
                     $NCKS --no_tmp_fl -O -v voltr,section $WKDIR/$infile $WKDIR/$outfile
+                fi
+                let iproc++
+            done
+        fi
+        # Global average: tempga,salnga,sstga,sssga
+        if [ "${var_list_ga/$var}" != "${var_list_ga}" ];then
+            echo "Global average (yrs ${YR_start}-${YR_end})"
+            iproc=1
+            while [ $iproc -le $nyrs ]
+            do
+                let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
+                yr_prnt=`printf "%04d" ${YR}`
+                infile=${casename}_ANN_${yr_prnt}.nc
+                outfile=${var}_${casename}_ANN_${filetype}_${yr_prnt}.nc
+                if [ ! -f $tsdir/ann_ts/$outfile ]; then
+                    $NCKS --no_tmp_fl -O -v $var $WKDIR/$infile $WKDIR/$outfile
                 fi
                 let iproc++
             done

@@ -255,7 +255,7 @@ fi
 required_vars_climo="depth_bnds,sealv,templvl,salnlvl,mmflxd,region,temp,saln,dz,sst,sss,mlts,mhflx,msflx"
 required_vars_climo_ann="depth_bnds,sealv,templvl,salnlvl,mmflxd,region,mhflx,msflx,mlts"
 required_vars_climo_mon="temp,saln,dz,sst,sss,mlts"
-required_vars_ts_ann="depth_bnds,time,section,mmflxd,voltr,temp,saln,templvl,salnlvl,region,dp,sst,sss"
+required_vars_ts_ann="depth_bnds,time,section,mmflxd,voltr,temp,saln,templvl,salnlvl,region,dp,sst,sss,tempga,salnga,sstga,sssga"
 
 # Check which sets should be plotted based on CLIMO_TIME_SERIES_SWITCH
 if [ $CLIMO_TIME_SERIES_SWITCH == ONLY_CLIMO ]; then
@@ -766,8 +766,29 @@ if [ $set_1 -eq 1 ]; then
     echo "Generating html for set1 plots"
     echo "-----------------------"
     echo " "
-    cat $DIAG_HTML/webpage1.html | sed "s/CINFO.png/${cinfo}.png/g" >> $WEBDIR/indexnew.html
-
+    cp $DIAG_HTML/webpage1.html /tmp/webpage1.html
+    sed -i "s/CINFO.png/${cinfo}.png/g" /tmp/webpage1.html
+    if ls $WEBDIR/set1/set1_ann_tempga_${cinfo}.png >/dev/null 2>&1
+    then
+        sed -i "s/set1_ann_temp_/set1_ann_tempga_/g" /tmp/webpage1.html
+        sed -i '46,54{s/Temperature/Temperature <br>(tempga)/}'  /tmp/webpage1.html
+    fi
+    if ls $WEBDIR/set1/set1_ann_salnga_${cinfo}.png >/dev/null 2>&1
+    then
+        sed -i "s/set1_ann_saln_/set1_ann_salnga_/g" /tmp/webpage1.html
+        sed -i '46,54{s/Salinity/Salinity <br>(salnga)/}'  /tmp/webpage1.html
+    fi
+    if ls $WEBDIR/set1/set1_ann_sstga_${cinfo}.png >/dev/null 2>&1
+    then
+        sed -i "s/set1_ann_sst_/set1_ann_sstga_/g" /tmp/webpage1.html
+        sed -i '46,54{s/SST/SST <br>(sstga)/}'  /tmp/webpage1.html
+    fi
+    if ls $WEBDIR/set1/set1_ann_sssga_${cinfo}.png >/dev/null 2>&1
+    then
+        sed -i "s/set1_ann_sss_/set1_ann_sssga_/g" /tmp/webpage1.html
+        sed -i '46,54{s/SSS/SSS <br>(sssga)/}'  /tmp/webpage1.html
+    fi
+    cat /tmp/webpage1.html >> $WEBDIR/indexnew.html
 fi
 # ---------------------------------
 # set 2: nino index
@@ -1180,7 +1201,7 @@ if [ $? -eq 0 ] && [ $publish_html -eq 1 ]; then
             chmod 775 ${publish_html_path}
         fi
     fi
-    web_server=ns2345k.web.sigma2.no
+    web_server=http://ns2345k.web.sigma2.no
     path_pref=`echo ${publish_html_path} | cut -c -21`
     path_suff=`echo ${publish_html_path} | cut -c 23-`
     tar -xf $TARFILE -C $publish_html_path
@@ -1198,7 +1219,7 @@ if [ $? -eq 0 ] && [ $publish_html -eq 1 ]; then
         else
             echo " "
             echo "The html files are located in:"
-            echo "${publish_html_path}/${tardir}"
+            echo "${publish_html_path}/"
             echo "(not on the NIRD web server)"
         fi
     fi

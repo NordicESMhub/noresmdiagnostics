@@ -139,7 +139,7 @@ end
 
 function get_sss (inptr:file) 
 begin
-   if (isfilevar(inptr,"saln")) then
+   if (isfilevar(inptr,"sss")) then
       tmp = inptr->sss
       if (typeof(tmp).eq."double") then
          xvar = dble2flt(tmp)
@@ -160,6 +160,118 @@ begin
 ;      end do
    else
       print("get_sss: no sss variable present")
+      xvar = -999.0
+   end if
+   return (xvar)
+end
+
+function get_tempga (inptr:file) 
+begin
+   if (isfilevar(inptr,"tempga")) then
+      tmp = inptr->tempga
+      if (typeof(tmp).eq."double") then
+         xvar = dble2flt(tmp)
+      else
+         xvar = tmp
+      end if
+      xvar@long_name = "Temperature"
+      xvar@units = "degC"
+      assignFillValue(xvar,xvar)
+;      nt=dimsizes(xvar)
+;      dt = new(nt-1,"float")
+;      do it = 0,nt-2
+;         dt(it) = xvar(it+1)-xvar(it)
+;         if (abs(dt(it)).gt.0.03) then
+;           print("WARNING: replaced temperature outlier "+flt2string(xvar(it+1))+" (it="+tostring(it)+") with previous value ("+flt2string(xvar(it))+").")
+;           xvar(it+1) = xvar(it)
+;         end if
+;      end do
+   else
+      print("get_tempga: no tempga variable present")
+      xvar = -999.0
+   end if
+   return (xvar)
+end
+
+function get_salnga (inptr:file) 
+begin
+   if (isfilevar(inptr,"salnga")) then
+      tmp = inptr->salnga
+      if (typeof(tmp).eq."double") then
+         xvar = dble2flt(tmp)
+      else
+         xvar = tmp
+      end if
+      xvar@long_name = "Salinity"
+      xvar@units = "g kg-1"
+      assignFillValue(xvar,xvar)
+;      nt=dimsizes(xvar)
+;      ds = new(nt-1,"float")
+;      do it = 0,nt-2
+;         ds(it) = xvar(it+1)-xvar(it)
+;         if (abs(ds(it)).gt.0.002) then
+;           print("WARNING: replaced salinity outlier "+flt2string(xvar(it+1))+" (it="+tostring(it)+") with previous value ("+flt2string(xvar(it))+").")
+;           xvar(it+1) = xvar(it)
+;         end if
+;      end do
+   else
+      print("get_salnga: no salnga variable present")
+      xvar = -999.0
+   end if
+   return (xvar)
+end
+
+function get_sstga (inptr:file) 
+begin
+   if (isfilevar(inptr,"sstga")) then
+      tmp = inptr->sstga
+      if (typeof(tmp).eq."double") then
+         xvar = dble2flt(tmp)
+      else
+         xvar = tmp
+      end if
+      xvar@long_name = "Sea Surface Temperature"
+      xvar@units = "degC"
+      assignFillValue(xvar,xvar)
+      nt=dimsizes(xvar)
+      dt = new(nt-1,"float")
+;      do it = 0,nt-2
+;         dt(it) = xvar(it+1)-xvar(it)
+;         if (abs(dt(it)).gt.0.03) then
+;           print("WARNING: replaced temperature outlier "+flt2string(xvar(it+1))+" (it="+tostring(it)+") with previous value ("+flt2string(xvar(it))+").")
+;           xvar(it+1) = xvar(it)
+;         end if
+;      end do
+   else
+      print("get_sstga: no sstga variable present")
+      xvar = -999.0
+   end if
+   return (xvar)
+end
+
+function get_sssga (inptr:file) 
+begin
+   if (isfilevar(inptr,"sssga")) then
+      tmp = inptr->sssga
+      if (typeof(tmp).eq."double") then
+         xvar = dble2flt(tmp)
+      else
+         xvar = tmp
+      end if
+      xvar@long_name = "Sea Surface Salinity"
+      xvar@units = "g kg-1"
+      assignFillValue(xvar,xvar)
+      nt=dimsizes(xvar)
+      ds = new(nt-1,"float")
+;      do it = 0,nt-2
+;         ds(it) = xvar(it+1)-xvar(it)
+;         if (abs(ds(it)).gt.0.002) then
+;           print("WARNING: replaced salinity outlier "+flt2string(xvar(it+1))+" (it="+tostring(it)+") with previous value ("+flt2string(xvar(it))+").")
+;           xvar(it+1) = xvar(it)
+;         end if
+;      end do
+   else
+      print("get_sssga: no sssga variable present")
       xvar = -999.0
    end if
    return (xvar)

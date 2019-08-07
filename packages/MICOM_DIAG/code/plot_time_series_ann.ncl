@@ -24,7 +24,7 @@ if (compare.eq."USER") then
    ncases  = 2
 end if
 
-vars   = (/"temp","saln","mmflxd_max","mmflxd265","mmflxd45","sst","sss"/)
+vars   = (/"temp","saln","mmflxd_max","mmflxd265","mmflxd45","sst","sss","tempga","salnga","sstga","sssga"/)
 nvars  = dimsizes(vars)
 
 do i = 0, nvars-1
@@ -56,10 +56,27 @@ do i = 0, nvars-1
    if (vars(i).eq."sss") then
       A = get_sss (inptr1)
    end if
+
+   if (vars(i).eq."tempga") then
+      A = get_tempga (inptr1)
+   end if
+
+   if (vars(i).eq."salnga") then
+      A = get_salnga (inptr1)
+   end if
+
+   if (vars(i).eq."sstga") then
+      A = get_sstga (inptr1)
+   end if
+
+   if (vars(i).eq."sssga") then
+      A = get_sssga (inptr1)
+   end if
    
    if (all(A.eq.-999.)) then
       print (vars(i)+" is not present in case1 input file.")
       delete(A)
+      continue
    end if
 
    ndim = dimsizes(A)
@@ -97,6 +114,7 @@ do i = 0, nvars-1
       if (all(B.eq.-999.)) then
          print (vars(i)+" is not present in case2 input file.")
          delete(B)
+         continue
       end if
       
       ndim = dimsizes(B)
@@ -164,6 +182,10 @@ do i = 0, nvars-1
    frame(wks)
    delete (wks)
    delete (data)
+   delete (A)
+   if (isvar("B")) then
+       delete (B)
+   end if
 end do
 
 exit
