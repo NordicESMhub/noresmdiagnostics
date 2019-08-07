@@ -31,7 +31,7 @@ cd $html_path
 cat >${webfold}.html << EOF
 <html>
 <head>
-<meta http-equiv="refresh" content="0"; url="${full_url}"/>
+<meta http-equiv="refresh" content="0; url=${full_url}"/>
 </head>
 </html>
 EOF
