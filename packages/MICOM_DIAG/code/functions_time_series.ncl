@@ -280,7 +280,7 @@ end
 function get_mmflxd_max (inptr:file) 
 begin
    if (isfilevar(inptr,"mmflxd_max")) then
-      tmp = inptr->mmflxd_max
+      tmp = inptr->mmflxd_max(:,0)
       if (typeof(tmp).eq."double") then
          xvar = dble2flt(tmp)
       else
@@ -300,7 +300,7 @@ end
 function get_mmflxd265 (inptr:file) 
 begin
    if (isfilevar(inptr,"mmflxd265")) then
-      tmp = inptr->mmflxd265
+      tmp = inptr->mmflxd265(:,0)
       if (typeof(tmp).eq."double") then
          xvar = dble2flt(tmp)
       else
@@ -320,7 +320,7 @@ end
 function get_mmflxd45 (inptr:file) 
 begin
    if (isfilevar(inptr,"mmflxd45")) then
-      tmp = inptr->mmflxd45
+      tmp = inptr->mmflxd45(:,0)
       if (typeof(tmp).eq."double") then
          xvar = dble2flt(tmp)
       else
@@ -332,6 +332,84 @@ begin
       assignFillValue(xvar,xvar)
    else
       print("get_mmflxd45: no mmflxd45 variable present")
+      xvar = -999.0
+   end if
+   return (xvar)
+end
+
+function get_mmflxd_maxext (inptr:file) 
+begin
+   if (isfilevar(inptr,"mmflxd_max")) then
+      dims = getfilevardimsizes(inptr,"mmflxd_max")
+      if (dims(1) .eq. 2) then
+          tmp = inptr->mmflxd_max(:,1)
+          if (typeof(tmp).eq."double") then
+             xvar = dble2flt(tmp)
+          else
+             xvar = tmp
+          end if
+          xvar = (/xvar*1.0e-9/)
+          xvar@long_name = "Max AMOC 20-60N"
+          xvar@units = "Sv"
+          assignFillValue(xvar,xvar)
+      else
+          print("get_mmflxd_maxext: mmflxd of region atlantic_arctic_extended_ocean present")
+          xvar = -999.0
+      end if
+   else
+      print("get_mmflxd_maxext: no mmflxd_max variable present")
+      xvar = -999.0
+   end if
+   return (xvar)
+end
+
+function get_mmflxd265ext (inptr:file) 
+begin
+   if (isfilevar(inptr,"mmflxd265")) then
+      dims = getfilevardimsizes(inptr,"mmflxd265")
+      if (dims(1) .eq. 2) then
+          tmp = inptr->mmflxd265(:,1)
+          if (typeof(tmp).eq."double") then
+             xvar = dble2flt(tmp)
+          else
+             xvar = tmp
+          end if
+          xvar = (/xvar*1.0e-9/)
+          xvar@long_name = "Max AMOC 26.5N"
+          xvar@units = "Sv"
+          assignFillValue(xvar,xvar)
+      else
+          print("get_mmflxd265ext: mmflxd of region atlantic_arctic_extended_ocean present")
+          xvar = -999.0
+      end if
+   else
+      print("get_mmflxd265ext: no mmflxd265 variable present")
+      xvar = -999.0
+   end if
+   return (xvar)
+end
+
+function get_mmflxd45ext (inptr:file) 
+begin
+   if (isfilevar(inptr,"mmflxd45")) then
+      dims = getfilevardimsizes(inptr,"mmflxd45")
+      if (dims(1) .eq. 2) then
+          tmp = inptr->mmflxd45(:,1)
+          if (typeof(tmp).eq."double") then
+             xvar = dble2flt(tmp)
+          else
+             xvar = tmp
+          end if
+          xvar = (/xvar*1.0e-9/)
+          xvar@long_name = "Max AMOC 45N"
+          xvar@units = "Sv"
+          assignFillValue(xvar,xvar)
+      else
+          print("get_mmflxd45ext: mmflxd of region atlantic_arctic_extended_ocean present")
+          xvar = -999.0
+      end if
+   else
+      print("get_mmflxd45ext: no mmflxd45 variable present")
       xvar = -999.0
    end if
    return (xvar)

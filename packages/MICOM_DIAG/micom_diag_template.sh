@@ -221,6 +221,12 @@ if [ $? -ne 0 ]; then
     echo "*** EXITING THE SCRIPT ***"
     exit 1
 fi
+export NCDUMP=`which ncdump`
+if [ $? -ne 0 ]; then
+    echo "Could not find ncdump (which ncdump)"
+    echo "*** EXITING THE SCRIPT ***"
+    exit 1
+fi
 
 # Set directories for climatology and time series
 CLIMO_TS_DIR1=$DIAG_ROOT/climo_ts/$CASENAME1
@@ -787,6 +793,14 @@ if [ $set_1 -eq 1 ]; then
     then
         sed -i "s/set1_ann_sss_/set1_ann_sssga_/g" /tmp/webpage1.html
         sed -i '46,54{s/SSS/SSS <br>(sssga)/}'  /tmp/webpage1.html
+    fi
+    ls $WEBDIR/set1/set1_ann_mmflx*ext_${cinfo}.png >/dev/null 2>&1
+    if [ $? != "0" ]
+    then
+        sed -i "/atlantic_arctic_extend_ocean/d" /tmp/webpage1.html
+        sed -i "/set1_ann_mmflxd265ext/d" /tmp/webpage1.html
+        sed -i "/set1_ann_mmflxd45ext/d" /tmp/webpage1.html
+        sed -i "/set1_ann_mmflxd_maxext/d" /tmp/webpage1.html
     fi
     cat /tmp/webpage1.html >> $WEBDIR/indexnew.html
 fi

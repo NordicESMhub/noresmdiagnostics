@@ -274,17 +274,24 @@ do
                 infile=${casename}_ANN_${yr_prnt}.nc
                 outfile_tmp=${var}_${casename}_ANN_${filetype}_${yr_prnt}_tmp.nc
                 outfile=${var}_${casename}_ANN_${filetype}_${yr_prnt}.nc
+                $NCDUMP -v region $WKDIR/$infile |grep 'atlantic_arctic_extended_ocean' >/dev/null 2>&1
+                if [ $? == 0 ]
+                then
+                    reglist="1,2"
+                else
+                    reglist="1"
+                fi
                 if [ ! -f $tsdir/ann_ts/$outfile ]; then
                     # Max AMOC 20-60N
-                    $NCKS -F --no_tmp_fl -O -v $var -d lat,20.0,60.0 -d region,1 $WKDIR/$infile $WKDIR/$outfile_tmp
+                    $NCKS -F --no_tmp_fl -O -v $var -d lat,20.0,60.0 -d region,$reglist $WKDIR/$infile $WKDIR/$outfile_tmp
                     $NCAP2 -O -s 'mmflxd_max=mmflxd.max($lat,$depth)' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
                     $NCKS --no_tmp_fl -O -v mmflxd_max,region $WKDIR/$outfile_tmp $WKDIR/$outfile
                     # Max AMOC at 26.5N
-                    $NCKS -F --no_tmp_fl -O -v $var -d lat,26.5 -d region,1 $WKDIR/$infile $WKDIR/$outfile_tmp
+                    $NCKS -F --no_tmp_fl -O -v $var -d lat,26.5 -d region,$reglist $WKDIR/$infile $WKDIR/$outfile_tmp
                     $NCAP2 -O -s 'mmflxd265=mmflxd.max($lat,$depth)' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
                     $NCKS --no_tmp_fl -A -v mmflxd265 -o $WKDIR/$outfile $WKDIR/$outfile_tmp
                     # Max AMOC at 45N
-                    $NCKS -F --no_tmp_fl -O -v $var -d lat,45.0 -d region,1 $WKDIR/$infile $WKDIR/$outfile_tmp
+                    $NCKS -F --no_tmp_fl -O -v $var -d lat,45.0 -d region,$reglist $WKDIR/$infile $WKDIR/$outfile_tmp
                     $NCAP2 -O -s 'mmflxd45=mmflxd.max($lat,$depth)' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
                     $NCKS --no_tmp_fl -A -v mmflxd45 -o $WKDIR/$outfile $WKDIR/$outfile_tmp
                     rm -f $WKDIR/$outfile_tmp

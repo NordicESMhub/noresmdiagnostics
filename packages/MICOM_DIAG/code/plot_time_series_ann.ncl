@@ -24,7 +24,7 @@ if (compare.eq."USER") then
    ncases  = 2
 end if
 
-vars   = (/"temp","saln","mmflxd_max","mmflxd265","mmflxd45","sst","sss","tempga","salnga","sstga","sssga"/)
+vars   = (/"temp","saln","mmflxd_max","mmflxd265","mmflxd45","mmflxd_maxext","mmflxd265ext","mmflxd45ext","sst","sss","tempga","salnga","sstga","sssga"/)
 nvars  = dimsizes(vars)
 
 do i = 0, nvars-1
@@ -47,6 +47,18 @@ do i = 0, nvars-1
 
    if (vars(i).eq."mmflxd45") then
       A = get_mmflxd45 (inptr1)
+   end if
+
+   if (vars(i).eq."mmflxd_maxext") then
+      A = get_mmflxd_maxext (inptr1)
+   end if
+
+   if (vars(i).eq."mmflxd265ext") then
+      A = get_mmflxd265ext (inptr1)
+   end if
+
+   if (vars(i).eq."mmflxd45ext") then
+      A = get_mmflxd45ext (inptr1)
    end if
 
    if (vars(i).eq."sst") then
