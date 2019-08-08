@@ -698,9 +698,9 @@ mkdir -m 775 -p $WEBDIR/set5
 mkdir -m 775 -p $WEBDIR/set6
 mkdir -m 775 -p $WEBDIR/set7
 
-cinfo=1model
+export cinfo=1model
 if [ $CNTL == USER ]; then
-    cinfo=2models
+    export cinfo=2models
 fi
 
 cp $DIAG_HTML/index.html $WEBDIR/index.html
@@ -772,37 +772,8 @@ if [ $set_1 -eq 1 ]; then
     echo "Generating html for set1 plots"
     echo "-----------------------"
     echo " "
-    cp $DIAG_HTML/webpage1.html /tmp/webpage1.html
-    sed -i "s/CINFO.png/${cinfo}.png/g" /tmp/webpage1.html
-    if ls $WEBDIR/set1/set1_ann_tempga_${cinfo}.png >/dev/null 2>&1
-    then
-        sed -i "s/set1_ann_temp_/set1_ann_tempga_/g" /tmp/webpage1.html
-        sed -i '46,54{s/Temperature/Temperature <br>(tempga)/}'  /tmp/webpage1.html
-    fi
-    if ls $WEBDIR/set1/set1_ann_salnga_${cinfo}.png >/dev/null 2>&1
-    then
-        sed -i "s/set1_ann_saln_/set1_ann_salnga_/g" /tmp/webpage1.html
-        sed -i '46,54{s/Salinity/Salinity <br>(salnga)/}'  /tmp/webpage1.html
-    fi
-    if ls $WEBDIR/set1/set1_ann_sstga_${cinfo}.png >/dev/null 2>&1
-    then
-        sed -i "s/set1_ann_sst_/set1_ann_sstga_/g" /tmp/webpage1.html
-        sed -i '46,54{s/SST/SST <br>(sstga)/}'  /tmp/webpage1.html
-    fi
-    if ls $WEBDIR/set1/set1_ann_sssga_${cinfo}.png >/dev/null 2>&1
-    then
-        sed -i "s/set1_ann_sss_/set1_ann_sssga_/g" /tmp/webpage1.html
-        sed -i '46,54{s/SSS/SSS <br>(sssga)/}'  /tmp/webpage1.html
-    fi
-    ls $WEBDIR/set1/set1_ann_mmflx*ext_${cinfo}.png >/dev/null 2>&1
-    if [ $? != "0" ]
-    then
-        sed -i "/atlantic_arctic_extend_ocean/d" /tmp/webpage1.html
-        sed -i "/set1_ann_mmflxd265ext/d" /tmp/webpage1.html
-        sed -i "/set1_ann_mmflxd45ext/d" /tmp/webpage1.html
-        sed -i "/set1_ann_mmflxd_maxext/d" /tmp/webpage1.html
-    fi
-    cat /tmp/webpage1.html >> $WEBDIR/indexnew.html
+    $DIAG_CODE/webpage1new.sh
+    sed -i "s/CINFO.png/${cinfo}.png/g" $WEBDIR/indexnew.html
 fi
 # ---------------------------------
 # set 2: nino index
