@@ -992,7 +992,7 @@ if [ $set_3 -eq 1 ]; then
     echo " "
     if ls $WEBDIR/set3/set3_*_mlts_${cinfo}.png >/dev/null 2>&1
     then
-        cat $DIAG_HTML/webpage3.html | sed "s/_mld_CINFO/_mlts_CINFO/g" | sed "s/MLD/MLD <br> (TS derived)/g" \
+        cat $DIAG_HTML/webpage3.html | sed "s/_mld_CINFO/_mlts_CINFO/g" | sed "s/MLD <br> (TS-derived)/MLTS <br> (online-diagnosed)/g" \
                                      | sed "s/CINFO.png/${cinfo}.png/g" >> $WEBDIR/indexnew.html
     else
         cat $DIAG_HTML/webpage3.html | sed "s/CINFO.png/${cinfo}.png/g" >> $WEBDIR/indexnew.html

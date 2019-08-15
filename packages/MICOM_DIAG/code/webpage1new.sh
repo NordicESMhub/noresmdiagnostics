@@ -185,8 +185,7 @@ cat << 'EOF' >> $WEBDIR/indexnew.html
     <TD><a target="_self" href='set1/set1_ann_mmflxd_max_CINFO.png'><img src="set1/set1_ann_mmflxd_max_CINFO.png" alt="20N-60N"></a>
 </TR>
 EOF
-ls $WEBDIR/set1/set1_ann_mmflx*ext_${cinfo}.png >/dev/null 2>&1
-if [ $? != "0" ]
+if ls $WEBDIR/set1/set1_ann_mmflx*ext_${cinfo}.png >/dev/null 2>&1
 then
 cat << 'EOF' >> $WEBDIR/indexnew.html
 <TR>
