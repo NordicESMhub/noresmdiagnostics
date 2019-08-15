@@ -48,6 +48,13 @@ if ($status == 0) then
    foreach mth (01 02 03 04 05 06 07 08 09 10 11 12)
       rm ${PATHJLS}/${CASE_READ}_${mth}_*_climo.nc
    end
+   foreach ses (amj ann fm jas jfm on ond)
+      set file = ${PATHJLS}/${ses}_avg_${first_yr_prnt}-${last_yr_prnt}.nc
+      if ( ` ncdump -h $file | grep ' uvel(' | wc -l ` == 0 ) then
+|    echo "Renames siu,siv to uvel,vvel in $file"
+|    $ncclimo_dir/ncrename -v .siu,uvel -v .siv,vvel -O $file
+      endif
+   end
 endif
 
   
