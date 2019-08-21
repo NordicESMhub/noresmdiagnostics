@@ -14,6 +14,7 @@ if  ( `echo $HOSTNAME |grep 'nird'` !="" ) then
     setenv PATH /opt/ncl65/bin/:/opt/nco475/bin/:/opt/cdo195/bin:/usr/local/bin:/usr/bin
     source /opt/intel/compilers_and_libraries/linux/bin/compilervars.csh -arch intel64 -platform linux
     setenv nco_dir  /opt/nco475/bin
+    setenv cdo_dir  /opt/cdo195/bin
 else if ( `echo $HOSTNAME |grep 'fram'` !="" ) then
     module -q purge
     module -q load NCO/4.7.2-intel-2018a

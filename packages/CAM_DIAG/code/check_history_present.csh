@@ -74,12 +74,14 @@ while ( $yri <= $yr_end )    # loop over yrs
             if (! -d ${path_climo}/derived) then
                 mkdir -p ${path_climo}/derived
             endif
-            $nco_dir/ncks --quiet -d lat,0 -d lon,0 -d time,0 -v AOD_VIS,AODVVOLC,DAYFOC ${path_local}/${filename}.nc >/dev/null
+            #$nco_dir/ncks --quiet -d lat,0 -d lon,0 -d time,0 -v AOD_VIS,AODVVOLC,DAYFOC ${path_local}/${filename}.nc >/dev/null
+            $cdo_dir/cdo -s showattsvar,AOD_VIS,AODVVOLC,DAYFOC ${path_local}/${filename}.nc >/dev/null         # more efficient
             if ($? == 0) then
                cdo --history -O -s expr,'DAYFOC2=DAYFOC+1.e-15;AODVIS=(AOD_VIS+AODVVOLC)/DAYFOC2' ${path_local}/${filename}.nc ${path_climo}/derived/AODVIS_tmp.nc
                cdo --history -O -s delvar,DAYFOC2 ${path_climo}/derived/AODVIS_tmp.nc ${path_climo}/derived/${filename}.nc 
             else
-               $nco_dir/ncks --quiet -d lat,0 -d lon,0 -d time,0 -v AOD_VIS,DAYFOC ${path_local}/${filename}.nc >/dev/null
+               #$nco_dir/ncks --quiet -d lat,0 -d lon,0 -d time,0 -v AOD_VIS,DAYFOC ${path_local}/${filename}.nc >/dev/null
+               $cdo_dir/cdo -s showattsvar,AOD_VIS,DAYFOC ${path_local}/${filename}.nc >/dev/null
                if ($? == 0) then
                    cdo --history -O -s expr,'DAYFOC2=DAYFOC+1.e-15;AODVIS=AOD_VIS/DAYFOC2' ${path_local}/${filename}.nc ${path_climo}/derived/AODVIS_tmp.nc
                    cdo --history -O -s delvar,DAYFOC2 ${path_climo}/derived/AODVIS_tmp.nc ${path_climo}/derived/${filename}.nc

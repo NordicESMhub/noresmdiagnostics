@@ -34,12 +34,17 @@ set fullpath_filename = $history_path/$casename.$modelname.h0.`printf "%04d" ${s
 
 set first_find = 1
 set var_list = " "
+set var_in_file="`${cdo_dir}/cdo -s showname $fullpath_filename`"
 foreach var ($req_vars)
    if ($cam_grid != SE) then
-      $nco_dir/ncks --quiet  -d lat,0 -d lon,0 -d lev,0 -d ilev,0 -v $var $fullpath_filename  >&! /dev/null
+      #$nco_dir/ncks --quiet  -d lat,0 -d lon,0 -d lev,0 -d ilev,0 -v $var $fullpath_filename  >&! /dev/null
+      #$cdo_dir/cdo -s showattsvar,$var ${path_local}/${filename}.nc >/dev/null  # more efficent than ncks
+      echo $var_in_file |grep -w $var >/dev/null
       set var_present = $status
    else
-      $nco_dir/ncks --quiet  -d ncol,0 -d lev,0 -d ilev,0 -v $var $fullpath_filename >&! /dev/null
+      #$nco_dir/ncks --quiet  -d ncol,0 -d lev,0 -d ilev,0 -v $var $fullpath_filename >&! /dev/null
+      #$cdo_dir/cdo -s showattsvar,$var ${path_local}/${filename}.nc >/dev/null
+      echo $var_in_file |grep -w $var >/dev/null
       set var_present = $status
    endif
    if ($var_present == 0) then
