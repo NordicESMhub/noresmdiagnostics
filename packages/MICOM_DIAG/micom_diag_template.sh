@@ -895,7 +895,7 @@ if [ $set_3 -eq 1 ]; then
     IFMLTS=$?
     $NCKS --quiet -d lon,0 -d lat,0 -d sigma,0 -v temp,saln,dz $TEST_FILE >/dev/null 2>&1
     IFTS=$?
-    if [ "$IFMLTS3D" != 0 ] && [ "$IFTS3D" == 0 ]; then
+    if [ "$IFMLTS" != 0 ] && [ "$IFTS" == 0 ]; then
         echo "2D monthly MLD plots (plot_mld_monthly.ncl)..."
         MLD_CLIM_DIR1=$CLIMO_TS_DIR1/MLD
         if [ -d $MLD_CLIM_DIR1 ]; then
