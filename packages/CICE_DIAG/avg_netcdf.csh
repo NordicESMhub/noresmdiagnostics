@@ -52,7 +52,7 @@ if ($status == 0) then
       set file = ${PATHJLS}/${ses}_avg_${first_yr_prnt}-${last_yr_prnt}.nc
       if ( ` ncdump -h $file | grep ' uvel(' | wc -l ` == 0 ) then
         echo "Renames siu,siv to uvel,vvel in $file"
-        $ncclimo_dir/ncrename -v siu,uvel -v siv,vvel -O $file
+        $ncclimo_dir/ncrename -v .siu,uvel -v .siv,vvel -O $file
       endif
    end
 endif
