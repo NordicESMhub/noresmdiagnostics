@@ -51,7 +51,8 @@ echo "Searching for $filetype history files between yrs ${first_yr} and ${last_y
 let "iyr = $first_yr"
 while [ $iyr -le $last_yr ]
 do
-    fullpath_filename=$pathdat/$casename.${model}.h0.`printf "%04d" ${iyr}`-01.nc
+    #fullpath_filename=$pathdat/$casename.${model}.h0.`printf "%04d" ${iyr}`-01.nc
+    fullpath_filename=$(ls $pathdat/$casename.${model}.h0.`printf "%04d" ${iyr}`-*.nc |head -1)
     if [ ! -f $fullpath_filename ]; then
 	echo "$fullpath_filename does not exist."
 	check_vars=0
@@ -84,13 +85,16 @@ if [ $check_vars -eq 1 ]; then
     var_list=" "
     var_list_remaining=" "
     fullpath_filename=$pathdat/$casename.${model}.h0.`printf "%04d" ${first_yr}`-01.nc
+    var_in_file=$(cdo -s showname $fullpath_filename)
     for var in $req_vars
     do
-	if [ $model == clm2 ]; then
-	    $NCKS --quiet -d lat,0 -d lon,0 -d levsoi,0 -v $var $fullpath_filename >/dev/null 2>&1
-	else
-	    $NCKS --quiet -d lat,0 -d lon,0 -d lev,0 -v $var $fullpath_filename >/dev/null 2>&1
-	fi
+        #speed up by check only ocean available variables
+        echo $var_in_file |grep -w $var >/dev/null
+        #if [ $model == clm2 ]; then
+            #$NCKS --quiet -d lat,0 -d lon,0 -d levsoi,0 -v $var $fullpath_filename >/dev/null 2>&1
+        #else
+            #$NCKS --quiet -d lat,0 -d lon,0 -d lev,0 -v $var $fullpath_filename >/dev/null 2>&1
+        #fi
 	if [ $? -eq 0 ]; then
 	    find_any=1
 	    if [ $first_find -eq 1 ]; then
@@ -128,3 +132,4 @@ if [ $var_flag -eq 0 ]; then
     echo "*** EXITING THE SCRIPT ***"
     exit 1
 fi
+
