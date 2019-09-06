@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 
 # CLM DIAGNOSTICS package: climo_time_series.sh
 # PURPOSE: compute climatology and time-series of a case
@@ -194,25 +195,25 @@ if [ $c_ts -eq 1 ]; then
 	echo "Searching for monthly history files..."
 	file_head=$casename.clm2.h0.
 	file_prefix=$pathdat/$file_head
-	first_file=`ls ${file_prefix}* | head -n 1`
-	last_file=`ls ${file_prefix}* | tail -n 1`
+	first_file=`ls ${file_prefix}????-??.nc | head -n 1`
+	last_file=`ls ${file_prefix}????-??.nc | tail -n 1`
 	if [ -z $first_file ]; then
             echo "ERROR: found no monthly history files in $pathdat"
             echo "*** EXITING THE SCRIPT ***"
             exit 1
 	else
-            fyr_prnt_ts=`echo $first_file | rev | cut -c 7-10 | rev`
+            fyr_prnt_ts=$(basename $first_file |awk -F"." '{print $(NF-1)}' |cut -d'-' -f1)
             fyr_ts=`echo $fyr_prnt_ts | sed 's/^0*//'`
-            lyr_prnt_ts=`echo $last_file | rev | cut -c 7-10 | rev`
+            lyr_prnt_ts=$(basename $last_file |awk -F"." '{print $(NF-1)}' |cut -d'-' -f1)
             lyr_ts=`echo $lyr_prnt_ts | sed 's/^0*//'`
             # Check that last file is a december file (for a full year)
             if [ "$last_file" != "$pathdat/${file_head}${lyr_prnt_ts}-12.nc" ]; then
 		let "lyr_ts = $lyr_ts - 1"
             fi
             if [ $fyr_ts -eq $lyr_ts ]; then
-		echo "ERROR: first and last year in $casename are identical: cannot compute trends"
-		echo "*** EXITING THE SCRIPT ***"
-		exit 1
+                echo "ERROR: first and last year in $casename are identical: cannot compute trends"
+                echo "*** EXITING THE SCRIPT ***"
+                exit 1
             fi
 	fi
 	echo "fyr_ts = $fyr_ts"
