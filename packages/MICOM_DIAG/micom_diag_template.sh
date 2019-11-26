@@ -1035,7 +1035,7 @@ if [ $set_4 -eq 1 ]; then
     echo "Generating html for set4 plots"
     echo "-----------------------"
     echo " "
-    cat $DIAG_HTML/webpage4.html | sed "s/CINFO.png/${cinfo}.png/g" >> $WEBDIR/indexnew.html
+    $DIAG_CODE/webpage4new.sh
 fi
 # ---------------------------------
 # set 5: Zonal means

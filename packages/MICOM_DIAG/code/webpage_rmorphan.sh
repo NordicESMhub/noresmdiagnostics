@@ -2,7 +2,7 @@
 # clean up links for missing figures
 #Yanchun He, 2018.10.04
 
-for fname in $(grep -o 'set[^"]*.png' $1 |uniq); do
+for fname in $(grep -o 'set[^"><]*.png' $1 |uniq); do
     if [[ ! -f $WEBDIR/$fname ]]; then
         text=$(grep -n "$fname" $1)
         ln=$(echo $text |cut -d: -f1)

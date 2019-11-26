@@ -194,7 +194,18 @@ do
             $NCKS --quiet -d depth,0 -d x,0 -d y,0 -v parea,dmass $WKDIR/$filename >/dev/null 2>&1
             if [ $? -ne 0 ]; then
                 $NCKS --quiet -A -v parea -o $WKDIR/$filename $grid_file
-                $NCAP2 -O -s 'dmass=dp*parea' $WKDIR/$filename  -o $WKDIR/$filename >/dev/null 2>&1
+                if [ $? -ne 0 ]; then
+                    echo "ERROR: $NCKS --quiet -A -v parea -o $WKDIR/$filename $grid_file"
+                    exit
+                fi
+                $NCKS --quiet -d depth,0 -d x,0 -d y,0 -v dp,parea $WKDIR/$filename >/dev/null 2>&1
+                if [ $? -eq 0 ]; then
+                    $NCAP2 -O -s 'dmass=dp*parea' $WKDIR/$filename  -o $WKDIR/$filename >/dev/null 2>&1
+                    if [ $? -ne 0 ]; then
+                        echo "ERROR: $NCAP2 -O -s 'dmass=dp*parea' $WKDIR/$filename  -o $WKDIR/$filename >/dev/null 2>&1"
+                        exit
+                    fi
+                fi
             fi
         fi
         let iproc++
