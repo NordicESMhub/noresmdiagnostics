@@ -1,22 +1,8 @@
 #!/bin/bash
 #
 # DESCRIPTION: Wrapper script for NorESM diagnostics
-# AUTHOR: Johan Liakka (johan.liakka@nersc.no)
-#
-# This application is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This application is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with the diagnostic package.  If not, see <http://www.gnu.org/licenses/>.
 
-VERSION=6.0
+VERSION=2.0
 BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 ETC_DIR=$ROOT_DIR/etc
@@ -73,7 +59,7 @@ if [ $# -eq 0 ]; then
     echo "                                                cam    : atmospheric package (AMWG)"
     echo "                                                clm    : land package (LMWG)"
     echo "                                                cice   : sea-ice package"
-    echo "                                                micom  : ocean package"
+    echo "                                                blom   : ocean package"
     echo "                                                hamocc : biogeochemistry package"
     echo "                                                all    : configure all available packages."
     echo "-c, -c1, --case=CASE1, --case1=CASE1          Test case simulation (OPTIONAL)."
@@ -98,14 +84,16 @@ if [ $# -eq 0 ]; then
     echo "Examples:"
     echo "${THIS_SCRIPT_NAME} -m all -c N1850_f19_tn11_exp1 -s 21 -e 50 # model-obs diagnostics of case=N1850_f19_tn11_exp1 (climatology between yrs 21 and 50) for all model components."
     echo "${THIS_SCRIPT_NAME} -m cam -c N1850_f19_tn11_exp1 -s 21 -e 50 -w /path/to/my/html # model-obs diagnostics in CAM, publish the html in /path/to/my/html."
-    echo "${THIS_SCRIPT_NAME} -m micom -c N1850_f19_tn11_exp1 -t time_series # model-obs time-series diagnostics in MICOM for all years represented in the model output directory (${HISTORY_PATH1}/N1850_f19_tn11_exp1/ocn/hist/)."
+    echo "${THIS_SCRIPT_NAME} -m blom -c N1850_f19_tn11_exp1 -t time_series # model-obs time-series diagnostics in BLOM for all years represented in the model output directory (${HISTORY_PATH1}/N1850_f19_tn11_exp1/ocn/hist/)."
     echo "${THIS_SCRIPT_NAME} -m cice -c N1850_f19_tn11_exp1 -s 21 -e 50 -p # configure (but do not run) model-obs diagnostics for CICE."
     echo "${THIS_SCRIPT_NAME} -m clm -c N1850_f19_tn11_exp1 -s 21 -e 50 -i /input/directory1 -c2 N1850_f19_tn11_exp2 -s2 21 -e2 50 -i2 /input/directory2 # model1-model2 diagnostics for CLM with user-specified history file directories"
-    echo "${THIS_SCRIPT_NAME} -m micom -c N1850_f19_tn11_exp1 -s 21 -e 50 -t climo # model-obs climatology diagnostics (no time series) for MICOM:"
+    echo "${THIS_SCRIPT_NAME} -m blom -c N1850_f19_tn11_exp1 -s 21 -e 50 -t climo # model-obs climatology diagnostics (no time series) for BLOM:"
     echo "${THIS_SCRIPT_NAME} -m cam -o /my/dir # install CAM diagnostics in /my/dir with minimal configuration."
-    echo "${THIS_SCRIPT_NAME} -m micom,hamocc -c N1850OC_f19_tn11_exp1 -s 21 -e 50 # model-obs diagnostics for MICOM and HAMOCC."
+    echo "${THIS_SCRIPT_NAME} -m blom,hamocc -c N1850OC_f19_tn11_exp1 -s 21 -e 50 # model-obs diagnostics for BLOM and HAMOCC."
     echo "${THIS_SCRIPT_NAME} -m clm -c N1850_f19_tn11_clmexp1 -s 71 -e 100 --no-atm # model-obs time-series diagnostics for an offline (uncoupled) CLM simulation."
     echo "${THIS_SCRIPT_NAME} -m hamocc -c N1850OC_f19_tn11_exp1 -s 31 -e 100 -t time_series # model-obs time-series diagnostics in HAMOCC between yrs 31 and 100."
+    echo " "
+    echo "*** NOTE: '-m micom' should be used for the ocean component of NorESM version 1 ***"
     echo " "
     exit 0
 else
@@ -345,24 +333,24 @@ dateHHMMSS=`date +%H%M%S`
 CAM_DIAG_DIR=${ROOT_DIR}/packages/CAM_DIAG
 CLM_DIAG_DIR=${ROOT_DIR}/packages/CLM_DIAG
 CICE_DIAG_DIR=${ROOT_DIR}/packages/CICE_DIAG
-MICOM_DIAG_DIR=${ROOT_DIR}/packages/MICOM_DIAG
+BLOM_DIAG_DIR=${ROOT_DIR}/packages/BLOM_DIAG
 HAMOCC_DIAG_DIR=${ROOT_DIR}/packages/HAMOCC_DIAG
 CAM_DIAG_FILE=amwg_template.csh
 CLM_DIAG_FILE=lnd_template.csh
 CICE_DIAG_FILE=ice_diag_template.csh
-MICOM_DIAG_FILE=micom_diag_template.sh
+BLOM_DIAG_FILE=blom_diag_template.sh
 HAMOCC_DIAG_FILE=hamocc_diag_template.sh
 CAM_FILE_OUT=amwg_${dateYYYYMMDD}_${dateHHMMSS}.csh
 CLM_FILE_OUT=lnd_${dateYYYYMMDD}_${dateHHMMSS}.csh
 CICE_FILE_OUT=ice_diag_${dateYYYYMMDD}_${dateHHMMSS}.csh
-MICOM_FILE_OUT=micom_diag_${dateYYYYMMDD}_${dateHHMMSS}.sh
+BLOM_FILE_OUT=blom_diag_${dateYYYYMMDD}_${dateHHMMSS}.sh
 HAMOCC_FILE_OUT=hamocc_diag_${dateYYYYMMDD}_${dateHHMMSS}.sh
 
-MODELS=(cam clm cice micom hamocc)
-MODELS_CAPS=(CAM CLM CICE MICOM HAMOCC)
-DIAG_DIRS=($CAM_DIAG_DIR $CLM_DIAG_DIR $CICE_DIAG_DIR $MICOM_DIAG_DIR $HAMOCC_DIAG_DIR)
-DIAG_FILES=($CAM_DIAG_FILE $CLM_DIAG_FILE $CICE_DIAG_FILE $MICOM_DIAG_FILE $HAMOCC_DIAG_FILE)
-DIAG_FILES_OUT=($CAM_FILE_OUT $CLM_FILE_OUT $CICE_FILE_OUT $MICOM_FILE_OUT $HAMOCC_FILE_OUT)
+MODELS=(cam clm cice blom hamocc)
+MODELS_CAPS=(CAM CLM CICE BLOM HAMOCC)
+DIAG_DIRS=($CAM_DIAG_DIR $CLM_DIAG_DIR $CICE_DIAG_DIR $BLOM_DIAG_DIR $HAMOCC_DIAG_DIR)
+DIAG_FILES=($CAM_DIAG_FILE $CLM_DIAG_FILE $CICE_DIAG_FILE $BLOM_DIAG_FILE $HAMOCC_DIAG_FILE)
+DIAG_FILES_OUT=($CAM_FILE_OUT $CLM_FILE_OUT $CICE_FILE_OUT $BLOM_FILE_OUT $HAMOCC_FILE_OUT)
 TEST_CASE_NAMES=(test_casename caseid_1 CASE_TO_CONT CASENAME1 CASENAME1)
 TEST_FIRST_YR_NAMES=(test_first_yr clim_first_yr_1 FIRST_YR_CLIMO1 FIRST_YR_CLIMO1 FIRST_YR_CLIMO1)
 TEST_NYRS_NAMES=(test_nyrs clim_num_yrs_1 NYRS_CLIMO1 NYRS_CLIMO1 NYRS_CLIMO1)
@@ -396,7 +384,7 @@ else
             let RUN_MODELS[1]=${RUN_MODELS[1]}+1
         elif [ "$model" == "cice" ]; then
             let RUN_MODELS[2]=${RUN_MODELS[2]}+1
-        elif [ "$model" == "micom" ]; then
+        elif [ "$model" == "blom" ]; then
             let RUN_MODELS[3]=${RUN_MODELS[3]}+1
         elif [ "$model" == "hamocc" ]; then
             let RUN_MODELS[4]=${RUN_MODELS[4]}+1
@@ -423,7 +411,7 @@ do
 done
 
 if [ $all_zeros -eq 1 ]; then
-    echo "ERROR: please specify a model (-m cam,clm,cice,micom,hamocc or -m all):"
+    echo "ERROR: please specify a model (-m cam,clm,cice,blom,hamocc or -m all):"
     echo "*** EXITING THE SCRIPT"
     exit 1
 fi

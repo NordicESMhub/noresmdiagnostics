@@ -1,0 +1,7 @@
+Copyright (C) 2020 
+
+The NorESM diagnostic tool package
+
+Copyright: source code authors
+
+License: GNU Lesser General Public License version 3.
