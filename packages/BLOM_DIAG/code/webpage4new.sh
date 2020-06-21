@@ -1,5 +1,4 @@
 #!/bin/bash
-set -x
 
 # BLOM DIAGNOSTICS package: webpage4.sh
 # PURPOSE: modifies the html for set 4 depending on existing plots

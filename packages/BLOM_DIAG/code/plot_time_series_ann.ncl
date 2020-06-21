@@ -115,6 +115,17 @@ do i = 0, nvars-1
       if (vars(i).eq."mmflxd45") then
          B = get_mmflxd45 (inptr2)
       end if
+      if (vars(i).eq."mmflxd_maxext") then
+         B = get_mmflxd_maxext (inptr2)
+      end if
+
+      if (vars(i).eq."mmflxd265ext") then
+         B = get_mmflxd265ext (inptr2)
+      end if
+
+      if (vars(i).eq."mmflxd45ext") then
+         B = get_mmflxd45ext (inptr2)
+      end if
       if (vars(i).eq."sst") then
          B = get_sst (inptr2)
       end if
@@ -122,7 +133,22 @@ do i = 0, nvars-1
       if (vars(i).eq."sss") then
          B = get_sss (inptr2)
       end if
-   
+
+      if (vars(i).eq."tempga") then
+         B = get_tempga (inptr2)
+      end if
+
+      if (vars(i).eq."salnga") then
+         B = get_salnga (inptr2)
+      end if
+
+      if (vars(i).eq."sstga") then
+         B = get_sstga (inptr2)
+      end if
+
+      if (vars(i).eq."sssga") then
+         B = get_sssga (inptr2)
+      end if
       if (all(B.eq.-999.)) then
          print (vars(i)+" is not present in case2 input file.")
          delete(B)
