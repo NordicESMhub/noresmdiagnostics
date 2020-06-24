@@ -384,7 +384,7 @@ else
             let RUN_MODELS[1]=${RUN_MODELS[1]}+1
         elif [ "$model" == "cice" ]; then
             let RUN_MODELS[2]=${RUN_MODELS[2]}+1
-        elif [ "$model" == "blom" ]; then
+        elif [ "$model" == "blom" ] || [ "$model" == "micom" ]; then
             let RUN_MODELS[3]=${RUN_MODELS[3]}+1
         elif [ "$model" == "hamocc" ]; then
             let RUN_MODELS[4]=${RUN_MODELS[4]}+1
