@@ -719,6 +719,7 @@ fi
 
 # new index page
 cp -r $DIAG_HTML/images/ $WEBDIR/
+chmod g+w $WEBDIR/images
 cp $DIAG_HTML/index1.html $WEBDIR/indexnew.html
 cdate=`date`
 sed -i "s/test_run/$CASENAME1/g" $WEBDIR/indexnew.html

@@ -1,10 +1,4 @@
 # The NorESM diagnostics tool package
-
-**Author:**
-- Johan Liakka, NERSC (05/2018)
-- Yanchun He, NERSC
-_Last updated: Jun 2020_
-
 Table of contents
 -----------------
 1.  Basic usage
@@ -77,6 +71,11 @@ Includes diagnostics of:
     * Horizontal fields
     * Zonal mean fields
     * Regionally-averaged monthly climatologies
+
+**Author:**
+- Johan Liakka, NERSC (05/2018)
+- Yanchun He, NERSC
+_Last updated: Jun 2020_
 
 **Contact information**
 Please report issues in the Github issue page, or contact by email to Yanchun He (yanchun.he@nersc.no)
