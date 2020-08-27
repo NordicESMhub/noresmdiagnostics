@@ -1,0 +1,22 @@
+<tr>
+    <td class="col-md-1">
+        {{ episode.teaching | plus: episode.exercises | plus: episode.break }} min
+    </td>
+    <td class="col-md-3">
+        <a href="{{ site.baseurl }}{{ episode.url }}">{{ episode.title }}</a>
+    </td>
+    <td class="col-md-7">
+        {% if episode.break %}
+            Break
+        {% else %}
+            {% if episode.questions %}
+                {% for question in episode.questions %}
+                    {{ question }}
+                    {% unless forloop.last %}
+                    <br/>
+                    {% endunless %}
+                {% endfor %}
+            {% endif %}
+        {% endif %}
+    </td>
+</tr>

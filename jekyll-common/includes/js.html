@@ -1,0 +1,45 @@
+<script src="{{ site.baseurl }}/jekyll-common/assets/js/jquery.min.js"></script>
+<script src="{{ site.baseurl }}/jekyll-common/assets/js/bootstrap.min.js"></script>
+<script src="{{ site.baseurl }}/jekyll-common/assets/js/lesson.js"></script>
+
+<script src="{{ site.baseurl }}/jekyll-common/assets/js/anchor.min.js"></script>
+<script>
+    anchors.add();
+
+    // https://github.com/twbs/bootstrap/issues/1768#issuecomment-6531466
+    var shiftWindow = function() { scrollBy(0, -50) };
+    if (location.hash) shiftWindow();
+    window.addEventListener("hashchange", shiftWindow);
+</script>
+
+<script src="http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML&delayStartupUntil=configured" type="text/javascript">
+</script>
+
+<script type="text/javascript">
+    MathJax.Hub.Config({
+        tex2jax: {
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+          inlineMath: [['$','$'], ['\\(','\\)']],
+          processEscapes: true
+        },
+        "TeX": {
+          Macros: {AA : "{\\unicode{x212B}}"},
+          extensions: ["autoload-all.js"]
+        },
+        "HTML-CSS": {
+          scale: 90
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        $(MathJax.Hub.getAllJax()).map(function(index, elem) {
+            return(elem.SourceElement());
+        }).parent().addClass('has-jax');
+    });
+    MathJax.Hub.Register.StartupHook("TeX autoload-all Ready", function () {
+      var MACROS = MathJax.InputJax.TeX.Definitions.macros;
+      MACROS.color = "Color";
+      delete MACROS.colorbox;
+      delete MACROS.fcolorbox;
+    });
+    MathJax.Hub.Configured();
+</script>
