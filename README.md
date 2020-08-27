@@ -6,7 +6,7 @@ And this can also be used as a quick guide on how to post-process and diagnose t
 
 Please got the webpage of the quick guide/tutorial:
 
-[https://noresmhub.github.io/noresmdiagnostics](https://noresmhub.github.io/noresmdiagnostics)
+[https://nordicesmhub.github.io/noresmdiagnostics/](https://nordicesmhub.github.io/noresmdiagnostics/)
 
 ## Maintainer(s)
 - [Yanchun He](mailto: yanchun.he_at_nersc.no)
