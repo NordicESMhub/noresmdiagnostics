@@ -1,0 +1,12 @@
+_drafts/
+_site/
+.sass-cache
+# vim temporary files
+*.sw?
+*~
+.jekyll-cache/
+.DS_Store
+.bundle/
+.vendor/
+.docker-vendor/
+Gemfile.lock
