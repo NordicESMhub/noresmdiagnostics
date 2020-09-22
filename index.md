@@ -3,29 +3,18 @@ layout: lesson
 permalink: /
 ---
 
-# A guide for the NorESM diagnostic tools
+# An introduction to NorESM model output and post-processing
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-culpa qui officia deserunt mollit anim id est laborum.
+This guide includes introductory information on:
+* Format of NorESM model output
+* Programs to process model files and visualize the results
+* The NorESM Diagnostic Tool Package, a command line tool to automatically generate a variety of different plots and metrics from model output files, which can be used to evaluate a simulation as the first step in the research process.
+* Stand-alone pre-process typical irregular model output
 
 > ## Prerequisites
 > 
-> 1. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
->    incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
->    nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
->    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
->    fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
->    culpa qui officia deserunt mollit anim id est laborum.
-> 
-> 2. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
->    incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
->    nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
->    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
->    fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
->    culpa qui officia deserunt mollit anim id est laborum.
+> 1. Basic knowlege of Unix/Linux shell for file navigation and edition.
+> 2. Understand the [netCDF](http://www.unidata.ucar.edu/software/netcdf) for creation, access, and sharing of array-oriented scientific data.
+> 3. Basics in one or more programming languages (Shell scripting, NCL, etc).
 {: .prereq}
 

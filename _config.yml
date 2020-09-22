@@ -1,6 +1,6 @@
-fork_me_ribbon_url: https://github.com/NordicESMhub/noresmdiagnostics
+#fork_me_ribbon_url: https://github.com/NordicESMhub/noresmdiagnostics
 baseurl: "/noresmdiagnostics"
-title: "A guide for the NorESM diagnostic tools"
+title: "NorESM output and post-processing"
 
 author:
   name: Yanchun He

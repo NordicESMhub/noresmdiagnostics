@@ -1,74 +1,120 @@
 ---
 layout: episode
-title: "The NorESM Diagnostic Package"
+title: "The NorESM Diagnostic Tool Package"
 teaching: 20
-exercises: 25
+#exercises: 90
 questions:
-  - "A question that this episode will answer?"
-  - "Another question?"
-objectives:
-  - "This is one objective of this episode."
-  - "This is another objective of this episode."
-  - "Yet another objective."
-  - "And not to forget this objective."
-keypoints:
-  - "This is an important key point."
-  - "Another important key point."
-  - "One more key point."
----
-
-## Task 1
-
-### Task1.1 Set up the environment
-- Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-- Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-
-```bash
-# login nird
-$ ssh -Y -l username login.nird.sigma2.no
-# append in your .bashrc alias
-$ echo "# add alias for diag_run" >> ~/.bashrc
-$ echo "alias diag_run='/projects/NS2345K/noresm_diagnostics_dev/bin/diag_run'" >> ~/.bashrc
-$ source ~/.bashrc
-
-# Logon FRAM
-ssh -l username fram.sigma2.no
-cd /cluster/work/users/$USER/archive
-rsync -vazu /cluster/work/users/$USER/archive/ login.nird.sigma2.no:/projects/NS2345K/noresm/cases/
-
-# Log on FRAM:
-mkdir -p tos-project1/NS2345K/noresm/cases/$USER
-cp -r /cluster/work/users/$USER/archive/YOUR_CASE_NAME /tos-project1/NS2345K/noresm/cases/$USER/
-```
----
-
-### Task 1.2 Model-obs comparison of a fully coupled simulation
-- Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-- Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-
-```bash
-# Compare model to observation
-$ diag_run  -m all -c CASENAEME -s START_YEAR -e  END_YEAR -i INPUT -o OUTPUT –w WEBPAGE​
-$ diag_run -m all -c N1850OC_f19_tn14_noresm-dev -s 1 -e 2
-$ diag_run -m all -c NHIST_f19_tn14_20190710 -s 2010 -e 2014 -i /projects/NS2345K/workshop/cases &>~/diag_run.log1 &
-```
+  - "Make a suit of model diagnostics with a command"
+#objectives:
+  #- "This is one objective of this episode."
+#keypoints:
+  #- "This is an important key point."
+  #- "Another important key point."
+  #- "One more key point."
 
 ---
+>## NorESM Diagnostic Package:
+... is a NorESM model evaluation tool written with a set of scripts (bash, NCL etc) to provide a general evaluation and quick preview of the model performance with only one command line.
+{: .callout}
 
-### Task1.3 Model-model comparison
-# Compare model to model
+>## The tool package consists of:
+* CAM_DIAG: (NCAR's AMWG Diagnostics Package)
+* CLM_DIAG: (CESM Land Model Diagnostics Package)
+* CICE_DIAG: snow/sea ice volume/area
+* HAMOCC_DIAG: time series, climaotology, zonal mean, regional mean
+* BLOM_DIAG: time series, climatologies, zonal mean, fluxes, etc
+{: .checklist}
 
+---
+**It has a one-line command interface, and is simple-to-use.**
 ```bash
-$ diag_run  -m all -c1 CASENAEME1 -s1 START_YEAR1 -e1  END_YEAR1 -c2 CASENAME2 -s2 START_YEAR2 -e2 –END_YEAR2 -i1 INPUT1 -i2 INPUT2 -o OUTPUT –w WEBPAGE
-$ diag_run  -m all -c1 NHIST_f19_tn14_20190710 –s1 2010 -e1 2014 –i1 /projects/NS2345K/workshop/cases -c2 N1850_f19_tn14_20190621 -s2 1750 -e2 1754 -i2 /projects/NS2345K/workshop/cases &>~/diag_run.log2 &
+# run this wraper script without parameters shows basic usage
+$ diag_run
+-------------------------------------------------
+Program:
+/projects/NS2345K/noresm_diagnostics_dev/bin/diag_run
+Version: 6.0
+-------------------------------------------------
+Short description:
+A wrapper script for NorESM diagnostic packages.
+
+Basic usage:
+# model-obs diagnostics
+diag_run -m [model] -c [test case name] -s [test case start yr] -e [test case end yr]
+# model1-model2 diagnostics
+diag_run -m [model] -c [test case name] -s [test case start yr] -e [test case end yr] -c2 [cntl case name] -s2 [cntl case start yr] -e2 [cntl case end yr]
+...
+```
+## Two types of analysis
+**#1. Compare model with observations**
+```bash
+$ diag_run --model=cam,cice,micom \ 
+--case1=CASENAME1 \ 
+--start_year1=51 \ 
+--end_year1=100 \ 
+--input-dir1=/PATH/TO/MODEL/FOLDER \ 
+--output-dir=/PATH/TO/PUT/OUTPUT/DATA \ 
+--web-dir=/PATH/TO/PUT/CREATED/WEBPAGES \
+```
+**#2. Compare model with another model simulation**
+```bash
+$ diag_run --model=cam,cice,micom \ 
+--case1=CASENAME1 \
+--start_year1=51 \
+--end_year1=100 \
+--input-dir1=/PATH/TO/MODEL/FOLDER1 \
+--case2=CASENAME2 \
+--start_year2=2 \
+--end_year2=50 \
+--input-dir2=/PATH/TO/MODEL/FOLDER2 \
+--output-dir=/PATH/TO/PUT/OUTPUT/DATA \
+--web-dir=/PATH/TO/PUT/CREATED/WEBPAGES \
 ```
 
-## Another section
+>Browse plots online at:
+[http://ns2345k.web.sigma2.no/diagnostics/noresmdiagnostics](http://ns2345k.web.sigma2.no/diagnostics/noresmdiagnostics)
+ <img src="https://hotemoji.com/images/emoji/x/6mnhuxe873ax.png" width="35px">
+{: .checklist}
+<img src="{{ site.baseurl }}/images/diagplot.png" width="800px" >
 
-- Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-- Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+>## Challenge
+If you don't have access to the NS2345K project, you have to specify another directory to write your webpage output by `-w` option. \
+You can then make a tarball (`tar -cvzf casenme.tar.gz /path/to/the/weboutput`) \
+And download to your local computer to view with your browser.
+{: .challenge}
 
-```python
-def foo():
-    print('foo!')
+>## Code structure
+{: .callout}
+<img src="{{ site.baseurl }}/images/code.png" alt="code structure" width="800px" >
+<img src="{{ site.baseurl }}/images/languages.png" alt="code languages" width="200px" >
+
+>## Resources
+{: .callout}
+
+### Where is it?
+* Github: https://github.com/NordicESMhub/noresmdiagnostics
+* NIRD: /tos-project1/NS2345K/diagnostics/noresmdiagnostics
+* FRAM: /tos-project1/NS2345K/diagnostics/noresmdiagnostics (NOT recommned to run it on FRAM!)
+
+Do **NOT** directly modify /tos-project1/NS2345K/diagnostics/noresmdiagnostics!
+
+### Install your own copy?
+Yes you can, if you:
+* don't have access to NIRD/FRAM at all.
+* or have account on NIRD/FRAM, but don't have access to project NS2345K.  \
+then
 ```
+git clone https://github.com/NordicESMhub/noresmdiagnostics
+```
+* or you want to make changes of the code at your will and/or want to contribute to the code. \
+then \
+You can first `fork` to your private repository and `clone` to install. \
+and then make soft links by the tool `bin/linkdata.sh` to `/tos-project1/NS2345K/www/diagnostics/noresmdiagnostics/inputdata`,\
+or download the observational data by `bin/dldata.sh` from [http://noresm.org/diagnostics](http://noresm.org/diagnostics).
+
+>Find the full doocumentation:
+[https://noresm-docs.readthedocs.io/en/noresm2/diagnostics/diag_run.html](https://noresm-docs.readthedocs.io/en/noresm2/diagnostics/diag_run.html)
+{: .callout}
+
+---
+
