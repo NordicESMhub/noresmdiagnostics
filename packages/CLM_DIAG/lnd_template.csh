@@ -1,20 +1,22 @@
 #!/bin/csh
 
 # Version lnd_template4.2.25.csh
-setenv HOSTNAME `hostname -f`
-if  ( `echo $HOSTNAME |grep 'nird'` !="" ) then
+if ( -d /opt/ncl65 && -d /opt/nco475 && -d /opt/cdo195 ) then
     setenv NCARG_ROOT /opt/ncl65
     setenv PATH /opt/ncl65/bin/:/opt/nco475/bin/:/opt/cdo195/bin:/usr/local/bin:/usr/bin
     source /opt/intel/compilers_and_libraries/linux/bin/compilervars.csh -arch intel64 -platform linux
     setenv ncclimo_dir  /opt/nco475/bin/
-else if ( `echo $HOSTNAME |grep 'fram'` !="" ) then
+else
     module -q purge
     module -q load NCO/4.7.2-intel-2018a
     module -q load CDO/1.9.3-intel-2018a
     module -q load NCL/6.5.0-intel-2018a   # NCL must be loaded after NCO/CDO
     module -q unload LibTIFF/4.0.9-GCCcore-6.4.0
     setenv ncclimo_dir  ${EBROOTNCO}/bin
-else
+endif
+which ncks >&/dev/null
+set rcode=$status
+if ( $rcode != 0 ) then
     echo "UNKNOW HOSTNAME: $HOSTNAME "
     echo "*** EXIT ***"
     exit 1

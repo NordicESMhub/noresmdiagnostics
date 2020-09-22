@@ -4,6 +4,7 @@ echo "                                                                          
 echo "--------------------------------------------------------------------------------------=-------------"
 echo "Make links of necessary observational datasets and grid files to the original NoresmDiagnostic tool."
 echo "By default, the original diagnostic tool is set as /projects/NS2345K/noresm_diagnostics.            "
+echo "Usage: ./linkdata.sh"
 echo "--------------------------------------------------------------------------------------------------- "
 
 ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"

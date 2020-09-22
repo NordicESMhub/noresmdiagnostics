@@ -1,6 +1,6 @@
 #!/bin/csh -f
 
-set echo verbose
+#set echo verbose
 
 #*****************************************************************
 # Get the file from the MSS if they don't exist locally
