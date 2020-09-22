@@ -152,6 +152,7 @@ TRENDS_ALL=0
 FIRST_YR_TS1=1
 LAST_YR_TS1=4
 ```
+and then resubmit `blom_diag_template.sh`
 
 ## Task 3
 
