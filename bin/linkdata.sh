@@ -14,6 +14,8 @@ if [ -d /projects/NS2345K/www/diagnostics/inputdata ]; then
     DATA_ROOT=/projects/NS2345K/www/diagnostics/inputdata
 elif [ -d /tos-project1/NS2345K/www/diagnostics/inputdata ]; then
     DATA_ROOT=/tos-project1/NS2345K/www/diagnostics/inputdata
+elif [ -d /cluster/work/users/yanchun/noresmdiagnostics ]; then
+    DATA_ROOT=/cluster/work/users/yanchun/noresmdiagnostics
 else
     echo "                                                                             "
     echo "*** FAIL TO LINK TO DATA FILES OF THE FULL NORESM DIAGNOSTIC TOOL PACKAGE ***"
@@ -26,6 +28,7 @@ else
     echo "*** EXIT THE SCRIPT ***"
     exit 1
 fi
+    DATA_ROOT=/cluster/work/users/yanchun/noresmdiagnostics
 
 dfolders=(CAM_DIAG/cam35_data)
 dfolders+=(CAM_DIAG/map_files)
