@@ -83,7 +83,7 @@ Diagnose only ocean component with passive mode `-p`
 ```bash
 # Example
 $ diag_run -m blom -c N1850frc2_f19_tnx1v4_workshop -s 1 -e 5 \
-                    -i -i /cluster/work/users/agu002/archive  -p
+                    -i /cluster/work/users/agu002/archive  -p
 ```
 ### Task 2.2
 Switch  on only some sets, e.g. set_1 and set_3, and switch off other sets \
