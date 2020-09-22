@@ -60,7 +60,40 @@ $ diag_run -m cam -c N1850frc2_f19_tnx1v4_workshop -s 1 -e 5 -i /cluster/work/us
 ```
 >## Challenge
 * Use your own finished experiment, and the component you are interested in.
+* You should specify a different `-o` and `-w` option if you have no access to NS2345K.\
 {: .challenge}
+
+For example:
+```
+-o /cluster/work/users/\$USER/noresmdiagnostics
+-w /cluster/work/users/\$USER/www
+```
+Make sure these two directories exist. Otherwise, use `mkdir` to create them:
+```
+mkdir -p /cluster/work/users/$USER/noresmdiagnostics /cluster/work/users/$USER/www
+```
+
+For those dont' have succefully model run, ideally longer than 2-years.
+
+You can find the case by Alok, under:
+`/cluster/work/users/agu002/archive/`
+
+* N1850frc2_f19_tnx1v4_workshop (5-year long)
+* NOINY_T62_tnx1v4_workshop
+* NF2000climo_f19_f19_mg17_workshop
+* NOINY_T62_tnx1v4_workshop3
+* N1850frc2_f19_tnx1v4_workshop2
+* NOINY_T62_tn14_Workshop2020
+* NOINY_T62_tn14_Workshop2020_clone
+* N1850frc2_f19_tn14_Workshop2020
+
+
+For those have access to NS2345K and NS9560K on NIRD, there are plent of CMIP6 experiments:
+* /projects/NS2345K/noresm/cases
+* /projects/NS9560K/noresm/cases
+
+Find out where is the casename and the location of each experiment:
+[https://noresmhub.github.io/noresm-exp/intro.html](https://noresmhub.github.io/noresm-exp/intro.html)
 
 ---
 
@@ -85,18 +118,27 @@ Diagnose only ocean component with passive mode `-p`
 $ diag_run -m blom -c N1850frc2_f19_tnx1v4_workshop -s 1 -e 5 \
                     -i /cluster/work/users/agu002/archive  -p
 ```
+In the standard output, you can find lines like:
+```
+...
+BLOM DIAGNOSTICS SUCCESSFULLY CONFIGURED in /tos-project1/NS2345K/diagnostics/noresmdiagnostics/out/$USER/BLOM_DIAG
+...
+```
+Go the that directory and check the shell script there, which is job script for each component.
+
 ### Task 2.2
-Switch  on only some sets, e.g. set_1 and set_3, and switch off other sets \
+
+In the configuration file by Task2.2, e.g., by default `/tos-project1/NS2345K/diagnostics/noresmdiagnostics/out/$USER/BLOM_DIAG/blom_diag_template.sh`
+
+Switch on only some sets, e.g. set_1 and set_3, and switch off other sets \
 change: 
+
 ```
 set_1=1
 set_3=1
 others =0
 ```
-in the output directory specified by `-o` \
-`$OUT_ROOT/out/$USER/BLOM_DIAG/blom_diag_template.sh`\
-by default, `OUT_ROOT=/tos-project1/NS2345K/diagnostics/noresmdiagnostics`
-
+and then submit the job script, e.g., `blom_diag_template.sh`
 
 ### Task 2.3
 Plot only part of the period of a simulation, instead of the whole period.\
