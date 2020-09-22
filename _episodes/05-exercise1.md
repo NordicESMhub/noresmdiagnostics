@@ -34,8 +34,19 @@ git clone https://github.com/NordicESMhub/noresmdiagnostics
 cd noresmdiagnostics/bin
 ./linkdata.sh
 ```
+It will link the data under either:
+```
+/tos-project1/NS2345K/www/diagnostics/noresmdiagnostics/inputdata
+```
+or
+```
+/cluster/work/users/$USER/noresmdiagnostics
+```
+to your installed copy.
 
-Get known with the `diag_run` optins
+Note, if you need to download the code to your home folder, you should donwload the observational data by `bin/dloaddata.sh` to a direcory that has large quota, e.g., to `/cluster/work/users/$USER`, not directly under your home directory. Then link the downloaded data with `bin/linkdata.sh`
+
+Next, get known with the `diag_run` optins
 ```bash
 # run this wraper script without parameters shows basic usage
 $ diag_run
