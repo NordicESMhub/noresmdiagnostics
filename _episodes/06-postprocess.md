@@ -27,7 +27,7 @@ Needs to remap irregular model grids to standard grid to facilitate comparision 
 >## Convert CAM hybrid-sigma coordinate to pressure levels
 {: .objectives}
 
-|The vertical coordinate of CAM is a hybrid sigma-pressure system. In this system, the upper regions of the atmosphere are discretized by pressure only. Lower vertical levels use the sigma (i.e. p/ps) vertical coordinate smoothly merged in, with the lowest levels being pure sigma. A schematic representation of the hybrid vertical coordinate and vertical indexing is presented in the right.|<img src="{{ site.baseurl }}/images/hyb_coord.gif" width="400px" alt="NorESM horizontal and vertical grid system"> |
+|<img src="{{ site.baseurl }}/images/hyb_coord.gif" width="400px" alt="NorESM horizontal and vertical grid system"> |The vertical coordinate of CAM is a hybrid sigma-pressure system. In this system, the upper regions of the atmosphere are discretized by pressure only. Lower vertical levels use the sigma (i.e. p/ps) vertical coordinate smoothly merged in, with the lowest levels being pure sigma. A schematic representation of the hybrid vertical coordinate and vertical indexing is presented in the right.|
 
 ```bash
 # Extract variable
@@ -67,9 +67,51 @@ ncdiff -O blom_sst_1x1d.nc HadISST_sst.nc sst_diff.nc
 >## Rotate vector from model `i,j` direction to zonal and meridional directions.
 {: .objectives}
 
+<!--
 <img src="{{ site.baseurl }}/images/rotateno.png" width="400px" alt="sst tripolar">
 <img src="{{ site.baseurl }}/images/rotateyes.png" width="400px" alt="sst tripolar">
+-->
 
+<html>
+<title>W3.CSS</title>
+<meta name="viewport" content="width=400px, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<style>
+.mySlides {display:none;}
+</style>
+<body>
+
+<div class="w3-content w3-display-container">
+  <img class="mySlides" src="{{ site.baseurl }}/images/rotateno.png" style="width:400px">
+  <img class="mySlides" src="{{ site.baseurl }}/images/rotateyes.png" style="width:400px">
+  <button class="w3-button w3-black w3-display-left" onclick="plusDivs(-1)">&#10094;</button>
+  <button class="w3-button w3-black w3-display-middle" onclick="plusDivs(1)">&#10095;</button>
+</div>
+
+<script>
+var slideIndex = 1;
+showDivs(slideIndex);
+
+function plusDivs(n) {
+  showDivs(slideIndex += n);
+}
+
+function showDivs(n) {
+  var i;
+  var x = document.getElementsByClassName("mySlides");
+  if (n > x.length) {slideIndex = 1}
+  if (n < 1) {slideIndex = x.length}
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none";  
+  }
+  x[slideIndex-1].style.display = "block";  
+}
+</script>
+
+</body>
+</html>
+
+---
 Rotate BLOM vectors using NCO
 ```bash
 # Extract ubaro,vbaro

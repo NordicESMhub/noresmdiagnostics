@@ -29,7 +29,7 @@ cd noresmpp
 ---
 
 >## Interpolate CAM hybrid-sigma coordinate to pressure levels
-You should be able to run `task1.sh` to interpolate air temperature (T) to pressure levels.
+Inspect the script, and you should be able to run `task1.sh` to interpolate air temperature (T) to pressure levels.
 {: .callout}
 
 ```bash
