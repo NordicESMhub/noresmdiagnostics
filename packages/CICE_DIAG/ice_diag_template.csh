@@ -11,7 +11,7 @@ unset echo verbose
 setenv HOSTNAME `hostname -f`
 if  ( `echo $HOSTNAME |grep 'nird'` !="" ) then
     setenv NCARG_ROOT /opt/ncl65
-    setenv PATH /opt/ncl65/bin/:/opt/nco475/bin/:/opt/cdo195/bin:/usr/local/bin:/usr/bin
+    setenv PATH /usr/local/bin:/usr/bin:/opt/ncl65/bin/:/opt/nco475/bin/:/opt/cdo197/bin
     source /opt/intel/compilers_and_libraries/linux/bin/compilervars.csh -arch intel64 -platform linux
     setenv ncclimo_dir  /opt/nco475/bin
 else if ( `echo $HOSTNAME |grep 'fram'` !="" ) then
@@ -172,7 +172,7 @@ set KEEP_PS_FILES = 0            # Keep .ps files, 1 = yes
 # web_pages = 1 creates a tar file with all figures and html
 # publish_html = 1 publishes the html in $publish_html_root
 # on NIRD. If publish_html_root is left empty, it will be set
-# to /projects/NS2345K/www/noresm_diagnostics
+# to /projects/NS2345K/www/noresm
 
 set web_pages         = 1                 # 1 --> true
 set publish_html      = 1
@@ -854,7 +854,7 @@ rm -rf $TAR_FILE
 if ($web_pages == 1 && $publish_html == 1) then
    set web_server_path = /projects/NS2345K/www
    if ( "$publish_html_root" == "" ) then
-      set publish_html_root = ${web_server_path}/noresm_diagnostics
+      set publish_html_root = ${web_server_path}/noresm
    endif
    set publish_html_path = ${publish_html_root}/${CASE_TO_CONT}/CICE_DIAG
    if (! -e ${publish_html_path}) then

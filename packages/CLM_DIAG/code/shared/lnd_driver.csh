@@ -848,7 +848,7 @@ if($web_pages == 1) then
    if ($publish_html == 1) then
       set web_server_path = /projects/NS2345K/www
       if ( "$publish_html_root" == "" ) then
-         set publish_html_root = ${web_server_path}/noresm_diagnostics
+         set publish_html_root = ${web_server_path}/noresm
       endif
       set publish_html_path = ${publish_html_root}/${caseid_1}/CLM_DIAG
       if (! -e ${publish_html_path}) then

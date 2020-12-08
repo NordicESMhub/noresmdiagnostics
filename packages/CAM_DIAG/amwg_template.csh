@@ -8,12 +8,12 @@
 
 unset echo verbose
 setenv DIAG_VERSION 140207  # version number YYMMDD
-if ( -d /opt/ncl65 && -d /opt/nco475 && -d /opt/cdo195 ) then
+if ( -d /opt/ncl65 && -d /opt/nco475 && -d /opt/cdo197 ) then
     setenv NCARG_ROOT /opt/ncl65
-    setenv PATH /opt/ncl65/bin/:/opt/nco475/bin/:/opt/cdo195/bin:/usr/local/bin:/usr/bin
+    setenv PATH /usr/local/bin:/usr/bin:/opt/ncl65/bin/:/opt/nco475/bin/:/opt/cdo197/bin
     source /opt/intel/compilers_and_libraries/linux/bin/compilervars.csh -arch intel64 -platform linux
     setenv nco_dir  /opt/nco475/bin
-    setenv cdo_dir  /opt/cdo195/bin
+    setenv cdo_dir  /opt/cdo197/bin
 else
     module -q purge
     module -q load NCO/4.7.2-intel-2018a
@@ -241,7 +241,7 @@ set cntl_last_yr_ts = lyr_of_ts_cntl
 # (does only work in conjunction with web_pages = 0 [default]),
 # and set the path where it should be published.
 # If the path is left empty it is set to
-# /projects/NS2345K/www/noresm_diagnostics
+# /projects/NS2345K/www/noresm
 # The URL will appear in the terminal right before the termination
 # of this script, as well as in ${test_path_diag}/URL
 
@@ -3374,7 +3374,7 @@ endif
 if ($web_pages == 0 && $publish_html == 0) then
    set web_server_path = /projects/NS2345K/www
    if ( "$publish_html_root" == "" ) then
-      set publish_html_root = ${web_server_path}/noresm_diagnostics
+      set publish_html_root = ${web_server_path}/noresm
    endif
    set publish_html_path = $publish_html_root/$test_casename/CAM_DIAG
    if (! -e ${publish_html_path}) then
