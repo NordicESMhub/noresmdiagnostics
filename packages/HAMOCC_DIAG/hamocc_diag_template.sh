@@ -830,7 +830,7 @@ if [ $? -eq 0 ] && [ $publish_html -eq 1 ]; then
     if [ $? -eq 0 ]; then
         if [ $path_pref == $web_server_path ]; then
             full_url=${web_server}/${path_suff}/${WEBFOLDER}/index.html
-            $DIAG_CODE/redirect_html.sh $WEBFOLDER $publish_html_path $full_url
+            $DIAG_CODE/redirect_html.sh $WEBFOLDER $publish_html_path ${WEBFOLDER}/index.htm
             echo " "
             echo "URL:"
             echo "***********************************************************************************"

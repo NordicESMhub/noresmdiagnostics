@@ -876,7 +876,7 @@ if($web_pages == 1) then
             echo "${full_url}"
             echo "***********************************************************************************"
             echo "COPY AND PASTE THE URL INTO THE ADDRESS BAR OF YOUR WEB BROWSER TO VIEW THE RESULTS"
-            ${DIAG_SHARED}/redirect_html.csh $WEBFOLD $publish_html_path $full_url
+            ${DIAG_SHARED}/redirect_html.csh $WEBFOLD $publish_html_path ${tardir}/setsIndex.html
          else
             echo "THE HTML FILES ARE LOCATED IN:"
             echo "${publish_html_path}/${tardir}"

@@ -3401,7 +3401,7 @@ if ($web_pages == 0 && $publish_html == 0) then
          echo "${full_url}"
          echo "***********************************************************************************"
          echo "COPY AND PASTE THE URL INTO THE ADDRESS BAR OF YOUR WEB BROWSER TO VIEW THE RESULTS"
-         $HTML_HOME/redirect_html.csh $tardir $publish_html_path $full_url
+         $HTML_HOME/redirect_html.csh $tardir $publish_html_path ${tardir}/sets.htm
       else
          echo "THE HTML FILES ARE LOCATED IN:"
          echo "${publish_html_path}/${tardir}"

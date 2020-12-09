@@ -882,7 +882,7 @@ if ($web_pages == 1 && $publish_html == 1) then
          echo " ${full_url}                                                                        "
          echo " ***********************************************************************************"
          echo " COPY AND PASTE THE URL INTO THE ADDRESS BAR OF YOUR WEB BROWSER TO VIEW THE RESULTS"
-         ${DIAG_HOME}/web/redirect_html.csh $TAR_FILE $publish_html_path $full_url
+         ${DIAG_HOME}/web/redirect_html.csh $TAR_FILE $publish_html_path ${TAR_FILE}/index.html
       else
          echo " THE HTML FILES ARE LOCATED IN:                                                     "
          echo " ${publish_html_path}/${TAR_FILE}                                                   "
