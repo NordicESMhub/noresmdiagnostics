@@ -5,9 +5,9 @@
 # Johan Liakka, NERSC, johan.liakka@nersc.no
 # Last Update, Sept. 2020, yanchun.he@nersc.no
 
-if [ -d /opt/ncl65 ] && [ -d /opt/nco475 ] && [ -d /opt/cdo195 ]; then
+if [ -d /opt/ncl65 ] && [ -d /opt/nco475 ] && [ -d /opt/cdo197 ]; then
     export NCARG_ROOT=/opt/ncl65
-    export PATH=/opt/ncl65/bin/:/opt/nco475/bin/:/opt/cdo195/bin:/usr/local/bin:/usr/bin
+    export PATH=/usr/local/bin:/usr/bin:/opt/ncl65/bin/:/opt/nco475/bin/:/opt/cdo197/bin
     source /opt/intel/compilers_and_libraries/linux/bin/compilervars.sh -arch intel64 -platform linux
 else
     module -q purge
@@ -105,7 +105,7 @@ set_4=1 # (1=ON,0=OFF) Regionally-averaged monthly climatology plots
 # ---------------------------------------------------------
 # Publish the html on the NIRD web server, and set the path
 # where it should be published. If the path is left empty,
-# it is set to /projects/NS2345K/www/noresm_diagnostics.
+# it is set to /projects/NS2345K/www/noresm.
 # The figures are converted to png. The quality of the
 # figures is determined by the density variable. You can
 # also choose the colormap for the full fields
@@ -813,7 +813,7 @@ tar -cf $TARFILE $WEBFOLDER
 if [ $? -eq 0 ] && [ $publish_html -eq 1 ]; then
     web_server_path=/projects/NS2345K/www
     if [ -z $publish_html_root ]; then
-        publish_html_root=${web_server_path}/noresm_diagnostics
+        publish_html_root=${web_server_path}/noresm
     fi
     publish_html_path=$publish_html_root/$CASENAME1/HAMOCC_DIAG
     if [ ! -d $publish_html_path ]; then
@@ -830,7 +830,7 @@ if [ $? -eq 0 ] && [ $publish_html -eq 1 ]; then
     if [ $? -eq 0 ]; then
         if [ $path_pref == $web_server_path ]; then
             full_url=${web_server}/${path_suff}/${WEBFOLDER}/index.html
-            $DIAG_CODE/redirect_html.sh $WEBFOLDER $publish_html_path $full_url
+            $DIAG_CODE/redirect_html.sh $WEBFOLDER $publish_html_path ${WEBFOLDER}/index.htm
             echo " "
             echo "URL:"
             echo "***********************************************************************************"

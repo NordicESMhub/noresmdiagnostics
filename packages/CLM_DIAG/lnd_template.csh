@@ -1,11 +1,12 @@
 #!/bin/csh
 
 # Version lnd_template4.2.25.csh
-if ( -d /opt/ncl65 && -d /opt/nco475 && -d /opt/cdo195 ) then
+if ( -d /opt/ncl65 && -d /opt/nco475 && -d /opt/cdo197 ) then
     setenv NCARG_ROOT /opt/ncl65
-    setenv PATH /opt/ncl65/bin/:/opt/nco475/bin/:/opt/cdo195/bin:/usr/local/bin:/usr/bin
+    setenv PATH /opt/ncl65/bin/:/opt/nco475/bin/:/opt/cdo197/bin:/usr/local/bin:/usr/bin
     source /opt/intel/compilers_and_libraries/linux/bin/compilervars.csh -arch intel64 -platform linux
-    setenv ncclimo_dir  /opt/nco475/bin/
+    setenv ncksbin  `which ncks`
+    setenv ncclimo_dir  `dirname $ncksbin`
 else
     module -q purge
     module -q load NCO/4.7.2-intel-2018a

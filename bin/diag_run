@@ -18,10 +18,10 @@ EYR1=-1
 CASE2=none
 SYR2=-1
 EYR2=-1
-if [ -d /tos-project1/NS2345K/noresm/cases ]; then
-    WEB_PATH=/tos-project1/NS2345K/www/diagnostics/$ROOT_FOLD/$USER
-    HISTORY_PATH1=/tos-project1/NS2345K/noresm/cases
-    HISTORY_PATH2=/tos-project1/NS2345K/noresm/cases
+if [ -d /projects/NS2345K/noresm/cases ]; then
+    WEB_PATH=/projects/NS2345K/www/diagnostics/noresm/$USER
+    HISTORY_PATH1=/projects/NS2345K/noresm/cases
+    HISTORY_PATH2=/projects/NS2345K/noresm/cases
 else
     echo "NO default input and out path set"
     #echo "*** EXIT ***"

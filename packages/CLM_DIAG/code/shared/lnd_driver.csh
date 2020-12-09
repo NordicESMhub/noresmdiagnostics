@@ -848,7 +848,7 @@ if($web_pages == 1) then
    if ($publish_html == 1) then
       set web_server_path = /projects/NS2345K/www
       if ( "$publish_html_root" == "" ) then
-         set publish_html_root = ${web_server_path}/noresm_diagnostics
+         set publish_html_root = ${web_server_path}/noresm
       endif
       set publish_html_path = ${publish_html_root}/${caseid_1}/CLM_DIAG
       if (! -e ${publish_html_path}) then
@@ -876,7 +876,7 @@ if($web_pages == 1) then
             echo "${full_url}"
             echo "***********************************************************************************"
             echo "COPY AND PASTE THE URL INTO THE ADDRESS BAR OF YOUR WEB BROWSER TO VIEW THE RESULTS"
-            ${DIAG_SHARED}/redirect_html.csh $WEBFOLD $publish_html_path $full_url
+            ${DIAG_SHARED}/redirect_html.csh $WEBFOLD $publish_html_path ${tardir}/setsIndex.html
          else
             echo "THE HTML FILES ARE LOCATED IN:"
             echo "${publish_html_path}/${tardir}"
