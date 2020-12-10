@@ -173,6 +173,7 @@ function getData (f:list          \  ; file references [pointers]
 local vClm, vClmx, vClmy, vFlag, vClass, dimv, rankv
 ;   , usrClm, dimu, ranku
 begin
+ 
     vFlag  = False                   ; flag iff variable found
     vClass = "null"
     f0 = addfile(fils(0),"r")
@@ -310,13 +311,15 @@ begin
    vClm@flag       = False
    vClm@rank       = -1    
 
+   ; printVarSummary(vClm)  ;++ hannay
+
    delete(f0)
    return(vClm)
 end
 ; -------------------------------
 undef("getLANDFRAC")
 function getLANDFRAC (fc:list,fils:string)
-local lfrac, ofrac, ifrac
+local lfrac
 begin
    f0 = addfile(fils(0),"r")
    if (isfilevar(f0,"LANDFRAC")) then
@@ -329,29 +332,15 @@ begin
            lfrac@_FillValue = 1e20
        end if
    else
-       if (isfilevar(f0,"OCNFRAC") .and. isfilevar(f0,"ICEFRAC")) then
-          ofrac = addfiles_GetVar(fc,fils,"OCNFRAC")
-	  ifrac = addfiles_GetVar(fc,fils,"ICEFRAC")
-	  lfrac = ofrac
-	  lfrac = (/1.0-(ofrac+ifrac)/)
-	  lfrac@flag  = True
-          lfrac@class = "scalar"
-          lfrac@rank  = dimsizes(dimsizes(lfrac))
+       print("------------------------------------------")
+       print("-->TAYLOR: land-sea: LANDFRAC not found  <--")
+       print("------------------------------------------")
 
-          if (.not.isatt(lfrac,"_FillValue")) then
-             lfrac@_FillValue = 1e20
-          end if
-       else
-          print("------------------------------------------")
-          print("-->TAYLOR: land-sea: LANDFRAC not found  <--")
-          print("------------------------------------------")
-
-          lfrac = 1e20
-          lfrac@_FillValue = 1e20
-          lfrac@flag       = False
-          lfrac@class      = "null"
-          lfrac@rank       = -1
-       end if
+       lfrac = 1e20
+       lfrac@_FillValue = 1e20
+       lfrac@flag       = False
+       lfrac@class      = "null"
+       lfrac@rank       = -1    
    end if
    delete(f0)
    return (lfrac)
@@ -806,6 +795,10 @@ begin
      else 
        opt  = (/1, levP(0), levP(1) /)
      end if
+     print("===>")     
+     ;print("===> lev  ="+ x&lev)   ;-- hannay
+     ;print("===> levP(0)  ="+ levP(0))   ;-- hannay
+     ;print("===> levP(1)  ="+ levP(1))   ;-- hannay
      
      ;print("lev  ="+ x&lev)   ;-- hannay
      xNew = wgt_vert_avg_beta(x&lev, x, PS_MONTH, ipunit, opt)

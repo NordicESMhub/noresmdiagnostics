@@ -3,11 +3,11 @@
 # Last updated: Johan Liakka, Nov 2017
 # Last updated: Yanchun He, Sept. 2020
 #
-# Based on file: diag140207.csh
-# Updated: 2014/02/07
+# Based on file: diag140804.csh
+# Updated: 2014/08/04
 
 unset echo verbose
-setenv DIAG_VERSION 140207  # version number YYMMDD
+setenv DIAG_VERSION 140804  # version number YYMMDD
 if ( -d /opt/ncl65 && -d /opt/nco475 && -d /opt/cdo197 ) then
     setenv NCARG_ROOT /opt/ncl65
     setenv PATH /usr/local/bin:/usr/bin:/opt/ncl65/bin/:/opt/nco475/bin/:/opt/cdo197/bin
@@ -293,8 +293,9 @@ set cset_7 = 1         # (0=ON,1=OFF)  surface comparisons (ozone, co, improve)
 # Select the control case to compare against for Taylor Diagrams
 # Cam run select cam3_5; coupled run select ccsm3_5  
  
-setenv TAYLOR_BASECASE ccsm3_5  # Base case to compare against
+setenv TAYLOR_BASECASE cam5.3  # Base case to compare against
                                 # Options are cam3_5, ccsm3_5
+                                # cam5.3, lens
                                 # They are both fv_1.9x2.5
 
 # Switch between climo and time-series computation, used by diag_run
@@ -437,7 +438,7 @@ set sig_lvl = 0.05           # level of significance
 # you need to set DIAG_HOME to the root location of the diagnostic code. 
 # The code is in $DIAG_HOME/code 
 # The obs data in $DIAG_HOME/obs_data
-# The cam3.5 data in $DIAG_HOME/cam35_data 
+# The cam3.5 data in $DIAG_HOME/cam_data 
 
 # CGD machines (tramhill, leehill...)
 #setenv DIAG_HOME /project/amp/amwg/amwg_diagnostics 
@@ -650,7 +651,7 @@ limit datasize  unlimited
 
 setenv WKDIR      $test_path_diag/
 setenv OBS_DATA   $DIAG_HOME/obs_data 
-setenv CAM35_DATA $DIAG_HOME/cam35_data 
+setenv CAM_DATA   $DIAG_HOME/cam_data 
 setenv MAP_DATA   $DIAG_HOME/map_files 
 setenv DIAG_CODE  $DIAG_HOME/code
 setenv COMPARE    $CNTL
@@ -3288,7 +3289,7 @@ cd $mydir
       -diag_code=$DIAG_CODE  -plots=$plots -plot_type=$PLOTTYPE -version=$DIAG_VERSION -color_type=$COLORTYPE -time_stamp=$TIMESTAMP \
       -web_pages=$web_pages -imageType=$image -webdir=$WEBDIR -rgb_file=$RGB_FILE -mg_micro=$MG_MICRO -paleo=$PALEO -land_mask1=$land_mask1 \
       -land_mask2=$land_mask2 -tick_marks=$TICKMARKS -sig_plot=$SIG_PLOT -sig_lvl=$SIG_LVL -diffs=$DIFF_PLOTS -significance=$significance \
-      -diaghome=$DIAG_HOME -cam_data=$CAM35_DATA -cam_base=$TAYLOR_BASECASE -ncarg_root=$NCARG_ROOT -strip_off_vars=$strip_off_vars \
+      -diaghome=$DIAG_HOME -cam_data=$CAM_DATA -cam_base=$TAYLOR_BASECASE -ncarg_root=$NCARG_ROOT -strip_off_vars=$strip_off_vars \
       -test_var_list=$test_var_list -cntl_var_list=$cntl_var_list -test_non_time_var_list=$test_non_time_var_list \
       -cntl_non_time_var_list=$cntl_non_time_var_list  -weight_months=$weight_months \
       -save_ncdfs=$save_ncdfs -delete_ps=$DELETEPS -conv_test=$test_rootname -conv_cntl=$cntl_rootname -test_res_in=$test_res_in \
@@ -3320,7 +3321,7 @@ cd $mydir
       -diag_code=$DIAG_CODE -plots=$plots -plots=$plots -plot_type=$PLOTTYPE -version=$DIAG_VERSION -color_type=$COLORTYPE -time_stamp=$TIMESTAMP \
       -web_pages=$web_pages -imageType=$image -webdir=$WEBDIR -rgb_file=$RGB_FILE -mg_micro=$MG_MICRO -paleo=$PALEO -land_mask1=$land_mask1 \
       -land_mask2=$land_mask2 -tick_marks=$TICKMARKS -sig_plot=$SIG_PLOT -sig_lvl=$SIG_LVL -diffs=$DIFF_PLOTS -significance=$significance \
-      -diaghome=$DIAG_HOME -cam_data=$CAM35_DATA -cam_base=$TAYLOR_BASECASE -ncarg_root=$NCARG_ROOT -strip_off_vars=$strip_off_vars \
+      -diaghome=$DIAG_HOME -cam_data=$CAM_DATA -cam_base=$TAYLOR_BASECASE -ncarg_root=$NCARG_ROOT -strip_off_vars=$strip_off_vars \
       -test_var_list=$test_var_list -cntl_var_list=$cntl_var_list -test_non_time_var_list=$test_non_time_var_list -weight_months=$weight_months \
       -save_ncdfs=$save_ncdfs -delete_ps=$DELETEPS -conv_test=$test_rootname -conv_cntl=$cntl_rootname -test_res_in=$test_res_in \
       -test_res_out=$test_res_out -cntl_res_in=$cntl_res_in -cntl_res_out=$cntl_res_out -map_dir=$MAP_DATA -interp_method=$INTERP_METHOD \

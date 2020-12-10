@@ -33,7 +33,7 @@ load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/gsn_csm.ncl"
   compare    = getenv("COMPARE")
   case_names = getenv("CASENAMES")
   obs_data   = getenv("OBS_DATA")
-  cam_data   = getenv("CAM35_DATA")
+  cam_data   = getenv("CAM_DATA")
   ncdf_mode  = getenv("NCDF_MODE")
   case_names = getenv("CASENAMES")
   infile1    = getenv("TEST_INPUT")     ; case1 input filename
@@ -84,8 +84,6 @@ end if
   end if
 
 ; CASE 1 is model (test)
-
-  
   inflist1   = systemfunc("ls -1 "+infile1+"_{01,02,03,04,05,06,07,08,09,10,11,12}_"+yrs_prnt1+"_climo.nc")
   inptr1 = addfile(inflist1(0), "r")           ; note the "s" of addfiless
     
@@ -1424,6 +1422,5 @@ begin
         fnc->SEASON         = season_c
         fnc->UNITS          = units_c
     end if
-    exit 
 end
 

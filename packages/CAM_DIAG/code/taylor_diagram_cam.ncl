@@ -577,56 +577,48 @@ begin
  ;print("============> taylor_diagram: Part 5 ")
 
   if (rOpts .and. isatt(rOpts,"caseLabels")) then 
-      if (isatt(rOpts,"caseLabelsXYloc")) then
-          caseXloc = rOpts@caseLabelsXYloc(0)
-          caseYloc = rOpts@caseLabelsXYloc(1)
-      else
-          caseXloc = 0.70                      ; default ndc
-          caseYloc = 0.80
-      end if
 
-      if (isatt(rOpts,"caseLabelsFontHeightF")) then
-          caseLabelsFontHeightF = rOpts@caseLabelsFontHeightF
-      else
-          caseLabelsFontHeightF = 0.15   ;+ hannay
-      end if
-      caseLabelsFontHeightF = 0.15   ;+ hannay
+; Add legend 
 
+      xposs = 0.57
+      yposs = 0.77
+      xoffset = 0.02;  
+      yspace = 0.02
 
-      lgres                    = True
-      lgres@lgMarkerColors     = Colors(::-1)        ; colors of markers
-      lgres@lgMarkerIndexes    = (/16,16,16,16,16/)       ; Markers 
-      lgres@lgMarkerSizeF      = gsMarkerSizeF ; Marker size
-      lgres@lgItemType         = "Markers"     ; draw markers only
-      lgres@lgLabelFontHeightF = caseLabelsFontHeightF  ; font height of legend case labels (the casename)
-      lgres@lgLabelFontHeightF = 0.25  ; font height of legend case labels (the casename) ++ hannay
+      ngsRes = True
+      ntxRes = True
+      
+      ntxRes@txFontHeightF = tmYLLabelFontHeightF*0.65
 
-      if (isatt(rOpts,"legendWidth")) then
-          lgres@vpWidthF       = rOpts@legendWidth
-      else
-          lgres@vpWidthF       = 0.15           ; width of legend (NDC)
-      end if
+      do nc=0,nCase-1
+        ngsRes@gsMarkerIndex = Markers(nc)
+        ngsRes@gsMarkerColor = Colors(nc)
+        ;ngsRes@gsJust           = "CenterLeft"
+        gsn_polymarker_ndc(wks, xposs, yposs - nc*yspace, ngsRes) 
+        
+        if (nc.eq.0) then
+          ntxRes@txFontColor = "black"
+        else
+          if (rmse_mean_ratio(nc).ge.rmse_mean_ratio(0)) then
+            ntxRes@txFontColor = "Firebrick"
+          else
+            ntxRes@txFontColor = "ForestGreen"
+          end if
+          ntxRes@txFontColor = "Black"
+        end if
 
-      lgres@lgLabelPosition = "Right"
-      if (isatt(rOpts,"legendHeight")) then
-          lgres@vpHeightF      = rOpts@legendHeight
-      else   
-          lgres@vpHeightF      = 0.025*nCase   ; height of legend (NDC)
-      end if
-      lgres@lgPerimOn           = True         ; turn off perimeter
-      lgres@lgLeftMarginF       = 0
-      lgres@lgBoxLineThicknessF = 3
-      lbid = gsn_create_legend(wks,nCase,rOpts@caseLabels(::-1),lgres)
-	 
-      amres = True
-      amres@amParallelPosF     =  -0.36         
-      amres@amOrthogonalPosF   =  0.07             
-      annoid1 = gsn_add_annotation(taylor,lbid,amres)	; add legend to plot  +hannay
+        ntxRes@txJust           = "CenterLeft"
+        gsn_text_ndc(wks, rOpts@caseLabels(nc), xposs+xoffset, yposs - nc*yspace, ntxRes)
+
+      end do
+
 
 ; Add mean RMSE and Bias info.
 
-      xposs = 0.64
-      yposs = 0.70
+  
+      xposs = 0.21
+      yposs = 0.42
+      xoffset_marker = 0.03  
       xoffset = 0.06
       yspace = 0.02
 
@@ -635,14 +627,14 @@ begin
       
       ntxRes@txFontHeightF = tmYLLabelFontHeightF*0.75
 
-      gsn_text_ndc(wks, "RMSE", xposs+xoffset, yposs+0.025, ntxRes)
+      gsn_text_ndc(wks, "RMSE", xposs+xoffset,   yposs+0.025, ntxRes)
       gsn_text_ndc(wks, "Bias", xposs+2*xoffset, yposs+0.025, ntxRes)
       
       do nc=0,nCase-1
         ngsRes@gsMarkerIndex = Markers(nc)
         ngsRes@gsMarkerColor = Colors(nc)
         
-        gsn_polymarker_ndc(wks, xposs, yposs - nc*yspace, ngsRes) 
+        gsn_polymarker_ndc(wks, xposs+xoffset_marker, yposs - nc*yspace, ngsRes) 
         
         if (nc.eq.0) then
           ntxRes@txFontColor = "black"
@@ -656,7 +648,7 @@ begin
         end if
    
           
-        gsn_text_ndc(wks, sprintf("%4.3f",rmse_mean_ratio(nc)), xposs+xoffset, yposs - nc*yspace, ntxRes)
+        gsn_text_ndc(wks, sprintf("%4.2f",rmse_mean_ratio(nc)), xposs+xoffset, yposs - nc*yspace, ntxRes)
 
         if (nc.eq.0) then
           ntxRes@txFontColor = "black"
@@ -668,8 +660,7 @@ begin
           end if
           ntxRes@txFontColor = "Black"
         end if
-
-        gsn_text_ndc(wks,  sprintf("%4.3f",bias_mean_ratio(nc)), xposs+2.*xoffset, yposs - nc*yspace, ntxRes)
+        gsn_text_ndc(wks,  sprintf("%4.2f",bias_mean_ratio(nc)), xposs+2.*xoffset, yposs - nc*yspace, ntxRes)
 
       end do
 
@@ -750,5 +741,4 @@ begin
  ;print("============> taylor_diagram: Part 8: Exit ")
 
   return(taylor)
-  exit
 end
