@@ -509,7 +509,6 @@ if (rOpts .and. isatt(rOpts,"tiMainString")) then
 	frame(wks)
   end if
   return(taylor)
-  exit
 end
 
 

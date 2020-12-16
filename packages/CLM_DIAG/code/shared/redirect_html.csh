@@ -16,7 +16,7 @@ cd $html_path
 cat >${tar_file}.html << EOF
 <html>
 <head>
-<meta http-equiv="refresh" content="0; url=http://${full_url}"/>
+<meta http-equiv="refresh" content="0; url=${full_url}"/>
 </head>
 </html>
 EOF

@@ -215,6 +215,5 @@ begin
             system("convert -trim +repage "+mfname+".eps "+mfname+"."+opt@pltType)
         end if
   ;;end if
-
-    exit
+    
 end

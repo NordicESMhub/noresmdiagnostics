@@ -4,6 +4,8 @@ set -e
 # this will download all individual files to the current folder
 
 dfolders=(CAM_DIAG/cam35_data)
+dfolders=(CAM_DIAG/cam5_data)
+dfolders=(CAM_DIAG/cam_data)
 dfolders+=(CAM_DIAG/map_files)
 dfolders+=(CAM_DIAG/obs_data)
 dfolders+=(CAM_DIAG/rgb)

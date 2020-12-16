@@ -1,4 +1,6 @@
 CAM_DIAG/cam35_data/
+CAM_DIAG/cam5_data/
+CAM_DIAG/cam_data/
 CAM_DIAG/map_files/
 CAM_DIAG/obs_data/
 CAM_DIAG/obs_data/cam-chem
