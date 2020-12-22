@@ -13,7 +13,7 @@
 # second command line argument is the image type
 #----------------------------------------------------------------
 if (! ${?DENSITY}) then
-  set DENSITY = 85     # default pixels/inch
+  set DENSITY = 150    # default pixels/inch
 endif
 
 if (-e /contrib/bin/convert) then

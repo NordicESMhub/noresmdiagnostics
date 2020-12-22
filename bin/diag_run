@@ -2,7 +2,7 @@
 #
 # DESCRIPTION: Wrapper script for NorESM diagnostics
 
-VERSION=2.0
+VERSION=2.1
 BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 ETC_DIR=$ROOT_DIR/etc
@@ -40,7 +40,7 @@ echo "Version: $VERSION"
 echo "-------------------------------------------------"
 
 ## Check all flags
-if [ $# -eq 0 ]; then
+if [ $# -eq 0 ] || [ $1 == "-h" ]; then
     echo "Short description:"
     echo "A wrapper script for NorESM diagnostic packages."
     echo " "
