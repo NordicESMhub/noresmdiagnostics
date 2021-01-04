@@ -415,7 +415,7 @@ do
         else
             echo "$CLIMO_TS_DIR/$MON_RGR_FILE already exists."
             echo "-> SKIPPING COMPUTING CLIMATOLOGY"
-            echo "(WARNING: If you have monthly SST,SSS and MLD diagnostics in the output of MICOM_DIAG, )"
+            echo "(WARNING: If you have monthly SST,SSS and MLD diagnostics in the output of BLOM_DIAG, )"
             echo "(...but no diagnostics in the Regionally-averaged monthly climatologies, you may need to clean $CLIMO_TS_DIR/$MON_RGR_FILE and rerun the HAMOCC_DIAG again.)"
         fi
         # ---------------------------------

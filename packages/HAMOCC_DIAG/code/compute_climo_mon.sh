@@ -1,6 +1,6 @@
 #!/bin/bash
 
-script_start=`date +%s`
+script_start=$(date +%s)
 #
 # HAMOCC DIAGNOSTICS package: compute_climo_mon.sh
 # PURPOSE: computes climatology from annual or monthly history files
@@ -32,10 +32,14 @@ echo " pathdat  = $pathdat"
 echo " climodir = $climodir"
 echo " "
 
-var_list=`cat $WKDIR/attributes/vars_climo_mon_${casename}_hbgcm`
-first_yr_prnt=`printf "%04d" ${first_yr}`
-last_yr_prnt=`printf "%04d" ${last_yr}`
+var_list=$cat $WKDIR/attributes/vars_climo_mon_${casename}_hbgcm)
+first_yr_prnt=$(printf "%04d" ${first_yr})
+last_yr_prnt=$(printf "%04d" ${last_yr})
 mon_avg_file=${climodir}/${casename}_MON_${first_yr_prnt}-${last_yr_prnt}_climo.nc
+
+# Determine file tag
+ls $pathdat/${casename}.blom.*.${first_yr_prnt}*.nc >/dev/null 2>&1
+[ $? -eq 0 ] && filetag=blom || filetag=micom
 
 pid=()
 mon_avg_files=()
@@ -46,8 +50,8 @@ do
     YR=$first_yr
     while [ $YR -le $last_yr ]
     do
-        yr_prnt=`printf "%04d" ${YR}`
-        filename=${casename}.micom.hbgcm.${yr_prnt}-${month}.nc
+        yr_prnt=$(printf "%04d" ${YR})
+        filename=${casename}.${filetag}.hbgcm.${yr_prnt}-${month}.nc
         if [ -f $pathdat/$filename ]; then
             filenames+=($filename)
         else
@@ -73,9 +77,9 @@ do
 done
 wait
 
-script_end=`date +%s`
-runtime_s=`expr ${script_end} - ${script_start}`
-runtime_script_m=`expr ${runtime_s} / 60`
-min_in_secs=`expr ${runtime_script_m} \* 60`
-runtime_script_s=`expr ${runtime_s} - ${min_in_secs}`
+script_end=$(date +%s)
+runtime_s=$(expr ${script_end} - ${script_start})
+runtime_script_m=$(expr ${runtime_s} / 60)
+min_in_secs=$(expr ${runtime_script_m} \* 60)
+runtime_script_s=$(expr ${runtime_s} - ${min_in_secs})
 echo "CLIMO RUNTIME: ${runtime_script_m}m${runtime_script_s}s"

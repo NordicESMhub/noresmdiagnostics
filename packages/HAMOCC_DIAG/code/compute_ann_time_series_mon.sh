@@ -32,15 +32,19 @@ echo " pathdat  = $pathdat"
 echo " tsdir    = $tsdir"
 echo " "
 
-var_list=`cat $WKDIR/attributes/vars_ts_mon_${casename}_hbgcm`
+var_list=$(cat $WKDIR/attributes/vars_ts_mon_${casename}_hbgcm)
 first_yr_prnt=`printf "%04d" ${first_yr}`
 last_yr_prnt=`printf "%04d" ${last_yr}`
 ann_ts_file=${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}_ts_mon.nc
 ann_ts_file_others=${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}_ts_mon_others.nc
 ann_ts_file_pp=${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}_ts_mon_pp.nc
 
+# Determine file tag
+ls $pathdat/${casename}.blom.*.${first_yr_prnt}*.nc >/dev/null 2>&1
+[ $? -eq 0 ] && filetag=blom || filetag=micom
+
 if [ -z $PGRIDPATH ]; then
-    grid_file=$DIAG_GRID/`cat $WKDIR/attributes/grid_${casename}`/grid.nc
+    grid_file=$DIAG_GRID/$(cat $WKDIR/attributes/grid_${casename})/grid.nc
 else
     grid_file=$PGRIDPATH/grid.nc
 fi
@@ -53,17 +57,17 @@ fi
 # First do all variables except pp
 var_list_others=""
 var_list_pp=""
-if `echo $var_list | grep -q ,pp`
+if $(echo $var_list | grep -q ,pp)
 then
-    var_list_others=`echo $var_list | sed "s/,pp//g"`
+    var_list_others=$(echo $var_list | sed "s/,pp//g")
     var_list_pp=pp,pddpo
 fi
-if `echo $var_list | grep -q pp,`
+if $(echo $var_list | grep -q pp,)
 then
-    var_list_others=`echo $var_list | sed "s/pp,//g"`
+    var_list_others=$(echo $var_list | sed "s/pp,//g")
     var_list_pp=pp,pddpo
 fi
-if `echo $var_list | grep -q pp`
+if $(echo $var_list | grep -q pp)
 then
     var_list_pp=pp,pddpo
 fi
@@ -73,14 +77,14 @@ if [ ! -f $tsdir/$ann_ts_file_others ]; then
         iyear=$first_yr
         while [ $iyear -le $last_yr ]
         do
-            yr_prnt=`printf "%04d" ${iyear}`
+            yr_prnt=$(printf "%04d" ${iyear})
             echo "Annual means from monthly history files (yr=$yr_prnt)"
             pid=()
             monfiles=()
             # Compute global averages for each month
             for mon in 01 02 03 04 05 06 07 08 09 10 11 12
             do
-                infile=${casename}.micom.hbgcm.${yr_prnt}-${mon}.nc
+                infile=${casename}.${filetag}.hbgcm.${yr_prnt}-${mon}.nc
                 outfile=${casename}_${yr_prnt}-${mon}_ts_mon.nc
                 monfiles+=($outfile)
                 eval $NCWA --no_tmp_fl -O -v $var_list_others -w pddpo -a sigma,y,x $pathdat/$infile $WKDIR/$outfile &
@@ -124,14 +128,14 @@ if [ ! -f $tsdir/$ann_ts_file_pp ]; then
         iyear=$first_yr
         while [ $iyear -le $last_yr ]
         do
-            yr_prnt=`printf "%04d" ${iyear}`
+            yr_prnt=$(printf "%04d" ${iyear})
             echo "Annual total pp from monthly history files (yr=$yr_prnt)"
             # Take out pp from monthly history files
             pid=()
             monfiles=()
             for mon in 01 02 03 04 05 06 07 08 09 10 11 12
             do
-                infile=${casename}.micom.hbgcm.${yr_prnt}-${mon}.nc
+                infile=${casename}.${filetag}.hbgcm.${yr_prnt}-${mon}.nc
                 outfile=${casename}_${yr_prnt}-${mon}.nc
                 monfiles+=($outfile)            
                 eval $NCKS -O -v $var_list_pp $pathdat/$infile $WKDIR/$outfile &
@@ -225,9 +229,9 @@ else
     echo "$tsdir/$ann_ts_file_pp already exists."
 fi
 
-script_end=`date +%s`
-runtime_s=`expr ${script_end} - ${script_start}`
-runtime_script_m=`expr ${runtime_s} / 60`
-min_in_secs=`expr ${runtime_script_m} \* 60`
-runtime_script_s=`expr ${runtime_s} - ${min_in_secs}`
+script_end=$(date +%s)
+runtime_s=$(expr ${script_end} - ${script_start})
+runtime_script_m=$(expr ${runtime_s} / 60)
+min_in_secs=$(expr ${runtime_script_m} \* 60)
+runtime_script_s=$(expr ${runtime_s} - ${min_in_secs})
 echo "ANNUAL TIME SERIES RUNTIME: ${runtime_script_m}m${runtime_script_s}s"

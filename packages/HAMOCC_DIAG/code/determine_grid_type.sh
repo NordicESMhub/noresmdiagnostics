@@ -5,7 +5,7 @@
 # Johan Liakka, NERSC, johan.liakka@nersc.no
 # Last update Jan 2018
 
-# STRATEGY: Unfortunately the micom history files do not include any grid information.
+# STRATEGY: Unfortunately the blom/micom history files do not include any grid information.
 # Therefore, the grid size and type is determined by the total number of grid points of the co2fxd variable,
 # and the grid version is determined by the number of missing values from that variable.
 
