@@ -1,6 +1,6 @@
 #!/bin/bash
 
-script_start=`date +%s`
+script_start=$(date +%s)
 #
 # HAMOCC DIAGNOSTICS package: compute_ann_time_series.sh
 # PURPOSE: computes annual time series from annual or monthly history files
@@ -39,13 +39,17 @@ echo " pathdat  = $pathdat"
 echo " tsdir    = $tsdir"
 echo " "
 
-var_list=`cat $WKDIR/attributes/vars_ts_ann_${casename}_${filetype}`
-first_yr_prnt=`printf "%04d" ${first_yr}`
-last_yr_prnt=`printf "%04d" ${last_yr}`
+var_list=$(cat $WKDIR/attributes/vars_ts_ann_${casename}_${filetype})
+first_yr_prnt=$(printf "%04d" ${first_yr})
+last_yr_prnt=$(printf "%04d" ${last_yr})
 ann_ts_file=${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}_ts_ann_${filetype}.nc
 
+# Determine file tag
+ls $pathdat/${casename}.blom.*.${first_yr_prnt}*.nc >/dev/null 2>&1
+[ $? -eq 0 ] && filetag=blom || filetag=micom
+
 if [ -z $PGRIDPATH ]; then
-    grid_file=$DIAG_GRID/`cat $WKDIR/attributes/grid_${casename}`/grid.nc
+    grid_file=$DIAG_GRID/$(cat $WKDIR/attributes/grid_${casename})/grid.nc
 else
     grid_file=$PGRIDPATH/grid.nc
 fi
@@ -57,9 +61,9 @@ fi
 
 # generate volume (mass) data for weighting
 if [ $filetype == hbgcy ]; then
-    filename=${casename}.micom.hbgcy.$(printf "%04d" ${first_yr}).nc
+    filename=${casename}.${filetag}.hbgcy.${first_yr_prnt}.nc
 else
-    filename=${casename}.micom.hbgcm.$(printf "%04d" ${first_yr})-01.nc
+    filename=${casename}.${filetag}.hbgcm.${first_yr_prnt}-01.nc
 fi
 
 ncks -O --quiet -v depth_bnds $pathdat/$filename -o $WKDIR/depth_bnds.nc
@@ -102,8 +106,8 @@ do
         while [ $iproc -le $nyrs ]
         do
             let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-            yr_prnt=`printf "%04d" ${YR}`
-            filename=${casename}.micom.hbgcy.${yr_prnt}.nc
+            yr_prnt=$(printf "%04d" ${YR})
+            filename=${casename}.${filetag}.hbgcy.${yr_prnt}.nc
 
             fflag=1     #check if all required annual ts files exist
             for var in $(echo $var_list | sed 's/,/ /g'|sed 's/pddpo//'|sed 's/depth_bnds//') ; do
@@ -142,11 +146,11 @@ do
         while [ $iproc -le $nyrs ]
         do
             let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-            yr_prnt=`printf "%04d" ${YR}`
+            yr_prnt=$(printf "%04d" ${YR})
             filenames=()
             for mon in 01 02 03 04 05 06 07 08 09 10 11 12
             do
-                filename=${casename}.micom.hbgcm.${yr_prnt}-${mon}.nc
+                filename=${casename}.${filetag}.hbgcm.${yr_prnt}-${mon}.nc
                 filenames+=($filename)
             done
             fflag=1     #check if all required annual ts files exist
@@ -183,7 +187,7 @@ do
     while [ $iproc -le $nyrs ]
     do
         let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-        yr_prnt=`printf "%04d" ${YR}`
+        yr_prnt=$(printf "%04d" ${YR})
         filename=${casename}_ANN_${yr_prnt}.nc
         if [ -f $WKDIR/$filename ]; then
             $NCKS --quiet -d depth,0 -d x,0 -d y,0 -v parea,dvol,dmass $WKDIR/$filename >/dev/null 2>&1
@@ -202,7 +206,7 @@ do
     wait
     rm -f $WKDIR/dmass_*.nc
     # Loop over variables and do some averaging...
-    for var in `echo $var_list | sed 's/,/ /g'`
+    for var in $(echo $var_list | sed 's/,/ /g')
     do
         # Mass weighted 3D averaging of nutrients
         if [ $var == o2 ] || [ $var == si ] || [ $var == po4 ] || \
@@ -213,7 +217,7 @@ do
             while [ $iproc -le $nyrs ]
             do
                 let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-                yr_prnt=`printf "%04d" ${YR}`
+                yr_prnt=$(printf "%04d" ${YR})
                 infile=${casename}_ANN_${yr_prnt}.nc
                 outfile=${var}_${casename}_ANN_${filetype}_${yr_prnt}.nc
                 if [ -f $WKDIR/$infile ] && [ ! -f $tsdir/ann_ts/$outfile ]; then
@@ -241,7 +245,7 @@ do
             while [ $iproc -le $nyrs ]
             do
                 let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-                yr_prnt=`printf "%04d" ${YR}`
+                yr_prnt=$(printf "%04d" ${YR})
                 infile=${casename}_ANN_${yr_prnt}.nc
                 outfile=${var}_${casename}_ANN_${filetype}_${yr_prnt}.nc
                 outfile2=${var}100m_${casename}_ANN_${filetype}_${yr_prnt}.nc
@@ -273,7 +277,7 @@ do
             while [ $iproc -le $nyrs ]
             do
                 let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-                yr_prnt=`printf "%04d" ${YR}`
+                yr_prnt=$(printf "%04d" ${YR})
                 infile=${casename}_ANN_${yr_prnt}.nc
                 outfile_tmp=${var}_${casename}_ANN_${filetype}_${yr_prnt}_tmp.nc
                 outfile=${var}_${casename}_ANN_${filetype}_${yr_prnt}.nc
@@ -293,7 +297,7 @@ do
             while [ $iproc -le $nyrs ]
             do
                 let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-                yr_prnt=`printf "%04d" ${YR}`
+                yr_prnt=$(printf "%04d" ${YR})
                 infile=${casename}_ANN_${yr_prnt}.nc
                 outfile_tmp=${var}_${casename}_ANN_${filetype}_${yr_prnt}_tmp.nc
                 outfile=${var}_${casename}_ANN_${filetype}_${yr_prnt}.nc
@@ -313,7 +317,7 @@ do
             while [ $iproc -le $nyrs ]
             do
                 let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-                yr_prnt=`printf "%04d" ${YR}`
+                yr_prnt=$(printf "%04d" ${YR})
                 infile=${casename}_ANN_${yr_prnt}.nc
                 outfile_tmp=${var}_${casename}_ANN_${filetype}_${yr_prnt}_tmp.nc
                 outfile=${var}_${casename}_ANN_${filetype}_${yr_prnt}.nc
@@ -333,7 +337,7 @@ do
             while [ $iproc -le $nyrs ]
             do
                 let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-                yr_prnt=`printf "%04d" ${YR}`
+                yr_prnt=$(printf "%04d" ${YR})
                 infile=${casename}_ANN_${yr_prnt}.nc
                 outfile_tmp=${var}_${casename}_ANN_${filetype}_${yr_prnt}_tmp.nc
                 outfile=${var}_${casename}_ANN_${filetype}_${yr_prnt}.nc
@@ -353,7 +357,7 @@ do
             while [ $iproc -le $nyrs ]
             do
                 let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-                yr_prnt=`printf "%04d" ${YR}`
+                yr_prnt=$(printf "%04d" ${YR})
                 infile=${casename}_ANN_${yr_prnt}.nc
                 outfile_tmp=${var}_${casename}_ANN_${filetype}_${yr_prnt}_tmp.nc
                 outfile=${var}_${casename}_ANN_${filetype}_${yr_prnt}.nc
@@ -374,7 +378,7 @@ do
             while [ $iproc -le $nyrs ]
             do
                 let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-                yr_prnt=`printf "%04d" ${YR}`
+                yr_prnt=$(printf "%04d" ${YR})
                 infile=${casename}_ANN_${yr_prnt}.nc
                 outfile_tmp=${var}_${casename}_ANN_${filetype}_${yr_prnt}_tmp.nc
                 if [ -f $WKDIR/$infile ] && [ ! -f $tsdir/ann_ts/$outfile ]; then
@@ -398,7 +402,7 @@ do
             while [ $iproc -le $nyrs ]
             do
                 let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-                yr_prnt=`printf "%04d" ${YR}`
+                yr_prnt=$(printf "%04d" ${YR})
                 outfile_tmp=${var}_${casename}_ANN_${filetype}_${yr_prnt}_tmp.nc
                 if [ -f $WKDIR/$infile ] && [ ! -f $tsdir/ann_ts/$outfile ]; then
                     $NCAP2 -O -s 'pp_tot=pp_vol.total($sigma,$y,$x)*12.0*86400.0*365.0*1.0e-15' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp &
@@ -421,7 +425,7 @@ do
             while [ $iproc -le $nyrs ]
             do
                 let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-                yr_prnt=`printf "%04d" ${YR}`
+                yr_prnt=$(printf "%04d" ${YR})
                 outfile_tmp=${var}_${casename}_ANN_${filetype}_${yr_prnt}_tmp.nc
                 outfile=${var}_${casename}_ANN_${filetype}_${yr_prnt}.nc
                 if [ -f $WKDIR/$infile ] && [ ! -f $tsdir/ann_ts/$outfile ]; then
@@ -445,7 +449,7 @@ do
             while [ $iproc -le $nyrs ]
             do
                 let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-                yr_prnt=`printf "%04d" ${YR}`
+                yr_prnt=$(printf "%04d" ${YR})
                 outfile_tmp=${var}_${casename}_ANN_${yr_prnt}_tmp.nc
                 rm -f $WKDIR/$outfile_tmp
                 let iproc++
@@ -458,7 +462,7 @@ do
             while [ $iproc -le $nyrs ]
             do
                 let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-                yr_prnt=`printf "%04d" ${YR}`
+                yr_prnt=$(printf "%04d" ${YR})
                 infile=${casename}_ANN_${yr_prnt}.nc
                 outfile_tmp=${var}_${casename}_ANN_${filetype}_${yr_prnt}_tmp.nc
                 outfile=${var}_${casename}_ANN_${filetype}_${yr_prnt}.nc
@@ -477,7 +481,7 @@ do
     while [ $iproc -le $nyrs ]
     do
         let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-        yr_prnt=`printf "%04d" ${YR}`
+        yr_prnt=$(printf "%04d" ${YR})
         filename=${casename}_ANN_${yr_prnt}.nc
         if [ -f  $WKDIR/$filename ]; then
             rm -f $WKDIR/$filename
@@ -506,7 +510,7 @@ then
 fi
 echo $var_list
 
-for var in `echo $var_list | sed 's/,/ /g'`
+for var in $(echo $var_list | sed 's/,/ /g')
 do
     mv $WKDIR/${var}_${casename}_ANN_${filetype}_*.nc $tsdir/ann_ts/ >/dev/null 2>&1
     first_file=${var}_${casename}_ANN_${filetype}_${first_yr_prnt}.nc
@@ -531,9 +535,9 @@ do
 done
 rm -f $WKDIR/{depth_bnds.nc,dz.nc,dz3d.nc,dvol.nc}
 
-script_end=`date +%s`
-runtime_s=`expr ${script_end} - ${script_start}`
-runtime_script_m=`expr ${runtime_s} / 60`
-min_in_secs=`expr ${runtime_script_m} \* 60`
-runtime_script_s=`expr ${runtime_s} - ${min_in_secs}`
+script_end=$(date +%s)
+runtime_s=$(expr ${script_end} - ${script_start})
+runtime_script_m=$(expr ${runtime_s} / 60)
+min_in_secs=$(expr ${runtime_script_m} \* 60)
+runtime_script_s=$(expr ${runtime_s} - ${min_in_secs})
 echo "ANNUAL TIME SERIES RUNTIME: ${runtime_script_m}m${runtime_script_s}s"

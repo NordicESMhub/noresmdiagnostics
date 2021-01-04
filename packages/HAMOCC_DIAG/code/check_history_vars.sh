@@ -39,14 +39,21 @@ if [ $mode == ts_mon ] || [ $mode == climo_mon ]; then
     filetypes="hbgcm"
 fi
 
+first_yr_prnt=$(printf "%04d" ${first_yr})
+
+# Determine file tag
+ls $pathdat/${casename}.blom.*.${first_yr_prnt}*.nc >/dev/null 2>&1
+[ $? -eq 0 ] && filetag=blom || filetag=micom
+
+
 # Look for co2fxd (used to determine grid type and version)
 if [ ! -f $WKDIR/attributes/co2fxd_file_${casename} ]; then
     for filetype in $filetypes
     do
         if [ $filetype == hbgcy ]; then
-            fullpath_filename=$pathdat/$casename.micom.$filetype.`printf "%04d" ${first_yr}`.nc
+            fullpath_filename=$pathdat/$casename.${filetag}.$filetype.${first_yr_prnt}.nc
         else
-            fullpath_filename=$pathdat/$casename.micom.$filetype.`printf "%04d" ${first_yr}`-01.nc
+            fullpath_filename=$pathdat/$casename.${filetag}.$filetype.${first_yr_prnt}-01.nc
         fi
         $NCKS --quiet -d y,0 -d x,0 -v co2fxd $fullpath_filename >/dev/null 2>&1
         echo $fullpath_filename
@@ -72,7 +79,7 @@ do
         let "iyr = $first_yr"
         while [ $iyr -le $last_yr ]
         do
-            fullpath_filename=$pathdat/$casename.micom.$filetype.`printf "%04d" ${iyr}`.nc
+            fullpath_filename=$pathdat/$casename.${filetag}.$filetype.`printf "%04d" ${iyr}`.nc
             if [ ! -f $fullpath_filename ]; then
                 echo "$fullpath_filename does not exist."
                 check_vars=0
@@ -85,7 +92,7 @@ do
         let "iyr = $first_yr"
         while [ $iyr -le $last_yr ]
         do
-            fullpath_filename=$pathdat/$casename.micom.$filetype.`printf "%04d" ${iyr}`-01.nc
+            fullpath_filename=$pathdat/$casename.${filetag}.$filetype.`printf "%04d" ${iyr}`-01.nc
             if [ ! -f $fullpath_filename ]; then
                 echo "$fullpath_filename does not exist."
                 check_vars=0

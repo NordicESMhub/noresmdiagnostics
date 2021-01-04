@@ -415,7 +415,7 @@ do
         else
             echo "$CLIMO_TS_DIR/$MON_RGR_FILE already exists."
             echo "-> SKIPPING COMPUTING CLIMATOLOGY"
-            echo "(WARNING: If you have monthly SST,SSS and MLD diagnostics in the output of MICOM_DIAG, )"
+            echo "(WARNING: If you have monthly SST,SSS and MLD diagnostics in the output of BLOM_DIAG, )"
             echo "(...but no diagnostics in the Regionally-averaged monthly climatologies, you may need to clean $CLIMO_TS_DIR/$MON_RGR_FILE and rerun the HAMOCC_DIAG again.)"
         fi
         # ---------------------------------
@@ -830,7 +830,7 @@ if [ $? -eq 0 ] && [ $publish_html -eq 1 ]; then
     if [ $? -eq 0 ]; then
         if [ $path_pref == $web_server_path ]; then
             full_url=${web_server}/${path_suff}/${WEBFOLDER}/index.html
-            $DIAG_CODE/redirect_html.sh $WEBFOLDER $publish_html_path ${WEBFOLDER}/index.htm
+            $DIAG_CODE/redirect_html.sh $WEBFOLDER $publish_html_path ${WEBFOLDER}/index.html
             echo " "
             echo "URL:"
             echo "***********************************************************************************"
