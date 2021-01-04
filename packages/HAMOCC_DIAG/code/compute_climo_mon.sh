@@ -32,7 +32,7 @@ echo " pathdat  = $pathdat"
 echo " climodir = $climodir"
 echo " "
 
-var_list=$cat $WKDIR/attributes/vars_climo_mon_${casename}_hbgcm)
+var_list=$(cat $WKDIR/attributes/vars_climo_mon_${casename}_hbgcm)
 first_yr_prnt=$(printf "%04d" ${first_yr})
 last_yr_prnt=$(printf "%04d" ${last_yr})
 mon_avg_file=${climodir}/${casename}_MON_${first_yr_prnt}-${last_yr_prnt}_climo.nc

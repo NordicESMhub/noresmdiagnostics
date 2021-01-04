@@ -41,7 +41,7 @@ last_yr_prnt=$(printf "%04d" ${last_yr})
 ann_avg_file=${climodir}/${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}_climo_${filetype}.nc
 
 # Determine file tag
-ls $pathdat/${casename}.blom.*.${first_yr_prnt})*.nc >/dev/null 2>&1
+ls $pathdat/${casename}.blom.*.${first_yr_prnt}*.nc >/dev/null 2>&1
 [ $? -eq 0 ] && filetag=blom || filetag=micom
 
 # COMPUTE CLIMATOLOGY FROM ANNUAL FILES

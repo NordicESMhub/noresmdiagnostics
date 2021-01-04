@@ -42,7 +42,7 @@ fi
 first_yr_prnt=$(printf "%04d" ${first_yr})
 
 # Determine file tag
-ls $pathdat/${casename}.blom.*.${first_yr_prnt})*.nc >/dev/null 2>&1
+ls $pathdat/${casename}.blom.*.${first_yr_prnt}*.nc >/dev/null 2>&1
 [ $? -eq 0 ] && filetag=blom || filetag=micom
 
 
