@@ -32,10 +32,15 @@ echo " "
 infile=$climodir/${casename}_MON_${fyr_prnt}-${lyr_prnt}_climo_remap.nc
 
 # append MICOM sst,sss climatology to $infile, if available
-climodir2=${climodir//HAMOCC_DIAG/MICOM_DIAG}
+if [ -f ${climodir//HAMOCC_DIAG/BLOM_DIAG}/${casename}_01_${fyr_prnt}-${lyr_prnt}_climo_remap.nc ]
+then
+    climodir2=${climodir//HAMOCC_DIAG/BLOM_DIAG}
+else
+    climodir2=${climodir//HAMOCC_DIAG/MICOM_DIAG}
+fi
 if [[ -f $climodir2/${casename}_01_${fyr_prnt}-${lyr_prnt}_climo_remap.nc ]]
 then
-    $NCRCAT --no_tmp_fl -O -v sst,sss `seq -f $climodir2/${casename}_%02g_${fyr_prnt}-${lyr_prnt}_climo_remap.nc 1 12` $climodir2/sst_sss_MON_tmp.nc
+    $NCRCAT --no_tmp_fl -O -v sst,sss $(seq -f $climodir2/${casename}_%02g_${fyr_prnt}-${lyr_prnt}_climo_remap.nc 1 12) $climodir2/sst_sss_MON_tmp.nc
     if [ $? -ne 0 ]; then
         echo "WARNING: merging monthly sst,sss climatogies fails: $NCRCAT --no_tmp_fl -O -v sst,sss $climodir2/${casename}_??_${fyr_prnt}-${lyr_prnt}_climo_remap.nc $climodir2/sst_sss_MON_tmp.nc"
     else
@@ -51,10 +56,15 @@ else
 fi
 
 # append MICOM mxld climatology to $infile, if available
-climodir2=${climodir//HAMOCC_DIAG/MICOM_DIAG}/MLD
+if [ -f ${climodir//HAMOCC_DIAG/BLOM_DIAG}/mld_${fyr_prnt}-${lyr_prnt}_01.nc ]
+then
+    climodir2=${climodir//HAMOCC_DIAG/BLOM_DIAG}/MLD
+else
+    climodir2=${climodir//HAMOCC_DIAG/MICOM_DIAG}/MLD
+fi
 if [[ -f $climodir2/mld_${fyr_prnt}-${lyr_prnt}_01.nc ]]
 then
-    $NCRCAT --no_tmp_fl -O -v mld `seq -f $climodir2/mld_${fyr_prnt}-${lyr_prnt}_%02g.nc 1 12` $climodir2/mld_MON_tmp.nc
+    $NCRCAT --no_tmp_fl -O -v mld $(seq -f $climodir2/mld_${fyr_prnt}-${lyr_prnt}_%02g.nc 1 12) $climodir2/mld_MON_tmp.nc
     if [ $? -ne 0 ]; then
         echo "WARNING: merging monthly mld climatogies fails: $NCRCAT --no_tmp_fl -O -v mld $climodir2/${casename}_??_${fyr_prnt}-${lyr_prnt}_climo_remap.nc $climodir2/mld_MON_tmp.nc"
     else
@@ -69,12 +79,12 @@ else
     echo "WARNING: mld climatology in MICOM diagnostic does not exist"
 fi
 
-vars=`$CDO -s showname $infile`
+vars=$($CDO -s showname $infile)
 
 for region in ARC NATL NPAC TATL TPAC IND MSO HSO
 do
     tmpfile=$climodir/${casename}_${region}_tmp.nc
-    for var in $vars
+    for var in $(echo $vars |sed 's/ pddpo//g')
         do
         maskfile=$DIAG_GRID/1x1d/${var}/region_mask_1x1_${region}.nc
         outfile=$climodir/${casename}_MON_${fyr_prnt}-${lyr_prnt}_climo_remap_${region}.nc
