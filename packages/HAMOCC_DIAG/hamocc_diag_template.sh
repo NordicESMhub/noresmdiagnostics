@@ -823,7 +823,7 @@ if [ $? -eq 0 ] && [ $publish_html -eq 1 ]; then
             chmod 775 ${publish_html_path}
         fi
     fi
-    web_server=ns2345k.web.sigma2.no
+    web_server=http://ns2345k.web.sigma2.no
     path_pref=`echo ${publish_html_path} | cut -c -21`
     path_suff=`echo ${publish_html_path} | cut -c 23-`
     tar -xf $TARFILE -C $publish_html_path
