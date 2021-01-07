@@ -331,47 +331,50 @@ CLM_DIAG_DIR=${ROOT_DIR}/packages/CLM_DIAG
 CICE_DIAG_DIR=${ROOT_DIR}/packages/CICE_DIAG
 BLOM_DIAG_DIR=${ROOT_DIR}/packages/BLOM_DIAG
 HAMOCC_DIAG_DIR=${ROOT_DIR}/packages/HAMOCC_DIAG
+CISM_DIAG_DIR=${ROOT_DIR}/packages/CISM_DIAG
 CAM_DIAG_FILE=amwg_template.csh
 CLM_DIAG_FILE=lnd_template.csh
 CICE_DIAG_FILE=ice_diag_template.csh
 BLOM_DIAG_FILE=blom_diag_template.sh
 HAMOCC_DIAG_FILE=hamocc_diag_template.sh
+CISM_DIAG_FILE=cism_diag_template.sh
 CAM_FILE_OUT=amwg_${dateYYYYMMDD}_${dateHHMMSS}.csh
 CLM_FILE_OUT=lnd_${dateYYYYMMDD}_${dateHHMMSS}.csh
 CICE_FILE_OUT=ice_diag_${dateYYYYMMDD}_${dateHHMMSS}.csh
 BLOM_FILE_OUT=blom_diag_${dateYYYYMMDD}_${dateHHMMSS}.sh
 HAMOCC_FILE_OUT=hamocc_diag_${dateYYYYMMDD}_${dateHHMMSS}.sh
+CISM_FILE_OUT=cism_diag_${dateYYYYMMDD}_${dateHHMMSS}.sh
 
-MODELS=(cam clm cice blom hamocc)
-MODELS_CAPS=(CAM CLM CICE BLOM HAMOCC)
-DIAG_DIRS=($CAM_DIAG_DIR $CLM_DIAG_DIR $CICE_DIAG_DIR $BLOM_DIAG_DIR $HAMOCC_DIAG_DIR)
-DIAG_FILES=($CAM_DIAG_FILE $CLM_DIAG_FILE $CICE_DIAG_FILE $BLOM_DIAG_FILE $HAMOCC_DIAG_FILE)
-DIAG_FILES_OUT=($CAM_FILE_OUT $CLM_FILE_OUT $CICE_FILE_OUT $BLOM_FILE_OUT $HAMOCC_FILE_OUT)
-TEST_CASE_NAMES=(test_casename caseid_1 CASE_TO_CONT CASENAME1 CASENAME1)
-TEST_FIRST_YR_NAMES=(test_first_yr clim_first_yr_1 FIRST_YR_CLIMO1 FIRST_YR_CLIMO1 FIRST_YR_CLIMO1)
-TEST_NYRS_NAMES=(test_nyrs clim_num_yrs_1 NYRS_CLIMO1 NYRS_CLIMO1 NYRS_CLIMO1)
-TEST_FIRST_YR_TS_NAMES=(test_first_yr_ts trends_first_yr_1 FIRST_YR_TS1 FIRST_YR_TS1 FIRST_YR_TS1)
-TEST_LAST_YR_TS_NAMES=(test_last_yr_ts trends_num_yrs_1 LAST_YR_TS1 LAST_YR_TS1 LAST_YR_TS1)
-DIAG_DIR_NAMES=(diag_dir PTMPDIR SCRIPT_HOME DIAG_ROOT DIAG_ROOT)
-CNTL_NAMES=(CNTL CNTL CNTL CNTL CNTL)
-CNTL_CASE_NAMES=(cntl_casename caseid_2 CASE_TO_DIFF CASENAME2 CASENAME2)
-CNTL_FIRST_YR_NAMES=(cntl_first_yr clim_first_yr_2 FIRST_YR_CLIMO2 FIRST_YR_CLIMO2 FIRST_YR_CLIMO2)
-CNTL_NYRS_NAMES=(cntl_nyrs clim_num_yrs_2 NYRS_CLIMO2 NYRS_CLIMO2 NYRS_CLIMO2)
-CNTL_FIRST_YR_TS_NAMES=(cntl_first_yr_ts trends_first_yr_2 FIRST_YR_TS2 FIRST_YR_TS2 FIRST_YR_TS2)
-CNTL_LAST_YR_TS_NAMES=(cntl_last_yr_ts trends_num_yrs_2 LAST_YR_TS2 LAST_YR_TS2 LAST_YR_TS2)
-WEB_DIR_NAMES=(publish_html_root publish_html_root publish_html_root publish_html_root publish_html_root)
-INPUT_DIR_NAMES1=(test_path_history_root SOURCE_1 DATA_ROOT1 pathdat_root1 pathdat_root1)
-INPUT_DIR_NAMES2=(cntl_path_history_root SOURCE_2 DATA_ROOT2 pathdat_root2 pathdat_root2)
-DIAG_RUNTIMES=(null null null null null)
-TRENDS_ALL_NAMES=(TRENDS_ALL trends_all_flag TRENDS_ALL TRENDS_ALL TRENDS_ALL)
+MODELS=(cam clm cice blom hamocc cism)
+MODELS_CAPS=(CAM CLM CICE BLOM HAMOCC CISM)
+DIAG_DIRS=($CAM_DIAG_DIR $CLM_DIAG_DIR $CICE_DIAG_DIR $BLOM_DIAG_DIR $HAMOCC_DIAG_DIR $CISM_DIAG_DIR)
+DIAG_FILES=($CAM_DIAG_FILE $CLM_DIAG_FILE $CICE_DIAG_FILE $BLOM_DIAG_FILE $HAMOCC_DIAG_FILE $CISM_DIAG_FILE)
+DIAG_FILES_OUT=($CAM_FILE_OUT $CLM_FILE_OUT $CICE_FILE_OUT $BLOM_FILE_OUT $HAMOCC_FILE_OUT $CISM_FILE_OUT )
+TEST_CASE_NAMES=(test_casename caseid_1 CASE_TO_CONT CASENAME1 CASENAME1 CASENAME1 )
+TEST_FIRST_YR_NAMES=(test_first_yr clim_first_yr_1 FIRST_YR_CLIMO1 FIRST_YR_CLIMO1 FIRST_YR_CLIMO1 FIRST_YR_CLIMO1)
+TEST_NYRS_NAMES=(test_nyrs clim_num_yrs_1 NYRS_CLIMO1 NYRS_CLIMO1 NYRS_CLIMO1 NYRS_CLIMO1)
+TEST_FIRST_YR_TS_NAMES=(test_first_yr_ts trends_first_yr_1 FIRST_YR_TS1 FIRST_YR_TS1 FIRST_YR_TS1 FIRST_YR_TS1)
+TEST_LAST_YR_TS_NAMES=(test_last_yr_ts trends_num_yrs_1 LAST_YR_TS1 LAST_YR_TS1 LAST_YR_TS1 LAST_YR_TS1)
+DIAG_DIR_NAMES=(diag_dir PTMPDIR SCRIPT_HOME DIAG_ROOT DIAG_ROOT DIAG_ROOT)
+CNTL_NAMES=(CNTL CNTL CNTL CNTL CNTL CNTL)
+CNTL_CASE_NAMES=(cntl_casename caseid_2 CASE_TO_DIFF CASENAME2 CASENAME2 CASENAME2)
+CNTL_FIRST_YR_NAMES=(cntl_first_yr clim_first_yr_2 FIRST_YR_CLIMO2 FIRST_YR_CLIMO2 FIRST_YR_CLIMO2 FIRST_YR_CLIMO2)
+CNTL_NYRS_NAMES=(cntl_nyrs clim_num_yrs_2 NYRS_CLIMO2 NYRS_CLIMO2 NYRS_CLIMO2 NYRS_CLIMO2)
+CNTL_FIRST_YR_TS_NAMES=(cntl_first_yr_ts trends_first_yr_2 FIRST_YR_TS2 FIRST_YR_TS2 FIRST_YR_TS2 FIRST_YR_TS2)
+CNTL_LAST_YR_TS_NAMES=(cntl_last_yr_ts trends_num_yrs_2 LAST_YR_TS2 LAST_YR_TS2 LAST_YR_TS2 LAST_YR_TS2)
+WEB_DIR_NAMES=(publish_html_root publish_html_root publish_html_root publish_html_root publish_html_root publish_html_root)
+INPUT_DIR_NAMES1=(test_path_history_root SOURCE_1 DATA_ROOT1 pathdat_root1 pathdat_root1 pathdat_root1)
+INPUT_DIR_NAMES2=(cntl_path_history_root SOURCE_2 DATA_ROOT2 pathdat_root2 pathdat_root2 pathdat_root2)
+DIAG_RUNTIMES=(null null null null null null)
+TRENDS_ALL_NAMES=(TRENDS_ALL trends_all_flag TRENDS_ALL TRENDS_ALL TRENDS_ALL TRENDS_ALL)
 runtime_s_tot=0
 
 # DETERMINE WHICH PACKAGE TO RUN
 if [ "$USER_MODEL" == "all" ]; then
-    RUN_MODELS=(1 1 1 1 1)
+    RUN_MODELS=(1 1 1 1 1 1)
 else
     USER_MODEL_SPACE=`echo $USER_MODEL | sed 's/,/ /g'`
-    RUN_MODELS=(0 0 0 0 0)
+    RUN_MODELS=(0 0 0 0 0 0)
     for model in $USER_MODEL_SPACE
     do
         if [ "$model" == "cam" ] || [ "$model" == "cam2" ]; then
@@ -384,6 +387,8 @@ else
             let RUN_MODELS[3]=${RUN_MODELS[3]}+1
         elif [ "$model" == "hamocc" ]; then
             let RUN_MODELS[4]=${RUN_MODELS[4]}+1
+        elif [ "$model" == "cism" ] || [ "$model" == "cism" ]; then
+            let RUN_MODELS[5]=${RUN_MODELS[5]}+1
         fi
     done
 fi
