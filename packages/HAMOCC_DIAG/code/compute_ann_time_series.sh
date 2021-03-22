@@ -45,8 +45,8 @@ last_yr_prnt=$(printf "%04d" ${last_yr})
 ann_ts_file=${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}_ts_ann_${filetype}.nc
 
 # Determine file tag
-ls $pathdat/${casename}.blom.*.${first_yr_prnt}*.nc >/dev/null 2>&1
-[ $? -eq 0 ] && filetag=blom || filetag=micom
+filetag=$(find $pathdat \( -name "${casename}.blom.*" -or -name "${casename}.micom.*" \) -print -quit | \
+            head -1 |awk -F/ '{print $NF}' |cut -d. -f2)
 
 if [ -z $PGRIDPATH ]; then
     grid_file=$DIAG_GRID/$(cat $WKDIR/attributes/grid_${casename})/grid.nc

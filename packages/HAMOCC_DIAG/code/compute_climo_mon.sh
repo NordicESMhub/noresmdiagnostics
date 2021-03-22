@@ -38,8 +38,8 @@ last_yr_prnt=$(printf "%04d" ${last_yr})
 mon_avg_file=${climodir}/${casename}_MON_${first_yr_prnt}-${last_yr_prnt}_climo.nc
 
 # Determine file tag
-ls $pathdat/${casename}.blom.*.${first_yr_prnt}*.nc >/dev/null 2>&1
-[ $? -eq 0 ] && filetag=blom || filetag=micom
+filetag=$(find $pathdat \( -name "${casename}.blom.*" -or -name "${casename}.micom.*" \) -print -quit | \
+                head -1 |awk -F/ '{print $NF}' |cut -d. -f2)
 
 pid=()
 mon_avg_files=()

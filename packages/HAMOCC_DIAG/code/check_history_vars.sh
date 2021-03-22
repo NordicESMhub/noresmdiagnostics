@@ -42,9 +42,8 @@ fi
 first_yr_prnt=$(printf "%04d" ${first_yr})
 
 # Determine file tag
-ls $pathdat/${casename}.blom.*.${first_yr_prnt}*.nc >/dev/null 2>&1
-[ $? -eq 0 ] && filetag=blom || filetag=micom
-
+filetag=$(find $pathdat \( -name "${casename}.blom.*" -or -name "${casename}.micom.*" \) -print -quit | \
+        head -1 |awk -F/ '{print $NF}' |cut -d. -f2)
 
 # Look for co2fxd (used to determine grid type and version)
 if [ ! -f $WKDIR/attributes/co2fxd_file_${casename} ]; then

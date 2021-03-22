@@ -23,8 +23,8 @@ echo " "
 echo "Searching for annual history files..."
 
 # Determine file tag
-ls $pathdat/${casename}.blom.*.*.nc >/dev/null 2>&1
-[ $? -eq 0 ] && filetag=blom || filetag=micom
+filetag=$(find $pathdat \( -name "${casename}.blom.*" -or -name "${casename}.micom.*" \) -print -quit | \
+    head -1 |awk -F/ '{print $NF}' |cut -d. -f2)
 
 file_head=${casename}.${filetag}.hbgcy.
 file_prefix=$pathdat/$file_head
@@ -32,7 +32,7 @@ first_file=$(ls ${file_prefix}* | head -n 1)
 last_file=$(ls ${file_prefix}* | tail -n 1)
 if [ -z $first_file ]; then
     echo "Found no annual history files in $pathdat"
-    echo "Searcing for monthly history files"
+    echo "Searching for monthly history files"
     file_head=${casename}.${filetag}.hbgcm.
     file_prefix=$pathdat/$file_head
     first_file=$(ls ${file_prefix}* | head -n 1)
