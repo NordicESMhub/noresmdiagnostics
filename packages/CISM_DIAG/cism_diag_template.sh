@@ -3,7 +3,7 @@
 #
 # CISM DIAGNOSTICS package
 # Heiko Goelzer, NORCE, heig@norceresearch.no 
-# Last update Jan. 2021
+# Last update 28.03.2021
 
 if [ -d /opt/ncl65 ] && [ -d /opt/nco475 ] && [ -d /opt/cdo197 ]; then
     export NCARG_ROOT=/opt/ncl65
@@ -300,6 +300,25 @@ if [ $TRENDS_ALL -eq 1 ]; then
     fi
 fi
 
+## CISM yearly filenames are offset by one year
+echo "Adjust timestamps for CISM" 
+let "FIRST_YR_CLIMO1 = $FIRST_YR_CLIMO1 + 1"
+let "FIRST_YR_TS1 = $FIRST_YR_TS1 + 1"
+let "LAST_YR_TS1 = $LAST_YR_TS1 + 1"
+echo "FIRST_YR_CLIMO1 = ${FIRST_YR_CLIMO1}"
+echo "FIRST_YR_TS1  = ${FIRST_YR_TS1}"
+echo "LAST_YR_TS1  = ${LAST_YR_TS1}"
+
+
+if [ $CNTL == USER ]; then
+    let "FIRST_YR_CLIMO2 = $FIRST_YR_CLIMO2 + 1"
+    let "FIRST_YR_TS2 = $FIRST_YR_TS2 + 1"
+    let "LAST_YR_TS2 = $LAST_YR_TS2 + 1"
+    echo "FIRST_YR_CLIMO2 = ${FIRST_YR_CLIMO2}"
+    echo "FIRST_YR_TS2  = ${FIRST_YR_TS2}"
+    echo "LAST_YR_TS2  = ${LAST_YR_TS2}"
+fi
+
 # Calculate climo last yr and define years with four digits
 let "LAST_YR_CLIMO1 = $FIRST_YR_CLIMO1 + $NYRS_CLIMO1 - 1"
 FYR_PRNT_CLIMO1=`printf "%04d" ${FIRST_YR_CLIMO1}`
@@ -466,34 +485,22 @@ if [ $CNTL == USER ]; then
     export cinfo=2models
 fi
 
-cp $DIAG_HTML/index.html $WEBDIR/index.html
-cdate=`date`
-sed -i "s/test_run/$CASENAME1/g" $WEBDIR/index.html
-sed -i "s/FY1/$FIRST_YR_CLIMO1/g" $WEBDIR/index.html
-sed -i "s/LY1/$LAST_YR_CLIMO1/g" $WEBDIR/index.html
-sed -i "s/date_and_time/$cdate/g" $WEBDIR/index.html
-if [ $CNTL == USER ]; then
-    sed -i "17i<br><b>and $CASENAME2 yrs${FIRST_YR_CLIMO2}to${LAST_YR_CLIMO2}</b>" $WEBDIR/index.html
-fi
-if [ $set_1 -eq 1 ] ; then
-    echo "<font color=maroon size=+1><b><u>Time series plots</u></b></font><br>" >> $WEBDIR/index.html
-    echo "<br>" >> $WEBDIR/index.html
-fi
-
-# new index page
+# BLOM format index page
 cp -r $DIAG_HTML/images/ $WEBDIR/
 chmod g+w $WEBDIR/images
-cp $DIAG_HTML/index1.html $WEBDIR/indexnew.html
+cp $DIAG_HTML/index1.html $WEBDIR/index.html
 cdate=`date`
-sed -i "s/test_run/$CASENAME1/g" $WEBDIR/indexnew.html
-sed -i "s/FY1/$FIRST_YR_CLIMO1/g" $WEBDIR/indexnew.html
-sed -i "s/LY1/$LAST_YR_CLIMO1/g" $WEBDIR/indexnew.html
-sed -i "s/date_and_time/$cdate/g" $WEBDIR/indexnew.html
+sed -i "s/test_run/$CASENAME1/g" $WEBDIR/index.html
+sed -i "s/date_and_time/$cdate/g" $WEBDIR/index.html
+if [ $CLIMO_TIME_SERIES_SWITCH == ONLY_TIME_SERIES ]; then
+    sed -i "s/FY1/$FIRST_YR_TS1/g" $WEBDIR/index.html
+    sed -i "s/LY1/$LAST_YR_TS1/g" $WEBDIR/index.html
+fi
 if [ $CNTL == USER ]; then
-    sed -i "12i<br><b>and $CASENAME2 yrs${FIRST_YR_CLIMO2}to${LAST_YR_CLIMO2}<b><br>" $WEBDIR/indexnew.html
+    sed -i "12i<br><b>and $CASENAME2 yrs${FIRST_YR_CLIMO2}to${LAST_YR_CLIMO2}<b><br>" $WEBDIR/index.html
 fi
 if [ $set_1 -eq 1 ] ; then
-    echo '<h2 id="Time-series-plots">Time series plots</h2>' >> $WEBDIR/indexnew.html
+    echo '<h2 id="Time-series-plots">Time series plots</h2>' >> $WEBDIR/index.html
 fi
 
 cd $WKDIR
@@ -514,8 +521,21 @@ if [ $set_1 -eq 1 ]; then
         export CASE2=$CASENAME2
         export FYR2=$FIRST_YR_TS2
     fi
-    echo "Plotting time series of ice volume (plot_time_series_vol.ncl)..."
+    echo "Plotting time series avg (plot_time_series_ann.ncl)..."
     $NCL -Q < $DIAG_CODE/plot_time_series_ann.ncl
+
+    # scalars
+    export COMPARE=$CNTL
+    export INFILE1=$CLIMO_TS_DIR1/${CASENAME1}_ANN_${FYR_PRNT_TS1}-${LYR_PRNT_TS1}_ts_scl.nc
+    export CASE1=$CASENAME1
+    export FYR1=$FIRST_YR_TS1
+    if [ $CNTL == USER ]; then
+        export INFILE2=$CLIMO_TS_DIR2/${CASENAME2}_ANN_${FYR_PRNT_TS2}-${LYR_PRNT_TS2}_ts_scl.nc
+        export CASE2=$CASENAME2
+        export FYR2=$FIRST_YR_TS2
+    fi
+    echo "Plotting time series scl (plot_time_series_ann_scl.ncl)..."
+    $NCL -Q < $DIAG_CODE/plot_time_series_ann_scl.ncl
     # Convert time series figure to png
     $DIAG_CODE/ps2png.sh set1 $density
     if [ $? -ne 0 ]; then
@@ -523,26 +543,19 @@ if [ $set_1 -eq 1 ]; then
         #"*** EXITING THE SCRIPT ***"
         #exit 1
     fi
-    $DIAG_CODE/webpage1.sh
 
-    # new index page
     echo " "
     echo "-----------------------"
     echo "Generating html for set1 plots"
     echo "-----------------------"
     echo " "
     $DIAG_CODE/webpage1new.sh
-    sed -i "s/CINFO.png/${cinfo}.png/g" $WEBDIR/indexnew.html
+    sed -i "s/CINFO.png/${cinfo}.png/g" $WEBDIR/index.html
 fi
 
 if [ $set_2 -eq 1 ] ; then
-    if [ $set_1 -eq 1 ] ; then
-        echo "<br>" >> $WEBDIR/index.html
-    fi
-    echo "<font color=maroon size=+1><b><u>Climatology plots</u></b></font><br>" >> $WEBDIR/index.html
-# new index page
-    echo '<hr noshade size=2 width="62.8%"><br>' >> $WEBDIR/indexnew.html
-    echo '<h2 id="Climatology-plots">Climatology plots</h2>' >> $WEBDIR/indexnew.html
+    echo '<hr noshade size=2 width="62.8%"><br>' >> $WEBDIR/index.html
+    echo '<h2 id="Climatology-plots">Climatology plots</h2>' >> $WEBDIR/index.html
 fi
 
 # ---------------------------------
@@ -640,12 +653,9 @@ if [ $set_2 -eq 1 ]; then
 fi
 
 # Closing the webpage
-echo "</BODY>" >> $WEBDIR/index.html
-echo "</HTML>" >> $WEBDIR/index.html
-# new index page
-cat $DIAG_HTML/index2.html >> $WEBDIR/indexnew.html
+cat $DIAG_HTML/index2.html >> $WEBDIR/index.html
 # cleanup orphan links
-$DIAG_CODE/webpage_rmorphan.sh $WEBDIR/indexnew.html
+$DIAG_CODE/webpage_rmorphan.sh $WEBDIR/index.html
 
 # Making tar file
 echo " "
@@ -673,13 +683,12 @@ if [ $? -eq 0 ] && [ $publish_html -eq 1 ]; then
     tar -xf $TARFILE -C $publish_html_path
     if [ $? -eq 0 ]; then
         if [ $path_pref == $web_server_path ]; then
-            full_url=${web_server}/${path_suff}/${WEBFOLDER}/indexnew.html
-            $DIAG_CODE/redirect_html.sh $WEBFOLDER $publish_html_path ${WEBFOLDER}/indexnew.html
+            full_url=${web_server}/${path_suff}/${WEBFOLDER}/index.html
+            $DIAG_CODE/redirect_html.sh $WEBFOLDER $publish_html_path ${WEBFOLDER}/index.html
             echo " "
             echo "URL:"
             echo "***********************************************************************************"
             echo "${web_server}/${path_suff}/${WEBFOLDER}/index.html"
-            echo "${full_url}"
             echo "***********************************************************************************"
             echo "Copy and paste the URL into the address bar of your web browser to view the results"
         else

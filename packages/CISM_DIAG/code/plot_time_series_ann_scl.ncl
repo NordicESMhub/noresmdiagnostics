@@ -1,5 +1,5 @@
 ; NCL script (CISM diagnostics package)
-; plot_ann_time_series.ncl
+; plot_time_series_ann_scl.ncl
 ; Johan Liakka, Dec 2017
 ; Yanchun He, Aug 2019
 ; Heiko Goelzer, Jan 2021
@@ -25,29 +25,42 @@ if (compare.eq."USER") then
    ncases  = 2
 end if
 
-vars   = (/"thkga","smbga","artmga","topgga","usurfga"/)
+vars   = (/"imass","imass_above_flotation","iareag","iareaf","total_smb_flux","total_calving_flux","total_gl_flux","total_bmb_flux"/)
+
 nvars  = dimsizes(vars)
 
 do i = 0, nvars-1
 
-   if (vars(i).eq."thkga") then
-      A = get_thkga (inptr1)
+   if (vars(i).eq."imass") then
+      A = get_imass (inptr1)
    end if
 
-   if (vars(i).eq."smbga") then
-      A = get_smbga (inptr1)
+   if (vars(i).eq."imass_above_flotation") then
+      A = get_imass_above_flotation (inptr1)
    end if
    
-   if (vars(i).eq."artmga") then
-      A = get_artmga (inptr1)
-   end if
-   
-   if (vars(i).eq."topgga") then
-      A = get_topgga (inptr1)
+   if (vars(i).eq."iareag") then
+      A = get_iareag (inptr1)
    end if
 
-   if (vars(i).eq."usurfga") then
-      A = get_usurfga (inptr1)
+   if (vars(i).eq."iareaf") then
+      A = get_iareaf (inptr1)
+   end if
+
+   if (vars(i).eq."total_smb_flux") then
+      A = get_total_smb_flux (inptr1)
+   end if
+   
+   if (vars(i).eq."total_calving_flux") then
+      A = get_total_calving_flux (inptr1)
+   end if
+
+   if (vars(i).eq."total_gl_flux") then
+      A = get_total_gl_flux (inptr1)
+   end if
+
+   if (vars(i).eq."total_bmb_flux") then
+      A = get_total_bmb_flux (inptr1)
    end if
 
    if (all(A.eq.-999.)) then
@@ -61,24 +74,36 @@ do i = 0, nvars-1
    ntimes_tot = ntimes1
 
    if (compare.eq."USER") then
-      if (vars(i).eq."thkga") then
-         B = get_thkga (inptr2)
+      if (vars(i).eq."imass") then
+         B = get_imass (inptr2)
       end if
 
-      if (vars(i).eq."smbga") then
-         B = get_smbga (inptr2)
+      if (vars(i).eq."imass_above_flotation") then
+         B = get_imass_above_flotation (inptr2)
       end if
 
-      if (vars(i).eq."artmga") then
-         B = get_artmga (inptr2)
+      if (vars(i).eq."iareag") then
+         B = get_iareag (inptr2)
       end if
 
-      if (vars(i).eq."topgga") then
-         B = get_topgga (inptr2)
+      if (vars(i).eq."iareaf") then
+         B = get_iareaf (inptr2)
       end if
 
-      if (vars(i).eq."usurfga") then
-         B = get_usurfga (inptr2)
+      if (vars(i).eq."total_smb_flux") then
+         B = get_total_smb_flux (inptr2)
+      end if
+
+      if (vars(i).eq."total_calving_flux") then
+         B = get_total_calving_flux (inptr2)
+      end if
+
+      if (vars(i).eq."total_gl_flux") then
+         B = get_total_gl_flux (inptr2)
+      end if
+
+      if (vars(i).eq."total_bmb_flux") then
+         B = get_total_bmb_flux (inptr2)
       end if
 
       if (all(B.eq.-999.)) then

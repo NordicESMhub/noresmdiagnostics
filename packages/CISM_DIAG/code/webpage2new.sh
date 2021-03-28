@@ -10,12 +10,12 @@ echo "-----------------------"
 echo "Modifying html for set2 plots"
 
 # Scalar variables
-cat << 'EOF' >> $WEBDIR/indexnew.html
+cat << 'EOF' >> $WEBDIR/index.html
     <h3 id="2d plots">2d Plots </h3>
 EOF
-if [ $(ls $WEBDIR/set2/set2_ann_test_*.png |wc -l) == 15 ]
+if [ $(ls $WEBDIR/set2/set2_ann_test_*.png |wc -l) == 13 ]
 then
-cat << 'EOF' >> $WEBDIR/indexnew.html
+cat << 'EOF' >> $WEBDIR/index.html
     <TABLE width='100%'>
     <TR>
         <TH> Ice volume
@@ -26,7 +26,7 @@ cat << 'EOF' >> $WEBDIR/indexnew.html
 EOF
 elif [ $(ls $WEBDIR/set2/set2_ann_test_*.png |wc -l) == 17 ]
 then
-    cat << 'EOF' >> $WEBDIR/indexnew.html
+    cat << 'EOF' >> $WEBDIR/index.html
     <TABLE width='100%'>
     <TR>
         <TH> Ice Volume
