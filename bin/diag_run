@@ -672,7 +672,7 @@ do
             fi
             # SET CNTL=OBS IF CASE2 IS NOT PROVIDED
             if [ $CASE2 == none ]; then
-                       echo "-CHANGING CNTL TO OBS in $DIAG_FILE"
+                echo "-CHANGING CNTL TO OBS in $DIAG_FILE"
                 if /usr/bin/grep -q type_of_control_case $DIAG_FILE
                 then
                     /usr/bin/sed -i "s+type_of_control_case+OBS+g" $DIAG_FILE

@@ -3,6 +3,7 @@
 # Version lnd_template4.2.25.csh
 if ( -d /opt/ncl65 && -d /opt/nco475 && -d /opt/cdo197 ) then
     setenv NCARG_ROOT /opt/ncl65
+    setenv NCARG_COLORMAPS $NCARG_ROOT/lib/ncarg/colormaps
     setenv PATH /opt/ncl65/bin/:/opt/nco475/bin/:/opt/cdo197/bin:/usr/local/bin:/usr/bin
     source /opt/intel/compilers_and_libraries/linux/bin/compilervars.csh -arch intel64 -platform linux
     setenv ncksbin  `which ncks`

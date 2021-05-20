@@ -38,8 +38,12 @@ if [ $mode == ts_mon ] || [ $mode == climo_mon ]; then
 fi
 
 # Determine file tag
-ls $pathdat/${casename}.blom.*.$(printf "%04d" ${first_yr})*.nc >/dev/null 2>&1
-[ $? -eq 0 ] && filetag=blom || filetag=micom
+for ocn in blom micom
+do
+    ls $pathdat/${casename}.$ocn.*.$(printf "%04d" ${first_yr})*.nc >/dev/null 2>&1
+    [ $? -eq 0 ] && filetag=$ocn && break
+done
+[ -z $filetag ] && echo "** NO ocean data found, EXIT ... **" && exit 1
 
 # Look for sst (used to determine grid type and version)
 if [ ! -f $WKDIR/attributes/sst_file_${casename} ]; then

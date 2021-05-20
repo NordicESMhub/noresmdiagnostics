@@ -45,8 +45,12 @@ last_yr_prnt=$(printf "%04d" ${last_yr})
 ann_ts_file=${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}_ts_ann_${filetype}.nc
 
 # Determine file tag
-filetag=$(find $pathdat \( -name "${casename}.blom.*" -or -name "${casename}.micom.*" \) -print -quit | \
-            head -1 |awk -F/ '{print $NF}' |cut -d. -f2)
+for ocn in blom micom
+do
+    ls $pathdat/${casename}.${ocn}.*.${first_yr_prnt}*.nc >/dev/null 2>&1
+    [ $? -eq 0 ] && filetag=$ocn && break
+done
+[ -z $filetag ] && echo "** NO ocean data found, EXIT ... **" && exit 1
 
 if [ -z $PGRIDPATH ]; then
     grid_file=$DIAG_GRID/$(cat $WKDIR/attributes/grid_${casename})/grid.nc

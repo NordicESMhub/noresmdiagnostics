@@ -41,8 +41,13 @@ last_yr_prnt=$(printf "%04d" ${last_yr})
 ann_avg_file=${climodir}/${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}_climo_${filetype}.nc
 
 # Determine file tag
-filetag=$(find $pathdat \( -name "${casename}.blom.*" -or -name "${casename}.micom.*" \) -print -quit | \
-                head -1 |awk -F/ '{print $NF}' |cut -d. -f2)
+for ocn in blom micom
+do
+    ls $pathdat/${casename}.${ocn}.*.${first_yr_prnt}*.nc >/dev/null 2>&1
+    [ $? -eq 0 ] && filetag=$ocn && break
+done
+[ -z $filetag ] && echo "** NO ocean data found, EXIT ... **" && exit 1
+
 
 # COMPUTE CLIMATOLOGY FROM ANNUAL FILES
 if [ $filetype == hbgcy ]; then

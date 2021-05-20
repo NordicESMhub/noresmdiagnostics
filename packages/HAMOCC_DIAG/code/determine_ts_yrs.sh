@@ -2,8 +2,8 @@
 
 # HAMOCC DIAGNOSTICS package: determine_ts_yrs.sh
 # PURPOSE: determine first and last years of time series (only if TRENDS_ALL=1)
-# Johan Liakka, NERSC, johan.liakka@nersc.no
-# Last update Jan 2018
+# Johan Liakka, NERSC; Jan 2018
+# Yanchun He, NERSC; May 2021
 
 # Input arguments:
 #  $casename  simulation name
@@ -23,8 +23,10 @@ echo " "
 echo "Searching for annual history files..."
 
 # Determine file tag
-filetag=$(find $pathdat \( -name "${casename}.blom.*" -or -name "${casename}.micom.*" \) -print -quit | \
-    head -1 |awk -F/ '{print $NF}' |cut -d. -f2)
+filetag=$(find $pathdat \( -name "${casename}.blom.*.nc" -or \
+            -name "${casename}.micom.*.nc" \) -print -quit | \
+            head -1 |awk -F/ '{print $NF}' |cut -d. -f2)
+[ -z $filetag ] && echo "** NO ocean data found, EXIT ... **" && exit 1
 
 file_head=${casename}.${filetag}.hbgcy.
 file_prefix=$pathdat/$file_head

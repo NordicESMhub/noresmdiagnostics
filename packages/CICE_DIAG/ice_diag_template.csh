@@ -11,6 +11,7 @@ unset echo verbose
 setenv HOSTNAME `hostname -f`
 if  ( `echo $HOSTNAME |grep 'nird'` !="" ) then
     setenv NCARG_ROOT /opt/ncl65
+    setenv NCARG_COLORMAPS $NCARG_ROOT/lib/ncarg/colormaps
     setenv PATH /usr/local/bin:/usr/bin:/opt/ncl65/bin/:/opt/nco475/bin/:/opt/cdo197/bin
     source /opt/intel/compilers_and_libraries/linux/bin/compilervars.csh -arch intel64 -platform linux
     setenv ncksbin  `which ncks`

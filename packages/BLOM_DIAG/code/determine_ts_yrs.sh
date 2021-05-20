@@ -23,8 +23,10 @@ echo " "
 echo "Searching for annual history files..."
 
 # Determine file tag
-ls $pathdat/${casename}.blom.*.${first_yr_prnt}*.nc >/dev/null 2>&1
-[ $? -eq 0 ] && filetag=blom || filetag=micom
+filetag=$(find $pathdat \( -name "${casename}.blom.*.nc" -or \
+            -name "${casename}.micom.*.nc" \) -print -quit | \
+            head -1 |awk -F/ '{print $NF}' |cut -d. -f2)
+[ -z $filetag ] && echo "** NO ocean data found, EXIT ... **" && exit 1
 
 file_head=$casename.$filetag.hy.
 file_prefix=$pathdat/$file_head

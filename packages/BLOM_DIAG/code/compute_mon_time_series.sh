@@ -44,8 +44,12 @@ first_yr_prnt=`printf "%04d" ${first_yr}`
 last_yr_prnt=`printf "%04d" ${last_yr}`
 
 # Determine file tag
-ls $pathdat/${casename}.blom.*.${first_yr_prnt}*.nc >/dev/null 2>&1
-[ $? -eq 0 ] && filetag=blom || filetag=micom
+for ocn in blom micom
+do
+    ls $pathdat/${casename}.${ocn}.*.${first_yr_prnt}*.nc >/dev/null 2>&1
+    [ $? -eq 0 ] && filetag=$ocn && break
+done
+[ -z $filetag ] && echo "** NO ocean data found, EXIT ... **" && exit 1
 
 if [ -z $PGRIDPATH ]; then
     mask_file=$DIAG_GRID/`cat $WKDIR/attributes/grid_${casename}`/mask_nino${ENSOidx}.nc

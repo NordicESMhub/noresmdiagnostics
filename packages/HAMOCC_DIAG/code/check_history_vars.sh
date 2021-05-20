@@ -42,8 +42,12 @@ fi
 first_yr_prnt=$(printf "%04d" ${first_yr})
 
 # Determine file tag
-filetag=$(find $pathdat \( -name "${casename}.blom.*" -or -name "${casename}.micom.*" \) -print -quit | \
-        head -1 |awk -F/ '{print $NF}' |cut -d. -f2)
+for ocn in blom micom
+do
+    ls $pathdat/${casename}.${ocn}.*.${first_yr_prnt}*.nc >/dev/null 2>&1
+    [ $? -eq 0 ] && filetag=$ocn && break
+done
+[ -z $filetag ] && echo "** NO ocean data found, EXIT ... **" && exit 1
 
 # Look for co2fxd (used to determine grid type and version)
 if [ ! -f $WKDIR/attributes/co2fxd_file_${casename} ]; then
