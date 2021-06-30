@@ -25,7 +25,7 @@ echo "Searching for annual history files..."
 # Determine file tag
 filetag=$(find $pathdat \( -name "${casename}.blom.*.nc" -or \
             -name "${casename}.micom.*.nc" \) -print -quit | \
-            head -1 |awk -F/ '{print $NF}' |cut -d. -f2)
+            head -1 |awk -F/ '{print $NF}' |awk -F. '{print $(NF-3)}')
 [ -z $filetag ] && echo "** NO ocean data found, EXIT ... **" && exit 1
 
 file_head=${casename}.${filetag}.hbgcy.
