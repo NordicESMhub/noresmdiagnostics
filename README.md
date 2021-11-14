@@ -1,6 +1,6 @@
 ## A guide for the NorESM diagnostic tools
 
-This is a teaching material for the [INES NorESM User Workshop 2020](https://noresmhub.github.io/INES_workshop_2020).
+This is a teaching material for the [INES NorESM User Workshop](https://noresmhub.github.io/INES_workshop_2020).
 
 And this can also be used as a quick guide on how to post-process and diagnose the NorESM model output.
 

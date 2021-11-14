@@ -18,10 +18,10 @@ keypoints:
 ---
 
 >## Directories storing model output
-1. Run directory: `/cluster/work/users/<username>/noresm/cases/$CASE` (on FRAM)
-2. Short-term archive: `/cluster/work/users/<username>/archive/cases/$CASE` (on FRAM).\
-   NOTE, files older than 21 days are subject to automatic deletion (see [FRAM documentation](https://documentation.sigma2.no/files_storage/clusters.html#user-work-area))
-3. Long-term arrchive: should archive the data to the [NIRD](https://documentation.sigma2.no/files_storage/nird.html) project areas, e.g., `/projects/NS2345K` for INES project.
+1. Run directory: `/cluster/work/users/<username>/noresm/cases/$CASE` (on Fram/Betzy)
+2. Short-term archive: `/cluster/work/users/<username>/archive/cases/$CASE` (on Fram/Betzy).\
+   NOTE, files older than 21 days might be automatic deleted (see [Fram/Betzy documentation](https://documentation.sigma2.no/files_storage/clusters.html#user-work-area))
+3. Medium/Long-term archive: should archive the data to the [NIRD](https://documentation.sigma2.no/files_storage/nird.html) project areas, e.g., `/projects/NS2345K` for INES project.
 {: .callout}
 
 <img src="{{ site.baseurl }}/images/archive.png" width="800px" alt="Archive structure of model output">
@@ -67,10 +67,10 @@ $ tree -L 2
 ```
 #### Example history file names:
 - `<compset name>_<resolution sname>_<opt_desc_string>_<component>.<frequency>_<date>.nc`
-- N1850frc2_f19_tn14_Workshop2020.blom.hm.0001-01.nc
-- N1850frc2_f19_tn14_Workshop2020.cam.h0.0001-01.nc
+- N1850frc2_f19_tn14_Workshop2021.blom.hm.0001-01.nc
+- N1850frc2_f19_tn14_Workshop2021.cam.h0.0001-01.nc
 
-By default, h0/h denotes that the time sampling frequency is monthly.
+By default, `h0,hm` denotes that the time sampling frequency is monthly.
 Other frequencies are saved under the h1, h2, etc.
 
 Different time sampling frequencies have distinct tags in the file names.
