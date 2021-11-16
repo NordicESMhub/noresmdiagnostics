@@ -19,9 +19,15 @@ Transfer your data from Fram/Betzy to NIRD
 
 ```bash
 # copy files from Fram/Betzy to NIRD
+# alternative 1, use scp
+scp -r /cluster/work/users/<username>/archive/<casename>/
+ <username>@login.nird.sigma2.no:/projects/NS2345K/workshop2021/<username>/<casename>/
+# For example:
+scp -r /cluster/work/users/yanchun/archive/NHISTfrc2_workshop2021/  yanchun@login.nird.sigma2.no:/projects/NS2345K/workshop2021/yanchun//NHISTfrc2_workshop2021
+# alternative 2, use rsync
 rsync -aP --chown=OWNER:GROUP <path/to/noresm/output> <username>@login.nird.sigma2.no:<path/to/project/storage>
-#.e.g.,
-rsync -aP --chown=yanchun:NS2345K /cluster/work/users/$USER/archive/NHISTfrc2_workshop2021/ yanchun@login.nird.sigma2.no:/projects/NS2345K/workshop2021/NHISTfrc2_workshop2021/
+# For example,
+rsync -aP --chown=yanchun:NS2345K /cluster/work/users/$USER/archive/NHISTfrc2_workshop2021/ yanchun@login.nird.sigma2.no:/projects/NS2345K/workshop2021/$USER/NHISTfrc2_workshop2021/
 ```
 See more information on archiving NorESM output at the [NorESM documentation](https://noresm-docs.readthedocs.io/en/latest/output/archive_output.html)
 
@@ -33,9 +39,9 @@ Use pre-installed tool under NS2345K project of NIRD (Recommended)
 
 ```bash
 # Fist, Logon NIRD
-ssh -l <your_username> login.nird.sigma2.no
+$ ssh -l <your_username> login.nird.sigma2.no
 
-# Next, add alias for diag_run
+# Next, add alias for diag_run (by pasting the following 5 lines on Shell)
 cat <<EOF >> ~/.bashrc
 if [ -f /projects/NS2345K/diagnostics/noresm/bin/diag_run ];then
     alias diag_run='/projects/NS2345K/diagnostics/noresm/bin/diag_run'
@@ -43,16 +49,20 @@ fi
 EOF
 
 # source to take effect
-source ~/.bashrc
+$ source ~/.bashrc
+
+# check if diag_run is in your searching path
+$ which diag_run
+
 ```
 
 #### Option 2: install your own copy
 If you have no access to NS2345K on NIRD. You can install your own copy.
 ```bash
-cd ~/
-git clone https://github.com/NordicESMhub/noresmdiagnostics
-cd noresmdiagnostics/bin
-./linkdata.sh
+$ cd ~/
+$ git clone https://github.com/NordicESMhub/noresmdiagnostics
+$ cd noresmdiagnostics/bin
+$ ./linkdata.sh
 ```
 It will link the data under either:
 ```
@@ -91,7 +101,6 @@ nohup /projects/NS2345K/diagnostics/noresm/bin/diag_run -m [model] -c [test case
 
 ### Task 1.2 Model-obs comparison of a fully coupled simulation
 
-**Demo**
 ```bash
 ## Compare model to observation
 # syntax:
@@ -116,7 +125,7 @@ Such as, on NIRD:
 Make sure these two directories exist.
 An example:
 ```bash
-$ diag_run -m blom -c N1850frc2_workshop2021 -s 1 -e 10 -i /projects/NS2345K/workshop2021
+$ diag_run -m blom -c N1850frc2_workshop2021 -s 1 -e 10 -i /projects/NS2345K/workshop2021/yanchun
 ```
 {: .challenge}
 
@@ -124,7 +133,7 @@ $ diag_run -m blom -c N1850frc2_workshop2021 -s 1 -e 10 -i /projects/NS2345K/wor
 For those dont' have succefully model run, ideally longer than 2-years.
 
 You can find sample cases, under:
-`/projects/NS2345K/workshop2021`
+`/projects/NS2345K/workshop2021/yanchun`
 
 * N1850frc2_workshop2021 (model years, 1-10)
 * NHISTfrc2_workshop2021 (model years, 1850-1859)
@@ -152,7 +161,7 @@ $ diag_run  -m cam -c1 NHIST_f19_tn14_20190710 –s1 1985 -e1 2014 –i1 /projec
 * User your own experiment
 For example:
 ```bash
-$ diag_run -m blom -c1 NHISTfrc2_workshop2021 -s1 1850 -e1 1859 -i1 /projects/NS2345K/workshop2021 -c2 N1850frc2_workshop2021 -s2 1 -e2 10 -i2 /projects/NS2345K/workshop2021 -o /projects/NS2345K/diagnostics/noresm/out/$USER -w /projects/NS2345K/www/diagnostics/noresm/$USER
+$ diag_run -m blom -c1 NHISTfrc2_workshop2021 -s1 1850 -e1 1859 -i1 /projects/NS2345K/workshop2021/yanchun -c2 N1850frc2_workshop2021 -s2 1 -e2 10 -i2 /projects/NS2345K/workshop2021/yanchun -o /projects/NS2345K/diagnostics/noresm/out/$USER -w /projects/NS2345K/www/diagnostics/noresm/$USER
 ```
 {: .challenge}
 
@@ -201,7 +210,7 @@ LAST_YR_TS1=10
 and then resubmit `blom_diag_template.sh`
 
 ### Task 2.4
-Diagnose only atmospheric component with passive mode `-p`, and switch offf significance and switch off chemistry sets
+Diagnose only atmospheric component with passive mode `-p`, and switch on the chemistry sets and `significance test` when comparing two models.
 
 ```bash
 # Example
@@ -220,7 +229,7 @@ Set in:
 ```text
 set significance = 0        # (0=ON,1=OFF)
 ...
-set all_waccm_sets = 1 # (0=ON,1=OFF)  Do all the WACCM sets
+set all_waccm_sets = 0 # (0=ON,1=OFF)  Do all the WACCM sets
 set all_chem_sets = 0  # (0=ON,1=OFF)   Do all the CHEM sets
 ```
 then start the scripit `./amwg_template.csh`.
@@ -231,6 +240,9 @@ then start the scripit `./amwg_template.csh`.
 ### Task 3.1
 Find out where the climo_ts/, config/, logs/, diag/ locate, and understand these processed data
 e.g., /projects/NS2345K/diagnostics/noresm/out/$USER/BLOM_DIAG
+
+/projects/NS2345K/diagnostics/noresm/out/yanchun/BLOM_DIAG/diag/N1850frc2_f19_tnx1v4_workshop
+/projects/NS2345K/diagnostics/noresm/out/yanchun/BLOM_DIAG/diag
 
 ### Task 3.2
 Q: How to edit the source code and apply your change?
