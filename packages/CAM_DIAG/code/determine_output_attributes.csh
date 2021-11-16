@@ -138,7 +138,8 @@ set required_vars = (AODVIS AODDUST AODDUST1 AODDUST2 AODDUST3 \
                      TAUIMODIS TAUWMODIS TAUTMODIS PCTMODIS \
                      CFAD_DBZE94_CS CFAD_SR532_CAL CLISCCP CLMISR \
                      CLDTOT_CAL CLDLOW_CAL CLDMED_CAL CLDHGH_CAL CLDTOT_CS2 U10 \
-                     gw ilev hyai hybi)
+                     O3 SO2\
+                     gw)
 
 set first_find = 1
 set var_list = " "
@@ -162,6 +163,8 @@ foreach var ($required_vars)
             endif
         endif
 end
+# add extra coordinate varibles
+set var_list = ${var_list},ilev,hyai,hybi
 
 echo  ${var_list}  > ${path_diag}/attributes/${casetype}_var_list
 echo  ${required_vars}  > ${path_diag}/attributes/required_vars 

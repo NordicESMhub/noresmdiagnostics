@@ -3,7 +3,7 @@
 echo "                                                                                                    "
 echo "--------------------------------------------------------------------------------------=-------------"
 echo "Make links of necessary observational datasets and grid files to the original NoresmDiagnostic tool."
-echo "By default, the original diagnostic tool is set as /projects/NS2345K/noresm_diagnostics.            "
+echo "By default, the original diagnostic tool is set as /projects/NS2345K/diagnostics/noresm.            "
 echo "Usage: ./linkdata.sh"
 echo "--------------------------------------------------------------------------------------------------- "
 
@@ -14,8 +14,8 @@ if [ -d /projects/NS2345K/www/diagnostics/inputdata ]; then
     DATA_ROOT=/projects/NS2345K/www/diagnostics/inputdata
 elif [ -d /tos-project1/NS2345K/www/diagnostics/inputdata ]; then
     DATA_ROOT=/tos-project1/NS2345K/www/diagnostics/inputdata
-elif [ -d /cluster/work/users/yanchun/noresmdiagnostics ]; then
-    DATA_ROOT=/cluster/work/users/yanchun/noresmdiagnostics/packages
+elif [ -d /cluster/work/users/$USER/diagnostics/noresm ]; then
+    DATA_ROOT=/cluster/work/users/$USER/diagnostics/noresm/packages
 else
     echo "                                                                             "
     echo "*** FAIL TO LINK TO DATA FILES OF THE FULL NORESM DIAGNOSTIC TOOL PACKAGE ***"
