@@ -69,7 +69,6 @@ cd task3
 
 # or
 # rotate and view with NCL
-module load NCL/6.5.0-intel-2018a
 ncl task3.ncl
 ```
 >## Exercise
@@ -88,3 +87,4 @@ Urot    = U*cos(angle)-V*sin(angle)
 Vrot    = U*sin(angle)+V*cos(angle)
 ```
 {: .solution}
+

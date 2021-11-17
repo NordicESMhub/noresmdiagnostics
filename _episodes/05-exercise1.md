@@ -145,6 +145,8 @@ For those have access to NS2345K and NS9560K on NIRD, there are plent of CMIP6 e
 Find out where is the casename and the location of each experiment:
 [https://noresmhub.github.io/noresm-exp/intro.html](https://noresmhub.github.io/noresm-exp/intro.html)
 
+Finally, after the `diag_run` is finished running, browser the result at [http://ns2345k.web.sigma2.no/diagnostics/noresm/\<usernname\>](http://ns2345k.web.sigma2.no/diagnostics/noresm)
+
 ---
 
 ### Task1.3 Model-model comparison
@@ -158,7 +160,7 @@ $ diag_run  -m cam -c1 NHIST_f19_tn14_20190710 –s1 1985 -e1 2014 –i1 /projec
 ```
 
 >## Challenge
-* User your own experiment
+User your own experiment! \
 For example:
 ```bash
 $ diag_run -m blom -c1 NHISTfrc2_workshop2021 -s1 1850 -e1 1859 -i1 /projects/NS2345K/workshop2021/yanchun -c2 N1850frc2_workshop2021 -s2 1 -e2 10 -i2 /projects/NS2345K/workshop2021/yanchun -o /projects/NS2345K/diagnostics/noresm/out/$USER -w /projects/NS2345K/www/diagnostics/noresm/$USER
@@ -171,6 +173,7 @@ Diagnose only ocean component with passive mode `-p`
 
 ```bash
 # Example
+# (replace with your own experiments)
 $ diag_run -m blom -c NHIST_f19_tn14_20190710 -s 1985 -e 2014 -p
 ```
 In the standard output, you can find lines like:
@@ -179,7 +182,7 @@ In the standard output, you can find lines like:
 BLOM DIAGNOSTICS SUCCESSFULLY CONFIGURED in /projects/NS2345K/diagnostics/noresm/out/$USER/BLOM_DIAG
 ...
 ```
-Go the that directory and check the shell script there, which is job script for each component.
+Go the that directory and check the shell script there, which is job script for each component. You can find the main script for the ocean component `blom_diag_template.sh`.
 
 ### Task 2.2
 
@@ -191,7 +194,8 @@ change:
 ```
 set_1=1
 set_3=1
-others =0
+
+set all other sets_*=0
 ```
 and then submit the job script, i.e, `./blom_diag_template.sh`
 
@@ -211,6 +215,8 @@ and then resubmit `blom_diag_template.sh`
 
 ### Task 2.4
 Diagnose only atmospheric component with passive mode `-p`, and switch on the chemistry sets and `significance test` when comparing two models.
+
+Note, it requires at least 10 years to have the `significance test` for differnce-plots.
 
 ```bash
 # Example
