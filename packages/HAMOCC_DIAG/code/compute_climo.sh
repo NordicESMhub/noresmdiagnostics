@@ -1,6 +1,6 @@
 #!/bin/bash
 
-script_start=`date +%s`
+script_start=$(date +%s)
 #
 # HAMOCC DIAGNOSTICS package: compute_climo.sh
 # PURPOSE: computes climatology from annual or monthly history files
@@ -35,10 +35,19 @@ echo " pathdat  = $pathdat"
 echo " climodir = $climodir"
 echo " "
 
-var_list=`cat $WKDIR/attributes/vars_climo_ann_${casename}_${filetype}`
-first_yr_prnt=`printf "%04d" ${first_yr}`
-last_yr_prnt=`printf "%04d" ${last_yr}`
+var_list=$(cat $WKDIR/attributes/vars_climo_ann_${casename}_${filetype})
+first_yr_prnt=$(printf "%04d" ${first_yr})
+last_yr_prnt=$(printf "%04d" ${last_yr})
 ann_avg_file=${climodir}/${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}_climo_${filetype}.nc
+
+# Determine file tag
+for ocn in blom micom
+do
+    ls $pathdat/${casename}.${ocn}.*.${first_yr_prnt}*.nc >/dev/null 2>&1
+    [ $? -eq 0 ] && filetag=$ocn && break
+done
+[ -z $filetag ] && echo "** NO ocean data found, EXIT ... **" && exit 1
+
 
 # COMPUTE CLIMATOLOGY FROM ANNUAL FILES
 if [ $filetype == hbgcy ]; then
@@ -46,8 +55,8 @@ if [ $filetype == hbgcy ]; then
     YR=$first_yr
     while [ $YR -le $last_yr ]
     do
-        yr_prnt=`printf "%04d" ${YR}`
-        filename=${casename}.micom.hbgcy.${yr_prnt}.nc
+        yr_prnt=$(printf "%04d" ${YR})
+        filename=${casename}.${filetag}.hbgcy.${yr_prnt}.nc
         filenames+=($filename)
         let YR++
     done
@@ -71,8 +80,8 @@ if [ $filetype == hbgcm ]; then
         YR=$first_yr
         while [ $YR -le $last_yr ]
         do
-            yr_prnt=`printf "%04d" ${YR}`
-            filename=${casename}.micom.hbgcm.${yr_prnt}-${month}.nc
+            yr_prnt=$(printf "%04d" ${YR})
+            filename=${casename}.${filetag}.hbgcm.${yr_prnt}-${month}.nc
             if [ -f $pathdat/$filename ]; then
                 filenames+=($filename)
             else
@@ -119,9 +128,9 @@ if [ $filetype == hbgcm ]; then
     done
 fi
 
-script_end=`date +%s`
-runtime_s=`expr ${script_end} - ${script_start}`
-runtime_script_m=`expr ${runtime_s} / 60`
-min_in_secs=`expr ${runtime_script_m} \* 60`
-runtime_script_s=`expr ${runtime_s} - ${min_in_secs}`
+script_end=$(date +%s)
+runtime_s=$(expr ${script_end} - ${script_start})
+runtime_script_m=$(expr ${runtime_s} / 60)
+min_in_secs=$(expr ${runtime_script_m} \* 60)
+runtime_script_s=$(expr ${runtime_s} - ${min_in_secs})
 echo "CLIMO RUNTIME: ${runtime_script_m}m${runtime_script_s}s"

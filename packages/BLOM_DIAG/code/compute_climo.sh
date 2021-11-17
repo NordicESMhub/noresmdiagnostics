@@ -42,8 +42,12 @@ last_yr_prnt=`printf "%04d" ${last_yr}`
 ann_avg_file=${climodir}/${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}_climo_${filetype}.nc
 
 # Determine file tag
-ls $pathdat/${casename}.blom.*.${first_yr_prnt}*.nc >/dev/null 2>&1
-[ $? -eq 0 ] && filetag=blom || filetag=micom
+for ocn in blom micom
+do
+    ls $pathdat/${casename}.${ocn}.*.${first_yr_prnt}*.nc >/dev/null 2>&1
+    [ $? -eq 0 ] && filetag=$ocn && break
+done
+[ -z $filetag ] && echo "** NO ocean data found, EXIT ... **" && exit 1
 
 # COMPUTE CLIMATOLOGY FROM ANNUAL FILES
 if [ $filetype == hy ]; then
@@ -53,7 +57,7 @@ if [ $filetype == hy ]; then
     while [ $YR -le $last_yr ]
     do
         yr_prnt=`printf "%04d" ${YR}`
-        filename=$(ls -1 ${casename}.$filetag.hy.${yr_prnt}.nc 2>/dev/null |tail -1)
+        filename=${casename}.$filetag.hy.${yr_prnt}.nc
         filenames+=($filename)
         let YR++
     done

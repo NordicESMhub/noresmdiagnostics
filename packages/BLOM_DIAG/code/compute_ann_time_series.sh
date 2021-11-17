@@ -52,8 +52,13 @@ last_yr_prnt=`printf "%04d" ${last_yr}`
 ann_ts_file=${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}_ts_${filetype}.nc
 ann_ts_var_list="mmflxd voltr temp saln templvl salnlvl sst sss tempga salnga sstga sssga"
 
-ls $pathdat/${casename}.blom.*.${yr_prnt}*.nc >/dev/null 2>&1
-[ $? -eq 0 ] && filetag=blom || filetag=micom
+# Determine file tag
+for ocn in blom micom
+do
+    ls $pathdat/${casename}.${ocn}.*.${first_yr_prnt}*.nc >/dev/null 2>&1
+    [ $? -eq 0 ] && filetag=$ocn && break
+done
+[ -z $filetag ] && echo "** NO ocean data found, EXIT ... **" && exit 1
 
 # Calculate number of chunks and the residual
 if [ `cat $WKDIR/attributes/grid_${casename}` == "tnx0.25v4" ]

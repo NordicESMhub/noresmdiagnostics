@@ -10,7 +10,8 @@ unset echo verbose
 setenv DIAG_VERSION 140804  # version number YYMMDD
 if ( -d /opt/ncl65 && -d /opt/nco475 && -d /opt/cdo197 ) then
     setenv NCARG_ROOT /opt/ncl65
-    setenv PATH /usr/local/bin:/usr/bin:/opt/ncl65/bin/:/opt/nco475/bin/:/opt/cdo197/bin
+    setenv NCARG_COLORMAPS $NCARG_ROOT/lib/ncarg/colormaps
+    setenv PATH /usr/bin://usr/local/bin:opt/ncl65/bin/:/opt/nco475/bin/:/opt/cdo197/bin
     source /opt/intel/compilers_and_libraries/linux/bin/compilervars.csh -arch intel64 -platform linux
     setenv ncksbin  `which ncks`
     setenv nco_dir  `dirname $ncksbin`
@@ -3389,7 +3390,7 @@ if ($web_pages == 0 && $publish_html == 0) then
    if (-e ${publish_html_path} && `stat -c %a ${publish_html_path}` != 775 ) then
       chmod 775 ${publish_html_path}
    endif
-   set web_server      = ns2345k.web.sigma2.no
+   set web_server      = http://ns2345k.web.sigma2.no
    set path_pref       = `echo ${publish_html_path} | cut -c -21`
    set path_suff       = `echo ${publish_html_path} | cut -c 23-`
    echo ' '

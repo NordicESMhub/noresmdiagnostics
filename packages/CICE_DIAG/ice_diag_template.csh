@@ -11,6 +11,7 @@ unset echo verbose
 setenv HOSTNAME `hostname -f`
 if  ( `echo $HOSTNAME |grep 'nird'` !="" ) then
     setenv NCARG_ROOT /opt/ncl65
+    setenv NCARG_COLORMAPS $NCARG_ROOT/lib/ncarg/colormaps
     setenv PATH /usr/local/bin:/usr/bin:/opt/ncl65/bin/:/opt/nco475/bin/:/opt/cdo197/bin
     source /opt/intel/compilers_and_libraries/linux/bin/compilervars.csh -arch intel64 -platform linux
     setenv ncksbin  `which ncks`
@@ -870,7 +871,7 @@ if ($web_pages == 1 && $publish_html == 1) then
       chmod 775 ${publish_html_path}
    endif
 
-   set web_server      = ns2345k.web.sigma2.no
+   set web_server      = http://ns2345k.web.sigma2.no
    set path_pref       = `echo ${publish_html_path} | cut -c -21`
    set path_suff       = `echo ${publish_html_path} | cut -c 23-`
    tar -xf ${TAR_FILE}.tar -C ${publish_html_path}

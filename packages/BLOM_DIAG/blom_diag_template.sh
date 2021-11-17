@@ -9,6 +9,7 @@
 
 if [ -d /opt/ncl65 ] && [ -d /opt/nco475 ] && [ -d /opt/cdo197 ]; then
     export NCARG_ROOT=/opt/ncl65
+    export NCARG_COLORMAPS=$NCARG_ROOT/lib/ncarg/colormaps
     export PATH=/usr/local/bin:/usr/bin:/opt/ncl65/bin/:/opt/nco475/bin/:/opt/cdo197/bin
     source /opt/intel/compilers_and_libraries/linux/bin/compilervars.sh -arch intel64 -platform linux
 else

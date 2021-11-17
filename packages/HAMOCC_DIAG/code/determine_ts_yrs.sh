@@ -2,8 +2,8 @@
 
 # HAMOCC DIAGNOSTICS package: determine_ts_yrs.sh
 # PURPOSE: determine first and last years of time series (only if TRENDS_ALL=1)
-# Johan Liakka, NERSC, johan.liakka@nersc.no
-# Last update Jan 2018
+# Johan Liakka, NERSC; Jan 2018
+# Yanchun He, NERSC; May 2021
 
 # Input arguments:
 #  $casename  simulation name
@@ -21,30 +21,37 @@ echo " casename = $casename"
 echo " pathdat  = $pathdat"
 echo " "
 echo "Searching for annual history files..."
-file_head=$casename.micom.hbgcy.
+
+# Determine file tag
+filetag=$(find $pathdat \( -name "${casename}.blom.*.nc" -or \
+            -name "${casename}.micom.*.nc" \) -print -quit | \
+            head -1 |awk -F/ '{print $NF}' |awk -F. '{print $(NF-3)}')
+[ -z $filetag ] && echo "** NO ocean data found, EXIT ... **" && exit 1
+
+file_head=${casename}.${filetag}.hbgcy.
 file_prefix=$pathdat/$file_head
-first_file=`ls ${file_prefix}* | head -n 1`
-last_file=`ls ${file_prefix}* | tail -n 1`
+first_file=$(ls ${file_prefix}* | head -n 1)
+last_file=$(ls ${file_prefix}* | tail -n 1)
 if [ -z $first_file ]; then
     echo "Found no annual history files in $pathdat"
-    echo "Searcing for monthly history files"
-    file_head=$casename.micom.hbgcm.
+    echo "Searching for monthly history files"
+    file_head=${casename}.${filetag}.hbgcm.
     file_prefix=$pathdat/$file_head
-    first_file=`ls ${file_prefix}* | head -n 1`
-    last_file=`ls ${file_prefix}* | tail -n 1`
+    first_file=$(ls ${file_prefix}* | head -n 1)
+    last_file=$(ls ${file_prefix}* | tail -n 1)
     if [ -z $first_file ]; then
         echo "ERROR: found no monthly history files in $pathdat"
         echo "*** EXITING THE SCRIPT ***"
         exit 1
     else
-        fyr_prnt_ts=`echo $first_file | rev | cut -c 7-10 | rev`
-        first_yr_ts=`echo $fyr_prnt_ts | sed 's/^0*//'`
-        lyr_prnt_ts=`echo $last_file | rev | cut -c 7-10 | rev`
-        last_yr_ts=`echo $lyr_prnt_ts | sed 's/^0*//'`
+        fyr_prnt_ts=$(echo $first_file | rev | cut -c 7-10 | rev)
+        first_yr_ts=$(echo $fyr_prnt_ts | sed 's/^0*//')
+        lyr_prnt_ts=$(echo $last_file | rev | cut -c 7-10 | rev)
+        last_yr_ts=$(echo $lyr_prnt_ts | sed 's/^0*//')
         # Check that last file is a december file (for a full year)
         if [ ! -f $pathdat/${file_head}${lyr_prnt_ts}-12.nc ]; then
             let "last_yr_ts = $last_yr_ts - 1"
-            lyr_prnt_ts=`printf "%04d" ${last_yr_ts}`
+            lyr_prnt_ts=$(printf "%04d" ${last_yr_ts})
         fi
         if [ $first_yr_ts -eq $last_yr_ts ]; then
             echo "ERROR: first and last year in $casename are identical: cannot compute trends"
@@ -53,10 +60,10 @@ if [ -z $first_file ]; then
         fi
     fi
 else
-    fyr_prnt_ts=`echo $first_file | rev | cut -c 4-7 | rev`
-    first_yr_ts=`echo $fyr_prnt_ts | sed 's/^0*//'`
-    lyr_prnt_ts=`echo $last_file | rev | cut -c 4-7 | rev`
-    last_yr_ts=`echo $lyr_prnt_ts | sed 's/^0*//'`
+    fyr_prnt_ts=$(echo $first_file | rev | cut -c 4-7 | rev)
+    first_yr_ts=$(echo $fyr_prnt_ts | sed 's/^0*//')
+    lyr_prnt_ts=$(echo $last_file | rev | cut -c 4-7 | rev)
+    last_yr_ts=$(echo $lyr_prnt_ts | sed 's/^0*//')
     if [ $first_yr_ts -eq $last_yr_ts ]; then
         echo "ERROR: first and last year in $casename are identical: cannot compute trends"
         echo "*** EXITING THE SCRIPT ***"
