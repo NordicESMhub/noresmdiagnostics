@@ -137,27 +137,28 @@ conda activate /projects/NS2345K/diagnostics/cdomagics
 
 Time series plot with CDO with magics
 ```bash
-cdo graph,device=png -yearmonmean -fldmean -sellevidx,32 -select,name=T N1850frc2_xxx.cam.h0.*.nc /projects/NS2345K/www/diagnostics/noresm/$USER/CDO/figure1
+cdo graph,device=png -yearmonmean -fldmean -sellevidx,32 -select,name=T NHIST_f19_tn14_20190710.cam.h0.*.nc /path/to/output//figure1
 ```
-<img src="{{ site.baseurl }}/images/HadCRUT.png" width="500px" alt="T">
+<img src="{{ site.baseurl }}/images/figure1_T.png" width="500px" alt="T">
 
 ---
 Shaded plot with CDO with magics
 ```bash
-cdo shaded,device=png -timmean -sellevidx,32 -select,name=T N1850frc2_xxx.cam.h0.*.nc /projects/NS2345K/www/diagnostics/noresm/$USER/CDO/figure2
+cdo shaded,device=png -timmean -sellevidx,32 -select,name=T NHIST_f19_tn14_20190710.cam.h0.2010-*.nc /path/to/output/figure2
 ```
-<img src="{{ site.baseurl }}/images/NorESM2_T500_monthly_mean.png" width="500px" alt="T">
+<img src="{{ site.baseurl }}/images/figure2_T.png" width="500px" alt="T">
 
 ---
 Grid fill plot with CDO with magics
 ```bash
-cdo grfill,device=png -timmean -sellevidx,32 -select,name=T N1850frc2_xxx.cam.h0.*.nc /projects/NS2345K/www/diagnostics/noresm/$USER/CDO/figure3
+cdo grfill,device=png -timmean -sellevidx,32 -select,name=T NHIST_f19_tn14_20190710.cam.h0.2010-*.nc /path/to/output/figure3
 ```
-<img src="{{ site.baseurl }}/images/figure_T.png" width="500px" alt="T">
+<img src="{{ site.baseurl }}/images/figure3_T.png" width="500px" alt="T">
 
 ---
 Changing the color and countour settings, etc
 ```bash
-cdo shaded,device=png,min=220,max=270,interval=5,colour_min=violet,colour_max=red,colour_triad=cw \
-    -timmean -sellevidx,32 -select,name=T N1850frc2_xxx.cam.h0.*.nc /projects/NS2345K/www/diagnostics/noresm/$USER/CDO/figure4
+cdo shaded,device=png,min=220,max=310,interval=5,colour_min=violet,colour_max=red,colour_triad=cw \
+    -timmean -sellevidx,32 -select,name=T NHIST_f19_tn14_20190710.cam.h0.2010-*.nc /path/to/output/figure4
 ```
+<img src="{{ site.baseurl }}/images/figure4_T.png" width="500px" alt="T">

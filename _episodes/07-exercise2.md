@@ -17,8 +17,11 @@ Copy the demo scripts to your working directory
 {: .callout}
 
 ```bash
-# logon FRAM
-ssh -Y -l username fram.sigma2.no
+# logon FRAM or Betzy
+ssh -Y -l <username> fram.sigma2.no
+# or
+ssh -Y -l <username> betzy.sigma2.no
+
 
 # clone the sample scripts to your working directory
 cd /cluster/work/users/$USER
@@ -47,8 +50,8 @@ You should be able to run `task2.sh` to interpolate `sst` to 1x1d grid in the No
 {: .callout}
 
 ```bash
-cd task1
-./task1.sh
+cd task2
+./task2.sh
 ```
 
 >## Exercise
