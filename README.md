@@ -11,6 +11,7 @@ The tool package consists of:
 * CICE_DIAG: snow/sea ice volume/area
 * HAMOCC_DIAG: time series, climaotology, zonal mean, regional mean
 * BLOM_DIAG: time series, climatologies, zonal mean, fluxes, etc
+* CISM_DIAG: time series 
 
 ## Documentation
 
