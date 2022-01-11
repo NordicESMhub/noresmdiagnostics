@@ -3,7 +3,7 @@
 #
 # CISM DIAGNOSTICS package
 # Heiko Goelzer, NORCE, heig@norceresearch.no 
-# Last update 28.03.2021
+# Last update 11.01.2022
 
 if [ -d /opt/ncl65 ] && [ -d /opt/nco475 ] && [ -d /opt/cdo197 ]; then
     export NCARG_ROOT=/opt/ncl65
