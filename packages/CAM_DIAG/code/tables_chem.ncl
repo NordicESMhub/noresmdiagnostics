@@ -129,7 +129,7 @@ delete(dst3)
 	hb11=doubletofloat(inptr1->hybm)
 	p0=doubletofloat(inptr1->P0)
 	p1 = pres_hybrid_ccm(ps1,p0,ha1,hb1)
-p11 = pres_hybrid_ccm(ps1,p0,ha11,hb11)
+    p11 = pres_hybrid_ccm(ps1,p0,ha11,hb11)
 
 	; Keep values for resetting after grid equalization computation for SST
 	gw1_keep   = gw1
@@ -216,7 +216,7 @@ delete(dst3)
 	p2 = pres_hybrid_ccm(ps2,p0,ha2,hb2)
 	ha21=doubletofloat(inptr2->hyam)
 	hb21=doubletofloat(inptr2->hybm)
-p21 = pres_hybrid_ccm(ps2,p0,ha21,hb21)
+    p21 = pres_hybrid_ccm(ps2,p0,ha21,hb21)
 
 
 	; Keep values for resetting after grid equalization computation for SST

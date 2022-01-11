@@ -2578,10 +2578,10 @@ if ($all_waccm_sets == 0 || $wset_1 == 0) then
 
     foreach name ($plots)
         setenv SEASON $name
-        setenv TEST_INPUT    ${test_path_climo}/${test_casename}_${SEASON}_climo.nc  
+        setenv TEST_INPUT    ${test_path_climo}/${test_casename}_${SEASON}_${test_first_yr_prnt}-${test_last_yr_prnt}_climo.nc  
         setenv TEST_PLOTVARS ${test_path_diag}/${test_casename}_${SEASON}_waccm_plotvars.nc
 
-        setenv CNTL_INPUT    ${cntl_path_climo}/${cntl_casename}_${SEASON}_climo.nc    
+        setenv CNTL_INPUT    ${cntl_path_climo}/${cntl_casename}_${SEASON}_${test_first_yr_prnt}-${test_last_yr_prnt}_climo.nc    
         setenv CNTL_PLOTVARS ${test_path_diag}/${cntl_casename}_${SEASON}_waccm_plotvars.nc
 
         if (-e $TEST_PLOTVARS) then
@@ -2607,6 +2607,12 @@ if ($all_waccm_sets == 0 || $wset_1 == 0) then
 
 endif
 
+# Make links for climatologies without time stamp for csets
+ foreach mth ( 01 02 03 04 05 06 07 08 09 10 11 12 DJF MAM JJA SON ANN )
+    ln -sf $test_path_climo/${test_casename}_${mth}_${test_first_yr_prnt}-${test_last_yr_prnt}_climo.nc $test_path_climo/${test_casename}_${mth}_climo.nc
+    ln -sf $cntl_path_climo/${cntl_casename}_${mth}_${cntl_first_yr_prnt}-${cntl_last_yr_prnt}_climo.nc $cntl_path_climo/${cntl_casename}_${mth}_climo.nc
+end
+
 #****************************************************************
 #   CSET 1 - Chemistry TABLES OF Budgets 
 #****************************************************************
@@ -2617,12 +2623,12 @@ if ($all_chem_sets == 0 || $cset_1 == 0) then
 
     foreach name ($plots)
         setenv SEASON $name 
-        setenv TEST_INPUT    ${test_path_climo}/${test_casename}_${SEASON}_climo.nc
+        setenv TEST_INPUT    ${test_path_climo}/${test_casename}_${SEASON}_${test_first_yr_prnt}-${test_last_yr_prnt}_climo.nc
         setenv TEST_PLOTVARS ${test_path_diag}/${test_casename}_${SEASON}_plotvars.nc
         if ($CNTL == OBS) then 
             setenv CNTL_INPUT $OBS_DATA
         else
-            setenv CNTL_INPUT    ${cntl_path_climo}/${cntl_casename}_${SEASON}_climo.nc
+            setenv CNTL_INPUT    ${cntl_path_climo}/${cntl_casename}_${SEASON}_${test_first_yr_prnt}-${test_last_yr_prnt}_climo.nc
             setenv CNTL_PLOTVARS ${test_path_diag}/${cntl_casename}_${SEASON}_plotvars.nc
         endif
         if (-e $TEST_PLOTVARS) then
@@ -2654,12 +2660,12 @@ echo CSET2 VERTICAL CONTOUR PLOTS
 setenv USE_WACCM_LEVS 0
 foreach name ($plots)
   setenv SEASON $name
-  setenv TEST_INPUT ${test_path_climo}/${test_casename}_${SEASON}_climo.nc
+  setenv TEST_INPUT ${test_path_climo}/${test_casename}_${SEASON}_${test_first_yr_prnt}-${test_last_yr_prnt}_climo.nc
   setenv TEST_PLOTVARS ${test_path_diag}/${test_casename}_${SEASON}_plotvars.nc
   if ($CNTL == OBS) then
     setenv CNTL_INPUT $OBS_DATA
   else
-    setenv CNTL_INPUT ${cntl_path_climo}/${cntl_casename}_${SEASON}_climo.nc
+    setenv CNTL_INPUT ${cntl_path_climo}/${cntl_casename}_${SEASON}_${test_first_yr_prnt}-${test_last_yr_prnt}_climo.nc
     setenv CNTL_PLOTVARS ${test_path_diag}/${cntl_casename}_${SEASON}_plotvars.nc
   endif
   if (-e $TEST_PLOTVARS) then
@@ -2817,12 +2823,12 @@ if ($all_chem_sets == 0 || $cset_7 == 0) then
 
     foreach name ($plots)
        setenv SEASON $name
-       setenv TEST_INPUT ${test_path_climo}/${test_casename}_${SEASON}_climo.nc
+       setenv TEST_INPUT ${test_path_climo}/${test_casename}_${SEASON}_${test_first_yr_prnt}-${test_last_yr_prnt}_climo.nc
        setenv TEST_PLOTVARS ${test_path_diag}/${test_casename}_${SEASON}_plotvars.nc
        if ($CNTL == OBS) then
          setenv CNTL_INPUT $OBS_DATA
        else
-         setenv CNTL_INPUT ${cntl_path_climo}/${cntl_casename}_${SEASON}_climo.nc
+         setenv CNTL_INPUT ${cntl_path_climo}/${cntl_casename}_${SEASON}_${test_first_yr_prnt}-${test_last_yr_prnt}_climo.nc
          setenv CNTL_PLOTVARS ${test_path_diag}/${cntl_casename}_${SEASON}_plotvars.nc
        endif
        echo MAKING $SEASON PLOTS
@@ -2835,6 +2841,12 @@ if ($all_chem_sets == 0 || $cset_7 == 0) then
         $DIAG_CODE/ps2imgwww.csh cset7 $image &
     endif
 endif
+
+# Remove links
+foreach mth ( 01 02 03 04 05 06 07 08 09 10 11 12 DJF MAM JJA SON ANN )
+    rm -f $test_path_climo/${test_casename}_${mth}_climo.nc
+    rm -f $cntl_path_climo/${cntl_casename}_${mth}_climo.nc
+end
 
 #***************************************************************
 # end of non-swift branch

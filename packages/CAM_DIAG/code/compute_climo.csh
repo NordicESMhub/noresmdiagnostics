@@ -137,34 +137,49 @@ if ( $significance == 0 ) then
                set fdec = ${rootname}`printf "%04d" ${yr_cnt}`-12.nc
       endif
       echo " FOR YEAR: $yr_cnt"
-      if ( $strip_off_vars == 0 ) then
-        $nco_dir/ncra -O -p ${path_history} -w 31,31,28    -v $var_list $fdec $fjan $ffeb ${path_climo}/tmp_djf_${yr_cnt}.nc
-        $nco_dir/ncra -O -p ${path_history} -w 31,30,31    -v $var_list $fmar $fapr $fmay ${path_climo}/tmp_mam_${yr_cnt}.nc
-        $nco_dir/ncra -O -p ${path_history} -w 30,31,31    -v $var_list $fjun $fjul $faug ${path_climo}/tmp_jja_${yr_cnt}.nc
-        $nco_dir/ncra -O -p ${path_history} -w 30,31,30    -v $var_list $fsep $foct $fnov ${path_climo}/tmp_son_${yr_cnt}.nc
-        $nco_dir/ncra -O -p ${path_climo}   -w 90,92,92,91 -v $var_list tmp_djf_${yr_cnt}.nc tmp_mam_${yr_cnt}.nc tmp_jja_${yr_cnt}.nc tmp_son_${yr_cnt}.nc ${path_climo}/tmp_ann_${yr_cnt}.nc
+      if ( ! -f ${path_climo}/tmp/tmp_djf_${yr_cnt}.nc || ! -f ${path_climo}/tmp/tmp_mam_${yr_cnt}.nc ||\
+           ! -f ${path_climo}/tmp/tmp_jja_${yr_cnt}.nc || ! -f ${path_climo}/tmp/tmp_son_${yr_cnt}.nc  ) then
+         mkdir -p ${path_climo}/tmp/
+         if ( $strip_off_vars == 0 ) then
+           $nco_dir/ncra -O -p ${path_history} -w 31,31,28    -v $var_list $fdec $fjan $ffeb ${path_climo}/tmp/tmp_djf_${yr_cnt}.nc &
+           $nco_dir/ncra -O -p ${path_history} -w 31,30,31    -v $var_list $fmar $fapr $fmay ${path_climo}/tmp/tmp_mam_${yr_cnt}.nc &
+           $nco_dir/ncra -O -p ${path_history} -w 30,31,31    -v $var_list $fjun $fjul $faug ${path_climo}/tmp/tmp_jja_${yr_cnt}.nc &
+           $nco_dir/ncra -O -p ${path_history} -w 30,31,30    -v $var_list $fsep $foct $fnov ${path_climo}/tmp/tmp_son_${yr_cnt}.nc &
+           wait
+           $nco_dir/ncra -O -p ${path_climo}/tmp   -w 90,92,92,91 -v $var_list tmp_djf_${yr_cnt}.nc tmp_mam_${yr_cnt}.nc tmp_jja_${yr_cnt}.nc tmp_son_${yr_cnt}.nc ${path_climo}/tmp/tmp_ann_${yr_cnt}.nc
+         else
+           $nco_dir/ncra -O -p ${path_history} -w 31,31,28    $fdec $fjan $ffeb ${path_climo}/tmp/tmp_djf_${yr_cnt}.nc &
+           $nco_dir/ncra -O -p ${path_history} -w 31,30,31    $fmar $fapr $fmay ${path_climo}/tmp/tmp_mam_${yr_cnt}.nc &
+           $nco_dir/ncra -O -p ${path_history} -w 30,31,31    $fjun $fjul $faug ${path_climo}/tmp/tmp_jja_${yr_cnt}.nc &
+           $nco_dir/ncra -O -p ${path_history} -w 30,31,30    $fsep $foct $fnov ${path_climo}/tmp/tmp_son_${yr_cnt}.nc &
+           wait
+           $nco_dir/ncra -O -p ${path_climo}/tmp   -w 90,92,92,91 tmp_djf_${yr_cnt}.nc tmp_mam_${yr_cnt}.nc tmp_jja_${yr_cnt}.nc tmp_son_${yr_cnt}.nc ${path_climo}/tmp/tmp_ann_${yr_cnt}.nc
+         endif
       else
-         $nco_dir/ncra -O -p ${path_history} -w 31,31,28    $fdec $fjan $ffeb ${path_climo}/tmp_djf_${yr_cnt}.nc
-         $nco_dir/ncra -O -p ${path_history} -w 31,30,31    $fmar $fapr $fmay ${path_climo}/tmp_mam_${yr_cnt}.nc
-         $nco_dir/ncra -O -p ${path_history} -w 30,31,31    $fjun $fjul $faug ${path_climo}/tmp_jja_${yr_cnt}.nc
-         $nco_dir/ncra -O -p ${path_history} -w 30,31,30    $fsep $foct $fnov ${path_climo}/tmp_son_${yr_cnt}.nc
-         $nco_dir/ncra -O -p ${path_climo}   -w 90,92,92,91 tmp_djf_${yr_cnt}.nc tmp_mam_${yr_cnt}.nc tmp_jja_${yr_cnt}.nc tmp_son_${yr_cnt}.nc ${path_climo}/tmp_ann_${yr_cnt}.nc
+        echo "tmp_*_${yr_cnt}.nc already exist"
       endif
       @ yr_cnt++
    end
 
    # Concatenate files
-   echo " CONCATENATING DJF FILES ..."
-   $nco_dir/ncrcat -O ${path_climo}/tmp_djf_*.nc ${path_climo}/${casename}_DJF_${first_yr_prnt}-${last_yr_prnt}_means.nc
-   echo " CONCATENATING MAM FILES ..."
-   $nco_dir/ncrcat -O ${path_climo}/tmp_mam_*.nc ${path_climo}/${casename}_MAM_${first_yr_prnt}-${last_yr_prnt}_means.nc
-   echo " CONCATENATING JJA FILES ..."
-   $nco_dir/ncrcat -O ${path_climo}/tmp_jja_*.nc ${path_climo}/${casename}_JJA_${first_yr_prnt}-${last_yr_prnt}_means.nc
-   echo " CONCATENATING SON FILES ..."
-   $nco_dir/ncrcat -O ${path_climo}/tmp_son_*.nc ${path_climo}/${casename}_SON_${first_yr_prnt}-${last_yr_prnt}_means.nc
-   echo " CONCATENATING ANN FILES ..."
-   $nco_dir/ncrcat -O ${path_climo}/tmp_ann_*.nc ${path_climo}/${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}_means.nc
+   if ( ! -f ${path_climo}/${casename}_DJF_${first_yr_prnt}-${last_yr_prnt}_means.nc || \
+        ! -f ${path_climo}/${casename}_MAM_${first_yr_prnt}-${last_yr_prnt}_means.nc || \
+        ! -f ${path_climo}/${casename}_JJA_${first_yr_prnt}-${last_yr_prnt}_means.nc || \
+        ! -f ${path_climo}/${casename}_SON_${first_yr_prnt}-${last_yr_prnt}_means.nc || \
+        ! -f ${path_climo}/${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}_means.nc ) then
+      echo " CONCATENATING DJF FILES ..."
+      $nco_dir/ncrcat -O ${path_climo}/tmp/tmp_djf_*.nc ${path_climo}/${casename}_DJF_${first_yr_prnt}-${last_yr_prnt}_means.nc &
+      echo " CONCATENATING MAM FILES ..."
+      $nco_dir/ncrcat -O ${path_climo}/tmp/tmp_mam_*.nc ${path_climo}/${casename}_MAM_${first_yr_prnt}-${last_yr_prnt}_means.nc &
+      echo " CONCATENATING JJA FILES ..."
+      $nco_dir/ncrcat -O ${path_climo}/tmp/tmp_jja_*.nc ${path_climo}/${casename}_JJA_${first_yr_prnt}-${last_yr_prnt}_means.nc &
+      echo " CONCATENATING SON FILES ..."
+      $nco_dir/ncrcat -O ${path_climo}/tmp/tmp_son_*.nc ${path_climo}/${casename}_SON_${first_yr_prnt}-${last_yr_prnt}_means.nc &
+      echo " CONCATENATING ANN FILES ..."
+      $nco_dir/ncrcat -O ${path_climo}/tmp/tmp_ann_*.nc ${path_climo}/${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}_means.nc &
+      wait
+   endif
 
    # Clean up
-   rm -f ${path_climo}/tmp_*.nc
+   #rm -f ${path_climo}/tmp_*.nc
 endif

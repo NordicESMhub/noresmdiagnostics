@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+#set -x
 
 # CLM DIAGNOSTICS package: climo_time_series.sh
 # PURPOSE: compute climatology and time-series of a case
