@@ -55,6 +55,7 @@ if [ $# -eq 0 ] || [ $1 == "-h" ]; then
     echo "                                                cam    : atmospheric package (AMWG)"
     echo "                                                clm    : land package (LMWG)"
     echo "                                                cice   : sea-ice package"
+    echo "                                                cism   : land-ice package"
     echo "                                                blom   : ocean package"
     echo "                                                hamocc : biogeochemistry package"
     echo "                                                all    : configure all available packages."
@@ -83,6 +84,7 @@ if [ $# -eq 0 ] || [ $1 == "-h" ]; then
     echo "${THIS_SCRIPT_NAME} -m blom -c N1850_f19_tn11_exp1 -t time_series # model-obs time-series diagnostics in BLOM for all years represented in the model output directory (${HISTORY_PATH1}/N1850_f19_tn11_exp1/ocn/hist/)."
     echo "${THIS_SCRIPT_NAME} -m cice -c N1850_f19_tn11_exp1 -s 21 -e 50 -p # configure (but do not run) model-obs diagnostics for CICE."
     echo "${THIS_SCRIPT_NAME} -m clm -c N1850_f19_tn11_exp1 -s 21 -e 50 -i /input/directory1 -c2 N1850_f19_tn11_exp2 -s2 21 -e2 50 -i2 /input/directory2 # model1-model2 diagnostics for CLM with user-specified history file directories"
+    echo "${THIS_SCRIPT_NAME} -m cism -c N1850_f19_tn11_exp1 -s 21 -e 50 -i /input/directory1 -c2 N1850_f19_tn11_exp2 -s2 21 -e2 50 -i2 /input/directory2 # model1-model2 diagnostics for CISM with user-specified history file directories"
     echo "${THIS_SCRIPT_NAME} -m blom -c N1850_f19_tn11_exp1 -s 21 -e 50 -t climo # model-obs climatology diagnostics (no time series) for BLOM:"
     echo "${THIS_SCRIPT_NAME} -m cam -o /my/dir # install CAM diagnostics in /my/dir with minimal configuration."
     echo "${THIS_SCRIPT_NAME} -m blom,hamocc -c N1850OC_f19_tn11_exp1 -s 21 -e 50 # model-obs diagnostics for BLOM and HAMOCC."
@@ -221,7 +223,7 @@ else
                     USER_MODEL=$1
                 else
                     echo "ERROR: no model specified (-m, --model)"
-                         echo "Valid options: cam, clm, cice, all"
+                         echo "Valid options: cam, clm, cice, cism, all"
                     echo "*** EXITING THE SCRIPT"
                     exit 1
                 fi
