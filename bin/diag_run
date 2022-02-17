@@ -223,7 +223,7 @@ else
                     USER_MODEL=$1
                 else
                     echo "ERROR: no model specified (-m, --model)"
-                         echo "Valid options: cam, clm, cice, cism, all"
+                         echo "Valid options: cam, blom/micom, clm, cice, cism, all"
                     echo "*** EXITING THE SCRIPT"
                     exit 1
                 fi
@@ -389,7 +389,7 @@ else
             let RUN_MODELS[3]=${RUN_MODELS[3]}+1
         elif [ "$model" == "hamocc" ]; then
             let RUN_MODELS[4]=${RUN_MODELS[4]}+1
-        elif [ "$model" == "cism" ] || [ "$model" == "cism" ]; then
+        elif [ "$model" == "cism" ]; then
             let RUN_MODELS[5]=${RUN_MODELS[5]}+1
         fi
     done
