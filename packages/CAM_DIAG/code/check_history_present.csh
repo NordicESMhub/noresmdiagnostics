@@ -75,19 +75,19 @@ while ( $yri <= $yr_end )    # loop over yrs
                 mkdir -p ${path_climo}/derived
             endif
             #$nco_dir/ncks --quiet -d lat,0 -d lon,0 -d time,0 -v AOD_VIS,AODVVOLC,DAYFOC ${path_local}/${filename}.nc >/dev/null
-            $cdo_dir/cdo -s showattsvar,AOD_VIS,AODVVOLC,DAYFOC ${path_local}/${filename}.nc >/dev/null         # more efficient
+            $cdo_dir/cdo -s showattsvar,AOD_VIS,AODVVOLC,DAYFOC ${path_local}/${filename}.nc >&/dev/null
             if ($? == 0) then
                $cdo_dir/cdo --history -O -s expr,'DAYFOC2=DAYFOC+1.e-15;AODVIS=(AOD_VIS+AODVVOLC)/DAYFOC2' ${path_local}/${filename}.nc ${path_climo}/derived/AODVIS_tmp.nc
                $cdo_dir/cdo --history -O -s delvar,DAYFOC2 ${path_climo}/derived/AODVIS_tmp.nc ${path_climo}/derived/${filename}.nc 
             else
                #$nco_dir/ncks --quiet -d lat,0 -d lon,0 -d time,0 -v AOD_VIS,DAYFOC ${path_local}/${filename}.nc >/dev/null
-               $cdo_dir/cdo -s showattsvar,AOD_VIS,DAYFOC ${path_local}/${filename}.nc >/dev/null
+               $cdo_dir/cdo -s showattsvar,AOD_VIS,DAYFOC ${path_local}/${filename}.nc >&/dev/null
                if ($? == 0) then
                    $cdo_dir/cdo --history -O -s expr,'DAYFOC2=DAYFOC+1.e-15;AODVIS=AOD_VIS/DAYFOC2' ${path_local}/${filename}.nc ${path_climo}/derived/AODVIS_tmp.nc
                    $cdo_dir/cdo --history -O -s delvar,DAYFOC2 ${path_climo}/derived/AODVIS_tmp.nc ${path_climo}/derived/${filename}.nc
                endif
             endif
-            if ($? == 0) then
+            if (-e ${path_climo}/derived/${filename}.nc) then
                set long_name = `$cdo_dir/cdo -s showattribute,AOD_VIS@long_name ${path_local}/${filename}.nc |cut -d'"' -f2`
                set units = `$cdo_dir/cdo -s showattribute,AOD_VIS@units ${path_local}/${filename}.nc |cut -d'"' -f2`
                set cell_methods = `$cdo_dir/cdo -s showattribute,AOD_VIS@units ${path_local}/${filename}.nc |cut -d'"' -f2`
@@ -100,5 +100,7 @@ while ( $yri <= $yr_end )    # loop over yrs
    end
    @ yri++
 end
-rm -f ${path_climo}/derived/AODVIS_tmp.nc
+if ( -e ${path_climo}/derived/AODVIS_tmp.nc ) then
+    rm -f ${path_climo}/derived/AODVIS_tmp.nc >&/dev/null
+endif
 echo "-->ALL $casename $MONTH FILES FOUND"
