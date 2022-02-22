@@ -1,0 +1,1 @@
+test smb 0 "WhiteBlueGreenYellowRed" 2 0 0 0 "(/-2e3,-1e3,-5e2,-2e2,-1e2,-5e1,-2e1,-1e1,0,1e2,2e2,3e2,4e2,5e2,6e2,7e2,8e2,9e2,10e2/)"
