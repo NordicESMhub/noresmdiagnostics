@@ -38,8 +38,6 @@ fi
 echo "DATA_ROOT:"
 echo $DATA_ROOT
 
-dfolders=(CAM_DIAG/cam35_data)
-dfolders=(CAM_DIAG/cam5_data)
 dfolders=(CAM_DIAG/cam_data)
 dfolders+=(CAM_DIAG/map_files)
 dfolders+=(CAM_DIAG/obs_data)
