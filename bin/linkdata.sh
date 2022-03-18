@@ -5,6 +5,8 @@ echo "--------------------------------------------------------------------------
 echo "Make links of necessary observational datasets and grid files to the original NoresmDiagnostic tool."
 echo "By default, the original diagnostic tool is set as /projects/NS2345K/diagnostics/noresm.            "
 echo "Usage: ./linkdata.sh"
+echo "    or ./linkdata.sh /absolute/path/to/inputdata"
+echo "    (where the last folder contains the *_DIAG/ folders"
 echo "--------------------------------------------------------------------------------------------------- "
 
 ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
@@ -12,9 +14,11 @@ cd $ROOT_DIR
 
 if [ -d /projects/NS2345K/www/diagnostics/inputdata ]; then
     DATA_ROOT=/projects/NS2345K/www/diagnostics/inputdata
+elif [ -d /cluster/work/users/$USER/diagnostics/inputdata ]; then
+    DATA_ROOT=/cluster/work/users/$USER/diagnostics/inputdata/
 elif [ -d /trd-project1/NS2345K/www/diagnostics/inputdata ]; then
     DATA_ROOT=/trd-project1/NS2345K/www/diagnostics/inputdata
-elif [ -d /cluster/work/users/$USER/diagnostics/noresm ]; then
+elif [ -d /cluster/work/users/$USER/diagnostics/noresm/packages ]; then
     DATA_ROOT=/cluster/work/users/$USER/diagnostics/noresm/packages
 else
     echo "                                                                             "
@@ -28,6 +32,8 @@ else
     echo "*** EXIT THE SCRIPT ***"
     exit 1
 fi
+
+[ ! -z $1 ] && DATA_ROOT=$1
 
 echo "DATA_ROOT:"
 echo $DATA_ROOT
@@ -52,14 +58,18 @@ for dname in ${dfolders[*]}
 do
     #rm -rf $ROOT_DIR/packages/$dname
     [ -h $ROOT_DIR/packages/$dname ] && rm -f $ROOT_DIR/packages/$dname
-    ln -sf $DATA_ROOT/$dname $ROOT_DIR/packages/$dname >/dev/null 2>&1
-    [ $? -ne 0 ] && echo " *** ERROR linking $DATA_ROOT/$dname ***" && exit 1
-    echo "  * $dname"
+    if [ -d $DATA_ROOT/$dname ];then    # NOTE, this does not work for relative path
+        ln -sf $DATA_ROOT/$dname $ROOT_DIR/packages/$dname >/dev/null 2>&1
+        [ $? -ne 0 ] && echo " *** ERROR linking $DATA_ROOT/$dname ***" && exit 1
+        echo "  * $dname"
+    else
+        echo " *** ERROR: $DATA_ROOT/$dname does not exist **" && exit
+    fi
 done
 echo "                                   "
 echo "Data files are successfully linked!"
 echo "                                   "
 
-echo "Output will be by default written to:"
+echo "Output will be, by default, written to:"
 echo "$ROOT_DIR/out!"
 

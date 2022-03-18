@@ -1,6 +1,8 @@
 #!/bin/env bash
 set -e
 
+# Usage: ./dloaddata.sh /root/path/to/download/data
+
 # this will download all individual files to the current folder
 
 if [ -z $1 ]; then
@@ -37,10 +39,11 @@ echo "wget log writes to /tmp/wget.log"
 echo "downloaded:"
 while read -r subfolder
 do
-    wget --timestamping -nd -r -l 1 -nH -np -R "index.html*"  --directory-prefix=${diagroot}/packages/${subfolder}/ \
+    wget -c --timestamping -nd -r -l 1 -nH -np -R "index.html*"  --directory-prefix=${diagroot}/packages/${subfolder}/ \
         http://ns2345k.web.sigma2.no/diagnostics/inputdata/${subfolder}/ \
         &>>/tmp/wget.log &
     wait
     [ $? -eq 0 ] && echo $subfolder
 done <./inputdata.txt
 rm -f /tmp/wget.log
+echo "All downloaded"
