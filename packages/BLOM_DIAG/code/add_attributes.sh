@@ -32,34 +32,40 @@ echo " climodir = $climodir"
 echo " ann_mode = $ann_mode"
 echo " mon_mode = $mon_mode"
 
+function ncattget { $NCKS --trd -M -m ${3} | grep -E -i "^${2} attribute [0-9]+: ${1}" | cut -f 11- -d ' ' | sort ; }
+
 if [ $ann_mode -eq 1 ]; then
     var_list=`cat $WKDIR/attributes/vars_climo_ann_${casename} | sed 's/,/ /g'|sed 's/depth_bnds //g'`
     ann_file=${casename}_ANN_${fyr_prnt}-${lyr_prnt}_climo.nc
     for var in $var_list
     do
-        $NCKS -O -v $var -d x,0 -d y,0 $climodir/$ann_file $WKDIR/tmp.nc
-        $NCKS --quiet -d x,0 -d y,0 -v $var $WKDIR/tmp.nc >/dev/null 2>&1
+        $NCKS --quiet -v $var -d x,0 -d y,0 $climodir/$mon_file >/dev/null 2>&1
         if [ $? -eq 0 ]; then
-            echo "Adding coordinate attributes to $var in $ann_file"
-            $NCATTED -a coordinates,$var,c,c,"plon plat" $climodir/$ann_file
+            crd=$(ncattget coordinates $var $climodir/$mon_file)
+            if [ "$crd" != "plon plat" ]
+            then
+                echo "Adding coordinate attributes to $var in $ann_file"
+                $NCATTED -a coordinates,$var,c,c,"plon plat" $climodir/$ann_file
+            fi
         fi
-        rm -f $WKDIR/tmp.nc
     done
 fi
 if [ $mon_mode -eq 1 ]; then
     var_list=`cat $WKDIR/attributes/vars_climo_mon_${casename} | sed 's/,/ /g'`
     for var in $var_list
     do
-        echo "Adding coordinate attributes to $var"
         for month in 01 02 03 04 05 06 07 08 09 10 11 12
         do
             mon_file=${casename}_${month}_${fyr_prnt}-${lyr_prnt}_climo.nc
-            $NCKS -O -v $var -d x,0 -d y,0 $climodir/$mon_file $WKDIR/tmp.nc
-            $NCKS --quiet -d x,0 -d y,0 -v $var $WKDIR/tmp.nc >/dev/null 2>&1
+            $NCKS --quiet -v $var -d x,0 -d y,0 $climodir/$mon_file >/dev/null 2>&1
             if [ $? -eq 0 ]; then
-                $NCATTED -a coordinates,$var,c,c,"plon plat" $climodir/$mon_file
+                crd=$(ncattget coordinates $var $climodir/$mon_file)
+                if [ "$crd" != "plon plat" ]
+                then
+                    echo "Adding coordinate attributes to $var"
+                    $NCATTED -a coordinates,$var,c,c,"plon plat" $climodir/$mon_file
+                fi
             fi
-            rm -f $WKDIR/tmp.nc
         done
     done    
 fi
