@@ -701,6 +701,12 @@ mkdir -m 775 -p $WEBDIR/set4
 mkdir -m 775 -p $WEBDIR/set5
 mkdir -m 775 -p $WEBDIR/set6
 mkdir -m 775 -p $WEBDIR/set7
+if [ ! -d $WEBDIR ]
+then
+    echo "** ERROR: making web folder: $WEBDIR **"
+    echo "**                 EXIT              **"
+    exit 1
+fi
 
 export cinfo=1model
 if [ $CNTL == USER ]; then

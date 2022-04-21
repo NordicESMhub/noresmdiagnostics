@@ -637,6 +637,12 @@ mkdir -m 775 -p $WEBDIR/set1
 mkdir -m 775 -p $WEBDIR/set2
 mkdir -m 775 -p $WEBDIR/set3
 mkdir -m 775 -p $WEBDIR/set4
+if [ ! -d $WEBDIR ]
+then
+    echo "** ERROR: making web folder: $WEBDIR **"
+    echo "**                 EXIT              **"
+    exit 1
+fi
 cp $DIAG_HTML/index.html $WEBDIR
 cdate=`date`
 sed -i "s/test_run/$CASENAME1/g" $WEBDIR/index.html

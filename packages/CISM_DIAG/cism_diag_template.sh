@@ -482,6 +482,12 @@ export WEBDIR=$WKDIR/$WEBFOLDER
 #fi
 mkdir -m 775 -p $WEBDIR/set1
 mkdir -m 775 -p $WEBDIR/set2
+if [ ! -d $WEBDIR ]
+then
+    echo "** ERROR: making web folder: $WEBDIR **"
+    echo "**                 EXIT              **"
+    exit 1
+fi
 
 export cinfo=1model
 if [ $CNTL == USER ]; then

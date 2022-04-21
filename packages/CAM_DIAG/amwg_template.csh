@@ -1554,6 +1554,11 @@ if ($web_pages == 0) then
         setenv WEBDIR ${test_path_diag}/yrs${test_first_yr}to${test_end}-yrs${cntl_first_yr}to${cntl_end}
       endif
       if (! -e $WEBDIR) mkdir -m 775 $WEBDIR
+      if (! -e ${WEBDIR}) then
+         echo ERROR: Unable to create \$WEBDIR: ${WEBDIR}
+         echo "***EXITING THE SCRIPT"
+         exit 1
+      endif
       if (-e $WEBDIR && `stat -c %a $WEBDIR` != 775 ) chmod 775 $WEBDIR
       cd $WEBDIR
       $HTML_HOME/setup_2models $test_casename $cntl_casename $image yrs${test_first_yr}to${test_end} yrs${cntl_first_yr}to${cntl_end}
