@@ -205,9 +205,9 @@ do
                 fi
                 $NCKS --quiet -d depth,0 -d x,0 -d y,0 -v dp,parea $WKDIR/$filename >/dev/null 2>&1
                 if [ $? -eq 0 ]; then
-                    $NCAP2 -O -s 'dmass=dp*parea' $WKDIR/$filename  -o $WKDIR/$filename >/dev/null 2>&1
+                    $NCAP2 -O -s 'dmass=dp*parea' $WKDIR/$filename  $WKDIR/$filename >/dev/null 2>&1
                     if [ $? -ne 0 ]; then
-                        echo "ERROR: $NCAP2 -O -s 'dmass=dp*parea' $WKDIR/$filename  -o $WKDIR/$filename >/dev/null 2>&1"
+                        echo "ERROR: $NCAP2 -O -s 'dmass=dp*parea' $WKDIR/$filename  $WKDIR/$filename >/dev/null 2>&1"
                         exit
                     fi
                 fi
