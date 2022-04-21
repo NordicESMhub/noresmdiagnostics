@@ -8,26 +8,32 @@ unset echo verbose
 # - Better performance climatology computation (ncclimo)
 # - Updated web interface for NIRD
 # - NCL updates to version 4.6.0.
-setenv HOSTNAME `hostname -f`
-if  ( `echo $HOSTNAME |grep 'nird'` !="" ) then
+
+## LOAD MODULES AND SET ENVIRONMENTS
+HOST="$(uname -a) $(hostname -f)"
+if ( "$(echo $HOST |grep 'ipcc.nird')" ) then
     setenv NCARG_ROOT /opt/ncl65
     setenv NCARG_COLORMAPS $NCARG_ROOT/lib/ncarg/colormaps
     setenv PATH /usr/local/bin:/usr/bin:/opt/ncl65/bin/:/opt/nco475/bin/:/opt/cdo197/bin
-    source /opt/intel/compilers_and_libraries/linux/bin/compilervars.csh -arch intel64 -platform linux
     setenv ncksbin  `which ncks`
     setenv ncclimo_dir  `dirname $ncksbin`
-else if ( `echo $HOSTNAME |grep 'fram'` !="" ) then
+else if ( "$(echo $HOST |grep 'login[0-9].nird')" ) then
+    setenv NCARG_ROOT /usr
+    setenv NCARG_COLORMAPS $NCARG_ROOT/lib/ncarg/colormaps
+    setenv ncksbin  `which ncks`
+    setenv ncclimo_dir  `dirname $ncksbin`
+else if ( "$(echo $HOST |grep 'betzy')" )  then
     module -q purge
-    module -q load NCO/4.7.2-intel-2018a
-    module -q load CDO/1.9.3-intel-2018a
-    module -q load NCL/6.5.0-intel-2018a   # NCL must be loaded after NCO/CDO
-    module -q unload LibTIFF/4.0.9-GCCcore-6.4.0
+    module -q load NCO/4.9.3-intel-2019b
+    module -q load CDO/1.9.8-intel-2019b
+    module -q load NCL/6.6.2-intel-2019b
     setenv ncclimo_dir  ${EBROOTNCO}/bin
 else
-    echo "UNKNOW HOSTNAME: $HOSTNAME "
-    echo "*** EXIT ***"
-    exit 1
+    echo "** UNKNOWN HOST $HOST **"
+    echo "**       EXIT         **"
+    exit
 endif
+
 #--------------------------------------------------------------------#
 #----------------- USER DEFINED INPUT -------------------------------#
 #--------------------------------------------------------------------#

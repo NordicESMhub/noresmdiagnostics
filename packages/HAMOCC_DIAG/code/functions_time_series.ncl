@@ -178,7 +178,7 @@ end
 
 function get_talklvl100m (inptr:file) 
 begin
-   if (isfilevar(inptr,"talklvl")) then
+   if (isfilevar(inptr,"talklvl100m")) then
       tmp = inptr->talklvl100m
       if (typeof(tmp).eq."double") then
          xvar = dble2flt(tmp)

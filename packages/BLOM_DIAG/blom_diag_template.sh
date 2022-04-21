@@ -7,24 +7,26 @@
 # built upon previous work by Detelina Ivanova
 # Last update Aug. 2019
 
-if [ -d /opt/ncl65 ] && [ -d /opt/nco475 ] && [ -d /opt/cdo197 ]; then
+## LOAD MODULES AND SET ENVIRONMENTS
+HOST="$(uname -a) $(hostname -f)"
+if [ "$(echo $HOST |grep 'ipcc.nird')" ];then
     export NCARG_ROOT=/opt/ncl65
     export NCARG_COLORMAPS=$NCARG_ROOT/lib/ncarg/colormaps
     export PATH=/usr/local/bin:/usr/bin:/opt/ncl65/bin/:/opt/nco475/bin/:/opt/cdo197/bin
-    source /opt/intel/compilers_and_libraries/linux/bin/compilervars.sh -arch intel64 -platform linux
+elif [ "$(echo $HOST |grep 'login[0-9].nird')" ];then
+     export NCARG_ROOT=/usr
+     export NCARG_COLORMAPS=$NCARG_ROOT/lib/ncarg/colormaps
+elif [ "$(echo $HOST |grep 'betzy')" ]; then
+     module -q purge
+     module -q load NCO/4.9.3-intel-2019b
+     module -q load CDO/1.9.8-intel-2019b
+     module -q load NCL/6.6.2-intel-2019b
 else
-    module -q purge
-    module -q load NCO/4.7.2-intel-2018a
-    module -q load CDO/1.9.3-intel-2018a
-    module -q load NCL/6.5.0-intel-2018a   # NCL must be loaded after NCO/CDO
-    module -q unload LibTIFF/4.0.9-GCCcore-6.4.0
+    echo "** UNKNOWN HOST $HOST **"
+    echo "** EXIT                   **"
+    exit
 fi
-which ncks &>/dev/null
-if [ $? -ne 0 ];then
-    echo "UNKNOW HOSTNAME: $HOSTNAME "
-    echo "*** EXIT ***"
-    exit 1
-fi
+
 #***************************
 #*** USER MODIFY SECTION ***
 #***************************
@@ -699,6 +701,12 @@ mkdir -m 775 -p $WEBDIR/set4
 mkdir -m 775 -p $WEBDIR/set5
 mkdir -m 775 -p $WEBDIR/set6
 mkdir -m 775 -p $WEBDIR/set7
+if [ ! -d $WEBDIR ]
+then
+    echo "** ERROR: making web folder: $WEBDIR **"
+    echo "**                 EXIT              **"
+    exit 1
+fi
 
 export cinfo=1model
 if [ $CNTL == USER ]; then

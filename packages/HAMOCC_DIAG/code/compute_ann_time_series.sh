@@ -70,11 +70,11 @@ else
     filename=${casename}.${filetag}.hbgcm.${first_yr_prnt}-01.nc
 fi
 
-ncks -O --quiet -v depth_bnds $pathdat/$filename -o $WKDIR/depth_bnds.nc
-ncap2 -O -s 'dz=depth_bnds(:,1)-depth_bnds(:,0)' $WKDIR/depth_bnds.nc -o $WKDIR/dz.nc
-ncks --quiet -A -v parea $grid_file $WKDIR/dz.nc
-ncap2 -O -s 'dz3d($depth,$y,$x)=dz' $WKDIR/dz.nc $WKDIR/dz3d.nc
-ncap2 -O -s 'dvol=dz3d*parea' $WKDIR/dz3d.nc $WKDIR/dvol.nc
+$NCKS -O --quiet -v depth_bnds $pathdat/$filename -o $WKDIR/depth_bnds.nc
+$NCAP2 -O -s 'dz=depth_bnds(:,1)-depth_bnds(:,0)' $WKDIR/depth_bnds.nc $WKDIR/dz.nc
+$NCKS --quiet -A -v parea $grid_file $WKDIR/dz.nc
+$NCAP2 -O -s 'dz3d($depth,$y,$x)=dz' $WKDIR/dz.nc $WKDIR/dz3d.nc
+$NCAP2 -O -s 'dvol=dz3d*parea' $WKDIR/dz3d.nc $WKDIR/dvol.nc
 
 # Calculate number of chunks and the residual
 nproc=10
@@ -113,11 +113,12 @@ do
             yr_prnt=$(printf "%04d" ${YR})
             filename=${casename}.${filetag}.hbgcy.${yr_prnt}.nc
 
-            fflag=1     #check if all required annual ts files exist
+            fflag=1
+            echo "check if any required annual ts files do not exist"
             for var in $(echo $var_list | sed 's/,/ /g'|sed 's/pddpo//'|sed 's/depth_bnds//') ; do
                 tsfile=${var}_${casename}_ANN_${filetype}_${yr_prnt}.nc
                 if [ ! -f  $tsdir/ann_ts/${tsfile} ]; then
-                    #echo "$tsdir/ann_ts/${tsfile} does not exist, ncks required variables..."
+                    echo "$tsdir/ann_ts/${tsfile} is missing, will redo all required variables..."
                     fflag=0
                     break
                 fi
@@ -157,11 +158,12 @@ do
                 filename=${casename}.${filetag}.hbgcm.${yr_prnt}-${mon}.nc
                 filenames+=($filename)
             done
-            fflag=1     #check if all required annual ts files exist
+            fflag=1
+            echo 'Check if any required annual ts files do not exist'
             for var in $(echo $var_list | sed 's/,/ /g'|sed 's/pddpo//') ; do
                 tsfile=${var}_${casename}_ANN_${filetype}_${yr_prnt}.nc
                 if [ ! -f  $tsdir/ann_ts/${tsfile} ]; then
-                    echo "$tsdir/ann_ts/${tsfile} does not exist"
+                    echo "$tsdir/ann_ts/${tsfile} is missing, will redo all required variables"
                     fflag=0
                     break
                 fi
@@ -170,7 +172,7 @@ do
                 eval $NCRA -3 -O --no_tmp_fl --hdr_pad=10000 -w 31,28,31,30,31,30,31,31,30,31,30,31 -v $var_list -p $pathdat ${filenames[*]} $WKDIR/${casename}_ANN_${yr_prnt}.nc &
                 pid+=($!)
             else
-                echo Skip computing year ${yr_prnt}, time-series variables already exist.
+                echo Skip computing year ${yr_prnt}, all ts files exist.
             fi
             let iproc++
         done
@@ -187,21 +189,21 @@ do
     fi
     # Append parea if necessary
     iproc=1
-    echo "Appending parea to annual files (yrs ${YR_start}-${YR_end})"
+    echo "Appending parea, cell volumne and mass to annual files (yrs ${YR_start}-${YR_end})"
     while [ $iproc -le $nyrs ]
     do
         let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
         yr_prnt=$(printf "%04d" ${YR})
         filename=${casename}_ANN_${yr_prnt}.nc
         if [ -f $WKDIR/$filename ]; then
-            $NCKS --quiet -d depth,0 -d x,0 -d y,0 -v parea,dvol,dmass $WKDIR/$filename >/dev/null 2>&1
+            $NCKS --quiet -d depth,0 -d sigma,0 -d x,0 -d y,0 -v parea,dvol,dmass $WKDIR/$filename >/dev/null 2>&1
         fi
         if [ $? -ne 0 ]; then
             $NCKS -A -v parea -o $WKDIR/$filename $grid_file
-            $NCKS --quiet -d depth,0 -d x,0 -d y,0 -v pddpo $WKDIR/$filename >/dev/null 2>&1
+            $NCKS --quiet -d sigma,0 -d x,0 -d y,0 -v pddpo $WKDIR/$filename >/dev/null 2>&1
             if [ $? -eq 0 ]; then
-                $NCAP2 -O -s 'dmass=pddpo*parea' $WKDIR/$filename  -o $WKDIR/dmass_${yr_prnt}.nc >/dev/null
-                $NCKS --quiet -A -v dmass $WKDIR/dmass_${yr_prnt}.nc -o $WKDIR/$filename >/dev/null 2>&1
+                $NCAP2 -O -s 'dmass=pddpo*parea' $WKDIR/$filename  $WKDIR/dmass_${yr_prnt}.nc >/dev/null
+                $NCKS --quiet -A -v dmass $WKDIR/dmass_${yr_prnt}.nc $WKDIR/$filename >/dev/null 2>&1
             fi
             $NCKS --quiet -A -v dvol $WKDIR/dvol.nc -o $WKDIR/$filename >/dev/null 2>&1
         fi
@@ -243,7 +245,7 @@ do
         fi
         if [ $var == o2lvl ] || [ $var == silvl ] || [ $var == po4lvl ] || \
            [ $var == no3lvl ] || [ $var == dissiclvl ] || [ $var == talklvl ]; then
-            echo "Mass weighted global average of $var (yrs ${YR_start}-${YR_end})"
+            echo "Volume weighted global average of $var (yrs ${YR_start}-${YR_end})"
             pid=()
             iproc=1
             while [ $iproc -le $nyrs ]
@@ -267,7 +269,7 @@ do
             do
                 wait ${pid[$m]}
                 if [ $? -ne 0 ]; then
-                    echo "ERROR in calculating mass weighted global average: $NCWA --no_tmp_fl -O -v $var -w dvol -a depth,y,x $WKDIR/$infile $WKDIR/$outfile"
+                    echo "ERROR in calculating volume weighted global average: $NCWA --no_tmp_fl -O -v $var -w dvol -a depth,y,x $WKDIR/$infile $WKDIR/$outfile"
                     echo "*** EXITING THE SCRIPT ***"
                     exit 1
                 fi
@@ -288,7 +290,9 @@ do
                 if [ -f $WKDIR/$infile ] && [ ! -f $tsdir/ann_ts/$outfile ]; then
                     $NCAP2 -O -s 'epc100_area=epc100*parea' $WKDIR/$infile $WKDIR/$outfile_tmp
                     $NCAP2 -O -s 'epc100_tot=epc100_area.total($x,$y)*12.011*86400.0*365.0*1.0e-15' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
-                    $NCKS --no_tmp_fl -O -v epc100_tot $WKDIR/$outfile_tmp $WKDIR/$outfile
+                    $NCKS --no_tmp_fl -O -v epc100_tot $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
+                    $NCAP2 -O -s 'parea=parea.total()' $WKDIR/$outfile_tmp $WKDIR/$outfile
+                    $NCATTED -a units,epc100_tot,m,c,'Pg yr-1' $WKDIR/$outfile
                     rm -f $WKDIR/$outfile_tmp
                 fi
                 let iproc++
@@ -308,7 +312,9 @@ do
                 if [ -f $WKDIR/$infile ] && [ ! -f $tsdir/ann_ts/$outfile ]; then
                     $NCAP2 -O -s 'epcalc100_area=epcalc100*parea' $WKDIR/$infile $WKDIR/$outfile_tmp
                     $NCAP2 -O -s 'epcalc100_tot=epcalc100_area.total($x,$y)*12.0*86400.0*365.0*1.0e-15' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
-                    $NCKS --no_tmp_fl -O -v epcalc100_tot $WKDIR/$outfile_tmp $WKDIR/$outfile
+                    $NCKS --no_tmp_fl -O -v epcalc100_tot $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
+                    $NCAP2 -O -s 'parea=parea.total()' $WKDIR/$outfile_tmp $WKDIR/$outfile
+                    $NCATTED -a units,epcalc100_tot,m,c,'Pg yr-1' $WKDIR/$outfile
                     rm -f $WKDIR/$outfile_tmp
                 fi
                 let iproc++
@@ -328,7 +334,9 @@ do
                 if [ -f $WKDIR/$infile ] && [ ! -f $tsdir/ann_ts/$outfile ]; then
                     $NCAP2 -O -s 'co2fxd_area=co2fxd*parea' $WKDIR/$infile $WKDIR/$outfile_tmp
                     $NCAP2 -O -s 'co2fxd_tot=co2fxd_area.total($x,$y)*86400.0*365.0*1.0e-12' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
-                    $NCKS --no_tmp_fl -O -v co2fxd_tot $WKDIR/$outfile_tmp $WKDIR/$outfile
+                    $NCKS --no_tmp_fl -O -v co2fxd_tot $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
+                    $NCAP2 -O -s 'parea=parea.total()' $WKDIR/$outfile_tmp $WKDIR/$outfile
+                    $NCATTED -a units,co2fxd_tot,m,c,'Pg yr-1' $WKDIR/$outfile
                     rm -f $WKDIR/$outfile_tmp
                 fi
                 let iproc++
@@ -348,7 +356,9 @@ do
                 if [ -f $WKDIR/$infile ] && [ ! -f $tsdir/ann_ts/$outfile ]; then
                     $NCAP2 -O -s 'co2fxu_area=co2fxu*parea' $WKDIR/$infile $WKDIR/$outfile_tmp
                     $NCAP2 -O -s 'co2fxu_tot=co2fxu_area.total($x,$y)*86400.0*365.0*1.0e-12' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
-                    $NCKS --no_tmp_fl -O -v co2fxu_tot $WKDIR/$outfile_tmp $WKDIR/$outfile
+                    $NCKS --no_tmp_fl -O -v co2fxu_tot $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
+                    $NCAP2 -O -s 'parea=parea.total()' $WKDIR/$outfile_tmp $WKDIR/$outfile
+                    $NCATTED -a units,co2fxu_tot,m,c,'Pg yr-1' $WKDIR/$outfile
                     rm -f $WKDIR/$outfile_tmp
                 fi
                 let iproc++
@@ -368,7 +378,9 @@ do
                 if [ -f $WKDIR/$infile ] && [ ! -f $tsdir/ann_ts/$outfile ]; then
                     $NCAP2 -O -s 'dmsflux_area=dmsflux*parea' $WKDIR/$infile $WKDIR/$outfile_tmp
                     $NCAP2 -O -s 'dmsflux_tot=dmsflux_area.total($x,$y)*86400.0*365.0*62.13*1.0e-12' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
-                    $NCKS --no_tmp_fl -O -v dmsflux_tot $WKDIR/$outfile_tmp $WKDIR/$outfile
+                    $NCKS --no_tmp_fl -O -v dmsflux_tot $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
+                    $NCAP2 -O -s 'parea=parea.total()' $WKDIR/$outfile_tmp $WKDIR/$outfile
+                    $NCATTED -a units,dmsflux_tot,m,c,'TgS yr-1' $WKDIR/$outfile
                     rm -f $WKDIR/$outfile_tmp
                 fi
                 let iproc++
@@ -473,7 +485,9 @@ do
                 if [ -f $WKDIR/$infile ] && [ ! -f $tsdir/ann_ts/$outfile ]; then
                     $NCAP2 -O -s 'ppint_area=ppint*parea' $WKDIR/$infile $WKDIR/$outfile_tmp
                     $NCAP2 -O -s 'ppint_tot=ppint_area.total($x,$y)*86400.0*365.0*12*1.0e-15' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
-                    $NCKS --no_tmp_fl -O -v ppint_tot $WKDIR/$outfile_tmp $WKDIR/$outfile
+                    $NCKS --no_tmp_fl -O -v ppint_tot $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
+                    $NCAP2 -O -s 'parea=parea.total()' $WKDIR/$outfile_tmp $WKDIR/$outfile
+                    $NCATTED -a units,ppint_tot,m,c,'Pg C yr-1' $WKDIR/$outfile
                     rm -f $WKDIR/$outfile_tmp
                 fi
                 let iproc++
