@@ -8,7 +8,7 @@
 # Last update Aug. 2019
 
 ## LOAD MODULES AND SET ENVIRONMENTS
-HOST="$(uname -a) $(hostname -f)"
+HOST="$(uname -n) $(hostname -f)"
 if [ "$(echo $HOST |grep 'ipcc.nird')" ];then
     export NCARG_ROOT=/opt/ncl65
     export NCARG_COLORMAPS=$NCARG_ROOT/lib/ncarg/colormaps

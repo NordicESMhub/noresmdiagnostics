@@ -10,21 +10,24 @@ unset echo verbose
 setenv DIAG_VERSION 140804  # version number YYMMDD
 
 ## LOAD MODULES AND SET ENVIRONMENTS
-HOST="$(uname -a) $(hostname -f)"
-if ( "$(echo $HOST |grep 'ipcc.nird')" ) then
+set MACHINE = "`uname -n` `hostname -f`"
+if ( `echo "$MACHINE" |grep 'ipcc'` != '' ) then
+    set MACHINE = 'ipcc.nird'
     setenv NCARG_ROOT /opt/ncl65
     setenv NCARG_COLORMAPS $NCARG_ROOT/lib/ncarg/colormaps
     setenv PATH /usr/local/bin:/usr/bin:/opt/ncl65/bin/:/opt/nco475/bin/:/opt/cdo197/bin
     setenv ncksbin  `which ncks`
     setenv nco_dir  `dirname $ncksbin`
     setenv cdo_dir  /opt/cdo197/bin
-else if ( "$(echo $HOST |grep 'login[0-9].nird')" ) then
+else if ( `echo "$MACHINE" |grep 'login[0-9].nird'` != '' ) then
+    set MACHINE = 'login.nird'
     setenv NCARG_ROOT /usr
     setenv NCARG_COLORMAPS $NCARG_ROOT/lib/ncarg/colormaps
     setenv ncksbin  `which ncks`
     setenv nco_dir  `dirname $ncksbin`
-    setenv cdo_dir  /opt/cdo197/bin
-else if ( "$(echo $HOST |grep 'betzy')" )  then
+    setenv cdo_dir  /usr/local/bin
+else if ( `echo "$MACHINE" |grep 'betzy'` != '' )  then
+    set MACHINE = 'betzy'
     module -q purge
     module -q load NCO/4.9.3-intel-2019b
     module -q load CDO/1.9.8-intel-2019b
@@ -32,9 +35,9 @@ else if ( "$(echo $HOST |grep 'betzy')" )  then
     setenv nco_dir  ${EBROOTNCO}/bin
     setenv cdo_dir  ${EBROOTCDO}/bin
 else
-    echo "** UNKNOWN HOST $HOST **"
+    echo "** UNKNOWN MACHINE $MACHINE **"
     echo "**       EXIT         **"
-    exit
+    exit 1
 endif
 
 #******************************************************************
