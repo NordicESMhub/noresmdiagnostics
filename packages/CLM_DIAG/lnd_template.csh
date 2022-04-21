@@ -1,28 +1,32 @@
 #!/bin/csh
 
 # Version lnd_template4.2.25.csh
-if ( -d /opt/ncl65 && -d /opt/nco475 && -d /opt/cdo197 ) then
+
+## LOAD MODULES AND SET ENVIRONMENTS
+HOST="$(uname -a) $(hostname -f)"
+if ( "$(echo $HOST |grep 'ipcc.nird')" ) then
     setenv NCARG_ROOT /opt/ncl65
     setenv NCARG_COLORMAPS $NCARG_ROOT/lib/ncarg/colormaps
-    setenv PATH /opt/ncl65/bin/:/opt/nco475/bin/:/opt/cdo197/bin:/usr/local/bin:/usr/bin
-    source /opt/intel/compilers_and_libraries/linux/bin/compilervars.csh -arch intel64 -platform linux
+    setenv PATH /usr/local/bin:/usr/bin:/opt/ncl65/bin/:/opt/nco475/bin/:/opt/cdo197/bin
     setenv ncksbin  `which ncks`
     setenv ncclimo_dir  `dirname $ncksbin`
-else
+else if ( "$(echo $HOST |grep 'login[0-9].nird')" ) then
+    setenv NCARG_ROOT /usr
+    setenv NCARG_COLORMAPS $NCARG_ROOT/lib/ncarg/colormaps
+    setenv ncksbin  `which ncks`
+    setenv ncclimo_dir  `dirname $ncksbin`
+else if ( "$(echo $HOST |grep 'betzy')" )  then
     module -q purge
-    module -q load NCO/4.7.2-intel-2018a
-    module -q load CDO/1.9.3-intel-2018a
-    module -q load NCL/6.5.0-intel-2018a   # NCL must be loaded after NCO/CDO
-    module -q unload LibTIFF/4.0.9-GCCcore-6.4.0
+    module -q load NCO/4.9.3-intel-2019b
+    module -q load CDO/1.9.8-intel-2019b
+    module -q load NCL/6.6.2-intel-2019b
     setenv ncclimo_dir  ${EBROOTNCO}/bin
+else
+    echo "** UNKNOWN HOST $HOST **"
+    echo "**       EXIT         **"
+    exit
 endif
-which ncks >&/dev/null
-set rcode=$status
-if ( $rcode != 0 ) then
-    echo "UNKNOW HOSTNAME: $HOSTNAME "
-    echo "*** EXIT ***"
-    exit 1
-endif
+
 # NOTE: You MUST use ncl/6.2.0 (e.g., module load ncl/6.2.0)
 
 # NOTE: For running the non-swift version of this script, you MUST use
