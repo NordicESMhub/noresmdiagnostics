@@ -290,7 +290,7 @@ do
                 if [ -f $WKDIR/$infile ] && [ ! -f $tsdir/ann_ts/$outfile ]; then
                     $NCAP2 -O -s 'epc100_area=epc100*parea' $WKDIR/$infile $WKDIR/$outfile_tmp
                     $NCAP2 -O -s 'epc100_tot=epc100_area.total($x,$y)*12.011*86400.0*365.0*1.0e-15' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
-                    $NCKS --no_tmp_fl -O -v epc100_tot $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
+                    $NCKS  -O -v epc100_tot $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
                     $NCAP2 -O -s 'parea=parea.total()' $WKDIR/$outfile_tmp $WKDIR/$outfile
                     $NCATTED -a units,epc100_tot,m,c,'Pg yr-1' $WKDIR/$outfile
                     rm -f $WKDIR/$outfile_tmp
@@ -312,7 +312,7 @@ do
                 if [ -f $WKDIR/$infile ] && [ ! -f $tsdir/ann_ts/$outfile ]; then
                     $NCAP2 -O -s 'epcalc100_area=epcalc100*parea' $WKDIR/$infile $WKDIR/$outfile_tmp
                     $NCAP2 -O -s 'epcalc100_tot=epcalc100_area.total($x,$y)*12.0*86400.0*365.0*1.0e-15' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
-                    $NCKS --no_tmp_fl -O -v epcalc100_tot $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
+                    $NCKS  -O -v epcalc100_tot $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
                     $NCAP2 -O -s 'parea=parea.total()' $WKDIR/$outfile_tmp $WKDIR/$outfile
                     $NCATTED -a units,epcalc100_tot,m,c,'Pg yr-1' $WKDIR/$outfile
                     rm -f $WKDIR/$outfile_tmp
@@ -334,7 +334,7 @@ do
                 if [ -f $WKDIR/$infile ] && [ ! -f $tsdir/ann_ts/$outfile ]; then
                     $NCAP2 -O -s 'co2fxd_area=co2fxd*parea' $WKDIR/$infile $WKDIR/$outfile_tmp
                     $NCAP2 -O -s 'co2fxd_tot=co2fxd_area.total($x,$y)*86400.0*365.0*1.0e-12' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
-                    $NCKS --no_tmp_fl -O -v co2fxd_tot $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
+                    $NCKS  -O -v co2fxd_tot $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
                     $NCAP2 -O -s 'parea=parea.total()' $WKDIR/$outfile_tmp $WKDIR/$outfile
                     $NCATTED -a units,co2fxd_tot,m,c,'Pg yr-1' $WKDIR/$outfile
                     rm -f $WKDIR/$outfile_tmp
@@ -356,7 +356,7 @@ do
                 if [ -f $WKDIR/$infile ] && [ ! -f $tsdir/ann_ts/$outfile ]; then
                     $NCAP2 -O -s 'co2fxu_area=co2fxu*parea' $WKDIR/$infile $WKDIR/$outfile_tmp
                     $NCAP2 -O -s 'co2fxu_tot=co2fxu_area.total($x,$y)*86400.0*365.0*1.0e-12' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
-                    $NCKS --no_tmp_fl -O -v co2fxu_tot $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
+                    $NCKS  -O -v co2fxu_tot $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
                     $NCAP2 -O -s 'parea=parea.total()' $WKDIR/$outfile_tmp $WKDIR/$outfile
                     $NCATTED -a units,co2fxu_tot,m,c,'Pg yr-1' $WKDIR/$outfile
                     rm -f $WKDIR/$outfile_tmp
@@ -378,7 +378,7 @@ do
                 if [ -f $WKDIR/$infile ] && [ ! -f $tsdir/ann_ts/$outfile ]; then
                     $NCAP2 -O -s 'dmsflux_area=dmsflux*parea' $WKDIR/$infile $WKDIR/$outfile_tmp
                     $NCAP2 -O -s 'dmsflux_tot=dmsflux_area.total($x,$y)*86400.0*365.0*62.13*1.0e-12' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
-                    $NCKS --no_tmp_fl -O -v dmsflux_tot $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
+                    $NCKS  -O -v dmsflux_tot $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
                     $NCAP2 -O -s 'parea=parea.total()' $WKDIR/$outfile_tmp $WKDIR/$outfile
                     $NCATTED -a units,dmsflux_tot,m,c,'TgS yr-1' $WKDIR/$outfile
                     rm -f $WKDIR/$outfile_tmp
@@ -485,7 +485,7 @@ do
                 if [ -f $WKDIR/$infile ] && [ ! -f $tsdir/ann_ts/$outfile ]; then
                     $NCAP2 -O -s 'ppint_area=ppint*parea' $WKDIR/$infile $WKDIR/$outfile_tmp
                     $NCAP2 -O -s 'ppint_tot=ppint_area.total($x,$y)*86400.0*365.0*12*1.0e-15' $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
-                    $NCKS --no_tmp_fl -O -v ppint_tot $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
+                    $NCKS  -O -v ppint_tot $WKDIR/$outfile_tmp $WKDIR/$outfile_tmp
                     $NCAP2 -O -s 'parea=parea.total()' $WKDIR/$outfile_tmp $WKDIR/$outfile
                     $NCATTED -a units,ppint_tot,m,c,'Pg C yr-1' $WKDIR/$outfile
                     rm -f $WKDIR/$outfile_tmp
