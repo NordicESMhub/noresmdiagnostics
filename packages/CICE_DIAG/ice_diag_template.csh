@@ -30,6 +30,7 @@ else if ( `echo "$MACHINE" |grep 'betzy'` != '' )  then
     module -q load NCO/4.9.3-intel-2019b
     module -q load CDO/1.9.8-intel-2019b
     module -q load NCL/6.6.2-intel-2019b
+    module -q load ImageMagick/7.1.0-4-GCCcore-11.2.0
     setenv ncclimo_dir  ${EBROOTNCO}/bin
 else
     echo "** UNKNOWN MACHINE $MACHINE **"
@@ -218,13 +219,21 @@ limit datasize  unlimited
 
 set AVERAGES = (jfm amj jas ond ann on fm)
 
-if ( `which convert | wc -w` == 1 ) then
-  set CONVERT_PATH = `which convert`
-  set CONVERT = "${CONVERT_PATH} -density 85 -background white -flatten"
+if (! ${?DENSITY}) then
+  set DENSITY = 150    # default pixels/inch
+endif
+
+if (-e /usr/bin/convert) then
+  set CONVERT = "/usr/bin/convert -density $DENSITY -trim -bordercolor white -border 5x5"
 else
-  echo "ERROR: CONVERT NOT FOUND"
-  echo "***EXITING THE SCRIPT"
-  exit 1
+  if (`which convert | wc -w` == 1) then
+    set CONVERT_PATH = `which convert`
+    set CONVERT = "${CONVERT_PATH} -density $DENSITY -trim -bordercolor white -border 5x5"
+  else
+    echo "ERROR: CONVERT NOT FOUND"
+    echo "***EXITING THE SCRIPT"
+    exit 1
+  endif
 endif
 
 echo " "

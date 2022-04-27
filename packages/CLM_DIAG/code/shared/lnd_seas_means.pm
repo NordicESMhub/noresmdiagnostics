@@ -95,7 +95,7 @@ sub create_SEAS_means_step1
                         $wt2 = $nd[$ctr];
                         $weights = "-w $wt1,$wt2";
                         # print("ncflint $atts $weights $tmpfile $ifile $out\n") if $DEBUG; 
-                        $err = system("/usr/local/bin/ncflint $atts $weights $tmpfile $ifile $out\n"); die "seasonal ncflint failed \n" if $err;
+                        $err = system("$ncksbin/ncflint $atts $weights $tmpfile $ifile $out\n"); die "seasonal ncflint failed \n" if $err;
                         $ctr++;
                 }
                 $wt1 = 1/$sdays;               # divide by number of days in the season
@@ -103,7 +103,7 @@ sub create_SEAS_means_step1
                 system("mv $out $tmpfile");
                 $weights = "-w $wt1,$wt2";
                 # print("ncflint -O $weights $tmpfile $tmpfile $ofile\n") if $DEBUG;
-                $err = system("/usr/local/bin/ncflint -O $weights $tmpfile $tmpfile $ofile");
+                $err = system("$ncksbin/ncflint -O $weights $tmpfile $tmpfile $ofile");
 
            }
        }  else {
@@ -129,15 +129,15 @@ sub create_SEAS_means_step1
             if ($mode eq "rtm")  { $atts = "time_written,date_written,fthresh"; }
             $flags = "-O -x -v";
 
-            print("/usr/local/bin/ncra  $flags $atts @DJF $sfileDJF\n") if $DEBUG;
-            print("/usr/local/bin/ncra  $flags $atts @MAM $sfileMAM\n") if $DEBUG;
-            print("/usr/local/bin/ncra  $flags $atts @JJA $sfileJJA\n") if $DEBUG;
-            print("/usr/local/bin/ncra  $flags $atts @SON $sfileSON\n") if $DEBUG;
+            print("$ncksbin/ncra  $flags $atts @DJF $sfileDJF\n") if $DEBUG;
+            print("$ncksbin/ncra  $flags $atts @MAM $sfileMAM\n") if $DEBUG;
+            print("$ncksbin/ncra  $flags $atts @JJA $sfileJJA\n") if $DEBUG;
+            print("$ncksbin/ncra  $flags $atts @SON $sfileSON\n") if $DEBUG;
 
-            $err = system("/usr/local/bin/ncra $flags $atts @DJF $sfileDJF"); die "ncra failed \n" if $err;
-            $err = system("/usr/local/bin/ncra $flags $atts @MAM $sfileMAM"); die "ncra failed \n" if $err;
-            $err = system("/usr/local/bin/ncra $flags $atts @JJA $sfileJJA"); die "ncra failed \n" if $err;
-            $err = system("/usr/local/bin/ncra $flags $atts @SON $sfileSON"); die "ncra failed \n" if $err;
+            $err = system("$ncksbin/ncra $flags $atts @DJF $sfileDJF"); die "ncra failed \n" if $err;
+            $err = system("$ncksbin/ncra $flags $atts @MAM $sfileMAM"); die "ncra failed \n" if $err;
+            $err = system("$ncksbin/ncra $flags $atts @JJA $sfileJJA"); die "ncra failed \n" if $err;
+            $err = system("$ncksbin/ncra $flags $atts @SON $sfileSON"); die "ncra failed \n" if $err;
 
 	}
 }
@@ -166,14 +166,14 @@ sub create_SEAS_means_step1_new
 
 	    if ($seas eq "DJF") {
 		if ($decFlag==1) {
-		    $err = system("$ncclimoDir/ncclimo --clm_md=mth -m $mode --seasons=$seas -a scd --no_amwg_links -s $yr -e $yr -c $caseid -i $casedir -o $procDir > $procDir/tmp_seas_mean"); die "ncclimo failed" if $err;
+		    $err = system("$ncclimoDir/ncclimo --no_stdin --clm_md=mth -m $mode --seasons=$seas -a scd --no_amwg_links -s $yr -e $yr -c $caseid -i $casedir -o $procDir > $procDir/tmp_seas_mean"); die "ncclimo failed" if $err;
 		    $ifile = $procDir.$caseid."_".$seas."_".$ypm1."12_".$yp."02_climo.nc";
                     $err = system("mv $ifile $ofile"); die "mv failed" if $err;
       		    $ifile   = $procDir.$caseid."_12_".$ypm1."12_".$ypm1."12_climo.nc";
 		    $err = system("rm $ifile"); die "rm failed \n" if $err;
 		}
 		else {
-		    $err = system("$ncclimoDir/ncclimo --clm_md=mth -m $mode --seasons=$seas -a sdd --no_amwg_links -s $yr -e $yr -c $caseid -i $casedir -o procDir > $procDir/tmp_seas_mean"); die "ncclimo failed" if $err;
+		    $err = system("$ncclimoDir/ncclimo --no_stdin --clm_md=mth -m $mode --seasons=$seas -a sdd --no_amwg_links -s $yr -e $yr -c $caseid -i $casedir -o procDir > $procDir/tmp_seas_mean"); die "ncclimo failed" if $err;
     		    $ifile = $procDir.$caseid."_".$seas."_".$yp."01_".$yp."12_climo.nc";
                     $err = system("mv $ifile $ofile"); die "mv failed" if $err;
        		    $ifile   = $procDir.$caseid."_12_".$yp."12_".$yp."12_climo.nc";
@@ -181,7 +181,7 @@ sub create_SEAS_means_step1_new
 		}
 	    }
 	    else {
-		$err = system("$ncclimoDir/ncclimo --clm_md=mth -m $mode --seasons=$seas -a scd --no_amwg_links -s $yr -e $yr -c $caseid -i $casedir -o $procDir > $procDir/tmp_seas_mean"); die "ncclimo failed" if $err;
+		$err = system("$ncclimoDir/ncclimo --no_stdin --clm_md=mth -m $mode --seasons=$seas -a scd --no_amwg_links -s $yr -e $yr -c $caseid -i $casedir -o $procDir > $procDir/tmp_seas_mean"); die "ncclimo failed" if $err;
 		$ifile = $procDir.$caseid."_".$seas."_".$yp.$fmon."_".$yp.$lmon."_climo.nc";
 		$err = system("mv $ifile $ofile"); die "mv failed" if $err;		
 	    }
@@ -190,7 +190,7 @@ sub create_SEAS_means_step1_new
 		$err = system("rm $ifile"); die "rm failed \n" if $err;
 	    }
 	}
-	$err = system("/usr/local/bin/ncra -O -w 90,92,92,91 $sfileDJF $sfileMAM $sfileJJA $sfileSON $sfileANN"); die "ncra failed" if $err;
+	$err = system("$ncksbin/ncra -O -w 90,92,92,91 $sfileDJF $sfileMAM $sfileJJA $sfileSON $sfileANN"); die "ncra failed" if $err;
 }
 
 sub create_SEAS_means_step2
@@ -231,33 +231,33 @@ sub create_SEAS_means_step2
                 $ofileSON = $prefixDir.$prefix."_SON_means_rtm.nc";
 		$ofileANN = $prefixDir.$prefix."_ANN_means_rtm.nc";
         }
-        system("/usr/local/bin/ncrcat \-O $ifileDJF $ofileDJF");
-        system("/usr/local/bin/ncrcat \-O $ifileMAM $ofileMAM");
-        system("/usr/local/bin/ncrcat \-O $ifileJJA $ofileJJA");
-        system("/usr/local/bin/ncrcat \-O $ifileSON $ofileSON");
-	system("/usr/local/bin/ncrcat \-O $ifileANN $ofileANN");
+        system("$ncksbin/ncrcat \-O $ifileDJF $ofileDJF");
+        system("$ncksbin/ncrcat \-O $ifileMAM $ofileMAM");
+        system("$ncksbin/ncrcat \-O $ifileJJA $ofileJJA");
+        system("$ncksbin/ncrcat \-O $ifileSON $ofileSON");
+	system("$ncksbin/ncrcat \-O $ifileANN $ofileANN");
 
-        system("/usr/local/bin/ncatted \-O \-a yrs_averaged,global,c,c,$clim_range $ofileDJF");
-        system("/usr/local/bin/ncatted \-O \-a yrs_averaged,global,c,c,$clim_range $ofileMAM");
-        system("/usr/local/bin/ncatted \-O \-a yrs_averaged,global,c,c,$clim_range $ofileJJA");
-        system("/usr/local/bin/ncatted \-O \-a yrs_averaged,global,c,c,$clim_range $ofileSON");
-	system("/usr/local/bin/ncatted \-O \-a yrs_averaged,global,c,c,$clim_range $ofileANN");
+        system("$ncksbin/ncatted \-O \-a yrs_averaged,global,c,c,$clim_range $ofileDJF");
+        system("$ncksbin/ncatted \-O \-a yrs_averaged,global,c,c,$clim_range $ofileMAM");
+        system("$ncksbin/ncatted \-O \-a yrs_averaged,global,c,c,$clim_range $ofileJJA");
+        system("$ncksbin/ncatted \-O \-a yrs_averaged,global,c,c,$clim_range $ofileSON");
+	system("$ncksbin/ncatted \-O \-a yrs_averaged,global,c,c,$clim_range $ofileANN");
 
-        system("/usr/local/bin/ncatted \-O \-a num_yrs_averaged,global,c,i,$clim_nyr $ofileDJF");
-        system("/usr/local/bin/ncatted \-O \-a num_yrs_averaged,global,c,i,$clim_nyr $ofileMAM");
-        system("/usr/local/bin/ncatted \-O \-a num_yrs_averaged,global,c,i,$clim_nyr $ofileJJA");
-        system("/usr/local/bin/ncatted \-O \-a num_yrs_averaged,global,c,i,$clim_nyr $ofileSON");
-	system("/usr/local/bin/ncatted \-O \-a num_yrs_averaged,global,c,i,$clim_nyr $ofileANN");
+        system("$ncksbin/ncatted \-O \-a num_yrs_averaged,global,c,i,$clim_nyr $ofileDJF");
+        system("$ncksbin/ncatted \-O \-a num_yrs_averaged,global,c,i,$clim_nyr $ofileMAM");
+        system("$ncksbin/ncatted \-O \-a num_yrs_averaged,global,c,i,$clim_nyr $ofileJJA");
+        system("$ncksbin/ncatted \-O \-a num_yrs_averaged,global,c,i,$clim_nyr $ofileSON");
+	system("$ncksbin/ncatted \-O \-a num_yrs_averaged,global,c,i,$clim_nyr $ofileANN");
 
         if ( $weightAnnAvg) 
 		{ $wtFlag = "\"annual means computed from monthly means with months weighted by number of days in month\""; }
 	else    { $wtFlag = "\"annual means computed from monthly means with all months weighted equally\""; }
 
-        system("/usr/local/bin/ncatted \-O \-a weighted_avg,global,c,c,$wtFlag $ofileDJF");
-        system("/usr/local/bin/ncatted \-O \-a weighted_avg,global,c,c,$wtFlag $ofileMAM");
-        system("/usr/local/bin/ncatted \-O \-a weighted_avg,global,c,c,$wtFlag $ofileJJA");
-        system("/usr/local/bin/ncatted \-O \-a weighted_avg,global,c,c,$wtFlag $ofileSON");
-	system("/usr/local/bin/ncatted \-O \-a weighted_avg,global,c,c,$wtFlag $ofileANN");
+        system("$ncksbin/ncatted \-O \-a weighted_avg,global,c,c,$wtFlag $ofileDJF");
+        system("$ncksbin/ncatted \-O \-a weighted_avg,global,c,c,$wtFlag $ofileMAM");
+        system("$ncksbin/ncatted \-O \-a weighted_avg,global,c,c,$wtFlag $ofileJJA");
+        system("$ncksbin/ncatted \-O \-a weighted_avg,global,c,c,$wtFlag $ofileSON");
+	system("$ncksbin/ncatted \-O \-a weighted_avg,global,c,c,$wtFlag $ofileANN");
         # ... nanr 8/24/07
         # Prob:  Landmask is set to 0 by averaging process.  (this only affects set9, but is still misleading.    
         # Soln:  Remove bad landmask and overwrite landmask directly from a history file. 
@@ -265,12 +265,12 @@ sub create_SEAS_means_step2
                 $yr_prnt = printYear($clim_lyr);
                 $usefile = $casedir.$caseid.".".$mode.".h0.".$yr_prnt."-01.nc";
                 $lmask   = $procDir.$prefix.".lmask.nc";
-                system("/usr/local/bin/ncks -v landmask $usefile $lmask") if !-e $lmask;
-                system("/usr/local/bin/ncks -q \-A -v landmask $lmask $ofileDJF"); 
-                system("/usr/local/bin/ncks -q \-A -v landmask $lmask $ofileMAM");
-                system("/usr/local/bin/ncks -q \-A -v landmask $lmask $ofileJJA");
-                system("/usr/local/bin/ncks -q \-A -v landmask $lmask $ofileSON");
-		system("/usr/local/bin/ncks -q \-A -v landmask $lmask $ofileANN");
+                system("$ncksbin/ncks -v landmask $usefile $lmask") if !-e $lmask;
+                system("$ncksbin/ncks -q \-A -v landmask $lmask $ofileDJF"); 
+                system("$ncksbin/ncks -q \-A -v landmask $lmask $ofileMAM");
+                system("$ncksbin/ncks -q \-A -v landmask $lmask $ofileJJA");
+                system("$ncksbin/ncks -q \-A -v landmask $lmask $ofileSON");
+		        system("$ncksbin/ncks -q \-A -v landmask $lmask $ofileANN");
         }
 }
 

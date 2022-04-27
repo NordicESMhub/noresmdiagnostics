@@ -76,7 +76,7 @@ if ($four_seas == 1) then
       while ( $iyr <= $eyr )
           set iyr_prnt = `printf "%04d" ${iyr}`
          echo " COMPUTING ANN, DJF, JJA AND GLOBAL MEAN OF $casename FOR YR=$iyr_prnt"
-         $nco_dir/ncclimo --clm_md=mth -m $modelname -v $var_list -a sdd --no_amwg_links -c $casename -s $iyr -e $iyr -i $history_path -o $time_out_path > $time_out_path/tmp_ncclimo.txt
+         $nco_dir/ncclimo --no_stdin --clm_md=mth -m $modelname -v $var_list -a sdd --no_amwg_links -c $casename -s $iyr -e $iyr -i $history_path -o $time_out_path > $time_out_path/tmp_ncclimo.txt
          $nco_dir/ncwa -h -O -w gw -a lat,lon $time_out_path/${casename}_ANN_${iyr_prnt}01_${iyr_prnt}12_climo.nc $time_out_path/global_mean_ANN_${iyr_prnt}.nc
          $nco_dir/ncwa -h -O -w gw -a lat,lon $time_out_path/${casename}_DJF_${iyr_prnt}01_${iyr_prnt}12_climo.nc $time_out_path/global_mean_DJF_${iyr_prnt}.nc
          $nco_dir/ncwa -h -O -w gw -a lat,lon $time_out_path/${casename}_JJA_${iyr_prnt}06_${iyr_prnt}08_climo.nc $time_out_path/global_mean_JJA_${iyr_prnt}.nc
@@ -111,7 +111,7 @@ else
       while ( $iyr <= $eyr )
           set iyr_prnt = `printf "%04d" ${iyr}`
          echo " COMPUTING SEASONAL AND GLOBAL MEAN OF $casename FOR YR=$iyr_prnt"
-         $nco_dir/ncclimo --clm_md=mth -m $modelname -v $var_list -a sdd --no_amwg_links -c $casename -s $iyr -e $iyr -i $history_path -o $time_out_path > $time_out_path/tmp_ncclimo.txt
+         $nco_dir/ncclimo --no_stdin --clm_md=mth -m $modelname -v $var_list -a sdd --no_amwg_links -c $casename -s $iyr -e $iyr -i $history_path -o $time_out_path > $time_out_path/tmp_ncclimo.txt
          $nco_dir/ncwa -h -O -w gw -a lat,lon $time_out_path/${casename}_ANN_${iyr_prnt}01_${iyr_prnt}12_climo.nc $time_out_path/global_mean_ANN_${iyr_prnt}.nc
          $nco_dir/ncwa -h -O -w gw -a lat,lon $time_out_path/${casename}_DJF_${iyr_prnt}01_${iyr_prnt}12_climo.nc $time_out_path/global_mean_DJF_${iyr_prnt}.nc
          $nco_dir/ncwa -h -O -w gw -a lat,lon $time_out_path/${casename}_MAM_${iyr_prnt}03_${iyr_prnt}05_climo.nc $time_out_path/global_mean_MAM_${iyr_prnt}.nc

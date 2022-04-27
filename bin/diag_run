@@ -11,6 +11,9 @@ ROOT_FOLD=$(basename $ROOT_DIR)
 ## Initial values
 THIS_SCRIPT_NAME=`basename "$0"`
 DIAG_PATH=$ROOT_DIR/out/$USER
+if [ $ROOT_DIR = '/cluster/shared/noresm/diagnostics/noresm' ]; then
+    DIAG_PATH=/cluster/work/users/$USER/diagnostics/out
+fi
 USER_MODEL=none
 CASE1=none
 SYR1=-1
@@ -22,6 +25,15 @@ if [ -d /projects/NS2345K/noresm/cases ]; then
     WEB_PATH=/projects/NS2345K/www/diagnostics/noresm/$USER
     HISTORY_PATH1=/projects/NS2345K/noresm/cases
     HISTORY_PATH2=/projects/NS2345K/noresm/cases
+elif [ -d /trd-project1/NS2345K/noresm/cases ]; then
+    WEB_PATH=/trd-project1/NS2345K/www/diagnostics/noresm/$USER
+    HISTORY_PATH1=/trd-project1/NS2345K/noresm/cases
+    HISTORY_PATH2=/trd-project1/NS2345K/noresm/cases
+elif [ -d /cluster/work/users/$USER ]; then
+    WEB_PATH=/cluster/work/users/$USER/diagnostics/www
+    HISTORY_PATH1=/cluster/work/users/$USER/archive
+    HISTORY_PATH2=/cluster/work/users/$USER/archive
+    DIAG_PATH=/cluster/work/users/$USER/diagnostics/out
 else
     echo "NO default input and out path set"
     #echo "*** EXIT ***"
@@ -288,6 +300,9 @@ else
                 WEB_PATH=`echo $1 | sed -e 's/^[^=]*=//g'`
                 shift
                 ;;
+             --account* | --time*)
+                 shift
+                 ;;
             *)
                 echo "ERROR: option $1 not allowed."
                 echo "Run $BIN_DIR/$THIS_SCRIPT_NAME to see available options"

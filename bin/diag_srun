@@ -1,0 +1,209 @@
+#!/bin/bash
+
+## Initial values
+DIAG_PATH="/cluster/work/users/$USER/diagnostics/out"
+LOG_PATH="/cluster/work/users/$USER/diagnostics/logs"
+
+if [ $# -eq 0 ] || [ $1 == "-h" ]; then
+    echo "Examples:"
+    echo ""
+    echo "1, Use default settings"
+    echo "\$ ./diag_srun -m blom -c test_case_name -s 1 -e 10"
+    echo ""
+    echo "2, Set CPU account and hours (the same as default values)"
+    echo "\$ ./diag_srun -m blom -c test_case_name -s 1 -e 10 --account=nn2345k --time=0-00:59:00"
+    echo ""
+    echo "3, Set input data, output data, and webpage path to /cluster on Betzy (the same as default values)"
+    echo "\$ ./diag_srun -m blom -c NOICPLHISTOC_f09_tn14_cpldiags -s 1 -e 20 -i /cluster/work/users/$USER/archive -o /cluster/work/users/$USER/diagnostics/out -w /cluster/work/users/$USER/diagnostics/web --account=nn2345k --time=0-00:59:00"
+    echo ""
+    echo "3, Set input data, output data on Betzy, and webpage path on NIRD"
+    echo "\$ ./diag_srun -m blom -c NOICPLHISTOC_f09_tn14_cpldiags -s 1 -e 20 -i /cluster/work/users/$USER/archive -o /cluster/shared/noresm/diagnostics/noresm/out -w /trd-project1/NS2345K/www/diagnostics/noresm/$USER/ --account=nn2345k --time=0-00:59:00"
+    echo ""
+    echo " "
+    echo "See more help:"
+    echo "/cluster/shared/noresm/diagnostics/noresm/bin/diag_run -h "
+    echo " ** EXIT THE SCRIPT **"
+    exit 1
+else
+    ARG=$@
+fi
+
+## Parse arguments
+while test $# -gt 0; do
+    case "$1" in
+        -c | -c1)
+            shift
+            if test $# -gt 0; then
+                CASE1=$1
+            else
+                echo "ERROR: no test case specified (-c, -c1, --case, --case1)"
+                echo "*** EXITING THE SCRIPT"
+                exit 1
+            fi
+            shift
+            ;;
+        --case=* | --case1=*)
+            CASE1=`echo $1 | sed -e 's/^[^=]*=//g'`
+            shift
+            ;;
+        -w)
+            shift
+            if test $# -gt 0; then
+                WEB_PATH=$1
+            else
+                echo "ERROR: no web directory specified (-w, --web-dir)"
+                echo "*** EXITING THE SCRIPT"
+                exit 1
+            fi
+            shift
+            ;;
+        --web-dir*)
+            WEB_PATH=`echo $1 | sed -e 's/^[^=]*=//g'`
+            shift
+            ;;
+        -o)
+            shift
+            if test $# -gt 0; then
+                DIAG_PATH=$1
+            else
+                echo "ERROR: no output directory specified (-o, --output-dir)"
+                echo "*** EXITING THE SCRIPT ***"
+                exit 1
+            fi
+            shift
+            ;;
+        --output-dir*)
+            DIAG_PATH=`echo $1 | sed -e 's/^[^=]*=//g'`
+            shift
+            ;;
+        --account*)
+            ACCOUNT=`echo $1 | sed -e 's/^[^=]*=//g'`
+            if [ ! $(echo $ACCOUNT |grep -P -i '^nn\d{4}.*k$') ];then
+                echo "** ERROR: \$ACCOUNT: $ACCOUNT must has the form of nnxxxxk (or NNxxxxK) **"
+                echo "*** EXITING THE SCRIPT ***"
+                exit 1
+            fi
+            shift
+            ;;
+        --time*)
+            TIME=`echo $1 | sed -e 's/^[^=]*=//g'`
+            if [ ! $(echo $TIME |grep -P '^\d{1}-\d{2}:\d{2}:\d{2}$') ];then
+                echo "** ERROR: TIME: $TIME must has the form of d-hh:mm:ss **"
+                echo "*** EXITING THE SCRIPT ***"
+                exit 1
+            fi
+            shift
+            ;;
+        *)
+            shift
+            ;;
+    esac
+done
+
+## Remove time and account arguments
+ARG=$(echo $ARG |sed 's/--time=\S*//g' |sed 's/--account=\S*//g')
+
+## Security checks
+if [ ! $(echo $DIAG_PATH |grep '\/cluster\/') ]; then
+    echo "** ERROR: \$DIAG_PATH $DIAG_PATH should be under /cluster"
+    echo "*** EXITING THE SCRIPT ***"
+    exit 1
+fi
+if [ $(echo $WEB_PATH |grep -P '\/trd-project\d\/') ]; then
+    echo "          "
+    echo "**  **  **"
+    echo "WARNING: WEB_PATH is set to nird: $WEB_PATH"
+    WEB_PATH0=$WEB_PATH
+    WEB_PATH=/cluster/work/users/$USER/diagnostics/www
+    echo "WEB_PATH is temporary to $WEB_PATH, which is reachable from the compute nodes"
+    echo "The created webpage will be moved to $WEB_PATH0/$CASE1 after the diagnostic is done"
+    echo "**  **  **"
+    echo "          "
+fi
+if [ -z $ACCOUNT ]; then
+    echo "          "
+    echo "**  **  **"
+    echo "WARNING: CPU acount is not specificed"
+    echo "Set default to #SBATCH --account=nn2345k"
+    echo "**  **  **"
+    echo "          "
+    ACCOUNT='nn2345k'
+fi
+if [ -z $TIME ]; then
+    echo "          "
+    echo "**  **  **"
+    echo "WARNING: CPU hours is not specificed"
+    echo "Set default to #SBATCH --time=0-00:59:00"
+    echo "**  **  **"
+    echo "          "
+    TIME='0-00:59:00'
+fi
+
+## SBATCH job
+cat <<EOF >/tmp/submit$$.sh
+#!/bin/bash
+# Script template to submit a diagnostic job on Betzy #
+
+#SBATCH --account=$ACCOUNT
+#SBATCH --job-name=diag_srun-$CASE1
+#SBATCH --partition=preproc
+#SBATCH --ntasks=1 --cpus-per-task=12
+#SBATCH --mem-per-cpu=2G
+#SBATCH --time=$TIME
+#SBATCH --output=${LOG_PATH}/slurm-$$.log
+#SBATCH --output=${LOG_PATH}/slurm-$$.log
+#SBATCH --parsable 
+
+## safety settings:
+set -o errexit
+set -o nounset
+
+## Prepare input files
+[ ! -d ${LOG_PATH} ] && mkdir -p ${LOG_PATH}
+cd /cluster/shared/noresm/diagnostics/noresm/bin
+
+## Run job
+srun --output=${LOG_PATH}/diag_srun-$$.log ./diag_run $ARG
+
+exit 0
+
+EOF
+
+## Submit job
+chmod 755 /tmp/submit$$.sh
+jobid=$(sbatch /tmp/submit$$.sh)
+rm -f /tmp/submit$$.sh
+
+# Log files
+echo "Check the log of SBATCH job status:"
+echo "${LOG_PATH}/slurm-$$.log"
+echo "                       "
+echo "Check the log of diag_run:"
+echo "${LOG_PATH}/diag_srun-$$.log"
+echo "                       "
+
+# Copy output from cluster to NIRD after job finishes, if required
+while [ $(squeue -j $jobid 2>/dev/null |wc -l) -eq 2 ];do
+    sleep 5s
+done
+
+if [ $(echo $WEB_PATH0 |grep -P '\/trd-project\d\/') ]; then
+    #echo "Note, you can move the created webpage to nird by"
+    #echo "$ rsync -azu --remove-source-files $WEB_PATH/$CASE1/ $WEB_PATH0/$CASE1/ &>${LOG_PATH}/rsync-$$.log &"
+    echo "Moving the created webpage to NIRD: $WEB_PATH0/$CASE1"
+    echo "Check the log: ${LOG_PATH}/rsync-$$.log "
+    echo "                                     "
+    rsync -vazu --remove-source-files $WEB_PATH/$CASE1/ $WEB_PATH0/$CASE1/ &>${LOG_PATH}/rsync-$$.log &
+    wait
+    tmpdir=$(mktemp -d)
+    rsync -av --delete $tmpdir/ $WEB_PATH/$CASE1/ &>>${LOG_PATH}/rsync-$$.log &
+    wait
+    rmdir $tmpdir
+fi
+
+## Finish the script
+echo '***              ***              ***'
+echo '        The job is finished          '
+echo '***              ***              ***'
+exit 0
+

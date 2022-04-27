@@ -30,7 +30,7 @@ if ($regrid_1 == 1) then
     $NCL < $DIAG_SHARED/se2fv_esmf.regrid2file.ncl
     if ($status != 0)  exit
 
-    /usr/local/bin/ncks -A -v area ${area_dir}/${area_file} {$prefix_1_dir}/$OutFile
+    $ncksbin/ncks -A -v area ${area_dir}/${area_file} {$prefix_1_dir}/$OutFile
     mv ${prefix_1_dir}/$file ${prefix_1_dir}/$newfn
     mv ${prefix_1_dir}/$OutFile ${prefix_1_dir}/$file
     ln -s ${prefix_1_dir}/$file ${prefix_1_dir}/$OutFile
@@ -63,7 +63,7 @@ if ($regrid_2 == 1) then
     $NCL < $DIAG_SHARED/se2fv_esmf.regrid2file.ncl
     if ($status != 0)  exit
 
-    /usr/local/bin/ncks -A -v area ${area_dir}/${area_file} {$prefix_2_dir}/$OutFile
+    $ncksbin/ncks -A -v area ${area_dir}/${area_file} {$prefix_2_dir}/$OutFile
     mv ${prefix_2_dir}/$file ${prefix_2_dir}/$newfn
     mv ${prefix_2_dir}/$OutFile ${prefix_2_dir}/$file
     ln -s ${prefix_2_dir}/$file ${prefix_2_dir}/$OutFile

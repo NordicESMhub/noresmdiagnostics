@@ -22,7 +22,7 @@ echo " nset    = $nset"
 echo " density = $density"
 echo " "
 
-CONVERT=`which convert`
+CONVERT=$(which convert)
 if [ $? -ne 0 ]; then
     echo "ERROR: convert not found."
     echo "*** EXITING THE SCRIPT ***"
