@@ -1138,6 +1138,8 @@ do
             /usr/bin/mv config.log config_${dateYYYYMMDD}_${dateHHMMSS}.log
             ./$DIAG_FILE_OUT $@ | /usr/bin/tee out_${dateYYYYMMDD}_${dateHHMMSS}.log
             echo "Standard output and errors are saved in $DIAG_PATH/$MODEL_DIAG_CAPS/config/$CASE1/logs/out_${dateYYYYMMDD}_${dateHHMMSS}.log"
+            echo "-------------------------------------------------"
+            echo "   "
             if [ ! -d ./config/$CASE1/run_scripts ]; then
                 /usr/bin/mkdir -p ./config/$CASE1/run_scripts
             fi

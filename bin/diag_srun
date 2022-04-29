@@ -1,25 +1,37 @@
 #!/bin/bash
+# Submit a preproc job for the diagnostic tool
 
 ## Initial values
 DIAG_PATH="/cluster/work/users/$USER/diagnostics/out"
 LOG_PATH="/cluster/work/users/$USER/diagnostics/logs"
 
 if [ $# -eq 0 ] || [ $1 == "-h" ]; then
+    echo ""
+    echo "Short description:"
+    echo "A wrapper script for submitting a preproc job on Betzy for the NorESM diagnostic packages."
+    echo " "
+    echo "Extra command-line options (see additional options with diag_run -h):"
+    echo "  --account=nsxxxxk                             Project account for CPU hours (OPTIONAL, default ns2345k)."
+    echo "  --time=DD-HH:MM:SS                            CPU walltime (OPTIONAL, default value according to length of years and active components)."
+    echo "  --remove-source-files-flag=true|false         Flag if the source file will be removed after the webpage is moved from Betzy /cluster to NIRD /project* (OPTIONAL, default as false)."
+    echo ""
     echo "Examples:"
     echo ""
     echo "1, Use default settings"
     echo "\$ ./diag_srun -m blom -c test_case_name -s 1 -e 10"
     echo ""
-    echo "2, Set CPU account and hours (the same as default values)"
+    echo "2, Set CPU account and hours"
     echo "\$ ./diag_srun -m blom -c test_case_name -s 1 -e 10 --account=nn2345k --time=0-00:59:00"
     echo ""
     echo "3, Set input data, output data, and webpage path to /cluster on Betzy (the same as default values)"
-    echo "\$ ./diag_srun -m blom -c NOICPLHISTOC_f09_tn14_cpldiags -s 1 -e 20 -i /cluster/work/users/$USER/archive -o /cluster/work/users/$USER/diagnostics/out -w /cluster/work/users/$USER/diagnostics/web --account=nn2345k --time=0-00:59:00"
+    echo "\$ ./diag_srun -m blom -c NOICPLHISTOC_f09_tn14_cpldiags -s 1 -e 20 -i /cluster/work/users/$USER/archive -o /cluster/work/users/$USER/diagnostics/out -w /cluster/work/users/$USER/diagnostics/web"
     echo ""
-    echo "3, Set input data, output data on Betzy, and webpage path on NIRD"
-    echo "\$ ./diag_srun -m blom -c NOICPLHISTOC_f09_tn14_cpldiags -s 1 -e 20 -i /cluster/work/users/$USER/archive -o /cluster/shared/noresm/diagnostics/noresm/out -w /trd-project1/NS2345K/www/diagnostics/noresm/$USER/ --account=nn2345k --time=0-00:59:00"
+    echo "4, Set input data, output data on Betzy, and webpage path on NIRD"
+    echo "\$ ./diag_srun -m blom -c NOICPLHISTOC_f09_tn14_cpldiags -s 1 -e 20 -w /trd-project1/NS2345K/www/diagnostics/noresm/$USER/ --account=nn2345k --time=0-00:59:00"
     echo ""
-    echo " "
+    echo "5, Remove source webpage files from Betzy after transferred to NIRD"
+    echo "\$ ./diag_srun -m blom -c NOICPLHISTOC_f09_tn14_cpldiags -s 1 -e 20 -w /trd-project1/NS2345K/www/diagnostics/noresm/$USER/ --remove-source-files-flag=true"
+    echo ""
     echo "See more help:"
     echo "/cluster/shared/noresm/diagnostics/noresm/bin/diag_run -h "
     echo " ** EXIT THE SCRIPT **"
@@ -29,6 +41,9 @@ else
 fi
 
 ## Parse arguments
+# initial values
+REMOVE_SOURCE_FILES_FLAG=false
+
 while test $# -gt 0; do
     case "$1" in
         -c | -c1)
@@ -44,6 +59,53 @@ while test $# -gt 0; do
             ;;
         --case=* | --case1=*)
             CASE1=`echo $1 | sed -e 's/^[^=]*=//g'`
+            shift
+            ;;
+        -s | -s1)
+            shift
+            if test $# -gt 0; then
+                SYR1=$1
+            else
+                echo "ERROR: no start yr of test case specified (-s, -s1, --start_yr, --start_yr1)"
+                echo "*** EXITING THE SCRIPT"
+                exit 1
+            fi
+            shift
+            ;;
+        --start_yr=* | --start_yr1=*)
+            SYR1=`echo $1 | sed -e 's/^[^=]*=//g'`
+            shift
+            ;;
+        -e | -e1)
+            shift
+            if test $# -gt 0; then
+                EYR1=$1
+            else
+                echo "ERROR: no end yr of test case specified (-e, -e1, --end_yr, --end_yr1)"
+                echo "*** EXITING THE SCRIPT"
+                exit 1
+            fi
+            shift
+            ;;
+        --end_yr=* | --end_yr1=*)
+            EYR1=`echo $1 | sed -e 's/^[^=]*=//g'`
+            shift
+            ;;
+
+        -m)
+            shift
+            if test $# -gt 0; then
+                USER_MODEL=$1
+            else
+                echo "ERROR: no model specified (-m, --model)"
+                     echo "Valid options: cam, blom/micom, clm, cice, cism, all"
+                echo "*** EXITING THE SCRIPT"
+                exit 1
+            fi
+            shift
+            ;;
+        --model*)
+            USER_MODEL=`echo $1 | sed -e 's/^[^=]*=//g'`
             shift
             ;;
         -w)
@@ -94,15 +156,64 @@ while test $# -gt 0; do
             fi
             shift
             ;;
+        --remove-source-files-flag*)
+            REMOVE_SOURCE_FILES_FLAG=`echo $1 | sed -e 's/^[^=]*=//g' |tr [:upper:] [:lower:]`
+            shift
+            ;;
         *)
             shift
             ;;
     esac
 done
 
-## Remove and restore arguments passing to diag_run
-ARG=$(echo $ARG |sed 's/--time=\S*//g' |sed 's/--account=\S*//g')
-[ ! -z $WEB_PATH0 ] && ARG=$(echo $ARG |sed "s% *-w \S.* *% -w $WEB_PATH %" |sed "s% *--web-dir=\S.* *% --web-dir=$WEB_PATH %")
+function getwt(){
+## DETERMINE TYPICAL WALL TIME
+# Typical 10-year-runtime for USER_MODEL(cam,clm,cice,blom,hamocc,cism)
+WTS=(30 40 10 30 30 10)
+WTT=0
+if [ "$USER_MODEL" == "all" ]; then
+    for WT in ${WTS[*]}
+    do
+        WTT=$(($WTT+$WT))
+    done
+else
+    for model in $(echo $USER_MODEL | sed 's/,/ /g')
+    do
+        case $model in
+            "cam"|"cam2")
+                WTT=$(($WTT+${WTS[0]}))
+                ;;
+            "clm"|"clm2")
+                WTT=$(($WTT+${WTS[1]}))
+                ;;
+            "cice")
+                WTT=$(($WTT+${WTS[2]}))
+                ;;
+            "blom"|"micom")
+                WTT=$(($WTT+${WTS[3]}))
+                ;;
+            "hamocc")
+                WTT=$(($WTT+${WTS[5]}))
+                ;;
+            "cism")
+                WTT=$(($WTT+${WTS[6]}))
+                ;;
+            *)
+                echo "** ERROR: Unknown model component $model"
+                echo "** EXIT "
+                exit 1
+                ;;
+        esac
+    done
+fi
+N10Y=$(echo "if (($EYR1-$SYR1+1)%10) ($EYR1-$SYR1+1)/10+1 else ($EYR1-$SYR1+1)/10 " |bc)
+WTT=$(($WTT*$N10Y))
+DD=$(($WTT/24/60))
+HH=$((($WTT-$DD*24*60)/60))
+MM=$(($WTT-$HH*60))
+TIME=$(printf "%d-%02d:%02d:00" $DD $HH $MM)
+echo $TIME
+}
 
 ## Security checks
 if [ ! $(echo $DIAG_PATH |grep '\/cluster\/') ]; then
@@ -116,8 +227,8 @@ if [ $(echo $WEB_PATH |grep -P '\/trd-project\d\/') ]; then
     echo "WARNING: WEB_PATH is set to nird: $WEB_PATH"
     WEB_PATH0=$WEB_PATH
     WEB_PATH=/cluster/work/users/$USER/diagnostics/www
-    echo "WEB_PATH is temporary to $WEB_PATH, which is reachable from the compute nodes"
-    echo "The created webpage will be moved to $WEB_PATH0/$CASE1 after the diagnostic is done"
+    echo "WEB_PATH is temporary set to $WEB_PATH, which is only reachable from the compute nodes."
+    echo "The created webpage will be moved to $WEB_PATH0/$CASE1 after the diagnostic is done."
     echo "**  **  **"
     echo "          "
 fi
@@ -131,14 +242,21 @@ if [ -z $ACCOUNT ]; then
     ACCOUNT='nn2345k'
 fi
 if [ -z $TIME ]; then
+    TIME=$(getwt)
     echo "          "
     echo "**  **  **"
     echo "WARNING: CPU hours is not specificed"
-    echo "Set default to #SBATCH --time=0-00:59:00"
+    echo "Set default to #SBATCH --time=$TIME"
     echo "**  **  **"
     echo "          "
-    TIME='0-00:59:00'
 fi
+
+## Remove and restore arguments passing to diag_run
+ARG=$(echo $ARG |sed 's/--time=\S*//g' |sed 's/--account=\S*//g')
+[ ! -z $WEB_PATH0 ] && ARG=$(echo $ARG |sed "s% *-w \S.* *% -w $WEB_PATH %" |sed "s% *--web-dir=\S.* *% --web-dir=$WEB_PATH %")
+                                                                             #sed "s% *--web-dir=\S.* *% --web-dir=$WEB_PATH %"
+#dateYYYYMMDD=$(date +%y%m%d)
+#dateHHMMSS=$(date +%H%M%S)
 
 ## SBATCH job
 cat <<EOF >/tmp/submit$$.sh
@@ -189,22 +307,29 @@ while [ $(squeue -j $jobid 2>/dev/null |wc -l) -eq 2 ];do
 done
 
 if [ $(echo $WEB_PATH0 |grep -P '\/trd-project\d\/') ]; then
-    #echo "Note, you can move the created webpage to nird by"
-    #echo "$ rsync -azu --remove-source-files $WEB_PATH/$CASE1/ $WEB_PATH0/$CASE1/ &>${LOG_PATH}/rsync-$$.log &"
     echo "Moving the created webpage to NIRD: $WEB_PATH0/$CASE1"
-    echo "Check the log: ${LOG_PATH}/rsync-$$.log "
-    echo "                                     "
-    rsync -vazu --remove-source-files $WEB_PATH/$CASE1/ $WEB_PATH0/$CASE1/ &>${LOG_PATH}/rsync-$$.log &
-    wait
-    tmpdir=$(mktemp -d)
-    rsync -av --delete $tmpdir/ $WEB_PATH/$CASE1/ &>>${LOG_PATH}/rsync-$$.log &
-    wait
-    rmdir $tmpdir
+    if $REMOVE_SOURCE_FILES_FLAG; then
+        echo "And remove source files and clean up empty folders."
+        echo "** BE CAUTIOUS WITH THE RISK ** "
+        echo "Check the log: ${LOG_PATH}/rsync-$$.log "
+        rsync -vazu --remove-source-files $WEB_PATH/$CASE1/ $WEB_PATH0/$CASE1/ &>${LOG_PATH}/rsync-$$.log &
+        wait
+        tmpdir=$(mktemp -d)
+        rsync -av --delete $tmpdir/ $WEB_PATH/$CASE1/ &>>${LOG_PATH}/rsync-$$.log &
+        wait && rmdir $tmpdir
+         #**                           **
+    else
+        echo "Check the log: ${LOG_PATH}/rsync-$$.log "
+        echo "                                     "
+        rsync -vazu $WEB_PATH/$CASE1/ $WEB_PATH0/$CASE1/ &>${LOG_PATH}/rsync-$$.log &
+        wait
+    fi
+
 fi
 
 ## Finish the script
 echo '***              ***              ***'
-echo '        The job is finished          '
+echo '            End of the job           '
 echo '***              ***              ***'
 exit 0
 
