@@ -100,8 +100,9 @@ while test $# -gt 0; do
     esac
 done
 
-## Remove time and account arguments
+## Remove and restore arguments passing to diag_run
 ARG=$(echo $ARG |sed 's/--time=\S*//g' |sed 's/--account=\S*//g')
+[ ! -z $WEB_PATH0 ] && ARG=$(echo $ARG |sed "s% *-w \S.* *% -w $WEB_PATH %" |sed "s% *--web-dir=\S.* *% --web-dir=$WEB_PATH %")
 
 ## Security checks
 if [ ! $(echo $DIAG_PATH |grep '\/cluster\/') ]; then
