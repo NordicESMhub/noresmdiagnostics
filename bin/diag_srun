@@ -332,13 +332,23 @@ echo " "
 echo "Check the log of diag_srun:"
 echo "${LOG_PATH}/diagsrun-${YMD}-${HMS}.log"
 echo " "
+echo "Waiting for the diag_srun to finish ..."
+echo " "
 
 # Copy output from cluster to NIRD after job finishes, if required
 while [ $(squeue -j $jobid 2>/dev/null |wc -l) -eq 2 ];do
     sleep 5s
 done
+echo "Done!"
+echo ""
 
 if [ $(echo $WEB_PATH0 |grep -P '\/trd-project\d\/') ]; then
+    PROJECT=$(echo $WEB_PATH0 |cut -d"/" -f3 |tr [:upper:] [:lower:])
+    if [ ! $(echo $PROJECT |grep -P -i '^ns\d{4}.*k$') ];then
+        echo "** ERROR: \$WEB_PATH: $WEB_PATH0 must start with /trd-project?/NSxxxxK/ **"
+        echo "*** EXITING THE SCRIPT ***"
+        exit 1
+    fi
     echo "The created webpage will be moved to NIRD: "
     echo "$WEB_PATH0/$CASE1"
     echo "Check the rsync log:"
@@ -348,16 +358,28 @@ if [ $(echo $WEB_PATH0 |grep -P '\/trd-project\d\/') ]; then
         #echo "(NB, the source files: $WEB_PATH/$CASE1)"
         #echo "(will be removed after they are synchronized)"
         #echo "(** BE CAUTIOUS WITH THE RISK ** )"
-        rsync -vazu --remove-source-files $WEB_PATH/$CASE1/ $WEB_PATH0/$CASE1/ &>${LOG_PATH}/rsync-${YMD}-${HMS}.log &
+        rsync -vazu --chown=$USER:$PROJECT --remove-source-files $WEB_PATH/$CASE1/ $WEB_PATH0/$CASE1/ &>${LOG_PATH}/rsync-${YMD}-${HMS}.log &
         wait
-        tmpdir=$(mktemp -d)
-        rsync -av --delete $tmpdir/ $WEB_PATH/$CASE1/ &>>${LOG_PATH}/rsync-${YMD}-${HMS}.log &
-        wait && rmdir $tmpdir
-         #**                           **
+        if [ $? -eq 0 ]
+        then
+            tmpdir=$(mktemp -d)
+            rsync -av --delete $tmpdir/ $WEB_PATH/$CASE1/ &>>${LOG_PATH}/rsync-${YMD}-${HMS}.log &
+            wait && rmdir $tmpdir && rmdir $WEB_PATH/$CASE1
+        else
+            echo "** ERROR synchronising the webpage to $WEB_PATH0  **"
+            echo "*** EXITING THE SCRIPT ***"
+            exit 1
+        fi
     else
         echo " "
-        rsync -vazu $WEB_PATH/$CASE1/ $WEB_PATH0/$CASE1/ &>${LOG_PATH}/rsync-${YMD}-${HMS}.log &
+        rsync -vazu --chown=$USER:$PROJECT $WEB_PATH/$CASE1/ $WEB_PATH0/$CASE1/ &>${LOG_PATH}/rsync-${YMD}-${HMS}.log &
         wait
+        if [ $? -eq 0 ]
+        then
+            echo "** ERROR synchronising the webpage to $WEB_PATH0  **"
+            echo "*** EXITING THE SCRIPT ***"
+            exit 1
+        fi
     fi
 
 fi
