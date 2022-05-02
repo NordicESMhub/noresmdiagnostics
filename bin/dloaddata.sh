@@ -34,16 +34,16 @@ do
 done
 
 # download all observation and grid data
-touch /tmp/wget.log
-echo "wget log writes to /tmp/wget.log"
+touch /tmp/wget$$.log
+echo "wget log writes to /tmp/wget$$.log"
 echo "downloaded:"
 while read -r subfolder
 do
     wget -c --timestamping -nd -r -l 1 -nH -np -R "index.html*"  --directory-prefix=${diagroot}/packages/${subfolder}/ \
         http://ns2345k.web.sigma2.no/diagnostics/inputdata/${subfolder}/ \
-        &>>/tmp/wget.log &
+        &>>/tmp/wget$$.log &
     wait
     [ $? -eq 0 ] && echo $subfolder
 done <./inputdata.txt
-rm -f /tmp/wget.log
+rm -f /tmp/wget$$.log
 echo "All downloaded"

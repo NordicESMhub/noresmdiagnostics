@@ -140,10 +140,12 @@ CLM_DIAG/regriddingFiles/ne30
 HAMOCC_DIAG/grid_files/
 HAMOCC_DIAG/grid_files/1x1d
 HAMOCC_DIAG/grid_files/1x1d/co2fxd
+HAMOCC_DIAG/grid_files/1x1d/co2fxu
 HAMOCC_DIAG/grid_files/1x1d/generic
 HAMOCC_DIAG/grid_files/1x1d/mld
 HAMOCC_DIAG/grid_files/1x1d/pco2
 HAMOCC_DIAG/grid_files/1x1d/ppint
+HAMOCC_DIAG/grid_files/1x1d/pp_tot
 HAMOCC_DIAG/grid_files/1x1d/srfno3
 HAMOCC_DIAG/grid_files/1x1d/srfo2
 HAMOCC_DIAG/grid_files/1x1d/srfpo4
