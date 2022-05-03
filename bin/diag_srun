@@ -374,7 +374,7 @@ if [ $(echo $WEB_PATH0 |grep -P '\/trd-project\d\/') ]; then
         echo " "
         rsync -vazu --chown=$USER:$PROJECT $WEB_PATH/$CASE1/ $WEB_PATH0/$CASE1/ &>${LOG_PATH}/rsync-${YMD}-${HMS}.log &
         wait
-        if [ $? -eq 0 ]
+        if [ $? -ne 0 ]
         then
             echo "** ERROR synchronising the webpage to $WEB_PATH0  **"
             echo "*** EXITING THE SCRIPT ***"
