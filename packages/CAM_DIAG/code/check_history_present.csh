@@ -88,9 +88,9 @@ while ( $yri <= $yr_end )    # loop over yrs
                endif
             endif
             if (-e ${path_climo}/derived/${filename}.nc) then
-               set long_name = `$cdo_dir/cdo -s showattribute,AOD_VIS@long_name ${path_local}/${filename}.nc |cut -d'"' -f2`
-               set units = `$cdo_dir/cdo -s showattribute,AOD_VIS@units ${path_local}/${filename}.nc |cut -d'"' -f2`
-               set cell_methods = `$cdo_dir/cdo -s showattribute,AOD_VIS@units ${path_local}/${filename}.nc |cut -d'"' -f2`
+               set long_name = `$cdo_dir/cdo -s showattribute,AOD_VIS@long_name ${path_local}/${filename}.nc |tail -1 |cut -d'"' -f2`
+               set units = `$cdo_dir/cdo -s showattribute,AOD_VIS@units ${path_local}/${filename}.nc |tail -1 | cut -d'"' -f2`
+               set cell_methods = `$cdo_dir/cdo -s showattribute,AOD_VIS@cell_methods ${path_local}/${filename}.nc |tail -1| cut -d'"' -f2`
                $nco_dir/ncatted -h -a long_name,AODVIS,a,c,"$long_name" ${path_climo}/derived/${filename}.nc
                $nco_dir/ncatted -h -a units,AODVIS,a,c,"$units" ${path_climo}/derived/${filename}.nc
                $nco_dir/ncatted -h -a cell_methods,AODVIS,a,c,"$cell_methods" ${path_climo}/derived/${filename}.nc
