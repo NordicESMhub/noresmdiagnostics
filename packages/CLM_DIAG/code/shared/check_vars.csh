@@ -13,7 +13,7 @@ set fullpath_filename = $case_1_dir/$caseid_1.clm2.h0.`printf "%04d" ${trends_fi
 set first_find = 1
 set var_list = " "
 foreach var ($required_vars)
-   /usr/local/bin/ncks --quiet  -d lat,0 -d lon,0 -v $var $fullpath_filename  >&! /dev/null
+   $ncksbin/ncks --quiet  -d lat,0 -d lon,0 -v $var $fullpath_filename  >&! /dev/null
    set var_present = $status
    if ($var_present == 0) then
       if ($first_find == 1) then
@@ -32,7 +32,7 @@ if ($RUNTYPE == "model1-model2") then
    set first_find = 1
    set var_list = " "
    foreach var ($required_vars)
-      /usr/local/bin/ncks --quiet  -d lat,0 -d lon,0 -v $var $fullpath_filename  >&! /dev/null
+      $ncksbin/ncks --quiet  -d lat,0 -d lon,0 -v $var $fullpath_filename  >&! /dev/null
       set var_present = $status
       if ($var_present == 0) then
          if ($first_find == 1) then

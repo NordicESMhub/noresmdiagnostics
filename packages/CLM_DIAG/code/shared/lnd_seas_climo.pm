@@ -148,8 +148,8 @@ sub create_SEAS_climo_step1
         $ifile = $lnd_seas_climoDir.$caseid.".".$mode.".h0.????".$m.".nc";
         $ofile = $procDir.$prefix.".climo".$m.".nc";
 	print( "processing $ifile to $ofile\n");
-        if ($DEBUG) { print("/usr/local/bin/ncra $atts $ifile $ofile\n"); }
-        $err = system("/usr/local/bin/ncra $atts $ifile $ofile\n");  die "ncra climo failed\n" if $err;
+        if ($DEBUG) { print("$ncksbin/ncra $atts $ifile $ofile\n"); }
+        $err = system("$ncksbin/ncra $atts $ifile $ofile\n");  die "ncra climo failed\n" if $err;
 
         $ctr++;
   }
@@ -231,16 +231,16 @@ sub create_SEAS_climo_step2
                 	}
                 	$wt2 = $nd[$ctr];
                 	$weights = "-w $wt1,$wt2";
-                	print("/usr/local/bin/ncflint $atts $weights $tmpfile $ifile $out\n") if $DEBUG; 
-                	$err = system("/usr/local/bin/ncflint $atts $weights $tmpfile $ifile $out\n"); die "seasonal ncflint failed \n" if $err;
+                	print("$ncksbin/ncflint $atts $weights $tmpfile $ifile $out\n") if $DEBUG; 
+                	$err = system("$ncksbin/ncflint $atts $weights $tmpfile $ifile $out\n"); die "seasonal ncflint failed \n" if $err;
                 	$ctr++;
 		}
         	$wt1 = 1./$sdays;		# divide by number of days in the season
 		$wt2 = 0.0;
 		system("mv $out $tmpfile");
 		$weights = "-w $wt1,$wt2";
-		print("/usr/local/bin/ncflint $weights $tmpfile $tmpfile $ofile\n") if $DEBUG;
-		$err = system("/usr/local/bin/ncflint $weights $tmpfile $tmpfile $ofile");
+		print("$ncksbin/ncflint $weights $tmpfile $tmpfile $ofile\n") if $DEBUG;
+		$err = system("$ncksbin/ncflint $weights $tmpfile $tmpfile $ofile");
 
 	   }
 	   print(" rm $out $tmpfile\n");
@@ -253,55 +253,55 @@ sub create_SEAS_climo_step2
 
            $flags = "-O -x -v date_written,time_written";
 
-           print("/usr/local/bin/ncra $flags @DJF $ofileDJF\n") if $DEBUG;
-           print("/usr/local/bin/ncra $flags @MAM $ofileMAM\n") if $DEBUG;
-           print("/usr/local/bin/ncra $flags @JJA $ofileJJA\n") if $DEBUG;
-           print("/usr/local/bin/ncra $flags @SON $ofileSON\n") if $DEBUG;
+           print("$ncksbin/ncra $flags @DJF $ofileDJF\n") if $DEBUG;
+           print("$ncksbin/ncra $flags @MAM $ofileMAM\n") if $DEBUG;
+           print("$ncksbin/ncra $flags @JJA $ofileJJA\n") if $DEBUG;
+           print("$ncksbin/ncra $flags @SON $ofileSON\n") if $DEBUG;
 
            # $DJF = $procDir.$prefix."_DJF_????.nc";
            # $MAM = $procDir.$prefix."_MAM_????.nc";
            # $JJA = $procDir.$prefix."_JJA_????.nc";
            # $SON = $procDir.$prefix."_SON_????.nc";
 
-           print("/usr/local/bin/ncra $flags @DJF $ofileDJF\n") if $DEBUG;
-           print("/usr/local/bin/ncra $flags @MAM $ofileMAM\n") if $DEBUG;
-           print("/usr/local/bin/ncra $flags @JJA $ofileJJA\n") if $DEBUG;
-           print("/usr/local/bin/ncra $flags @SON $ofileSON\n") if $DEBUG;
+           print("$ncksbin/ncra $flags @DJF $ofileDJF\n") if $DEBUG;
+           print("$ncksbin/ncra $flags @MAM $ofileMAM\n") if $DEBUG;
+           print("$ncksbin/ncra $flags @JJA $ofileJJA\n") if $DEBUG;
+           print("$ncksbin/ncra $flags @SON $ofileSON\n") if $DEBUG;
 
-           # print("/usr/local/bin/ncra $flags $DJF $ofileDJF\n") if $DEBUG;
-           # print("/usr/local/bin/ncra $flags $MAM $ofileMAM\n") if $DEBUG;
-           # print("/usr/local/bin/ncra $flags $JJA $ofileJJA\n") if $DEBUG;
-           # print("/usr/local/bin/ncra $flags $SON $ofileSON\n") if $DEBUG;
+           # print("$ncksbin/ncra $flags $DJF $ofileDJF\n") if $DEBUG;
+           # print("$ncksbin/ncra $flags $MAM $ofileMAM\n") if $DEBUG;
+           # print("$ncksbin/ncra $flags $JJA $ofileJJA\n") if $DEBUG;
+           # print("$ncksbin/ncra $flags $SON $ofileSON\n") if $DEBUG;
 
-           $err = system("/usr/local/bin/ncra $flags @DJF $ofileDJF"); die "SEAS_climo DJF failed \n" if $err;
-           $err = system("/usr/local/bin/ncra $flags @MAM $ofileMAM"); die "SEAS_climo MAM failed \n" if $err;
-           $err = system("/usr/local/bin/ncra $flags @JJA $ofileJJA"); die "SEAS_climo JJA failed \n" if $err;
-           $err = system("/usr/local/bin/ncra $flags @SON $ofileSON"); die "SEAS_climo SON failed \n" if $err;
+           $err = system("$ncksbin/ncra $flags @DJF $ofileDJF"); die "SEAS_climo DJF failed \n" if $err;
+           $err = system("$ncksbin/ncra $flags @MAM $ofileMAM"); die "SEAS_climo MAM failed \n" if $err;
+           $err = system("$ncksbin/ncra $flags @JJA $ofileJJA"); die "SEAS_climo JJA failed \n" if $err;
+           $err = system("$ncksbin/ncra $flags @SON $ofileSON"); die "SEAS_climo SON failed \n" if $err;
 
-           # $err = system("/usr/local/bin/ncra $flags $DJF $ofileDJF"); die "SEAS_climo DJF failed \n" if $err;
-           # $err = system("/usr/local/bin/ncra $flags $MAM $ofileMAM"); die "SEAS_climo MAM failed \n" if $err;
-           # $err = system("/usr/local/bin/ncra $flags $JJA $ofileJJA"); die "SEAS_climo JJA failed \n" if $err;
-           # $err = system("/usr/local/bin/ncra $flags $SON $ofileSON"); die "SEAS_climo SON failed \n" if $err;
+           # $err = system("$ncksbin/ncra $flags $DJF $ofileDJF"); die "SEAS_climo DJF failed \n" if $err;
+           # $err = system("$ncksbin/ncra $flags $MAM $ofileMAM"); die "SEAS_climo MAM failed \n" if $err;
+           # $err = system("$ncksbin/ncra $flags $JJA $ofileJJA"); die "SEAS_climo JJA failed \n" if $err;
+           # $err = system("$ncksbin/ncra $flags $SON $ofileSON"); die "SEAS_climo SON failed \n" if $err;
        }
 
-       system("/usr/local/bin/ncatted \-O \-a yrs_averaged,global,c,c,$clim_range $ofileDJF");
-       system("/usr/local/bin/ncatted \-O \-a yrs_averaged,global,c,c,$clim_range $ofileMAM");
-       system("/usr/local/bin/ncatted \-O \-a yrs_averaged,global,c,c,$clim_range $ofileJJA");
-       system("/usr/local/bin/ncatted \-O \-a yrs_averaged,global,c,c,$clim_range $ofileSON");
+       system("$ncksbin/ncatted \-O \-a yrs_averaged,global,c,c,$clim_range $ofileDJF");
+       system("$ncksbin/ncatted \-O \-a yrs_averaged,global,c,c,$clim_range $ofileMAM");
+       system("$ncksbin/ncatted \-O \-a yrs_averaged,global,c,c,$clim_range $ofileJJA");
+       system("$ncksbin/ncatted \-O \-a yrs_averaged,global,c,c,$clim_range $ofileSON");
 
-       system("/usr/local/bin/ncatted \-O \-a num_yrs_averaged,global,c,i,$clim_nyr $ofileDJF");
-       system("/usr/local/bin/ncatted \-O \-a num_yrs_averaged,global,c,i,$clim_nyr $ofileMAM");
-       system("/usr/local/bin/ncatted \-O \-a num_yrs_averaged,global,c,i,$clim_nyr $ofileJJA");
-       system("/usr/local/bin/ncatted \-O \-a num_yrs_averaged,global,c,i,$clim_nyr $ofileSON");
+       system("$ncksbin/ncatted \-O \-a num_yrs_averaged,global,c,i,$clim_nyr $ofileDJF");
+       system("$ncksbin/ncatted \-O \-a num_yrs_averaged,global,c,i,$clim_nyr $ofileMAM");
+       system("$ncksbin/ncatted \-O \-a num_yrs_averaged,global,c,i,$clim_nyr $ofileJJA");
+       system("$ncksbin/ncatted \-O \-a num_yrs_averaged,global,c,i,$clim_nyr $ofileSON");
 
        if ( $weightAnnAvg) 
                { $wtFlag = "\"annual means computed from monthly means with months weighted by number of days in month\""; }
        else    { $wtFlag = "\"annual means computed from monthly means with all months weighted equally\""; }     
 
-       system("/usr/local/bin/ncatted \-O \-a weighted_avg,global,c,c,$wtFlag $ofileDJF");  
-       system("/usr/local/bin/ncatted \-O \-a weighted_avg,global,c,c,$wtFlag $ofileMAM");  
-       system("/usr/local/bin/ncatted \-O \-a weighted_avg,global,c,c,$wtFlag $ofileJJA");  
-       system("/usr/local/bin/ncatted \-O \-a weighted_avg,global,c,c,$wtFlag $ofileSON");  
+       system("$ncksbin/ncatted \-O \-a weighted_avg,global,c,c,$wtFlag $ofileDJF");  
+       system("$ncksbin/ncatted \-O \-a weighted_avg,global,c,c,$wtFlag $ofileMAM");  
+       system("$ncksbin/ncatted \-O \-a weighted_avg,global,c,c,$wtFlag $ofileJJA");  
+       system("$ncksbin/ncatted \-O \-a weighted_avg,global,c,c,$wtFlag $ofileSON");  
        # ... nanr 8/24/07
        # Prob:  Landmask is set to 0 by averaging process.  (this only affects set9, but is still misleading.    
        # Soln:  Remove bad landmask and overwrite landmask directly from a history file. 
@@ -309,11 +309,11 @@ sub create_SEAS_climo_step2
 		$yr_prnt = printYear($clim_lyr);
                 $usefile = $casedir.$caseid.".".$mode.".h0.".$yr_prnt."-01.nc";
                 $lmask   = $procDir.$prefix.".lmask.nc";                 
-                system("/usr/local/bin/ncks -v landmask $usefile $lmask") if !-e $lmask; 
-                system("/usr/local/bin/ncks -q \-A -v landmask $lmask $ofileDJF"); 
-                system("/usr/local/bin/ncks -q \-A -v landmask $lmask $ofileMAM"); 
-                system("/usr/local/bin/ncks -q \-A -v landmask $lmask $ofileJJA"); 
-                system("/usr/local/bin/ncks -q \-A -v landmask $lmask $ofileSON"); 
+                system("$ncksbin/ncks -v landmask $usefile $lmask") if !-e $lmask; 
+                system("$ncksbin/ncks -q \-A -v landmask $lmask $ofileDJF"); 
+                system("$ncksbin/ncks -q \-A -v landmask $lmask $ofileMAM"); 
+                system("$ncksbin/ncks -q \-A -v landmask $lmask $ofileJJA"); 
+                system("$ncksbin/ncks -q \-A -v landmask $lmask $ofileSON"); 
        }
        print(" END  ----  create_SEAS_climo_step2:   \[Y=$yr\]\n") ;
 }

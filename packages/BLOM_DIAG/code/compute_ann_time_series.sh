@@ -291,10 +291,11 @@ do
                 outfile_tmp=${var}_${casename}_ANN_${filetype}_${yr_prnt}_tmp.nc
                 outfile=${var}_${casename}_ANN_${filetype}_${yr_prnt}.nc
                 $NCDUMP -v region $WKDIR/$infile |grep 'atlantic_arctic_extended_ocean' >/dev/null 2>&1
-                reglist="1"
                 if [ $? == 0 ]
                 then
                     reglist="1,2"
+                else
+                    reglist="1"
                 fi
                 if [ ! -f $tsdir/ann_ts/$outfile ]; then
                     # Max AMOC 20-60N

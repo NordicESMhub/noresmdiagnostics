@@ -23,6 +23,7 @@ else if ( `echo "$MACHINE" |grep 'betzy'` != '' )  then
     module -q load NCO/4.9.3-intel-2019b
     module -q load CDO/1.9.8-intel-2019b
     module -q load NCL/6.6.2-intel-2019b
+    setenv ncksbin  ${EBROOTNCO}/bin
     setenv ncclimo_dir  ${EBROOTNCO}/bin
 else
     echo "** UNKNOWN MACHINE $MACHINE **"
@@ -349,7 +350,7 @@ setenv setRestart_set   2   # (Valid sets:  2,3,4,5,6,7,8,9)
 #**************************************************
  setenv projection       0      # (1=Cylindrical Equidistant, 0=Robinson)
  setenv colormap         1      # (1=use Blue-Yellow-Red Colormap, 0=use original colormaps)
- setenv density         85      # controls density of output .gif images, example values = 72,96,144,216,288 (higher values = higher quality)
+ setenv density        150      # controls density of output .gif images, example values = 72,96,144,216,288 (higher values = higher quality)
  setenv rmMonFilesTrend  0      # (1=ON,0=OFF)  rm monthly MSS files after trend files are created   (default = 0)
  setenv rmMonFilesClimo  0      # (1=ON,0=OFF)  rm monthly MSS files after climo files are created   (default = 0)
  setenv raster           1      # (1=ON,0=OFF)  raster mode for set2 contour plots.                  (default = 1)

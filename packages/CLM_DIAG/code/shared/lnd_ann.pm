@@ -42,7 +42,7 @@ sub createAnnualFile
                 }
                 $wt2 = @ndays[$ctr];
                 $weights = "-w $wt1,$wt2";
-                $err = system("/usr/local/bin/ncflint $atts $weights $tmpfile $ifile $ofile\n");   die "annT ncflint failed \n" if $err;
+                $err = system("$ncksbin/ncflint $atts $weights $tmpfile $ifile $ofile\n");   die "annT ncflint failed \n" if $err;
                 $ctr++;
            }
            $wt1 = 1/365.;       # divide by 365 days to get annual average
@@ -53,8 +53,8 @@ sub createAnnualFile
            if ($mode eq "cam") { $ofile = $procDir.$caseid."_annT_atm_".$yr_prnt.".nc"; }
            if ($mode eq "rtm")  { $ofile = $procDir.$caseid."_annT_rtm_".$yr_prnt.".nc"; }
            $weights = "-w $wt1,$wt2";
-           print("/usr/local/bin/ncflint $weights $tmpfile $tmpfile $ofile\n");
-           $err = system("/usr/local/bin/ncflint $weights $tmpfile $tmpfile $ofile\n");
+           print("$ncksbin/ncflint $weights $tmpfile $tmpfile $ofile\n");
+           $err = system("$ncksbin/ncflint $weights $tmpfile $tmpfile $ofile\n");
         }
         else {
                 print("    $yr_prnt SIMPLE TIME AVERAGE\n") if $DEBUG;
@@ -75,8 +75,8 @@ sub createAnnualFile
                        $ofile = $procDir.$caseid."_annT_rtm_".$yr_prnt.".nc"; 
                        $atts = "-O -x -v time_written,date_written,fthresh"; 
                 }
-                print(" /usr/local/bin/ncra $atts \-n 12,2,1 $ifile $ofile\n") if $DEBUG;
-                $err = system("/usr/local/bin/ncra $atts \-n 12,2,1 $ifile $ofile\n"); die "ncra failed \n" if $err;
+                print(" $ncksbin/ncra $atts \-n 12,2,1 $ifile $ofile\n") if $DEBUG;
+                $err = system("$ncksbin/ncra $atts \-n 12,2,1 $ifile $ofile\n"); die "ncra failed \n" if $err;
         }
 	# ... nanr 8/24/07
 	# Prob:  Landmask is set to 0 by averaging process.  (this only affects set9, but is still misleading.
@@ -84,8 +84,8 @@ sub createAnnualFile
         if ($mode eq "clm2") { 
                 $usefile = $casedir.$caseid.".".$mode.".h0.".$yr_prnt."-01.nc";
                	$lmask   = $procDir.$prefix.".lmask.nc";                 
-		system("/usr/local/bin/ncks -v landmask $usefile $lmask") if !-e $lmask; 
-		system("/usr/local/bin/ncks -q \-A -v landmask $lmask $ofile"); 
+		system("$ncksbin/ncks -v landmask $usefile $lmask") if !-e $lmask; 
+		system("$ncksbin/ncks -q \-A -v landmask $lmask $ofile"); 
 	}
 	print("  END  ---------- createAnnualFile --------\n");
 }
@@ -111,8 +111,8 @@ sub createAnnualFileNew
         if ($mode eq "clm2") { 
                 $usefile = $casedir.$caseid.".".$mode.".h0.".$yr_prnt."-01.nc";
                	$lmask   = $procDir.$prefix.".lmask.nc";                 
-		system("/usr/local/bin/ncks -v landmask $usefile $lmask") if !-e $lmask; 
-		system("/usr/local/bin/ncks -q \-A -v landmask $lmask $ofile"); 
+		system("$ncksbin/ncks -v landmask $usefile $lmask") if !-e $lmask; 
+		system("$ncksbin/ncks -q \-A -v landmask $lmask $ofile"); 
 	}
 	print("  END  ---------- createAnnualFileNew --------\n");
 }
@@ -137,10 +137,10 @@ sub create_ANN_ALL
                 $ifile = $procDir.$caseid."_annT_rtm_".$trends_fyr_prnt.".nc";
                 $ofile = $prefixDir.$prefix."_ANN_ALL_rtm.nc";
         }
-        print("/usr/local/bin/ncrcat -\O \-n $trends_nyr,4,1 $ifile $ofile\n") if $DEBUG;
-        $err = system("/usr/local/bin/ncrcat  -\O \-n $trends_nyr,4,1 $ifile $ofile");  die "ANN_ALL ncrcat failed \n" if $err;
-        system("/usr/local/bin/ncatted \-O \-a yrs_averaged,global,c,c,$trends_range $ofile");
-        system("/usr/local/bin/ncatted \-O \-a num_yrs_averaged,global,c,i,$trends_nyr $ofile");
+        print("$ncksbin/ncrcat -\O \-n $trends_nyr,4,1 $ifile $ofile\n") if $DEBUG;
+        $err = system("$ncksbin/ncrcat  -\O \-n $trends_nyr,4,1 $ifile $ofile");  die "ANN_ALL ncrcat failed \n" if $err;
+        system("$ncksbin/ncatted \-O \-a yrs_averaged,global,c,c,$trends_range $ofile");
+        system("$ncksbin/ncatted \-O \-a num_yrs_averaged,global,c,i,$trends_nyr $ofile");
         print("END -------- create_ANN_ALL\n") if $DEBUG;
 }
 
@@ -170,11 +170,11 @@ sub create_ANN_climo
                 $ifile = $procDir.$caseid."_annT_rtm_".$clim_fyr_prnt.".nc";
                 $ofile = $prefixDir.$prefix."_ANN_climo_rtm.nc";
         }
-        print("/usr/local/bin/ncra -\O \-n $clim_nyr,4,1 $ifile $ofile\n") if $DEBUG;
-        $err = system("/usr/local/bin/ncra -\O \-n $clim_nyr,4,1 $ifile $ofile"); die "ANN_climo ncra failed\n" if $err;
+        print("$ncksbin/ncra -\O \-n $clim_nyr,4,1 $ifile $ofile\n") if $DEBUG;
+        $err = system("$ncksbin/ncra -\O \-n $clim_nyr,4,1 $ifile $ofile"); die "ANN_climo ncra failed\n" if $err;
 
-        system("/usr/local/bin/ncatted \-O \-a yrs_averaged,global,c,c,$clim_range $ofile");
-        system("/usr/local/bin/ncatted \-O \-a num_yrs_averaged,global,c,i,$clim_nyr $ofile");
+        system("$ncksbin/ncatted \-O \-a yrs_averaged,global,c,c,$clim_range $ofile");
+        system("$ncksbin/ncatted \-O \-a num_yrs_averaged,global,c,i,$clim_nyr $ofile");
         chdir("$prefixDir");
 }
 sub create_ANN_means
@@ -200,17 +200,17 @@ sub create_ANN_means
                 $ifile = $procDir.$caseid."_annT_rtm_".$clim_fyr_prnt.".nc";
                 $ofile = $prefixDir.$prefix."_ANN_means_rtm.nc";
         }
-        print("/usr/local/bin/ncrcat -\O \-n $clim_nyr,4,1 $ifile $ofile\n") if $DEBUG;
-        $err = system("/usr/local/bin/ncrcat -\O \-n $clim_nyr,4,1 $ifile $ofile");  die "ANN_means ncrcat failed \n" if $err;
+        print("$ncksbin/ncrcat -\O \-n $clim_nyr,4,1 $ifile $ofile\n") if $DEBUG;
+        $err = system("$ncksbin/ncrcat -\O \-n $clim_nyr,4,1 $ifile $ofile");  die "ANN_means ncrcat failed \n" if $err;
 
-        system("/usr/local/bin/ncatted \-O \-a yrs_averaged,global,c,c,$clim_range $ofile");
-        system("/usr/local/bin/ncatted \-O \-a num_yrs_averaged,global,c,i,$clim_nyr $ofile");
+        system("$ncksbin/ncatted \-O \-a yrs_averaged,global,c,c,$clim_range $ofile");
+        system("$ncksbin/ncatted \-O \-a num_yrs_averaged,global,c,i,$clim_nyr $ofile");
 
         if ( $weightAnnAvg) 
                 { $wtFlag = "\"annual means computed from monthly means with months weighted by number of days in month\""; }
         else    { $wtFlag = "\"annual means computed from monthly means with all months weighted equally\""; }     
 
-        system("/usr/local/bin/ncatted \-O \-a weighted_avg,global,c,c,$wtFlag $ofile");  
+        system("$ncksbin/ncatted \-O \-a weighted_avg,global,c,c,$wtFlag $ofile");  
 
         chdir("$prefixDir");
 }

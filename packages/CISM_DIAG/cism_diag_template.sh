@@ -19,6 +19,7 @@ elif [ "$(echo $HOST |grep 'betzy')" ]; then
      module -q load NCO/4.9.3-intel-2019b
      module -q load CDO/1.9.8-intel-2019b
      module -q load NCL/6.6.2-intel-2019b
+     module -q load ImageMagick/7.1.0-4-GCCcore-11.2.0
 else
     echo "** UNKNOWN HOST $HOST **"
     echo "** EXIT                   **"

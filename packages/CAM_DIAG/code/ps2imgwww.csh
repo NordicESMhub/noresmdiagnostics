@@ -16,18 +16,16 @@ if (! ${?DENSITY}) then
   set DENSITY = 150    # default pixels/inch
 endif
 
-if (-e /contrib/bin/convert) then
-  set CONVERT = "/contrib/bin/convert -density $DENSITY -trim -bordercolor white -border 5x5"
+if (-e /usr/bin/convert) then
+  set CONVERT = "/usr/bin/convert -density $DENSITY -trim -bordercolor white -border 5x5"
 else
-  if (-e /usr/bin/convert) then
-    set CONVERT = "/usr/bin/convert -density $DENSITY -trim -bordercolor white -border 5x5"
+  if (`which convert | wc -w` == 1) then
+    set CONVERT_PATH = `which convert`
+    set CONVERT = "${CONVERT_PATH} -density $DENSITY -trim -bordercolor white -border 5x5"
   else
-    if (-e /usr/X11R6/bin/convert) then
-      set CONVERT = "/usr/X11R6/bin/convert -density $DENSITY -trim -bordercolor white -border 5x5"
-    else
-      echo CONVERT NOT FOUND
-      exit
-    endif
+    echo "ERROR: CONVERT NOT FOUND"
+    echo "***EXITING THE SCRIPT"
+    exit 1
   endif
 endif
 

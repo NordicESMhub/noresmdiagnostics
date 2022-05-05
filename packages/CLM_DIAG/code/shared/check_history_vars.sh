@@ -36,13 +36,6 @@ echo " procdir  = $procdir"
 echo " mode     = $mode"
 echo " "
 
-NCKS=`which ncks`
-if [ $? -ne 0 ]; then
-    echo "Could not find ncks (which ncks)"
-    echo "*** EXITING THE SCRIPT ***"
-    exit 1
-fi
-
 file_flag=0
 var_flag=0
 check_vars=1
@@ -91,9 +84,9 @@ if [ $check_vars -eq 1 ]; then
         #speed up by check only ocean available variables
         echo $var_in_file |grep -w $var >/dev/null
         #if [ $model == clm2 ]; then
-            #$NCKS --quiet -d lat,0 -d lon,0 -d levsoi,0 -v $var $fullpath_filename >/dev/null 2>&1
+            #$ncksbin/ncks --quiet -d lat,0 -d lon,0 -d levsoi,0 -v $var $fullpath_filename >/dev/null 2>&1
         #else
-            #$NCKS --quiet -d lat,0 -d lon,0 -d lev,0 -v $var $fullpath_filename >/dev/null 2>&1
+            #$ncksbin/ncks --quiet -d lat,0 -d lon,0 -d lev,0 -v $var $fullpath_filename >/dev/null 2>&1
         #fi
 	if [ $? -eq 0 ]; then
 	    find_any=1

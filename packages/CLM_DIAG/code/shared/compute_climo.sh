@@ -38,27 +38,6 @@ echo " procdir  = $procdir"
 echo " model    = $model"
 echo " "
 
-NCCLIMO=`which ncclimo`
-if [ $? -ne 0 ]; then
-    echo "Could not find ncclimo (which ncclimo)"
-    echo "*** EXITING THE SCRIPT ***"
-    exit 1
-fi
-
-NCRCAT=`which ncrcat`
-if [ $? -ne 0 ]; then
-    echo "Could not find ncrcat (which ncrcat)"
-    echo "*** EXITING THE SCRIPT ***"
-    exit 1
-fi
-
-NCATTED=`which ncatted`
-if [ $? -ne 0 ]; then
-    echo "Could not find ncatted (which ncatted)"
-    echo "*** EXITING THE SCRIPT ***"
-    exit 1
-fi
-
 let "first_yrm = $first_yr - 1"
 let "last_yrm = $last_yr - 1"
 first_yr_prnt=`printf "%04d" ${first_yr}`
@@ -69,9 +48,9 @@ var_list=`cat $procdir/vars_climo_${model}`
 dec_flag=`cat $procdir/dec_flag`
 
 # Compute climatology
-$NCCLIMO --clm_md=mth -m $model -a $dec_flag -v $var_list --no_amwg_links -c $casename -s $first_yr -e $last_yr -i $pathdat -o $climodir
+$ncclimo_dir/ncclimo --no_stdin --clm_md=mth -m $model -a $dec_flag -v $var_list --no_amwg_links -c $casename -s $first_yr -e $last_yr -i $pathdat -o $climodir
 if [ $? -ne 0 ]; then
-    echo "ERROR in computing climatology: $NCCLIMO --clm_md=mth -m $model -a $dec_flag --no_amwg_links -c $casename -s $first_yr -e $last_yr -i $pathdat -o $climodir"
+    echo "ERROR in computing climatology: $ncclimo_dir/ncclimo --no_stdin --clm_md=mth -m $model -a $dec_flag --no_amwg_links -c $casename -s $first_yr -e $last_yr -i $pathdat -o $climodir"
     exit 1
 fi
 
@@ -87,12 +66,12 @@ do
 done
 
 echo "Merging monthly files."
-$NCRCAT --no_tmp_fl -O -p $climodir ${monfiles[*]} $climodir/${casename}_MON_${first_yr_prnt}-${last_yr_prnt}_climo.nc
+$ncksbin/ncrcat --no_tmp_fl -O -p $climodir ${monfiles[*]} $climodir/${casename}_MON_${first_yr_prnt}-${last_yr_prnt}_climo.nc
 if [ $? -ne 0 ]; then
-    echo "ERROR in merging monthly climo files: $NCRCAT --no_tmp_fl -O -p $climodir ${monfiles[*]} $climodir/${casename}_MON_${first_yr_prnt}-${last_yr_prnt}_climo.nc"
+    echo "ERROR in merging monthly climo files: $ncksbin/ncrcat --no_tmp_fl -O -p $climodir ${monfiles[*]} $climodir/${casename}_MON_${first_yr_prnt}-${last_yr_prnt}_climo.nc"
     exit 1
 fi
-$NCATTED -O -a yrs_averaged,global,c,c,"${first_yr}-${last_yr}" $climodir/${casename}_MON_${first_yr_prnt}-${last_yr_prnt}_climo.nc
+$ncksbin/ncatted -O -a yrs_averaged,global,c,c,"${first_yr}-${last_yr}" $climodir/${casename}_MON_${first_yr_prnt}-${last_yr_prnt}_climo.nc
 
 # Delete monthly files
 echo "Deleting monthy files."

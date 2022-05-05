@@ -26,7 +26,7 @@ if ($status != 0)  exit
 mv ${procDir}/${OutFile} $output_dir
 
 #echo ncks -A -v area ${area_dir}/${area_file} $output_dir/$OutFile
-/usr/local/bin/ncks -A -v area ${area_dir}/${area_file} $output_dir/$OutFile
+$ncksbin/ncks -A -v area ${area_dir}/${area_file} $output_dir/$OutFile
 
 ln -s $output_dir/$OutFile $output_dir/$InFile
 
