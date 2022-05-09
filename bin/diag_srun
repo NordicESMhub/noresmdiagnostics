@@ -12,7 +12,7 @@ if [ $# -eq 0 ] || [ $1 == "-h" ]; then
     echo " "
     echo "Extra command-line options (see additional options with diag_run -h):"
     echo "  --account=nsxxxxk                             : (OPTIONAL) Project account for CPU hours (default ns2345k)."
-    echo "  --time=DD-HH:MM:SS                            : (OPTIONAL) CPU walltime (default value according to length of years and active components)."
+    echo "  --time=DD-HH:MM:SS                            : (OPTIONAL) CPU walltime (default value will be automatically calculated based on the length of years and active components)."
     echo "  --remove-source-files-flag=true|false         : (OPTIONAL) Flag if the source file will be removed after the webpage is moved from Betzy /cluster to NIRD /project* (default as false)."
     echo " "
     echo "Examples:"
@@ -253,6 +253,8 @@ if [ ! $(echo $DIAG_PATH |grep '\/cluster\/') ]; then
     echo "** ERROR: \$DIAG_PATH $DIAG_PATH should be under /cluster"
     echo "*** EXITING THE SCRIPT ***"
     exit 1
+else
+    [ ! -d $DIAG_PATH ] && mkdir -p $DIAG_PATH
 fi
 if [ $(echo $WEB_PATH |grep -P '\/trd-project\d\/') ]; then
     echo " "
@@ -283,6 +285,9 @@ if [ -z $TIME ]; then
     echo "**  **  **"
     echo " "
 fi
+if [ ! -d $LOG_PATH ]; then
+    mkdir -p $LOG_PATH
+fi
 
 ## Remove and restore arguments passing to diag_run
 ARG=$(echo $ARG |sed 's/--time=\S*//g' |sed 's/--account=\S*//g')
@@ -310,7 +315,6 @@ set -o errexit
 set -o nounset
 
 ## Prepare input files
-[ ! -d ${LOG_PATH} ] && mkdir -p ${LOG_PATH}
 cd /cluster/shared/noresm/diagnostics/noresm/bin
 
 ## Run job
@@ -333,6 +337,7 @@ echo "Check the log of diag_srun:"
 echo "${LOG_PATH}/diagsrun-${YMD}-${HMS}.log"
 echo " "
 echo "Waiting for the diag_srun to finish ..."
+echo "... "
 echo " "
 
 # Copy output from cluster to NIRD after job finishes, if required
