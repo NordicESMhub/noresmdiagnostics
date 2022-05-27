@@ -110,14 +110,15 @@ do i = 0, nvars-1
       if (all(B.eq.-999.)) then
          print (vars(i)+" is not present in case2 input file.")
          delete(B)
-      end if
-      
-      ndim = dimsizes(B)
-      ntimes2 = ndim(0)
-      ntimes_tot = max((/ntimes1,ntimes2/))
-      if (fyr1.ne.fyr2) then
-         print("Warning: first yr in case2 time series is different from case1.")
-         print("Shifting case2 time axis to that of case1.")
+         continue
+      else 
+         ndim = dimsizes(B)
+         ntimes2 = ndim(0)
+         ntimes_tot = max((/ntimes1,ntimes2/))
+         if (fyr1.ne.fyr2) then
+            print("Warning: first yr in case2 time series is different from case1.")
+            print("Shifting case2 time axis to that of case1.")
+         end if
       end if
    end if
 

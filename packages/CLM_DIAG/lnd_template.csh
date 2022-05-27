@@ -11,12 +11,14 @@ if ( `echo "$MACHINE" |grep 'ipcc'` != '' ) then
     setenv PATH /usr/local/bin:/usr/bin:/opt/ncl65/bin/:/opt/nco475/bin/:/opt/cdo197/bin
     setenv ncksbin  `which ncks`
     setenv ncclimo_dir  `dirname $ncksbin`
+    setenv ncksbin $ncclimo_dir
 else if ( `echo "$MACHINE" |grep 'login[0-9].nird'` != '' ) then
     set MACHINE = 'login.nird'
     setenv NCARG_ROOT /usr
     setenv NCARG_COLORMAPS $NCARG_ROOT/lib/ncarg/colormaps
     setenv ncksbin  `which ncks`
     setenv ncclimo_dir  `dirname $ncksbin`
+    setenv ncksbin $ncclimo_dir
 else if ( `echo "$MACHINE" |grep 'betzy'` != '' )  then
     set MACHINE = 'betzy'
     module -q purge
