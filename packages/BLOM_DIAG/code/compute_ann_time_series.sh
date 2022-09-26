@@ -210,6 +210,8 @@ do
                         echo "ERROR: $NCAP2 -O -s 'dmass=dp*parea' $WKDIR/$filename  $WKDIR/$filename >/dev/null 2>&1"
                         exit
                     fi
+                else
+                    echo "ERROR: dp and/or parea are missing in $WKDIR/$filename"
                 fi
             fi
         fi
