@@ -8,12 +8,13 @@
 ## LOAD MODULES AND SET ENVIRONMENTS
 HOST="$(uname -n) $(hostname -f)"
 if [ "$(echo $HOST |grep 'ipcc.nird')" ];then
-    export NCARG_ROOT=/opt/ncl65
+    export NCARG_ROOT=/opt/ncl66
     export NCARG_COLORMAPS=$NCARG_ROOT/lib/ncarg/colormaps
-    export PATH=/usr/local/bin:/usr/bin:/opt/ncl65/bin/:/opt/nco475/bin/:/opt/cdo197/bin
+    export PATH=/usr/bin:/opt/ncl66/bin:/opt/cdo201/bin
 elif [ "$(echo $HOST |grep 'login[0-9].nird')" ];then
-     export NCARG_ROOT=/usr
-     export NCARG_COLORMAPS=$NCARG_ROOT/lib/ncarg/colormaps
+    export NCARG_ROOT=/usr
+    export NCARG_COLORMAPS=$NCARG_ROOT/lib/ncarg/colormaps
+    export PATH=/usr/bin:/usr/local/bin
 elif [ "$(echo $HOST |grep 'betzy')" ]; then
      module -q purge
      module -q load NCO/4.9.3-intel-2019b

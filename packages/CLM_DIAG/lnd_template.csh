@@ -6,9 +6,9 @@
 set MACHINE = "`uname -n` `hostname -f`"
 if ( `echo "$MACHINE" |grep 'ipcc'` != '' ) then
     set MACHINE = 'ipcc.nird'
-    setenv NCARG_ROOT /opt/ncl65
+    setenv NCARG_ROOT /opt/ncl66
     setenv NCARG_COLORMAPS $NCARG_ROOT/lib/ncarg/colormaps
-    setenv PATH /usr/local/bin:/usr/bin:/opt/ncl65/bin/:/opt/nco475/bin/:/opt/cdo197/bin
+    setenv PATH /usr/bin:/opt/ncl66/bin:/opt/cdo201/bin
     setenv ncksbin  `which ncks`
     setenv ncclimo_dir  `dirname $ncksbin`
     setenv ncksbin $ncclimo_dir
