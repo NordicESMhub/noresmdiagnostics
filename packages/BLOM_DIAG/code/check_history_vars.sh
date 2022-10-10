@@ -50,9 +50,9 @@ if [ ! -f $WKDIR/attributes/sst_file_${casename} ]; then
     for filetype in $filetypes
     do
         if [ $filetype == hy ]; then
-            fullpath_filename=$(ls -1 $pathdat/$casename.$filetag.$filetype.$(printf "%04d" ${first_yr}).nc 2>/dev/null |head -1)
+            fullpath_filename=$(echo $pathdat/$casename.$filetag.$filetype.$(printf "%04d" ${first_yr}).nc 2>/dev/null |head -1)
         else
-            fullpath_filename=$(ls -1 $pathdat/$casename.$filetag.$filetype.$(printf "%04d" ${first_yr})-01.nc 2>/dev/null |head -1)
+            fullpath_filename=$(echo $pathdat/$casename.$filetag.$filetype.$(printf "%04d" ${first_yr})-01.nc 2>/dev/null |head -1)
         fi
         $NCKS --quiet -d y,0 -d x,0 -v sst $fullpath_filename >/dev/null 2>&1
         if [ $? -eq 0 ]; then
@@ -76,7 +76,7 @@ do
         let "iyr = $first_yr"
         while [ $iyr -le $last_yr ]
         do
-            fullpath_filename=$(ls -1 $pathdat/$casename.$filetag.$filetype.$(printf "%04d" ${iyr}).nc 2>/dev/null |head -1)
+            fullpath_filename=$(echo $pathdat/$casename.$filetag.$filetype.$(printf "%04d" ${iyr}).nc 2>/dev/null |head -1)
             if [ ! -f $fullpath_filename ]; then
                 echo "$fullpath_filename does not exist."
                 check_vars=0
@@ -89,7 +89,7 @@ do
         let "iyr = $first_yr"
         while [ $iyr -le $last_yr ]
         do
-            fullpath_filename=$(ls -1 $pathdat/$casename.$filetag.$filetype.$(printf "%04d" ${iyr})-01.nc 2>/dev/null |head -1)
+            fullpath_filename=$(echo $pathdat/$casename.$filetag.$filetype.$(printf "%04d" ${iyr})-01.nc 2>/dev/null |head -1)
             if [ ! -f $fullpath_filename ]; then
                 echo "$fullpath_filename does not exist."
                 check_vars=0
