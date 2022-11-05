@@ -77,8 +77,15 @@ if [ $check_vars -eq 1 ]; then
     first_find_remaining=1
     var_list=" "
     var_list_remaining=" "
-    fullpath_filename=$pathdat/$casename.${model}.h0.`printf "%04d" ${first_yr}`-01.nc
-    var_in_file=$(cdo -s showname $fullpath_filename)
+    fullpath_filename=$(ls $pathdat/$casename.${model}.h0.$(printf "%04d" ${first_yr})-*.nc 2>/dev/null |head -1)
+    if [ ! -z $fullpath_filename ];then
+        var_in_file=$(cdo -s showname $fullpath_filename)
+    else
+        echo "** No history file found from the first year $first_yr **"
+        echo "** EXIT **"
+        exit 1
+    fi
+
     for var in $req_vars
     do
         #speed up by check only ocean available variables
