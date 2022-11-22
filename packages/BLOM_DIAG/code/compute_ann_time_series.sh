@@ -144,6 +144,11 @@ do
     else 
         # Compute annual means if in hm mode
         echo "Computing annual means from monthly history files (yrs ${YR_start}-${YR_end})"
+
+        if [ ! -f $WKDIR/attributes/grid_${casename} ] && [ -z $PGRIDPATH ]; then
+            $DIAG_CODE/determine_grid_type.sh $casename
+        fi
+        grid_type=$(cat $WKDIR/attributes/grid_${casename} |cut -d'v' -f1)
         pid=()
         iproc=1
         while [ $iproc -le $nyrs ]
@@ -167,7 +172,12 @@ do
             done
             if [ $fflag = 0 ]; then
                 eval $NCRA -O --no_tmp_fl --hdr_pad=10000 -w 31,28,31,30,31,30,31,31,30,31,30,31 -v $var_list -p $pathdat ${filenames[*]} $WKDIR/${casename}_ANN_${yr_prnt}.nc &
-                pid+=($!)
+                if [ $grid_type == "tnx0.125" ]
+                then
+                    wait $!
+                else
+                    pid+=($!)
+                fi
             else
                 echo Skip computing year ${yr_prnt}, time-series variables already exist.
             fi

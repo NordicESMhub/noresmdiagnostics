@@ -97,6 +97,10 @@ if [ $filetype == hm ]; then
         echo "ERROR: No annual or monthly climo variables present in hm files"
         exit 1
     fi
+    if [ ! -f $WKDIR/attributes/grid_${casename} ] && [ -z $PGRIDPATH ]; then
+        $DIAG_CODE/determine_grid_type.sh $casename
+    fi
+    grid_type=$(cat $WKDIR/attributes/grid_${casename} |cut -d'v' -f1)
     pid=()
     mon_tmp_files=()
     for month in 01 02 03 04 05 06 07 08 09 10 11 12
@@ -120,7 +124,12 @@ if [ $filetype == hm ]; then
         mon_tmp_file=${casename}_${month}_${first_yr_prnt}-${last_yr_prnt}_tmp.nc
         mon_tmp_files+=($mon_tmp_file)
         eval $NCRA -O --no_tmp_fl --hdr_pad=10000 -v $var_list -p $pathdat ${filenames[*]} $climodir/$mon_tmp_file &
-        pid+=($!)
+        if [ $grid_type == "tnx0.125" ]
+        then
+            wait $!
+        else
+            pid+=($!)
+        fi
     done
     for ((m=0;m<=11;m++))
     do
