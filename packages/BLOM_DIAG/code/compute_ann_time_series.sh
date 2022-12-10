@@ -278,6 +278,11 @@ do
                 fi
             done
             wait
+            for (( yr= ${YR_start}; yr<=${YR_end}; yr++ )); do
+                yr_prnt=$(printf "%04d" $yr)
+                outfile=${var}_${casename}_ANN_${filetype}_${yr_prnt}.nc
+                ncks -O -C -x -v parea $WKDIR/$outfile $WKDIR/$outfile
+            done
         fi
         # Max AMOC between 20-60N
         if [ $var == mmflxd ]; then
@@ -387,6 +392,7 @@ do
         fi
     fi
 done
+ncks -O -C -x -v parea $tsdir/$ann_ts_file $tsdir/$ann_ts_file
 
 script_end=`date +%s`
 runtime_s=`expr ${script_end} - ${script_start}`
