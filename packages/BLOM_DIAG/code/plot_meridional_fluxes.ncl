@@ -184,13 +184,13 @@ do i = 0,nvars-1
 
   res@tiYAxisString = A@long_name+" ["+A@units+"]"
 
-  if (vars(i).eq."mhflx") then
-    res@trYMinF             = -2.5
-    res@trYMaxF             = 2.5
-  else
-    res@trYMinF             = -75.0
-    res@trYMaxF             = 75.0
-  end if
+;  if (vars(i).eq."mhflx") then
+;    res@trYMinF             = -2.5
+;    res@trYMaxF             = 2.5
+;  else
+;    res@trYMinF             = -75.0
+;    res@trYMaxF             = 75.0
+;  end if
 
 
   ; REGION 1
@@ -217,6 +217,14 @@ do i = 0,nvars-1
   end if
   plot(2) = gsn_csm_xy(wks,lat,data,res)
 
+  ; REGION 4
+  res@gsnLeftString = region(3)
+  data(0,:) = A(3,:)
+  if (compare .eq. "USER") then
+    data(1,:) = B(3,:)
+  end if
+  plot(3) = gsn_csm_xy(wks,lat,data,res)
+
   gsn_panel(wks,(/plot/),(/2,2/),pan)
   delete(data)
   delete(plot)
@@ -227,11 +235,11 @@ do i = 0,nvars-1
   txres@txFontColor   = "blue"
   txres@txJust        = "centerright"
   case1text = case1+" ("+yrs_ave1+")"
-  gsn_text_ndc(wks,case1text,0.9,0.1,txres)
+  gsn_text_ndc(wks,case1text,0.7,0.03,txres)
   if (compare.eq."USER") then
     case2text = case2+" ("+yrs_ave2+")"
     txres@txFontColor   = "red"
-    gsn_text_ndc(wks,case2text,0.9,0.075,txres)
+    gsn_text_ndc(wks,case2text,0.7,0.01,txres)
   end if
 
   frame (wks)
