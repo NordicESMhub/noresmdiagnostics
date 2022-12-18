@@ -182,7 +182,7 @@ do i = 0, nvars-1
    plot = new(ncases,graphic)                        ; create a plot array
 
    res                     = True
-;   res@gsnDraw             = False            ; don't draw
+;   res@gsnDraw            = False            ; don't draw
    res@gsnFrame            = False            ; don't advance frame
    res@tiYAxisString       = A@long_name+" ["+A@units+"]"
    res@tiXAxisString       = "Years"
@@ -235,7 +235,7 @@ do i = 0, nvars-1
          resB@gsnRightString            = ""
 
          plot(0) = gsn_csm_x2y2(wks,pyrs1_tot,pyrs2_tot,data(0,:),data(1,:),res,resB)
-         delete (data)
+         delete(data)
       else
          res@gsnDraw                    = False
          res@trXMinF                    = min((/min(fyr1),min(fyr2)/))

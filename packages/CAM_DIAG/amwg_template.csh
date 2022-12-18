@@ -1,7 +1,7 @@
 #!/bin/csh
 # file: amwg_template.csh
 # Last updated: Johan Liakka, Nov 2017
-# Last updated: Yanchun He, Sept. 2020
+# Last updated: Yanchun He, Dec 2022
 #
 # Based on file: diag140804.csh
 # Updated: 2014/08/04
@@ -242,6 +242,11 @@ set test_first_yr_ts = fyr_of_ts_test
 set test_last_yr_ts = lyr_of_ts_test
 set cntl_first_yr_ts = fyr_of_ts_cntl
 set cntl_last_yr_ts = lyr_of_ts_cntl
+
+# Control if align the USER case time series to the TEST case (fyr1)
+# Valide values: [0 (default) | 1]
+# YH, Dec 2022
+set NO_ALIGN = if_align_ts_flag
 
 # ********************
 # *** Web options ***
