@@ -246,7 +246,7 @@ set cntl_last_yr_ts = lyr_of_ts_cntl
 # Control if align the USER case time series to the TEST case (fyr1)
 # Valide values: [0 (default) | 1]
 # YH, Dec 2022
-set NO_ALIGN = if_align_ts_flag
+setenv NO_ALIGN if_align_ts_flag
 
 # ********************
 # *** Web options ***

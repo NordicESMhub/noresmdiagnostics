@@ -173,27 +173,27 @@ do i = 0, nvars-1
    wks  = gsn_open_wks("ps",wkdir+"/"+plotname) ; send graphics to PS file
    plot = new(ncases,graphic)                        ; create a plot array
 
-   res                     = True
-   res@gsnDraw            = False            ; don't draw
-   res@gsnFrame            = False            ; don't advance frame
-;   res@pmLegendSide           = "Right"
-;   res@pmLegendWidthF         = 0.15
-;   res@pmLegendDisplayMode    = "Always"
-;   res@lgPerimOn              = False
-;   res@lgLabelFontHeightF     = 0.015
-   res@trXReverse             = False
-;      res@pmLegendHeightF        = 0.12
-;      res@xyExplicitLegendLabels = (/case1/)
-      res@xyLineThicknessF      = 2.
-;      res@pmLegendParallelPosF   = 0.1
-      if (color_type .eq. "COLOR") then
-         res@xyLineColor           = "blue"
-         res@xyDashPattern         = 0
-      else
-         res@xyMonoLineColor      = True
-         res@xyLineColor          = "black"
-         res@xyDashPatterns       = 0
-      end if
+   res                      = True
+   res@gsnDraw              = False            ; don't draw
+   res@gsnFrame             = False            ; don't advance frame
+;  res@pmLegendSide         = "Right"
+;  res@pmLegendWidthF       = 0.15
+;  res@pmLegendDisplayMode  = "Always"
+;  res@lgPerimOn            = False
+;  res@lgLabelFontHeightF   = 0.015
+   res@trXReverse           = False
+;  res@pmLegendHeightF      = 0.12
+;  res@xyExplicitLegendLabels   = (/case1/)
+   res@xyLineThicknessF     = 2.
+;  res@pmLegendParallelPosF = 0.1
+   if (color_type .eq. "COLOR") then
+      res@xyLineColor       = "blue"
+      res@xyDashPattern     = 0
+   else
+      res@xyMonoLineColor   = True
+      res@xyLineColor       = "black"
+      res@xyDashPatterns    = 0
+   end if
    if (compare .eq."OBS") then
       plot = gsn_csm_xy(wks,pyrs1,A,res)
    else
@@ -234,7 +234,7 @@ do i = 0, nvars-1
          res@tmXBMajorLineColor         = "blue"
          res@tmXBMinorLineColor         = "blue"
          res@tmXBLabelFontColor         = "blue"
-         res@pmLegendOrthogonalPosF = -0.9
+         res@pmLegendOrthogonalPosF     = -0.9
 
          resB = res
          resB@trXMinF                   = fyr2
@@ -265,8 +265,8 @@ do i = 0, nvars-1
         if (time_stamp .eq. "True") then
             infoTimeStamp(wks,0.011,"DIAG Version: "+version)
         end if
-         draw(plot(0))
       end if
+      draw(plot(0))
    end if
 
 ;   pan = True
