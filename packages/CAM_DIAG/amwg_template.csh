@@ -19,8 +19,15 @@ if ( `echo "$MACHINE" |grep 'ipcc'` != '' ) then
     setenv ncksbin  `which ncks`
     setenv nco_dir  `dirname $ncksbin`
     setenv cdo_dir  /opt/cdo201/bin
-else if ( `echo "$MACHINE" |grep 'login[0-9].nird'` != '' ) then
+else if ( `echo "$MACHINE" |grep 'login[0-9]-nird-tos|login[0-9]-nird-trd'` != '' ) then
     set MACHINE = 'login.nird'
+    setenv NCARG_ROOT /usr
+    setenv NCARG_COLORMAPS $NCARG_ROOT/lib/ncarg/colormaps
+    setenv ncksbin  `which ncks`
+    setenv nco_dir  `dirname $ncksbin`
+    setenv cdo_dir  /usr/local/bin
+else if ( `echo "$MACHINE" |grep 'login[0-9]-nird-lmd'` != '' ) then
+    set MACHINE = 'nird-lmd'
     setenv NCARG_ROOT /usr
     setenv NCARG_COLORMAPS $NCARG_ROOT/lib/ncarg/colormaps
     setenv ncksbin  `which ncks`

@@ -19,6 +19,13 @@ else if ( `echo "$MACHINE" |grep 'login[0-9].nird'` != '' ) then
     setenv ncksbin  `which ncks`
     setenv ncclimo_dir  `dirname $ncksbin`
     setenv ncksbin $ncclimo_dir
+else if ( `echo "$MACHINE" |grep 'login[0-9]-nird-lmd'` != '' ) then
+    set MACHINE = 'nird-lmd'
+    setenv NCARG_ROOT /usr
+    setenv NCARG_COLORMAPS $NCARG_ROOT/lib/ncarg/colormaps
+    setenv ncksbin  `which ncks`
+    setenv nco_dir  `dirname $ncksbin`
+    setenv ncksbin $ncclimo_dir
 else if ( `echo "$MACHINE" |grep 'betzy'` != '' )  then
     set MACHINE = 'betzy'
     module -q purge
