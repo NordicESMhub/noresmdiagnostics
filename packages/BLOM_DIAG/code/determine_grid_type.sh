@@ -23,7 +23,7 @@ echo " casename  = $casename"
 echo " "
 
 gp_tn0083=14934240 # (4320x3457) number of gridpoints on tn0.083 grids
-gp_tn0125=6235200  # (2880x2165) number of gridpoints on tn0.125 grids
+gp_tn0125=6223680  # (2880x2165) number of gridpoints on tn0.125 grids
 gp_tn025=1660320   # (1440x1153) number of gridpoints on tn0.25  grids (multiple choices)
 gp_tn1=138600      # (360x385)   number of gridpoints on tn1     grids (multiple choices)
 gp_tn15=61680      # (240x257)   number of gridpoints on tn1.5   grids
@@ -31,7 +31,7 @@ gp_tn2=34740       # (180x193)   number of gridpoints on tn2     grids
 gp_g1=122880       # (320x384)   number of gridpoints on g1      grids (multiple choices)
 gp_g3=11600        # (100x116)   number of gridpoints on g3      grids
 
-nmiss_tn0125v4=2604394
+nmiss_tn0125v4=2591643
 nmiss_tn025v1=682899
 nmiss_tn025v3=681867
 nmiss_tn025v4=682843

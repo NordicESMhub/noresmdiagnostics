@@ -57,7 +57,13 @@ echo "The following files are linked:"
 for dname in ${dfolders[*]}
 do
     #rm -rf $ROOT_DIR/packages/$dname
-    [ -h $ROOT_DIR/packages/$dname ] && rm -rf $ROOT_DIR/packages/$dname
+    if [ -h $ROOT_DIR/packages/$dname ];then
+        rm -f $ROOT_DIR/packages/$dname
+    elif [ -d $ROOT_DIR/packages/$dname ];then
+        echo "** WARNING: data files/folders alreay exist **"
+        echo "**                   EXIT                   **"
+        exit 1
+    fi
     if [ -d $DATA_ROOT/$dname ];then    # NOTE, this does not work for relative path
         ln -sf $DATA_ROOT/$dname $ROOT_DIR/packages/$dname >/dev/null 2>&1
         [ $? -ne 0 ] && echo " *** ERROR linking $DATA_ROOT/$dname ***" && exit 1
