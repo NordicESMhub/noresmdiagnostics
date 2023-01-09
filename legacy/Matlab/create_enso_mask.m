@@ -2,6 +2,7 @@ clear all
 close all
 
 % Create the mask for enso indices 3 and 3.4
+index_type = '3';
 index_type = '34';
 gridtypes  = {'gx1v5','gx1v6','gx3v7','tnx0.083v1','tnx0.25v1','tnx0.25v3','tnx0.25v4','tnx1.5v1','tnx1v1','tnx1v2','tnx1v3','tnx1v4','tnx2v1'};
 
@@ -9,10 +10,12 @@ gridtypes  = {'gx1v5','gx1v6','gx3v7','tnx0.083v1','tnx0.25v1','tnx0.25v3','tnx0
 
 ng = 1;
 for ig = 1:ng
- gridtype = 'tnx1v1'; % gridtypes{ig};
+ gridtype = 'tnx0.125v4'; % gridtypes{ig};
  disp(gridtype)
- infile   = strcat('/projects/NS2345K/noresm_diagnostics_dev/MICOM_DIAG/grid_files/',gridtype,'/PlioMIP2/grid.nc');
- outfile  = strcat('/projects/NS2345K/noresm_diagnostics_dev/MICOM_DIAG/grid_files/',gridtype,'/PlioMIP2/mask_nino',index_type,'.nc');
+ %infile   = strcat('/cluster/shared/noresm/diagnostics/noresm/packages/BLOM_DIAG/grid_files/',gridtype,'/grid.nc');
+ %outfile  = strcat('/cluster/shared/noresm/diagnostics/noresm/packages/BLOM_DIAG/grid_files/',gridtype,'/mask_nino',index_type,'.nc');
+ infile   = strcat('/trd-project1/NS2345K/www/diagnostics/inputdata/BLOM_DIAG/grid_files/',gridtype,'/grid.nc');
+ outfile  = strcat('/trd-project1/NS2345K/www/diagnostics/inputdata/BLOM_DIAG/grid_files/',gridtype,'/mask_nino',index_type,'.nc');
 
  plon  = ncread(infile,'plon');
  plat  = ncread(infile,'plat');
