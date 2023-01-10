@@ -14,7 +14,7 @@ if [ "$(echo $HOST |grep 'ipcc.nird')" ];then
 elif [ "$(echo $HOST |grep 'login[0-9].nird')" ];then
     export NCARG_ROOT=/usr
     export NCARG_COLORMAPS=$NCARG_ROOT/lib/ncarg/colormaps
-    export PATH=/usr/bin:/usr/local/bin
+    export PATH=/usr/bin:/usr/local/bin:/opt
 elif [ "$(echo $HOST |grep 'login[0-9]-nird-lmd')" ];then
     export NCARG_ROOT=/usr
     export NCARG_COLORMAPS=$NCARG_ROOT/lib/ncarg/colormaps

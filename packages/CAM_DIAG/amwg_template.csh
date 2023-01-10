@@ -25,7 +25,7 @@ else if ( `echo "$MACHINE" |grep 'login[0-9]-nird-tos|login[0-9]-nird-trd'` != '
     setenv NCARG_COLORMAPS $NCARG_ROOT/lib/ncarg/colormaps
     setenv ncksbin  `which ncks`
     setenv nco_dir  `dirname $ncksbin`
-    setenv cdo_dir  /usr/local/bin
+    setenv cdo_dir  /opt
 else if ( `echo "$MACHINE" |grep 'login[0-9]-nird-lmd'` != '' ) then
     set MACHINE = 'nird-lmd'
     setenv NCARG_ROOT /usr
@@ -988,7 +988,17 @@ if ($CLIMO_TIME_SERIES_SWITCH != ONLY_TIME_SERIES) then
     set cntl_first_yr_prnt = `printf "%04d" ${cntl_first_yr}`
     set cntl_last_yr_prnt = `printf "%04d" ${cntl_last_yr}`
   endif
+else
+  set test_first_yr_prnt = `printf "%04d" ${test_first_yr_ts}`
+  set test_last_yr_prnt = `printf "%04d" ${test_last_yr_ts}`
+
+  if ($CNTL == USER) then
+    set cntl_first_yr_prnt = `printf "%04d" ${cntl_first_yr_ts}`
+    set cntl_last_yr_prnt = `printf "%04d" ${cntl_last_yr_ts}`
+  endif
+endif
   
+if ($CLIMO_TIME_SERIES_SWITCH != ONLY_TIME_SERIES) then
   echo "DETERMINE ATTRIBUTES FOR HISTORY FILES"
   echo ' '
 
@@ -1595,7 +1605,7 @@ if ($web_pages == 0) then
       if (! -e $WEBDIR) mkdir -m 775 $WEBDIR
       if (-e $WEBDIR && `stat -c %a $WEBDIR` != 775 ) chmod 775 $WEBDIR
       cd $WEBDIR
-      $HTML_HOME/setup_2models $test_casename $cntl_casename $image yrs${test_first_yr}to${test_end} yrs${cntl_first_yr}to${cntl_end}
+      $HTML_HOME/setup_2models $test_casename $cntl_casename $image yrs${test_first_yr_ts}to${test_last_yr_ts} yrs${cntl_first_yr_ts}to${cntl_last_yr_ts}
       cd $test_path_diag
       set tarfile = ts${BEGYRS[1]}to${ENDYRS[1]}-${cntl_casename}.tar
     endif
