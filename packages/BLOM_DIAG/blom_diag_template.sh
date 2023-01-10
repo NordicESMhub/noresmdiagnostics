@@ -269,10 +269,10 @@ if [ $CNTL == USER ]; then
 fi
 
 # Set required variables for climatology and time series
-required_vars_climo="depth_bnds,sealv,templvl,salnlvl,mmflxd,region,temp,saln,dz,sst,sss,mlts,mhflx,msflx"
-required_vars_climo_ann="depth_bnds,sealv,templvl,salnlvl,mmflxd,region,mhflx,msflx,mlts"
+required_vars_climo="depth_bnds,sealv,templvl,salnlvl,mmflxd,temp,saln,dz,sst,sss,mlts,mhflx,msflx"
+required_vars_climo_ann="depth_bnds,sealv,templvl,salnlvl,mmflxd,mhflx,msflx,mlts"
 required_vars_climo_mon="temp,saln,dz,sst,sss,mlts"
-required_vars_ts_ann="depth_bnds,time,section,mmflxd,voltr,temp,saln,templvl,salnlvl,region,dp,sst,sss,tempga,salnga,sstga,sssga"
+required_vars_ts_ann="depth_bnds,time,section,mmflxd,voltr,temp,saln,templvl,salnlvl,dp,sst,sss,tempga,salnga,sstga,sssga"
 
 # Check which sets should be plotted based on CLIMO_TIME_SERIES_SWITCH
 if [ $CLIMO_TIME_SERIES_SWITCH == ONLY_CLIMO ]; then

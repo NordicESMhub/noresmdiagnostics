@@ -33,11 +33,11 @@ echo " ann_mode = $ann_mode"
 echo " mon_mode = $mon_mode"
 echo " "
 
-script_start=`date +%s`
+script_start=$(date +%s)
 
 # Read the ascii grid description (created in determine_grid_type.sh)
 if [ -z $PGRIDPATH ]; then
-    grid_type=`cat $WKDIR/attributes/grid_${casename}`
+    grid_type=$(awk 'NR==1' $WKDIR/attributes/grid_${casename})
     grid_file=$DIAG_GRID/$grid_type/grid.nc
 else
     grid_file=$PGRIDPATH/grid.nc
