@@ -164,7 +164,6 @@ if [ $filetype == hm ]; then
         echo "Climatological weighted annual mean of $var_list_ann"
         if [ $gp -gt 1000000 ];then
             for var in $(echo $var_list_ann | sed 's/,/ /g') ; do
-                #eval $NCRA -O --no_tmp_fl --hdr_pad=10000 -v $var -p $pathdat ${filenames[*]} $climodir/var_tmp.nc &
                 $NCRA -O -w 31,28,31,30,31,30,31,31,30,31,30,31 --no_tmp_fl --hdr_pad=10000 -v $var -p $climodir ${mon_tmp_files[*]} $climodir/var_tmp.nc &
                 wait $!
                 $NCKS -A -v $var $climodir/var_tmp.nc $climodir/$ann_avg_file &
@@ -212,6 +211,7 @@ if [ $filetype == hm ]; then
             exit 1
         fi
     done
+    rm $climodir/var_tmp.nc
 fi
 
 script_end=`date +%s`
