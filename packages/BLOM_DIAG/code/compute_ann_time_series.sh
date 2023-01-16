@@ -177,7 +177,7 @@ do
                     for var in $(echo $var_list | sed 's/,/ /g') ; do
                         eval $NCRA -O --no_tmp_fl --hdr_pad=10000 -w 31,28,31,30,31,30,31,31,30,31,30,31 -v $var -p $pathdat ${filenames[*]} $WKDIR/var_tmp.nc &
                         wait $!
-                        ncks -A -v $var $WKDIR/var_tmp.nc $WKDIR/${casename}_ANN_${yr_prnt}.nc &
+                        $NCKS -A -v $var $WKDIR/var_tmp.nc $WKDIR/${casename}_ANN_${yr_prnt}.nc &
                         wait $!
                     done
                 else
