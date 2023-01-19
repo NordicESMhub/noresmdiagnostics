@@ -454,12 +454,12 @@ elif [ $set_1 -eq 1 ] && [ -f $CLIMO_TS_DIR1/$ANN_TS_FILE1 ]; then
 fi
 
 # set_2: ANN_AVG_FILE
-ANN_AVG_FILE1=${CASENAME1}_ANN_${FYR_PRNT_CLIMO}-${LYR_PRNT_CLIMO}_climo_h.nc
+ANN_AVG_FILE1=${CASENAME1}_ANN_${FYR_PRNT_CLIMO1}-${LYR_PRNT_CLIMO1}_climo_h.nc
 if [ $set_2 -eq 1 ] && [ ! -f $CLIMO_TS_DIR1/$ANN_AVG_FILE1 ]; then
     echo "$CLIMO_TS_DIR1/$ANN_AVG_FILE1 not found: skipping set_2"
     set_2=0
 elif [ $set_2 -eq 1 ] && [ -f $CLIMO_TS_DIR1/$ANN_AVG_FILE1 ]; then
-    ANN_AVG_FILE2=${CASENAME2}_ANN_${FYR_PRNT_CLIMO}-${LYR_PRNT_CLIMO}_climo_h.nc
+    ANN_AVG_FILE2=${CASENAME2}_ANN_${FYR_PRNT_CLIMO2}-${LYR_PRNT_CLIMO2}_climo_h.nc
     if [ $CNTL == USER ] && [ ! -f $CLIMO_TS_DIR2/$ANN_AVG_FILE2 ]; then
         echo "$CLIMO_TS_DIR2/$ANN_AVG_FILE2 not found: skipping set_2"
         set_2=0
