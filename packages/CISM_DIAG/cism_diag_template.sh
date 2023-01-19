@@ -507,10 +507,10 @@ cp $DIAG_HTML/index1.html $WEBDIR/index.html
 cdate=`date`
 sed -i "s/test_run/$CASENAME1/g" $WEBDIR/index.html
 sed -i "s/date_and_time/$cdate/g" $WEBDIR/index.html
-if [ $CLIMO_TIME_SERIES_SWITCH == ONLY_TIME_SERIES ]; then
+#if [ $CLIMO_TIME_SERIES_SWITCH == ONLY_TIME_SERIES ]; then
     sed -i "s/FY1/$FIRST_YR_TS1/g" $WEBDIR/index.html
     sed -i "s/LY1/$LAST_YR_TS1/g" $WEBDIR/index.html
-fi
+#fi
 if [ $CNTL == USER ]; then
     sed -i "12i<br><b>and $CASENAME2 yrs${FIRST_YR_CLIMO2}to${LAST_YR_CLIMO2}<b><br>" $WEBDIR/index.html
 fi
