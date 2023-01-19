@@ -210,20 +210,20 @@ do i = 0, nvars-1
       res@gsnRightStringFontColor       = "red"
       res@gsnRightStringFontHeightF     = 0.02
       res@gsnRightStringOrthogonalPosF  = 0.02
-         res@tiYAxisString          = "["+A@units+"]"
-         res@tiXAxisString          = "Years"
-         res@tiMainString           = A@long_name+" ("+season+")"
-         res@tiXAxisFontHeightF     = 0.02
-         res@tiYAxisFontHeightF     = 0.02
-         res@tiMainFontHeightF      = 0.02
-         res@txFontHeightF          = 0.01
-         res@gsnYRefLine            = 0.0
-         res@trYMinF                    = min((/min(A),min(B)/))
-         res@trYMaxF                    = max((/max(A),max(B)/))
-         if (season.eq."ANN") then
-            res@trYMaxF                = y_range_max(i)
-            res@trYMinF                = y_range_min(i)
-         end if
+      res@tiYAxisString                 = "["+A@units+"]"
+      res@tiXAxisString                 = "Years"
+      res@tiMainString                  = A@long_name+" ("+season+")"
+      res@tiXAxisFontHeightF            = 0.02
+      res@tiYAxisFontHeightF            = 0.02
+      res@tiMainFontHeightF             = 0.02
+      res@txFontHeightF                 = 0.01
+      res@gsnYRefLine                   = 0.0
+      res@trYMinF                       = min((/min(A),min(B)/))
+      res@trYMaxF                       = max((/max(A),max(B)/))
+      if (season.eq."ANN") then
+         res@trYMaxF                = y_range_max(i)
+         res@trYMinF                = y_range_min(i)
+      end if
       if (no_align.eq."0") then
          if (fyr1.ne.fyr2) then
             print("Warning: first yr in case2 time series is different from case1.")

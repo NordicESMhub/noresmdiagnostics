@@ -206,6 +206,8 @@ do i = 0, nvars-1
       res@gsnRightStringFontColor       = "red"
       res@gsnRightStringFontHeightF     = 0.02
       res@gsnRightStringOrthogonalPosF  = 0.02
+      res@trYMinF                       = min((/min(A),min(B)/))
+      res@trYMaxF                       = max((/max(A),max(B)/))
       if (no_align.eq."0") then
          if (fyr1.ne.fyr2) then
             print("Warning: first yr in case2 time series is different from case1.")
@@ -213,8 +215,6 @@ do i = 0, nvars-1
          end if
          res@trXMinF                    = fyr1
          res@trXMaxF                    = eyr1_tot
-         res@trYMinF                    = min((/min(A),min(B)/))
-         res@trYMaxF                    = max((/max(A),max(B)/))
 
          res@tmXBMajorLineColor         = "blue"
          res@tmXBMinorLineColor         = "blue"

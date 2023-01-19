@@ -3,11 +3,11 @@
 
 unset echo verbose
 # Modified by Johan Liakka, Oct 2017
-# Last Update, Yanchun He, Mar 2019
+# Last Update, Yanchun He, Dec 2022
 # Major updates include:
 # - Better performance climatology computation (ncclimo)
 # - Updated web interface for NIRD
-# - NCL updates to version 4.6.0.
+# - NCL updates to version 6.6.2.
 
 ## LOAD MODULES AND SET ENVIRONMENTS
 set MACHINE = "`uname -n` `hostname -f`"
@@ -71,6 +71,11 @@ set FIRST_YR_TS2 = fyr_of_ts_cntl
 set LAST_YR_TS2 = lyr_of_ts_cntl
 set BEGYRS = ( $FIRST_YR_TS1 $FIRST_YR_TS2 )           # Beginning years for line plots
 set ENDYRS = ( $LAST_YR_TS1 $LAST_YR_TS2 )           # Ending years for line plots
+
+# Control if align the USER case time series to the TEST case (fyr1)
+# Valide values: [0 (default) | 1]
+# YH, Dec 2022
+setenv NO_ALIGN if_align_ts_flag
 
 # Check if climo/time-series switch has been used by diag_run
 # -JL, Nov 2017 
