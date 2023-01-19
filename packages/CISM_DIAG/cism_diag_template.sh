@@ -49,6 +49,9 @@ TRENDS_ALL=ts_all_switch
 FIRST_YR_TS1=fyr_of_ts_test
 LAST_YR_TS1=lyr_of_ts_test
 
+# Control if align the USER case time series to the TEST case (fyr1)
+# Valide values: [0 (default) | 1]
+export NO_ALIGN=if_align_ts_flag
 # ---------------------------------------------------------
 # ROOT DIRECTORY FOR HISTORY FILES (CASE1)
 # ---------------------------------------------------------
@@ -307,23 +310,23 @@ if [ $TRENDS_ALL -eq 1 ]; then
 fi
 
 ## CISM yearly filenames are offset by one year
-echo "Adjust timestamps for CISM" 
-let "FIRST_YR_CLIMO1 = $FIRST_YR_CLIMO1 + 1"
-let "FIRST_YR_TS1 = $FIRST_YR_TS1 + 1"
-let "LAST_YR_TS1 = $LAST_YR_TS1 + 1"
-echo "FIRST_YR_CLIMO1 = ${FIRST_YR_CLIMO1}"
-echo "FIRST_YR_TS1  = ${FIRST_YR_TS1}"
-echo "LAST_YR_TS1  = ${LAST_YR_TS1}"
+#echo "Adjust timestamps for CISM" 
+#let "FIRST_YR_CLIMO1 = $FIRST_YR_CLIMO1 + 1"
+#let "FIRST_YR_TS1 = $FIRST_YR_TS1 + 1"
+#let "LAST_YR_TS1 = $LAST_YR_TS1 + 1"
+#echo "FIRST_YR_CLIMO1 = ${FIRST_YR_CLIMO1}"
+#echo "FIRST_YR_TS1  = ${FIRST_YR_TS1}"
+#echo "LAST_YR_TS1  = ${LAST_YR_TS1}"
 
 
-if [ $CNTL == USER ]; then
-    let "FIRST_YR_CLIMO2 = $FIRST_YR_CLIMO2 + 1"
-    let "FIRST_YR_TS2 = $FIRST_YR_TS2 + 1"
-    let "LAST_YR_TS2 = $LAST_YR_TS2 + 1"
-    echo "FIRST_YR_CLIMO2 = ${FIRST_YR_CLIMO2}"
-    echo "FIRST_YR_TS2  = ${FIRST_YR_TS2}"
-    echo "LAST_YR_TS2  = ${LAST_YR_TS2}"
-fi
+#if [ $CNTL == USER ]; then
+    #let "FIRST_YR_CLIMO2 = $FIRST_YR_CLIMO2 + 1"
+    #let "FIRST_YR_TS2 = $FIRST_YR_TS2 + 1"
+    #let "LAST_YR_TS2 = $LAST_YR_TS2 + 1"
+    #echo "FIRST_YR_CLIMO2 = ${FIRST_YR_CLIMO2}"
+    #echo "FIRST_YR_TS2  = ${FIRST_YR_TS2}"
+    #echo "LAST_YR_TS2  = ${LAST_YR_TS2}"
+#fi
 
 # Calculate climo last yr and define years with four digits
 let "LAST_YR_CLIMO1 = $FIRST_YR_CLIMO1 + $NYRS_CLIMO1 - 1"
@@ -456,7 +459,7 @@ if [ $set_2 -eq 1 ] && [ ! -f $CLIMO_TS_DIR1/$ANN_AVG_FILE1 ]; then
     echo "$CLIMO_TS_DIR1/$ANN_AVG_FILE1 not found: skipping set_2"
     set_2=0
 elif [ $set_2 -eq 1 ] && [ -f $CLIMO_TS_DIR1/$ANN_AVG_FILE1 ]; then
-    ANN_AVG_FILE2=${CASENAME2}_ANN_${FYR_PRNT_CLIMO}-${FYR_PRNT_CLIMO}_climo_h.nc
+    ANN_AVG_FILE2=${CASENAME2}_ANN_${FYR_PRNT_CLIMO}-${LYR_PRNT_CLIMO}_climo_h.nc
     if [ $CNTL == USER ] && [ ! -f $CLIMO_TS_DIR2/$ANN_AVG_FILE2 ]; then
         echo "$CLIMO_TS_DIR2/$ANN_AVG_FILE2 not found: skipping set_2"
         set_2=0
