@@ -21,7 +21,7 @@ The tool package consists of:
 
 **Author:**
 - Johan Liakka, NERSC (05/2018)
-- Yanchun He, NERSC (Last updated: Dec 2020)
+- Yanchun He, NERSC (Last updated: Jan 2023)
 
 **Contact information**
 Please report issues in the Github issue page, or contact yanchun.he@nersc.no

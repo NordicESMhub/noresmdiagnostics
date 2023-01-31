@@ -2,7 +2,7 @@
 #
 # DESCRIPTION: Wrapper script for NorESM diagnostics
 
-VERSION=2.1
+VERSION=2.2
 BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 ETC_DIR=$ROOT_DIR/etc
