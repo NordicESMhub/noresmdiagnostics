@@ -263,7 +263,7 @@ setenv trends_all_flag      ts_all_switch      # (1=ON,0=OFF)
 # Control if align the USER case time series to the TEST case (fyr1)
 # Valide values: [0 (default) | 1]
 # YH, Dec 2022
-#setenv NO_ALIGN    if_align_ts_flag
+#setenv TS_OFFSET    if_ts_offset_flag
 #**************************************************
 # 9b: The following setting are  necessary only if trends_all_flag=0
 # -JL, Nov 2017

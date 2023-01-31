@@ -75,7 +75,7 @@ set ENDYRS = ( $LAST_YR_TS1 $LAST_YR_TS2 )           # Ending years for line plo
 # Control if align the USER case time series to the TEST case (fyr1)
 # Valide values: [0 (default) | 1]
 # YH, Dec 2022
-setenv NO_ALIGN if_align_ts_flag
+setenv TS_OFFSET if_ts_offset_flag
 
 # Check if climo/time-series switch has been used by diag_run
 # -JL, Nov 2017 

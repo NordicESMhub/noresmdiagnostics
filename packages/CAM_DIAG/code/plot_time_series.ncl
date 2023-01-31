@@ -21,7 +21,7 @@ season     = getenv("SEASON")
 color_type = getenv("COLORTYPE")
 time_stamp = getenv("TIMESTAMP")
 version    = getenv("VERSION")
-no_align   = getenv("NO_ALIGN")
+ts_offset  = getenv("TS_OFFSET")
 
 inptr1 = addfile(test_input+"/"+"time_series_"+season+"_yrs"+syr1+"-"+eyr1+".nc","r")
 
@@ -224,7 +224,7 @@ do i = 0, nvars-1
          res@trYMaxF                = y_range_max(i)
          res@trYMinF                = y_range_min(i)
       end if
-      if (no_align.eq."0") then
+      if (ts_offset.eq."0") then
          if (fyr1.ne.fyr2) then
             print("Warning: first yr in case2 time series is different from case1.")
             print("Shifting case2 time axis to that of case1.")

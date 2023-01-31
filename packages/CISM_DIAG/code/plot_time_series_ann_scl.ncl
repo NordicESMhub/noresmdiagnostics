@@ -13,7 +13,7 @@ compare    = getenv("COMPARE")
 infile1    = getenv("INFILE1")
 case1      = getenv("CASE1")
 fyr1       = stringtointeger(getenv("FYR1"))
-no_align   = getenv("NO_ALIGN")
+ts_offset  = getenv("TS_OFFSET")
 
 inptr1 = addfile(infile1,"r")
 ncases = 1
@@ -165,7 +165,7 @@ do i = 0, nvars-1
       res@gsnRightStringOrthogonalPosF  = 0.02
       res@trYMinF                       = min((/min(A),min(B)/))
       res@trYMaxF                       = max((/max(A),max(B)/))
-      if (no_align.eq."0") then
+      if (ts_offset.eq."0") then
          if (fyr1.ne.fyr2) then
             print("Warning: first yr in case2 time series is different from case1.")
             print("Shifting case2 time axis to that of case1.")

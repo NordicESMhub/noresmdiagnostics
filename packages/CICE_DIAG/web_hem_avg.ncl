@@ -12,7 +12,7 @@ yr1 = getenv("YR1")
 yr2 = getenv("YR2")
 yr1_diff = getenv("YR1_DIFF")
 yr2_diff = getenv("YR2_DIFF")
-no_align = getenv("NO_ALIGN")
+ts_offset= getenv("TS_OFFSET")
 
 xyr1 = stringtointeger(yr1)
 xyr2 = stringtointeger(yr2)
@@ -571,7 +571,7 @@ if (ncases .gt. 1) then
    resb@tmYROn = False
    resb@tmXMajorGrid = False
 
-   if (no_align.eq."0") then
+   if (ts_offset.eq."0") then
 
        res@trXMinF = min((/min(x1),min(x1)/))
        res@trXMaxF = max((/max(x1),max(x1)/))
@@ -681,7 +681,7 @@ if (ncases .gt. 1) then
    res2b@tmXTLabelFontColor = "red"
    res2b@tmYROn = False
 
-   if (no_align.eq."0") then
+   if (ts_offset.eq."0") then
 
        res2@trYMinF = min((/min(y4),min(y4b)/))
        res2@trYMaxF = max((/max(y4),max(y4b)/))

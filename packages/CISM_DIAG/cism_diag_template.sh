@@ -51,7 +51,7 @@ LAST_YR_TS1=lyr_of_ts_test
 
 # Control if align the USER case time series to the TEST case (fyr1)
 # Valide values: [0 (default) | 1]
-export NO_ALIGN=if_align_ts_flag
+export TS_OFFSET=if_ts_offset_flag
 # ---------------------------------------------------------
 # ROOT DIRECTORY FOR HISTORY FILES (CASE1)
 # ---------------------------------------------------------

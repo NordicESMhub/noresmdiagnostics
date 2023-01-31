@@ -11,7 +11,7 @@ compare    = getenv("COMPARE")
 infile1    = getenv("INFILE1")
 case1      = getenv("CASE1")
 fyr1       = stringtointeger(getenv("FYR1"))
-no_align   = getenv("NO_ALIGN")
+ts_offset  = getenv("TS_OFFSET")
 
 inptr1 = addfile(infile1,"r")
 ncases = 1
@@ -91,7 +91,7 @@ do i=0, dimsizes(section)-1
        data = new((/ncases,ntimes_tot/),float)
        data(0,0:ntimes1-1) = voltr1(:,i)
        data(1,0:ntimes2-1) = voltr2(:,i)
-       if (no_align.eq."0") then
+       if (ts_offset.eq."0") then
            if (fyr1.ne.fyr2) then
              print("Warning: first yr in case2 time series is different from case1.")
              print("Shifting case2 time axis to that of case1.")
