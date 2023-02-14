@@ -49,6 +49,9 @@ TRENDS_ALL=ts_all_switch
 FIRST_YR_TS1=fyr_of_ts_test
 LAST_YR_TS1=lyr_of_ts_test
 
+# Control if align the USER case time series to the TEST case (fyr1)
+# Valide values: [0 (default) | 1]
+export TS_OFFSET=if_ts_offset_flag
 # ---------------------------------------------------------
 # ROOT DIRECTORY FOR HISTORY FILES (CASE1)
 # ---------------------------------------------------------

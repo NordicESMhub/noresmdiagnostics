@@ -2,7 +2,7 @@
 #
 # DESCRIPTION: Wrapper script for NorESM diagnostics
 
-VERSION=2.1
+VERSION=2.2
 BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 ETC_DIR=$ROOT_DIR/etc
@@ -43,6 +43,7 @@ fi
 RUN_DIAG=1
 TYPE_OF_DIAG=both
 RUN_ATM_CLM=1
+TS_OFFSET=0
 
 ## Welcome message
 echo "-------------------------------------------------"
@@ -89,6 +90,7 @@ if [ $# -eq 0 ] || [ $1 == "-h" ]; then
     echo "-w, --web-dir=DIR                             Specify the directory where the html should be published (OPTIONAL)."
     echo "                                              Default is --web-dir=$WEB_PATH"
     echo "--no-atm                                      Run CLM diagnostics without CAM data. Must be used for offline CLM simulations."
+    echo "--ts-offset                                   Add timeseries offset when the CONTROL and TEST cases have different time spans"
     echo " "
     echo "Examples:"
     echo "${THIS_SCRIPT_NAME} -m all -c N1850_f19_tn11_exp1 -s 21 -e 50 # model-obs diagnostics of case=N1850_f19_tn11_exp1 (climatology between yrs 21 and 50) for all model components."
@@ -249,6 +251,10 @@ else
                 RUN_ATM_CLM=0
                 shift
                 ;;
+            --ts-offset)
+                TS_OFFSET=1
+                shift
+                ;;
             -p|--passive-mode)
                 RUN_DIAG=0
                 final_message="RUNNING IN PASSIVE MODE: EXITING"
@@ -384,6 +390,7 @@ INPUT_DIR_NAMES1=(test_path_history_root SOURCE_1 DATA_ROOT1 pathdat_root1 pathd
 INPUT_DIR_NAMES2=(cntl_path_history_root SOURCE_2 DATA_ROOT2 pathdat_root2 pathdat_root2 pathdat_root2)
 DIAG_RUNTIMES=(null null null null null null)
 TRENDS_ALL_NAMES=(TRENDS_ALL trends_all_flag TRENDS_ALL TRENDS_ALL TRENDS_ALL TRENDS_ALL)
+TS_OFFSET_NAMES=(TS_OFFSET TS_OFFSET TS_OFFSET TS_OFFSET TS_OFFSET TS_OFFSET)
 runtime_s_tot=0
 
 # DETERMINE WHICH PACKAGE TO RUN
@@ -465,6 +472,7 @@ do
         INPUT_DIR_NAME1=${INPUT_DIR_NAMES1[icount]}
         INPUT_DIR_NAME2=${INPUT_DIR_NAMES2[icount]}
         TRENDS_ALL_NAME=${TRENDS_ALL_NAMES[icount]}
+        TS_OFFSET_NAME=${TS_OFFSET_NAMES[icount]}
                 
         # CREATE USER DIAGNOSTICS DIRECTORY
         if [ ! -d $DIAG_PATH/$MODEL_DIAG_CAPS ]; then
@@ -1070,7 +1078,15 @@ do
             echo "# TRENDS_ALL FLAG:" >> config.log
             echo "${TRENDS_ALL_NAME} = 1" >> config.log
         fi
-        
+
+        # CHANGE FLAG FOR ALINGING TIME SERIES TO THE LEFT
+        echo "-SETTING UP TIME-SERIES PLOTS ALIGNMENT (TO THE LEFT)"
+        if /usr/bin/grep -q if_ts_offset_flag $DIAG_FILE
+        then
+            /usr/bin/sed -i "s/if_ts_offset_flag/${TS_OFFSET}/g" $DIAG_FILE
+            echo "# TS_OFFSET FLAG:" >> config.log
+            echo "${TS_OFFSET_NAME} = $TS_OFFSET" >> config.log
+        fi
         # CHECK IF SCRIPT CAN BE EXECUTED
         if [ $RUN_DIAG -eq 1 ]; then
             final_message="RUNNING ${DIAG_FILE} ..."

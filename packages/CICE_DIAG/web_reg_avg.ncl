@@ -12,9 +12,12 @@ yr1 = getenv("YR1")
 yr2 = getenv("YR2")
 yr1_diff = getenv("YR1_DIFF")
 yr2_diff = getenv("YR2_DIFF")
+ts_offset= getenv("TS_OFFSET")
 
-xyr1 = stringtofloat(yr1)
-xyr1_diff = stringtofloat(yr1_diff)
+xyr1 = stringtointeger(yr1)
+xyr2 = stringtointeger(yr2)
+xyr1_diff = stringtointeger(yr1_diff)
+xyr2_diff = stringtointeger(yr2_diff)
 
 ; This version of the time series plots uses the offsets differently.
 ; Added flexibility allows the user to plot two time series of different
@@ -588,8 +591,10 @@ do nr=0,nregions-1
    if (ncases .gt. 1) then
       res@gsnRightString = case_to_cont
       res@gsnRightStringFontColor = "blue"
+      res@gsnRightStringOrthogonalPosF  = 0.01
       res@gsnLeftString = case_to_diff
       res@gsnLeftStringFontColor = "red"
+      res@gsnLeftStringOrthogonalPosF   = 0.15
 
       y1b@_FillValue = -999.
       y2b@_FillValue = -999.
@@ -597,15 +602,7 @@ do nr=0,nregions-1
       x2@units = "years"
       x2@long_name = "Years"
 
-;      print(x1)
-;      print(x2)
-
       res@tmXBLabelFontColor = "blue"
-
-      res@trYMinF = min((/min(y1),min(y1b)/))
-      res@trYMaxF = max((/max(y1),max(y1b)/))
-      resb@trYMinF = min((/min(y1),min(y1b)/))
-      resb@trYMaxF = max((/max(y1),max(y1b)/))
 
       resb@gsnRightString = " "
       resb@gsnLeftString = " "
@@ -614,24 +611,60 @@ do nr=0,nregions-1
       resb@tmXMajorGrid = False
       ;resb@tmYMajorGrid = False
 
-      res@trXMinF = min((/min(x1),min(x1)/))
-      res@trXMaxF = max((/max(x1),max(x1)/))
-      resb@trXMinF = min((/min(x2),min(x2)/))
-      resb@trXMaxF = max((/max(x2),max(x2)/))
+      if (ts_offset.eq."0") then
 
-      plot1 = gsn_csm_x2y2(wks1,x1,x2,y1,y1b,res,resb)
-      res@gsnRightString = " "
-      res@gsnLeftString = " "
-      res@trYMinF = min((/min(y2),min(y2b)/))
-      res@trYMaxF = max((/max(y2),max(y2b)/))
-      resb@trYMinF = min((/min(y2),min(y2b)/))
-      resb@trYMaxF = max((/max(y2),max(y2b)/))
-      plot2 = gsn_csm_x2y2(wks1,x1,x2,y2,y2b,res,resb)
-      res@trYMinF = min((/min(y3),min(y3b)/))
-      res@trYMaxF = max((/max(y3),max(y3b)/))
-      resb@trYMinF = min((/min(y3),min(y3b)/))
-      resb@trYMaxF = max((/max(y3),max(y3b)/))
-      plot3 = gsn_csm_x2y2(wks1,x1,x2,y3,y3b,res,resb)
+          res@trXMinF = min((/min(x1),min(x1)/))
+          res@trXMaxF = max((/max(x1),max(x1)/))
+          resb@trXMinF = min((/min(x2),min(x2)/))
+          resb@trXMaxF = max((/max(x2),max(x2)/))
+
+          res@trYMinF = min((/min(y1),min(y1b)/))
+          res@trYMaxF = max((/max(y1),max(y1b)/))
+          resb@trYMinF = min((/min(y1),min(y1b)/))
+          resb@trYMaxF = max((/max(y1),max(y1b)/))
+
+          plot1 = gsn_csm_x2y2(wks1,x1,x2,y1,y1b,res,resb)
+          res@gsnRightString = " "
+          res@gsnLeftString = " "
+          res@trYMinF = min((/min(y2),min(y2b)/))
+          res@trYMaxF = max((/max(y2),max(y2b)/))
+          resb@trYMinF = min((/min(y2),min(y2b)/))
+          resb@trYMaxF = max((/max(y2),max(y2b)/))
+          plot2 = gsn_csm_x2y2(wks1,x1,x2,y2,y2b,res,resb)
+          res@trYMinF = min((/min(y3),min(y3b)/))
+          res@trYMaxF = max((/max(y3),max(y3b)/))
+          resb@trYMinF = min((/min(y3),min(y3b)/))
+          resb@trYMaxF = max((/max(y3),max(y3b)/))
+          plot3 = gsn_csm_x2y2(wks1,x1,x2,y3,y3b,res,resb)
+      else
+          res@trXMinF   = min((/min(x1),min(x1)/))
+          res@trXMaxF   = max((/max(x1),max(x1)/))
+          resb@trXMinF  = min((/min(x2),min(x2)/))
+          resb@trXMaxF  = max((/max(x2),max(x2)/))
+          res@trYMinF   = min((/min(y1),min(y1b)/))
+          res@trYMaxF   = max((/max(y1),max(y1b)/))
+          resb@trYMinF  = min((/min(y1),min(y1b)/))
+          resb@trYMaxF  = max((/max(y1),max(y1b)/))
+          plot1 = gsn_csm_xy(wks1,x1,y1,res)
+          plot1b = gsn_csm_xy(wks1,x2,y1b,resb)
+          overlay(plot1,plot1b)
+  
+          res@trYMinF   = min((/min(y2),min(y2b)/))
+          res@trYMaxF   = max((/max(y2),max(y2b)/))
+          resb@trYMinF  = min((/min(y2),min(y2b)/))
+          resb@trYMaxF  = max((/max(y2),max(y2b)/))
+          plot2 = gsn_csm_xy(wks1,x1, y2,res)
+          plot2b = gsn_csm_xy(wks1,x2, y2b,resb)
+          overlay(plot2,plot2b)
+          res@trYMinF   = min((/min(y3),min(y3b)/))
+          res@trYMaxF   = max((/max(y3),max(y3b)/))
+          resb@trYMinF  = min((/min(y3),min(y3b)/))
+          resb@trYMaxF  = max((/max(y3),max(y3b)/))
+          plot3 = gsn_csm_xy(wks1,x1,y3 ,res)
+          plot3b = gsn_csm_xy(wks1,x2,y3b,resb)
+          overlay(plot3,plot3b)
+      end if
+
    else
       res@trXMinF = min((/x1/))
       res@trXMaxF = max((/x1/))
@@ -675,8 +708,10 @@ do nr=0,nregions-1
       if (ncases .gt. 1) then
          res2@gsnRightString = case_to_cont
          res2@gsnRightStringFontColor = "blue"
+         res2@gsnRightStringOrthogonalPosF  = 0.01
          res2@gsnLeftString = case_to_diff
          res2@gsnLeftStringFontColor = "red"
+         res2@gsnLeftStringOrthogonalPosF   = 0.15
 
          y4b@_FillValue = -999.
          y5b@_FillValue = -999.
@@ -687,32 +722,58 @@ do nr=0,nregions-1
          res2b = resb
          res2@tmXBLabelFontColor = "blue"
          res2b@tmXMajorGrid = False
-         ;res2b@tmYMajorGrid = False
-
-         res2@trYMinF = min((/min(y4),min(y4b)/))
-         res2@trYMaxF = max((/max(y4),max(y4b)/))
-         res2b@trYMinF = min((/min(y4),min(y4b)/))
-         res2b@trYMaxF = max((/max(y4),max(y4b)/))
-
          res2b@tmXTLabelFontColor = "red"
          res2b@tmYROn = False
 
-         res2@trXMinF = min((/min(x1),min(x1)/))
-         res2@trXMaxF = max((/max(x1),max(x1)/))
-         res2b@trXMinF = min((/min(x2),min(x2)/))
-         res2b@trXMaxF = max((/max(x2),max(x2)/))
+         if (ts_offset.eq."0") then
+            res2@trXMinF = min((/min(x1),min(x1)/))
+            res2@trXMaxF = max((/max(x1),max(x1)/))
+            res2b@trXMinF = min((/min(x2),min(x2)/))
+            res2b@trXMaxF = max((/max(x2),max(x2)/))
 
-         plot4 = gsn_csm_x2y2(wks2,x1,x2,y4,y4b,res2,res2b)
-         res2@trYMinF = min((/min(y5),min(y5b)/))
-         res2@trYMaxF = max((/max(y5),max(y5b)/))
-         res2b@trYMinF = min((/min(y5),min(y5b)/))
-         res2b@trYMaxF = max((/max(y5),max(y5b)/))
-         plot5 = gsn_csm_x2y2(wks2,x1,x2,y5,y5b,res2,res2b)
-         res2@trYMinF = min((/min(y6),min(y6b)/))
-         res2@trYMaxF = max((/max(y6),max(y6b)/))
-         res2b@trYMinF = min((/min(y6),min(y6b)/))
-         res2b@trYMaxF = max((/max(y6),max(y6b)/))
-         plot6 = gsn_csm_x2y2(wks2,x1,x2,y6,y6b,res2,res2b)
+            res2@trYMinF = min((/min(y4),min(y4b)/))
+            res2@trYMaxF = max((/max(y4),max(y4b)/))
+            res2b@trYMinF = min((/min(y4),min(y4b)/))
+            res2b@trYMaxF = max((/max(y4),max(y4b)/))
+            plot4 = gsn_csm_x2y2(wks2,x1,x2,y4,y4b,res2,res2b)
+            res2@trYMinF = min((/min(y5),min(y5b)/))
+            res2@trYMaxF = max((/max(y5),max(y5b)/))
+            res2b@trYMinF = min((/min(y5),min(y5b)/))
+            res2b@trYMaxF = max((/max(y5),max(y5b)/))
+            plot5 = gsn_csm_x2y2(wks2,x1,x2,y5,y5b,res2,res2b)
+            res2@trYMinF = min((/min(y6),min(y6b)/))
+            res2@trYMaxF = max((/max(y6),max(y6b)/))
+            res2b@trYMinF = min((/min(y6),min(y6b)/))
+            res2b@trYMaxF = max((/max(y6),max(y6b)/))
+            plot6 = gsn_csm_x2y2(wks2,x1,x2,y6,y6b,res2,res2b)
+         else
+            res2@trXMinF    = min((/min(x1),min(x1)/))
+            res2@trXMaxF    = max((/max(x1),max(x1)/))
+            res2b@trXMinF   = min((/min(x2),min(x2)/))
+            res2b@trXMaxF   = max((/max(x2),max(x2)/))
+
+            res2@trYMinF    = min((/min(y4),min(y4b)/))
+            res2@trYMaxF    = max((/max(y4),max(y4b)/))
+            res2b@trYMinF   = min((/min(y4),min(y4b)/))
+            res2b@trYMaxF   = max((/max(y4),max(y4b)/))
+            plot4    = gsn_csm_xy(wks2,x1,y4,res2)
+            plot4b   = gsn_csm_xy(wks2,x2,y4b,res2b)
+            overlay(plot4,plot4b)
+            res2@trYMinF    = min((/min(y5),min(y5b)/))
+            res2@trYMaxF    = max((/max(y5),max(y5b)/))
+            res2b@trYMinF   = min((/min(y5b),min(y5b)/))
+            res2b@trYMaxF   = max((/max(y5b),max(y5b)/))
+            plot5    = gsn_csm_xy(wks2,x1, y5,res2)
+            plot5b   = gsn_csm_xy(wks2,x2, y5b,res2b)
+            overlay(plot5,plot5b)
+            res2@trYMinF    = min((/min(y6),min(y6b)/))
+            res2@trYMaxF    = max((/max(y6),max(y6b)/))
+            res2b@trYMinF   = min((/min(y6b),min(y6b)/))
+            res2b@trYMaxF   = max((/max(y6b),max(y6b)/))
+            plot6    = gsn_csm_xy(wks2,x1,y6 ,res2)
+            plot6b   = gsn_csm_xy(wks2,x2,y6b,res2b)
+            overlay(plot6,plot6b)
+         end if
       else
          res2@trXMinF = min((/x1/))
          res2@trXMaxF = max((/x1/))
@@ -720,17 +781,17 @@ do nr=0,nregions-1
          plot5 = gsn_csm_xy(wks2,x1,y5,res2)
          plot6 = gsn_csm_xy(wks2,x1,y6,res2)
       end if
-      txres               = True
-      txres@txFontHeightF = 19
-      txres@txFontColor   = "blue"
-      gsn_text_ndc(wks2,case_to_cont,0.30,0.92,txres)
+;      txres               = True
+;      txres@txFontHeightF = 19
+;      txres@txFontColor   = "blue"
+;      gsn_text_ndc(wks2,case_to_cont,0.30,0.92,txres)
 
-      if (ncases .gt. 1) then
-         txres               = True
-         txres@txFontHeightF = 19
-         txres@txFontColor   = "red"
-         gsn_text_ndc(wks2,case_to_diff,0.80,0.92,txres)
-      end if
+;      if (ncases .gt. 1) then
+;         txres               = True
+;         txres@txFontHeightF = 19
+;         txres@txFontColor   = "red"
+;         gsn_text_ndc(wks2,case_to_diff,0.80,0.92,txres)
+;      end if
 
       gsn_panel(wks2,(/plot4,plot5,plot6/),(/3,1/),resP2)
 

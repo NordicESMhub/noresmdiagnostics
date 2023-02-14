@@ -49,6 +49,9 @@ TRENDS_ALL=ts_all_switch
 FIRST_YR_TS1=fyr_of_ts_test
 LAST_YR_TS1=lyr_of_ts_test
 
+# Control if align the USER case time series to the TEST case (fyr1)
+# Valide values: [0 (default) | 1]
+export TS_OFFSET=if_ts_offset_flag
 # ---------------------------------------------------------
 # ROOT DIRECTORY FOR HISTORY FILES (CASE1)
 # ---------------------------------------------------------
@@ -307,23 +310,23 @@ if [ $TRENDS_ALL -eq 1 ]; then
 fi
 
 ## CISM yearly filenames are offset by one year
-echo "Adjust timestamps for CISM" 
-let "FIRST_YR_CLIMO1 = $FIRST_YR_CLIMO1 + 1"
-let "FIRST_YR_TS1 = $FIRST_YR_TS1 + 1"
-let "LAST_YR_TS1 = $LAST_YR_TS1 + 1"
-echo "FIRST_YR_CLIMO1 = ${FIRST_YR_CLIMO1}"
-echo "FIRST_YR_TS1  = ${FIRST_YR_TS1}"
-echo "LAST_YR_TS1  = ${LAST_YR_TS1}"
+#echo "Adjust timestamps for CISM" 
+#let "FIRST_YR_CLIMO1 = $FIRST_YR_CLIMO1 + 1"
+#let "FIRST_YR_TS1 = $FIRST_YR_TS1 + 1"
+#let "LAST_YR_TS1 = $LAST_YR_TS1 + 1"
+#echo "FIRST_YR_CLIMO1 = ${FIRST_YR_CLIMO1}"
+#echo "FIRST_YR_TS1  = ${FIRST_YR_TS1}"
+#echo "LAST_YR_TS1  = ${LAST_YR_TS1}"
 
 
-if [ $CNTL == USER ]; then
-    let "FIRST_YR_CLIMO2 = $FIRST_YR_CLIMO2 + 1"
-    let "FIRST_YR_TS2 = $FIRST_YR_TS2 + 1"
-    let "LAST_YR_TS2 = $LAST_YR_TS2 + 1"
-    echo "FIRST_YR_CLIMO2 = ${FIRST_YR_CLIMO2}"
-    echo "FIRST_YR_TS2  = ${FIRST_YR_TS2}"
-    echo "LAST_YR_TS2  = ${LAST_YR_TS2}"
-fi
+#if [ $CNTL == USER ]; then
+    #let "FIRST_YR_CLIMO2 = $FIRST_YR_CLIMO2 + 1"
+    #let "FIRST_YR_TS2 = $FIRST_YR_TS2 + 1"
+    #let "LAST_YR_TS2 = $LAST_YR_TS2 + 1"
+    #echo "FIRST_YR_CLIMO2 = ${FIRST_YR_CLIMO2}"
+    #echo "FIRST_YR_TS2  = ${FIRST_YR_TS2}"
+    #echo "LAST_YR_TS2  = ${LAST_YR_TS2}"
+#fi
 
 # Calculate climo last yr and define years with four digits
 let "LAST_YR_CLIMO1 = $FIRST_YR_CLIMO1 + $NYRS_CLIMO1 - 1"
@@ -451,12 +454,12 @@ elif [ $set_1 -eq 1 ] && [ -f $CLIMO_TS_DIR1/$ANN_TS_FILE1 ]; then
 fi
 
 # set_2: ANN_AVG_FILE
-ANN_AVG_FILE1=${CASENAME1}_ANN_${FYR_PRNT_CLIMO}-${LYR_PRNT_CLIMO}_climo_h.nc
+ANN_AVG_FILE1=${CASENAME1}_ANN_${FYR_PRNT_CLIMO1}-${LYR_PRNT_CLIMO1}_climo_h.nc
 if [ $set_2 -eq 1 ] && [ ! -f $CLIMO_TS_DIR1/$ANN_AVG_FILE1 ]; then
     echo "$CLIMO_TS_DIR1/$ANN_AVG_FILE1 not found: skipping set_2"
     set_2=0
 elif [ $set_2 -eq 1 ] && [ -f $CLIMO_TS_DIR1/$ANN_AVG_FILE1 ]; then
-    ANN_AVG_FILE2=${CASENAME2}_ANN_${FYR_PRNT_CLIMO}-${FYR_PRNT_CLIMO}_climo_h.nc
+    ANN_AVG_FILE2=${CASENAME2}_ANN_${FYR_PRNT_CLIMO2}-${LYR_PRNT_CLIMO2}_climo_h.nc
     if [ $CNTL == USER ] && [ ! -f $CLIMO_TS_DIR2/$ANN_AVG_FILE2 ]; then
         echo "$CLIMO_TS_DIR2/$ANN_AVG_FILE2 not found: skipping set_2"
         set_2=0
@@ -504,10 +507,10 @@ cp $DIAG_HTML/index1.html $WEBDIR/index.html
 cdate=`date`
 sed -i "s/test_run/$CASENAME1/g" $WEBDIR/index.html
 sed -i "s/date_and_time/$cdate/g" $WEBDIR/index.html
-if [ $CLIMO_TIME_SERIES_SWITCH == ONLY_TIME_SERIES ]; then
+#if [ $CLIMO_TIME_SERIES_SWITCH == ONLY_TIME_SERIES ]; then
     sed -i "s/FY1/$FIRST_YR_TS1/g" $WEBDIR/index.html
     sed -i "s/LY1/$LAST_YR_TS1/g" $WEBDIR/index.html
-fi
+#fi
 if [ $CNTL == USER ]; then
     sed -i "12i<br><b>and $CASENAME2 yrs${FIRST_YR_CLIMO2}to${LAST_YR_CLIMO2}<b><br>" $WEBDIR/index.html
 fi
