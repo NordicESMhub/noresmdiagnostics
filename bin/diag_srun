@@ -1,9 +1,10 @@
 #!/bin/bash
 # Submit a preproc job for the diagnostic tool
 
-## Initial values
-DIAG_PATH="/cluster/work/users/$USER/diagnostics/out"
-LOG_PATH="/cluster/work/users/$USER/diagnostics/logs"
+## default values
+DIAG_PATH=/cluster/work/users/$USER/diagnostics/out
+LOG_PATH=/cluster/work/users/$USER/diagnostics/logs
+WEB_PATH=/trd-project1/NS2345K/www/diagnostics/noresm/USER
 
 if [ $# -eq 0 ] || [ $1 == "-h" ]; then
     echo " "
@@ -262,16 +263,16 @@ if [ $(echo $WEB_PATH |grep -P '\/trd-project\d\/') ]; then
     echo "WARNING: WEB_PATH is set to nird: $WEB_PATH"
     WEB_PATH0=$WEB_PATH
     WEB_PATH=/cluster/work/users/$USER/diagnostics/www
-    echo "WEB_PATH is now temporarily set to the path below, which is only reachable from the compute nodes."
+    echo "WEB_PATH is now temporarily set to the path below, which can be reached from the compute nodes."
     echo "$WEB_PATH."
-    echo "The created webpage will be moved to the path below, after the diagnostic is done."
+    echo "The created webpage will be transferred to the specified path below, after the diagnostic is done."
     echo "$WEB_PATH0/$CASE1"
     echo "**  **  **"
     echo " "
 fi
 if [ -z $ACCOUNT ]; then
     echo "**  **  **"
-    echo "WARNING: CPU acount is not specificed"
+    echo "WARNING: CPU account is not specificed"
     echo "Set default to #SBATCH --account=nn2345k"
     echo "**  **  **"
     echo " "
@@ -292,7 +293,7 @@ fi
 ## Remove and restore arguments passing to diag_run
 ARG=$(echo $ARG |sed 's/--time=\S*//g' |sed 's/--account=\S*//g')
 [ ! -z $WEB_PATH0 ] && ARG=$(echo $ARG |sed "s% *-w \S.* *% -w $WEB_PATH %" |sed "s% *--web-dir=\S.* *% --web-dir=$WEB_PATH %")
-                                                                             #sed "s% *--web-dir=\S.* *% --web-dir=$WEB_PATH %"
+
 YMD=$(date +%y%m%d)
 HMS=$(date +%H%M%S)
 
@@ -302,13 +303,15 @@ cat <<EOF >/tmp/submit$$.sh
 # Script template to submit a diagnostic job on Betzy #
 
 #SBATCH --account=$ACCOUNT
-#SBATCH --job-name=diagsrun-$CASE1
+#SBATCH --job-name=diagsrun
 #SBATCH --partition=preproc
 #SBATCH --ntasks=1 --cpus-per-task=12
 #SBATCH --mem-per-cpu=2G
 #SBATCH --time=$TIME
 #SBATCH --output=${LOG_PATH}/slurm-${YMD}-${HMS}.log
-#SBATCH --parsable 
+
+## --parsable will give only jobid and cluster name (if present)
+##SBATCH --parsable 
 
 ## safety settings:
 set -o errexit
@@ -326,7 +329,9 @@ EOF
 
 ## Submit job
 chmod 755 /tmp/submit$$.sh
-jobid=$(sbatch /tmp/submit$$.sh)
+rcode=$(sbatch /tmp/submit$$.sh)
+#reserve jobid for later dependency job (for rsync, not used yet)
+jobid=${rcode##* }
 rm -f /tmp/submit$$.sh
 
 # Log files

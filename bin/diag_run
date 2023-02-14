@@ -216,7 +216,7 @@ else
                 HISTORY_PATH1=`echo $1 | sed -e 's/^[^=]*=//g'`
                 shift
                 ;;
-                -i2)
+            -i2)
                 shift
                 if test $# -gt 0; then
                     HISTORY_PATH2=$1
