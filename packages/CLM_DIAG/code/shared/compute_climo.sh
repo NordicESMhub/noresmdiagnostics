@@ -109,7 +109,7 @@ do
 	fi
     fi
     mv $infile $outfile
-    $NCATTED -O -a yrs_averaged,global,c,c,"${first_yr}-${last_yr}" $outfile
+    $ncksbin/ncatted -O -a yrs_averaged,global,c,c,"${first_yr}-${last_yr}" $outfile
 done
        
 script_end=`date +%s`

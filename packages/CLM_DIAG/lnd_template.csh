@@ -26,6 +26,7 @@ else if ( `echo "$MACHINE" |grep 'betzy'` != '' )  then
     module -q load CDO/1.9.8-intel-2019b
     module -q load NCL/6.6.2-intel-2019b
     module unload HDF/4.2.14-GCCcore-8.3.0
+    module -q load ImageMagick/7.1.0-4-GCCcore-11.2.0
     setenv ncksbin  ${EBROOTNCO}/bin
     setenv ncclimo_dir  ${EBROOTNCO}/bin
 else

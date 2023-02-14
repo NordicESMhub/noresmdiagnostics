@@ -38,27 +38,6 @@ echo " tsdir    = $tsdir"
 echo " procdir  = $procdir"
 echo " "
 
-NCRA=`which ncra`
-if [ $? -ne 0 ]; then
-    echo "Could not find ncra (which ncra)"
-    echo "*** EXITING THE SCRIPT ***"
-    exit 1
-fi
-
-NCRCAT=`which ncrcat`
-if [ $? -ne 0 ]; then
-    echo "Could not find ncrcat (which ncrcat)"
-    echo "*** EXITING THE SCRIPT ***"
-    exit 1
-fi
-
-NCATTED=`which ncatted`
-if [ $? -ne 0 ]; then
-    echo "Could not find ncatted (which ncatted)"
-    echo "*** EXITING THE SCRIPT ***"
-    exit 1
-fi
-
 var_list=`cat $procdir/vars_ts_clm2`
 first_yr_prnt=`printf "%04d" ${first_yr}`
 last_yr_prnt=`printf "%04d" ${last_yr}`
@@ -106,7 +85,7 @@ do
 	    filename=${casename}.clm2.h0.${yr_prnt}-${mon}.nc
 	    filenames+=($filename)
 	done
-	eval $NCRA -O --no_tmp_fl --hdr_pad=10000 -w 31,28,31,30,31,30,31,31,30,31,30,31 -v $var_list -p $pathdat ${filenames[*]} $tsdir/${casename}_ANN_${yr_prnt}_tmp.nc &
+	eval $ncksbin/ncra -O --no_tmp_fl --hdr_pad=10000 -w 31,28,31,30,31,30,31,31,30,31,30,31 -v $var_list -p $pathdat ${filenames[*]} $tsdir/${casename}_ANN_${yr_prnt}_tmp.nc &
         pid+=($!)
         let iproc++
     done
@@ -114,7 +93,7 @@ do
     do
         wait ${pid[$m]}
 	if [ $? -ne 0 ]; then
-	    echo "ERROR in computing annual means from monthly history files: $NCRA -O --no_tmp_fl --hdr_pad=10000 -w 31,28,31,30,31,30,31,31,30,31,30,31 -v $var_list -p $pathdat $filenames $tsdir/${casename}_ANN_${yr_prnt}.nc"
+	    echo "ERROR in computing annual means from monthly history files: $ncksbin/ncra -O --no_tmp_fl --hdr_pad=10000 -w 31,28,31,30,31,30,31,31,30,31,30,31 -v $var_list -p $pathdat $filenames $tsdir/${casename}_ANN_${yr_prnt}.nc"
 	    echo "*** EXITING THE SCRIPT ***"
 	    exit 1
 	fi
@@ -127,16 +106,16 @@ done
 first_file=${casename}_ANN_${first_yr_prnt}_tmp.nc
 if [ -f $tsdir/$first_file ]; then
     echo "Merging all time series files..."
-    $NCRCAT --no_tmp_fl -O $tsdir/${casename}_ANN_????_tmp.nc $tsdir/${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}_ts.nc
+    $ncksbin/ncrcat --no_tmp_fl -O $tsdir/${casename}_ANN_????_tmp.nc $tsdir/${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}_ts.nc
     if [ $? -ne 0 ]; then
-	echo "ERROR in merging annual time-series files: $NCRCAT --no_tmp_fl -O $tsdir/${casename}_ANN_????_tmp.nc $tsdir/${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}_ts.nc"
+	echo "ERROR in merging annual time-series files: $ncksbin/ncrcat --no_tmp_fl -O $tsdir/${casename}_ANN_????_tmp.nc $tsdir/${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}_ts.nc"
 	echo "*** EXITING THE SCRIPT ***"
 	exit 1
     fi
     # Clean up
     rm $tsdir/${casename}_ANN_*_tmp.nc
 
-    $NCATTED -O -a yrs_averaged,global,c,c,"1" $tsdir/${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}_ts.nc
+    $ncksbin/ncatted -O -a yrs_averaged,global,c,c,"1" $tsdir/${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}_ts.nc
 fi
 
 script_end=`date +%s`
