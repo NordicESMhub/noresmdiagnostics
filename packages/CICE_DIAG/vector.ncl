@@ -67,7 +67,7 @@ do j = 0, nseasons-1
 ; Convert velocities from the POP grid to regular meridional grid
 ;--------------------------------------------------------------------
     
-;  if (hires .eq. 0) then
+  if (hires .eq. 0) then
      urot        = u_mean(:,:)     ; Copy coordinate variables
      vrot        = v_mean(:,:)
      urot        = u_mean(:,:)*cos(rot_ang) - v_mean(:,:)*sin(rot_ang)
@@ -76,17 +76,17 @@ do j = 0, nseasons-1
      urot@lat2d  = lat2d
      vrot@lon2d  = lon2d
      vrot@lat2d  = lat2d
-;  else
+  else
      ; Subsample the vectors for high-resolution data.
-;     urot        = u_mean(::3,::3)     ; Copy coordinate variables
-;     vrot        = v_mean(::3,::3)
-;     urot        = u_mean(::3,::3)*cos(rot_ang(::3,::3)) - v_mean(::3,::3)*sin(rot_ang(::3,::3))
-;     vrot        = u_mean(::3,::3)*sin(rot_ang(::3,::3)) + v_mean(::3,::3)*cos(rot_ang(::3,::3))
-;     urot@lon2d  = lon2d(::3,::3)
-;     urot@lat2d  = lat2d(::3,::3)
-;     vrot@lon2d  = lon2d(::3,::3)
-;     vrot@lat2d  = lat2d(::3,::3)
-;  end if
+     urot        = u_mean(::8,::8)     ; Copy coordinate variables
+     vrot        = v_mean(::8,::8)
+     urot        = u_mean(::8,::8)*cos(rot_ang(::8,::8)) - v_mean(::8,::8)*sin(rot_ang(::8,::8))
+     vrot        = u_mean(::8,::8)*sin(rot_ang(::8,::8)) + v_mean(::8,::8)*cos(rot_ang(::8,::8))
+     urot@lon2d  = lon2d(::8,::8)
+     urot@lat2d  = lat2d(::8,::8)
+     vrot@lon2d  = lon2d(::8,::8)
+     vrot@lat2d  = lat2d(::8,::8)
+  end if
   delete(u_mean)
   delete(v_mean)
   delete(rot_ang)

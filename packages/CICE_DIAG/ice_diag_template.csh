@@ -13,23 +13,33 @@ unset echo verbose
 set MACHINE = "`uname -n` `hostname -f`"
 if ( `echo "$MACHINE" |grep 'ipcc'` != '' ) then
     set MACHINE = 'ipcc.nird'
-    setenv NCARG_ROOT /opt/ncl66
-    setenv NCARG_COLORMAPS $NCARG_ROOT/lib/ncarg/colormaps
-    setenv PATH /usr/bin:/opt/ncl66/bin:/opt/cdo201/bin
+    if ( -f /conda/miniconda3/bin/ncl ) then
+        setenv NCARG_ROOT /conda/miniconda3
+        setenv NCARG_COLORMAPS $NCARG_ROOT/lib/ncarg/colormaps
+        setenv PATH /conda/miniconda3/bin:/usr/local/bin:/usr/bin
+        setenv UDUNITS2_XML_PATH /conda/miniconda3/share/udunits/udunits2.xml
+    else
+        setenv NCARG_ROOT /opt/ncl66
+        setenv NCARG_COLORMAPS $NCARG_ROOT/lib/ncarg/colormaps
+        setenv PATH /usr/bin:/opt/ncl66/bin:/opt/cdo201/bin
+    endif 
     setenv ncksbin  `which ncks`
     setenv ncclimo_dir  `dirname $ncksbin`
+    setenv ncksbin $ncclimo_dir
 else if ( `echo "$MACHINE" |grep 'login[0-9].nird'` != '' ) then
     set MACHINE = 'login.nird'
     setenv NCARG_ROOT /usr
     setenv NCARG_COLORMAPS $NCARG_ROOT/lib/ncarg/colormaps
     setenv ncksbin  `which ncks`
     setenv ncclimo_dir  `dirname $ncksbin`
+    setenv ncksbin $ncclimo_dir
 else if ( `echo "$MACHINE" |grep 'login[0-9]-nird-lmd'` != '' ) then
     set MACHINE = 'login-lmd'
     setenv NCARG_ROOT /usr
     setenv NCARG_COLORMAPS $NCARG_ROOT/lib/ncarg/colormaps
     setenv ncksbin  `which ncks`
     setenv ncclimo_dir  `dirname $ncksbin`
+    setenv ncksbin $ncclimo_dir
 else if ( `echo "$MACHINE" |grep 'betzy'` != '' )  then
     set MACHINE = 'betzy'
     module -q purge
@@ -103,7 +113,6 @@ endif
 setenv X1_OFF 0
 setenv X2_OFF 0
 
-setenv HIRES 1 # Should be set to 1 for tripolar grids -JL, Nov 2017
 
 #----------------------------
 #---- Set the pathnames  ----
@@ -132,6 +141,17 @@ setenv PLOT_ROOT  $SCRATCH/web_plots/$CASE_TO_CONT
 
 #--- The pre-processed data for the line plots will go here:
 setenv PRE_PROC_ROOT ${SCRIPT_HOME}/pre_process
+
+#--- Determine grid size
+set first_yr_prnt = `printf "%04d" ${FIRST_YR_CLIMO1}`
+set nj = `$ncksbin/ncks --trd -m -M ${DATA_ROOT1}/${CASE_TO_CONT}/ice/hist/${CASE_TO_CONT}.cice.h.${first_yr_prnt}-01.nc | grep -E -i ": nj, size =" | cut -f 7 -d ' ' | uniq |tr -d ','`
+set ni = `$ncksbin/ncks --trd -m -M ${DATA_ROOT1}/${CASE_TO_CONT}/ice/hist/${CASE_TO_CONT}.cice.h.${first_yr_prnt}-01.nc | grep -E -i ": ni, size =" | cut -f 7 -d ' ' | uniq |tr -d ','`
+@ gp = $nj * $ni
+if ($gp > 1000000) then  # for grids of 1/4 and 1/8 degrees
+    setenv HIRES 1
+else
+    setenv HIRES 0
+endif
 
 #--- These data files are now in the diagnostics directory
 #set SSMI_PATH = ${DIAG_HOME}/data/SSMI_fi_1x1d.nc

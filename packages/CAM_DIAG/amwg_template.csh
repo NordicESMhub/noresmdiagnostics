@@ -13,9 +13,16 @@ setenv DIAG_VERSION 140804  # version number YYMMDD
 set MACHINE = "`uname -n` `hostname -f`"
 if ( `echo "$MACHINE" |grep 'ipcc'` != '' ) then
     set MACHINE = 'ipcc.nird'
-    setenv NCARG_ROOT /opt/ncl66
-    setenv NCARG_COLORMAPS $NCARG_ROOT/lib/ncarg/colormaps
-    setenv PATH /usr/bin:/opt/ncl66/bin:/opt/cdo201/bin
+    if ( -f /conda/miniconda3/bin/ncl ) then
+        setenv NCARG_ROOT /conda/miniconda3
+        setenv NCARG_COLORMAPS $NCARG_ROOT/lib/ncarg/colormaps
+        setenv PATH /conda/miniconda3/bin:/usr/local/bin:/usr/bin
+        setenv UDUNITS2_XML_PATH /conda/miniconda3/share/udunits/udunits2.xml
+    else
+        setenv NCARG_ROOT /opt/ncl66
+        setenv NCARG_COLORMAPS $NCARG_ROOT/lib/ncarg/colormaps
+        setenv PATH /usr/bin:/opt/ncl66/bin:/opt/cdo201/bin
+    endif 
     setenv ncksbin  `which ncks`
     setenv nco_dir  `dirname $ncksbin`
     setenv cdo_dir  /opt/cdo201/bin
