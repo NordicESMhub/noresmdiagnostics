@@ -83,7 +83,7 @@ then
         <TH>Drake passage
         <TH>English channel
         <TH>Faroe Scotland channel
-        <TH>Florida Bahamas strit
+        <TH>Florida Bahamas strait
         <TH>Fram strait
     </TR>
     <TR>

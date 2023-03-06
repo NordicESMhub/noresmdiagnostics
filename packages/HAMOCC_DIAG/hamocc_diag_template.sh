@@ -8,13 +8,23 @@
 ## LOAD MODULES AND SET ENVIRONMENTS
 HOST="$(uname -n) $(hostname -f)"
 if [ "$(echo $HOST |grep 'ipcc.nird')" ];then
-    export NCARG_ROOT=/opt/ncl66
-    export NCARG_COLORMAPS=$NCARG_ROOT/lib/ncarg/colormaps
-    export PATH=/usr/bin:/opt/ncl66/bin:/opt/cdo201/bin
+    if [ -f /conda/miniconda3/bin/ncl ];then
+        export NCARG_ROOT=/conda/miniconda3
+        export NCARG_COLORMAPS=$NCARG_ROOT/lib/ncarg/colormaps
+        export PATH=/conda/miniconda3/bin:/usr/local/bin:/usr/bin
+    else
+        export NCARG_ROOT=/opt/ncl66
+        export NCARG_COLORMAPS=$NCARG_ROOT/lib/ncarg/colormaps
+        export PATH=/usr/bin:/opt/ncl66/bin:/opt/cdo201/bin
+    fi
 elif [ "$(echo $HOST |grep 'login[0-9].nird')" ];then
     export NCARG_ROOT=/usr
     export NCARG_COLORMAPS=$NCARG_ROOT/lib/ncarg/colormaps
     export PATH=/usr/bin:/usr/local/bin:/opt
+elif [ "$(echo $HOST |grep 'login[0-9]-nird-lmd')" ];then
+    export NCARG_ROOT=/usr
+    export NCARG_COLORMAPS=$NCARG_ROOT/lib/ncarg/colormaps
+    export PATH=/usr/bin:/usr/local/bin
 elif [ "$(echo $HOST |grep 'betzy')" ]; then
      module -q purge
      module -q load NCO/4.9.3-intel-2019b

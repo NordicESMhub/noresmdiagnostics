@@ -1,6 +1,6 @@
 #!/bin/bash
 
-script_start=`date +%s`
+script_start=$(date +%s)
 #
 # BLOM DIAGNOSTICS package: compute_mon_time_series.sh
 # PURPOSE: computes ENSO time series from monthly or daily history files
@@ -51,8 +51,9 @@ do
 done
 [ -z $filetag ] && echo "** NO ocean data found, EXIT ... **" && exit 1
 
+grid_type=$(awk 'NR==1' $WKDIR/attributes/grid_${casename})
 if [ -z $PGRIDPATH ]; then
-    mask_file=$DIAG_GRID/`cat $WKDIR/attributes/grid_${casename}`/mask_nino${ENSOidx}.nc
+    mask_file=$DIAG_GRID/$grid_type/mask_nino${ENSOidx}.nc
 else
     mask_file=$PGRIDPATH/mask_nino${ENSOidx}.nc
 fi

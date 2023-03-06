@@ -6,14 +6,28 @@
 set MACHINE = "`uname -n` `hostname -f`"
 if ( `echo "$MACHINE" |grep 'ipcc'` != '' ) then
     set MACHINE = 'ipcc.nird'
-    setenv NCARG_ROOT /opt/ncl66
-    setenv NCARG_COLORMAPS $NCARG_ROOT/lib/ncarg/colormaps
-    setenv PATH /usr/bin:/opt/ncl66/bin:/opt/cdo201/bin
+    if ( -f /conda/miniconda3/bin/ncl ) then
+        setenv NCARG_ROOT /conda/miniconda3
+        setenv NCARG_COLORMAPS $NCARG_ROOT/lib/ncarg/colormaps
+        setenv PATH /conda/miniconda3/bin:/usr/local/bin:/usr/bin
+        setenv UDUNITS2_XML_PATH /conda/miniconda3/share/udunits/udunits2.xml
+    else
+        setenv NCARG_ROOT /opt/ncl66
+        setenv NCARG_COLORMAPS $NCARG_ROOT/lib/ncarg/colormaps
+        setenv PATH /usr/bin:/opt/ncl66/bin:/opt/cdo201/bin
+    endif 
     setenv ncksbin  `which ncks`
     setenv ncclimo_dir  `dirname $ncksbin`
     setenv ncksbin $ncclimo_dir
 else if ( `echo "$MACHINE" |grep 'login[0-9].nird'` != '' ) then
     set MACHINE = 'login.nird'
+    setenv NCARG_ROOT /usr
+    setenv NCARG_COLORMAPS $NCARG_ROOT/lib/ncarg/colormaps
+    setenv ncksbin  `which ncks`
+    setenv ncclimo_dir  `dirname $ncksbin`
+    setenv ncksbin $ncclimo_dir
+else if ( `echo "$MACHINE" |grep 'login[0-9]-nird-lmd'` != '' ) then
+    set MACHINE = 'nird-lmd'
     setenv NCARG_ROOT /usr
     setenv NCARG_COLORMAPS $NCARG_ROOT/lib/ncarg/colormaps
     setenv ncksbin  `which ncks`

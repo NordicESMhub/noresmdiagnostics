@@ -39,7 +39,7 @@ echo "wget log writes to /tmp/wget$$.log"
 echo "downloaded:"
 while read -r subfolder
 do
-    wget -c --timestamping -nd -r -l 1 -nH -np -R "index.html*"  --directory-prefix=${diagroot}/packages/${subfolder}/ \
+    wget -nv -c --timestamping -nd -r -l 1 -nH -np -R "index.html*"  --directory-prefix=${diagroot}/packages/${subfolder}/ \
         http://ns2345k.web.sigma2.no/diagnostics/inputdata/${subfolder}/ \
         &>>/tmp/wget$$.log &
     wait

@@ -4,6 +4,7 @@ BLOM_DIAG/grid_files/gx1v6
 BLOM_DIAG/grid_files/gx3v7
 BLOM_DIAG/grid_files/gx3v7/lgm
 BLOM_DIAG/grid_files/tnx0.083v1
+BLOM_DIAG/grid_files/tnx0.125v4
 BLOM_DIAG/grid_files/tnx0.25v1
 BLOM_DIAG/grid_files/tnx0.25v3
 BLOM_DIAG/grid_files/tnx0.25v4
@@ -11,6 +12,7 @@ BLOM_DIAG/grid_files/tnx1.5v1
 BLOM_DIAG/grid_files/tnx1v1
 BLOM_DIAG/grid_files/tnx1v1_PlioMIP2
 BLOM_DIAG/grid_files/tnx1v1_lgm
+BLOM_DIAG/grid_files/tnx1v1_lgm2
 BLOM_DIAG/grid_files/tnx1v1_mis3
 BLOM_DIAG/grid_files/tnx1v1_mis3g
 BLOM_DIAG/grid_files/tnx1v2
@@ -144,8 +146,8 @@ HAMOCC_DIAG/grid_files/1x1d/co2fxu
 HAMOCC_DIAG/grid_files/1x1d/generic
 HAMOCC_DIAG/grid_files/1x1d/mld
 HAMOCC_DIAG/grid_files/1x1d/pco2
-HAMOCC_DIAG/grid_files/1x1d/ppint
 HAMOCC_DIAG/grid_files/1x1d/pp_tot
+HAMOCC_DIAG/grid_files/1x1d/ppint
 HAMOCC_DIAG/grid_files/1x1d/srfno3
 HAMOCC_DIAG/grid_files/1x1d/srfo2
 HAMOCC_DIAG/grid_files/1x1d/srfpo4
@@ -165,6 +167,7 @@ HAMOCC_DIAG/grid_files/tnx1.5v1
 HAMOCC_DIAG/grid_files/tnx1v1
 HAMOCC_DIAG/grid_files/tnx1v1_PlioMIP2
 HAMOCC_DIAG/grid_files/tnx1v1_lgm
+HAMOCC_DIAG/grid_files/tnx1v1_lgm2
 HAMOCC_DIAG/grid_files/tnx1v1_mis3
 HAMOCC_DIAG/grid_files/tnx1v2
 HAMOCC_DIAG/grid_files/tnx1v3

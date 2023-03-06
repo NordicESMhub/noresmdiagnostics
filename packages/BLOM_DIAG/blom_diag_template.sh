@@ -10,13 +10,23 @@
 ## LOAD MODULES AND SET ENVIRONMENTS
 HOST="$(uname -n) $(hostname -f)"
 if [ "$(echo $HOST |grep 'ipcc.nird')" ];then
-    export NCARG_ROOT=/opt/ncl66
-    export NCARG_COLORMAPS=$NCARG_ROOT/lib/ncarg/colormaps
-    export PATH=/usr/bin:/opt/ncl66/bin:/opt/cdo201/bin
+    if [ -f /conda/miniconda3/bin/ncl ];then
+        export NCARG_ROOT=/conda/miniconda3
+        export NCARG_COLORMAPS=$NCARG_ROOT/lib/ncarg/colormaps
+        export PATH=/conda/miniconda3/bin:/usr/local/bin:/usr/bin
+    else
+        export NCARG_ROOT=/opt/ncl66
+        export NCARG_COLORMAPS=$NCARG_ROOT/lib/ncarg/colormaps
+        export PATH=/usr/bin:/opt/ncl66/bin:/opt/cdo201/bin
+    fi
 elif [ "$(echo $HOST |grep 'login[0-9].nird')" ];then
     export NCARG_ROOT=/usr
     export NCARG_COLORMAPS=$NCARG_ROOT/lib/ncarg/colormaps
     export PATH=/usr/bin:/usr/local/bin:/opt
+elif [ "$(echo $HOST |grep 'login[0-9]-nird-lmd')" ];then
+    export NCARG_ROOT=/usr
+    export NCARG_COLORMAPS=$NCARG_ROOT/lib/ncarg/colormaps
+    export PATH=/usr/bin:/usr/local/bin
 elif [ "$(echo $HOST |grep 'betzy')" ]; then
      module -q purge
      module -q load NCO/4.9.3-intel-2019b
@@ -268,10 +278,10 @@ if [ $CNTL == USER ]; then
 fi
 
 # Set required variables for climatology and time series
-required_vars_climo="depth_bnds,sealv,templvl,salnlvl,mmflxd,region,temp,saln,dz,sst,sss,mlts,mhflx,msflx"
-required_vars_climo_ann="depth_bnds,sealv,templvl,salnlvl,mmflxd,region,mhflx,msflx,mlts"
+required_vars_climo="sealv,templvl,salnlvl,mmflxd,temp,saln,dz,sst,sss,mlts,mhflx,msflx"
+required_vars_climo_ann="sealv,templvl,salnlvl,mmflxd,mhflx,msflx,mlts"
 required_vars_climo_mon="temp,saln,dz,sst,sss,mlts"
-required_vars_ts_ann="depth_bnds,time,section,mmflxd,voltr,temp,saln,templvl,salnlvl,region,dp,sst,sss,tempga,salnga,sstga,sssga"
+required_vars_ts_ann="mmflxd,voltr,temp,saln,templvl,salnlvl,dp,sst,sss,tempga,salnga,sstga,sssga"
 
 # Check which sets should be plotted based on CLIMO_TIME_SERIES_SWITCH
 if [ $CLIMO_TIME_SERIES_SWITCH == ONLY_CLIMO ]; then

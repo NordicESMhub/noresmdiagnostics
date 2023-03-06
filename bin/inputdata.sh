@@ -18,7 +18,14 @@ dfolders+=(BLOM_DIAG/obs_data)
 cwd=$(pwd)
 rm -f ./inputdata.txt
 
-cd /trd-project1/NS2345K/www/diagnostics/inputdata
+if [ -d /trd-project1 ];then
+    cd /trd-project1/NS2345K/www/diagnostics/inputdata
+elif [ -d /projects ]; then
+    cd /projects/NS2345K/www/diagnostics/inputdata
+else
+    echo "** ERROR: determing the inputdata path **" 
+    exit 1
+fi
 
 for folder in ${dfolders[*]}
 do

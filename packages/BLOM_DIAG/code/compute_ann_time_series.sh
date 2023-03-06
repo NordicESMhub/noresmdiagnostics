@@ -1,5 +1,5 @@
 #!/bin/bash
-script_start=`date +%s`
+script_start=$(date +%s)
 #
 # BLOM DIAGNOSTICS package: compute_ann_time_series.sh
 # PURPOSE: computes annual time series from annual or monthly history files
@@ -47,8 +47,8 @@ do
         var_list=${var_list/,${var},/,}
     fi
 done
-first_yr_prnt=`printf "%04d" ${first_yr}`
-last_yr_prnt=`printf "%04d" ${last_yr}`
+first_yr_prnt=$(printf "%04d" ${first_yr})
+last_yr_prnt=$(printf "%04d" ${last_yr})
 ann_ts_file=${casename}_ANN_${first_yr_prnt}-${last_yr_prnt}_ts_${filetype}.nc
 ann_ts_var_list="mmflxd voltr temp saln templvl salnlvl sst sss tempga salnga sstga sssga"
 
@@ -60,8 +60,14 @@ do
 done
 [ -z $filetag ] && echo "** NO ocean data found, EXIT ... **" && exit 1
 
+# Get grid information
+if [ ! -f $WKDIR/attributes/grid_${casename} ] && [ -z $PGRIDPATH ]; then
+    $DIAG_CODE/determine_grid_type.sh $casename
+fi
+grid_type=$(awk 'NR==1' $WKDIR/attributes/grid_${casename})
+gp=$(awk 'NR==2' $WKDIR/attributes/grid_${casename}|cut -d':' -f2)
 # Calculate number of chunks and the residual
-if [ `cat $WKDIR/attributes/grid_${casename}` == "tnx0.25v4" ]
+if [ $gp -gt 1000000 ]
 then
     nproc=5
 else
@@ -72,7 +78,7 @@ let "nchunks = $nyrs / $nproc"
 let "residual = $nyrs % $nproc"
 
 if [ -z $PGRIDPATH ]; then
-    grid_file=$DIAG_GRID/`cat $WKDIR/attributes/grid_${casename}`/grid.nc
+    grid_file=$DIAG_GRID/$grid_type/grid.nc
 else
     grid_file=$PGRIDPATH/grid.nc
 fi
@@ -110,10 +116,10 @@ do
         while [ $iproc -le $nyrs ]
         do
             let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-            yr_prnt=`printf "%04d" ${YR}`
+            yr_prnt=$(printf "%04d" ${YR})
             filename=${casename}.${filetag}.hy.${yr_prnt}.nc
             fflag=1     #check if all required annual ts files exist
-            for var in `echo $var_list | sed 's/,/ /g'` ; do
+            for var in $(echo $var_list | sed 's/,/ /g') ; do
                 tsfile=${var}_${casename}_ANN_${filetype}_${yr_prnt}.nc
                 if [ "${ann_ts_var_list/$var}" != "${ann_ts_var_list}" ] && [ ! -f  $tsdir/ann_ts/${tsfile} ]; then
                     echo '$tsdir'"/ann_ts/${tsfile} will be computed"
@@ -134,7 +140,7 @@ do
             wait ${pid[$m]}
             if [ $? -ne 0 ]; then
                 let "YR = ($ichunk - 1) * $nproc + $m + $first_yr"
-                yr_prnt=`printf "%04d" ${YR}`
+                yr_prnt=$(printf "%04d" ${YR})
                 echo "ERROR in extracting variables from annual history file: $NCKS -O -v $var_list --no_tmp_fl $pathdat/$filename $WKDIR/${casename}_ANN_${yr_prnt}.nc"
                 echo "*** EXITING THE SCRIPT ***"
                 exit 1
@@ -144,12 +150,13 @@ do
     else 
         # Compute annual means if in hm mode
         echo "Computing annual means from monthly history files (yrs ${YR_start}-${YR_end})"
+
         pid=()
         iproc=1
         while [ $iproc -le $nyrs ]
         do
             let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-            yr_prnt=`printf "%04d" ${YR}`
+            yr_prnt=$(printf "%04d" ${YR})
             filenames=()
             for mon in 01 02 03 04 05 06 07 08 09 10 11 12
             do
@@ -157,7 +164,7 @@ do
                 filenames+=($filename)
             done
             fflag=1     #check if all required annual ts files exist
-            for var in `echo $var_list | sed 's/,/ /g'` ; do
+            for var in $(echo $var_list | sed 's/,/ /g') ; do
                 tsfile=${var}_${casename}_ANN_${filetype}_${yr_prnt}.nc
                 if [ "${ann_ts_var_list/$var}" != "${ann_ts_var_list}" ] && [ ! -f $tsdir/ann_ts/${tsfile} ]; then
                     echo '$tsdir'"/ann_ts/${tsfile} will be computed"
@@ -166,8 +173,18 @@ do
                 fi
             done
             if [ $fflag = 0 ]; then
-                eval $NCRA -O --no_tmp_fl --hdr_pad=10000 -w 31,28,31,30,31,30,31,31,30,31,30,31 -v $var_list -p $pathdat ${filenames[*]} $WKDIR/${casename}_ANN_${yr_prnt}.nc &
-                pid+=($!)
+                if [ $gp -gt 1000000 ];then
+                    for var in $(echo $var_list | sed 's/,/ /g') ; do
+                        eval $NCRA -O --no_tmp_fl --hdr_pad=10000 -w 31,28,31,30,31,30,31,31,30,31,30,31 -v $var -p $pathdat ${filenames[*]} $WKDIR/var_tmp.nc &
+                        wait $!
+                        $NCKS -A -v $var $WKDIR/var_tmp.nc $WKDIR/${casename}_ANN_${yr_prnt}.nc &
+                        wait $!
+                    done
+                else
+                    eval $NCRA -O --no_tmp_fl --hdr_pad=10000 -w 31,28,31,30,31,30,31,31,30,31,30,31 -v $var_list -p $pathdat ${filenames[*]} $WKDIR/${casename}_ANN_${yr_prnt}.nc &
+                    pid+=($!)
+                fi
+                rm -f $WKDIR/var_tmp.nc
             else
                 echo Skip computing year ${yr_prnt}, time-series variables already exist.
             fi
@@ -178,7 +195,7 @@ do
             wait ${pid[$m]}
             if [ $? -ne 0 ]; then
                 let "YR = ($ichunk - 1) * $nproc + $m + $first_yr"
-                yr_prnt=`printf "%04d" ${YR}`
+                yr_prnt=$(printf "%04d" ${YR})
                 echo "ERROR in computing annual means from monthly history files: $NCRA -O --no_tmp_fl --hdr_pad=10000 -w 31,28,31,30,31,30,31,31,30,31,30,31 -v $var_list -p $pathdat $filenames $WKDIR/${casename}_ANN_${yr_prnt}.nc"
                 echo "*** EXITING THE SCRIPT ***"
                 exit 1
@@ -192,7 +209,7 @@ do
     while [ $iproc -le $nyrs ]
     do
         let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-        yr_prnt=`printf "%04d" ${YR}`
+        yr_prnt=$(printf "%04d" ${YR})
         filename=${casename}_ANN_${yr_prnt}.nc
         if [ -f $WKDIR/$filename ]; then
             echo $WKDIR/$filename
@@ -210,6 +227,8 @@ do
                         echo "ERROR: $NCAP2 -O -s 'dmass=dp*parea' $WKDIR/$filename  $WKDIR/$filename >/dev/null 2>&1"
                         exit
                     fi
+                else
+                    echo "ERROR: dp and/or parea are missing in $WKDIR/$filename"
                 fi
             fi
         fi
@@ -217,7 +236,7 @@ do
     done
     wait
     # Loop over variables and do some averaging...
-    for var in `echo $var_list | sed 's/,/ /g'`
+    for var in $(echo $var_list | sed 's/,/ /g')
     do
         # Mass weighted 3D averaging of temp and saln
         if [ $var == temp ] || [ $var == saln ]; then
@@ -227,7 +246,7 @@ do
             while [ $iproc -le $nyrs ]
             do
                 let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-                yr_prnt=`printf "%04d" ${YR}`
+                yr_prnt=$(printf "%04d" ${YR})
                 infile=${casename}_ANN_${yr_prnt}.nc
                 outfile=${var}_${casename}_ANN_${filetype}_${yr_prnt}.nc
                 if [ ! -f $tsdir/ann_ts/$outfile ]; then
@@ -241,7 +260,7 @@ do
                 wait ${pid[$m]}
                 if [ $? -ne 0 ]; then
                     let "YR = ($ichunk - 1) * $nproc + $m + $first_yr"
-                    yr_prnt=`printf "%04d" ${YR}`
+                    yr_prnt=$(printf "%04d" ${YR})
                     echo "ERROR in calculating mass weighted global average: $NCWA --no_tmp_fl -O -v $var -w dmass -a sigma,y,x $WKDIR/$infile $WKDIR/$outfile"
                     echo "*** EXITING THE SCRIPT ***"
                     exit 1
@@ -257,7 +276,7 @@ do
             while [ $iproc -le $nyrs ]
             do
                 let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-                yr_prnt=`printf "%04d" ${YR}`
+                yr_prnt=$(printf "%04d" ${YR})
                 infile=${casename}_ANN_${yr_prnt}.nc
                 outfile=${var}_${casename}_ANN_${filetype}_${yr_prnt}.nc
                 if [ ! -f $tsdir/ann_ts/$outfile ]; then
@@ -271,7 +290,7 @@ do
                 wait ${pid[$m]}
                 if [ $? -ne 0 ]; then
                     let "YR = ($ichunk - 1) * $nproc + $m + $first_yr"
-                    yr_prnt=`printf "%04d" ${YR}`
+                    yr_prnt=$(printf "%04d" ${YR})
                     echo "ERROR in calculating area weighted global average: $NCWA --no_tmp_fl -O -v $var -w parea -a x,y $WKDIR/$infile $WKDIR/$outfile"
                     echo "*** EXITING THE SCRIPT ***"
                     exit 1
@@ -291,7 +310,7 @@ do
             while [ $iproc -le $nyrs ]
             do
                 let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-                yr_prnt=`printf "%04d" ${YR}`
+                yr_prnt=$(printf "%04d" ${YR})
                 infile=${casename}_ANN_${yr_prnt}.nc
                 outfile_tmp=${var}_${casename}_ANN_${filetype}_${yr_prnt}_tmp.nc
                 outfile=${var}_${casename}_ANN_${filetype}_${yr_prnt}.nc
@@ -327,7 +346,7 @@ do
             while [ $iproc -le $nyrs ]
             do
                 let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-                yr_prnt=`printf "%04d" ${YR}`
+                yr_prnt=$(printf "%04d" ${YR})
                 infile=${casename}_ANN_${yr_prnt}.nc
                 outfile=${var}_${casename}_ANN_${filetype}_${yr_prnt}.nc
                 if [ ! -f $tsdir/ann_ts/$outfile ]; then
@@ -343,7 +362,7 @@ do
             while [ $iproc -le $nyrs ]
             do
                 let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-                yr_prnt=`printf "%04d" ${YR}`
+                yr_prnt=$(printf "%04d" ${YR})
                 infile=${casename}_ANN_${yr_prnt}.nc
                 outfile=${var}_${casename}_ANN_${filetype}_${yr_prnt}.nc
                 if [ ! -f $tsdir/ann_ts/$outfile ]; then
@@ -358,7 +377,7 @@ do
     while [ $iproc -le $nyrs ]
     do
         let "YR = ($ichunk - 1) * $nproc + $iproc + $first_yr - 1"
-        yr_prnt=`printf "%04d" ${YR}`
+        yr_prnt=$(printf "%04d" ${YR})
         filename=${casename}_ANN_${yr_prnt}.nc
         if [ -f  $WKDIR/$filename ]; then
             rm -f $WKDIR/$filename
@@ -374,7 +393,7 @@ if [ ! -d $tsdir/ann_ts ]; then
 fi
 let "nyrs = $last_yr - $first_yr + 1"
 first_var=1
-for var in `echo $var_list | sed 's/,/ /g'`
+for var in $(echo $var_list | sed 's/,/ /g')
 do
     mv $WKDIR/${var}_${casename}_ANN_${filetype}_*.nc $tsdir/ann_ts/ >/dev/null 2>&1
     first_file=${var}_${casename}_ANN_${filetype}_${first_yr_prnt}.nc
@@ -394,9 +413,9 @@ do
 done
 ncks -O -C -x -v parea $tsdir/$ann_ts_file $tsdir/$ann_ts_file
 
-script_end=`date +%s`
-runtime_s=`expr ${script_end} - ${script_start}`
-runtime_script_m=`expr ${runtime_s} / 60`
-min_in_secs=`expr ${runtime_script_m} \* 60`
-runtime_script_s=`expr ${runtime_s} - ${min_in_secs}`
+script_end=$(date +%s)
+runtime_s=$(expr ${script_end} - ${script_start})
+runtime_script_m=$(expr ${runtime_s} / 60)
+min_in_secs=$(expr ${runtime_script_m} \* 60)
+runtime_script_s=$(expr ${runtime_s} - ${min_in_secs})
 echo "ANNUAL TIME SERIES RUNTIME: ${runtime_script_m}m${runtime_script_s}s"

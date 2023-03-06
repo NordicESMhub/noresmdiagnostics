@@ -49,6 +49,11 @@ do
 done
 [ -z $filetag ] && echo "** NO ocean data found, EXIT ... **" && exit 1
 
+if [ ! -f $WKDIR/attributes/grid_${casename} ] && [ -z $PGRIDPATH ]; then
+    $DIAG_CODE/determine_grid_type.sh $casename
+fi
+gp=$(awk 'NR==2' $WKDIR/attributes/grid_${casename} |cut -d':' -f2)
+
 # COMPUTE CLIMATOLOGY FROM ANNUAL FILES
 if [ $filetype == hy ]; then
     var_list=`cat $WKDIR/attributes/vars_climo_ann_${casename}_hy`
@@ -66,9 +71,22 @@ if [ $filetype == hy ]; then
         echo "No fields from hy files, skip calculate annual mean from hy files"
     else
         echo "Climatological annual mean of $var_list"
-        $NCRA -O --no_tmp_fl --hdr_pad=10000 -v $var_list -p $pathdat ${filenames[*]} $ann_avg_file
+        if [ $gp -gt 1000000 ];then
+            for var in $(echo $var_list | sed 's/,/ /g') ; do
+                echo $var
+                eval $NCRA -h -O --no_tmp_fl --hdr_pad=10000 -v $var -p $pathdat ${filenames[*]} $climodir/var_tmp.nc &
+                wait $!
+                $NCATTED -h -a eulaVlliF_,depth,d,, -a eulaVlliF_,lat,d,, \
+                         -a eulaVlliF_,sigma,d,, -a eulaVlliF_,$var,d,, \
+                         $climodir/var_tmp.nc
+                $NCKS -h -A -v $var $climodir/var_tmp.nc $ann_avg_file
+                wait $!
+            done
+        else
+            $NCRA -h -O --no_tmp_fl --hdr_pad=10000 -v $var_list -p $pathdat ${filenames[*]} $ann_avg_file
+        fi
         if [ $? -ne 0 ]; then
-            echo "ERROR in computation of climatological annual mean: $NCRA -O --no_tmp_fl --hdr_pad=10000 -v $var_list -p $pathdat ${filenames[*]} $ann_avg_file"
+            echo "ERROR in computation of climatological annual mean: $NCRA -h -O --no_tmp_fl --hdr_pad=10000 -v $var_list -p $pathdat ${filenames[*]} $ann_avg_file"
             echo "*** EXITING THE SCRIPT ***"
             exit 1
         fi
@@ -119,14 +137,24 @@ if [ $filetype == hm ]; then
         done
         mon_tmp_file=${casename}_${month}_${first_yr_prnt}-${last_yr_prnt}_tmp.nc
         mon_tmp_files+=($mon_tmp_file)
-        eval $NCRA -O --no_tmp_fl --hdr_pad=10000 -v $var_list -p $pathdat ${filenames[*]} $climodir/$mon_tmp_file &
-        pid+=($!)
+        if [ $gp -gt 1000000 ];then
+            for var in $(echo $var_list | sed 's/,/ /g') ; do
+                echo $var
+                eval $NCRA -h -O --no_tmp_fl --hdr_pad=10000 -v $var -p $pathdat ${filenames[*]} $climodir/var_tmp.nc &
+                wait $!
+                $NCKS -h -A -v $var $climodir/var_tmp.nc $climodir/$mon_tmp_file &
+                wait $!
+            done
+        else
+            eval $NCRA -h -O --no_tmp_fl --hdr_pad=10000 -v $var_list -p $pathdat ${filenames[*]} $climodir/$mon_tmp_file &
+            pid+=($!)
+        fi
     done
     for ((m=0;m<=11;m++))
     do
         wait ${pid[$m]}
         if [ $? -ne 0 ]; then
-            echo "ERROR in computation of climatological monthly mean: $NCRA -O --no_tmp_fl --hdr_pad=10000 -v $var_list -p $pathdat ${filenames[*]} $climodir/$mon_tmp_file"
+            echo "ERROR in computation of climatological monthly mean: $NCRA -h -O --no_tmp_fl --hdr_pad=10000 -v $var_list -p $pathdat ${filenames[*]} $climodir/$mon_tmp_file"
             echo "*** EXITING THE SCRIPT ***"
             exit 1
         fi
@@ -135,9 +163,19 @@ if [ $filetype == hm ]; then
     # COMPUTE ANNUAL MEAN
     if [ $annual_climo -eq 1 ]; then
         echo "Climatological weighted annual mean of $var_list_ann"
-        $NCRA -O -w 31,28,31,30,31,30,31,31,30,31,30,31 --no_tmp_fl --hdr_pad=10000 -v $var_list_ann -p $climodir ${mon_tmp_files[*]} $ann_avg_file
+        if [ $gp -gt 1000000 ];then
+            for var in $(echo $var_list_ann | sed 's/,/ /g') ; do
+                $NCRA -h -O -w 31,28,31,30,31,30,31,31,30,31,30,31 --no_tmp_fl --hdr_pad=10000 -v $var -p $climodir ${mon_tmp_files[*]} $climodir/var_tmp.nc &
+                wait $!
+                $NCKS -h -A -v $var $climodir/var_tmp.nc $ann_avg_file &
+                wait $!
+            done
+        else
+            #eval $NCRA -O --no_tmp_fl --hdr_pad=10000 -v $var_list -p $pathdat ${filenames[*]} $climodir/$mon_tmp_file &
+            $NCRA -h -O -w 31,28,31,30,31,30,31,31,30,31,30,31 --no_tmp_fl --hdr_pad=10000 -v $var_list_ann -p $climodir ${mon_tmp_files[*]} $ann_avg_file
+        fi
         if [ $? -ne 0 ]; then
-            echo "ERROR in computation of climatological annual mean: $NCRA -O -w 31,28,31,30,31,30,31,31,30,31,30,31 --no_tmp_fl --hdr_pad=10000 -v $var_list_ann -p $climodir ${mon_tmp_files[*]} $ann_avg_file"
+            echo "ERROR in computation of climatological annual mean: $NCRA -h -O -w 31,28,31,30,31,30,31,31,30,31,30,31 --no_tmp_fl --hdr_pad=10000 -v $var_list_ann -p $climodir ${mon_tmp_files[*]} $ann_avg_file"
             echo "*** EXITING THE SCRIPT ***"
             exit 1
         fi
@@ -150,14 +188,14 @@ if [ $filetype == hm ]; then
         do
             mon_tmp_file=$climodir/${casename}_${month}_${first_yr_prnt}-${last_yr_prnt}_tmp.nc
             mon_avg_file=$climodir/${casename}_${month}_${first_yr_prnt}-${last_yr_prnt}_climo.nc
-            eval $NCKS -O --no_tmp_fl -v $var_list_mon $mon_tmp_file $mon_avg_file &
+            eval $NCKS -h -O --no_tmp_fl -v $var_list_mon $mon_tmp_file $mon_avg_file &
             pid+=($!)
         done
         for ((m=0;m<=11;m++))
         do
             wait ${pid[$m]}
             if [ $? -ne 0 ]; then
-                echo "ERROR in creating monthly climatology: $NCKS -O --no_tmp_fl -v $var_list_mon $mon_tmp_file $mon_avg_file"
+                echo "ERROR in creating monthly climatology: $NCKS -h -O --no_tmp_fl -v $var_list_mon $mon_tmp_file $mon_avg_file"
                 echo "*** EXITING THE SCRIPT ***"
                 exit 1
             fi
@@ -174,6 +212,7 @@ if [ $filetype == hm ]; then
             exit 1
         fi
     done
+    rm $climodir/var_tmp.nc
 fi
 
 script_end=`date +%s`
