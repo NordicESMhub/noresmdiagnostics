@@ -38,8 +38,8 @@ set last_yr_prnt = `printf "%04d" ${last_yr}`
 
 # Determine grid type
 
-set nj = `$ncksbin/ncks --trd -m -M ${PATHDATA}/${CASEREAD}.cice.h.${first_yr_prnt}-01.nc | grep -E -i ": nj, size =" | cut -f 7 -d ' ' | uniq |tr -d ','`
-set ni = `$ncksbin/ncks --trd -m -M ${PATHDATA}/${CASEREAD}.cice.h.${first_yr_prnt}-01.nc | grep -E -i ": ni, size =" | cut -f 7 -d ' ' | uniq |tr -d ','`
+set nj = `$ncksbin/ncks --trd -m -M ${PATHDAT}/${CASEREAD}.cice.h.${first_yr_prnt}-01.nc | grep -E -i ": nj, size =" | cut -f 7 -d ' ' | uniq |tr -d ','`
+set ni = `$ncksbin/ncks --trd -m -M ${PATHDAT}/${CASEREAD}.cice.h.${first_yr_prnt}-01.nc | grep -E -i ": ni, size =" | cut -f 7 -d ' ' | uniq |tr -d ','`
 @ gp = $nj * $ni
 if ( $gp > 1000000 ) then
     njobs=1
