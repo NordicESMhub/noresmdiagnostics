@@ -38,13 +38,13 @@ set last_yr_prnt = `printf "%04d" ${last_yr}`
 
 # Determine grid type
 
-set nj = `$ncksbin/ncks --trd -m -M ${PATHDAT}/${CASEREAD}.cice.h.${first_yr_prnt}-01.nc | grep -E -i ": nj, size =" | cut -f 7 -d ' ' | uniq |tr -d ','`
-set ni = `$ncksbin/ncks --trd -m -M ${PATHDAT}/${CASEREAD}.cice.h.${first_yr_prnt}-01.nc | grep -E -i ": ni, size =" | cut -f 7 -d ' ' | uniq |tr -d ','`
+set nj = `$ncksbin/ncks --trd -m -M ${PATHDAT}/${CASE_READ}.cice.h.${first_yr_prnt}-01.nc | grep -E -i ": nj, size =" | cut -f 7 -d ' ' | uniq |tr -d ','`
+set ni = `$ncksbin/ncks --trd -m -M ${PATHDAT}/${CASE_READ}.cice.h.${first_yr_prnt}-01.nc | grep -E -i ": ni, size =" | cut -f 7 -d ' ' | uniq |tr -d ','`
 @ gp = $nj * $ni
 if ( $gp > 1000000 ) then
-    njobs=1
+    set njobs = 1
 else
-    njobs=12
+    set njobs = 12
 endif
 
 $ncclimo_dir/ncclimo --job_nbr=$njobs --no_stdin -m $modelname --clm_md=mth --seasons=amj,ann,fm,jas,jfm,on,ond --no_amwg_links -a $djf_md -h h -c $CASE_READ -s $first_yr -e $last_yr -i $PATHDAT -o $PATHJLS

@@ -22,6 +22,7 @@ new_frst_avg_yr = getenv("NEW_YR_AVG_FRST")
 new_last_avg_yr = getenv("NEW_YR_AVG_LAST")
 prev_frst_avg_yr = getenv("PREV_YR_AVG_FRST")
 prev_last_avg_yr = getenv("PREV_YR_AVG_LAST")
+hires = getenv("HIRES")
 
 ;---------USER DEFINED QUANTITIES------------------
 c_hemisphere = (/"NH", "SH"/)
@@ -134,10 +135,29 @@ do jj = 0, nseasons-1       ; Loop through seasonal means
 ;--------------------------------------------------------------------
 ; Read variables into memory
 ;--------------------------------------------------------------------
-  u_new  = b->$var_to_read_new(0)$(0,:,:)
-  v_new  = b->$var_to_read_new(1)$(0,:,:)
-  u_prev = a->$var_to_read_prev(0)$(0,:,:)
-  v_prev = a->$var_to_read_prev(1)$(0,:,:)
+  if (hires .eq. 0) then
+      u_new  = b->$var_to_read_new(0)$(0,:,:)
+      v_new  = b->$var_to_read_new(1)$(0,:,:)
+      u_prev = a->$var_to_read_prev(0)$(0,:,:)
+      v_prev = a->$var_to_read_prev(1)$(0,:,:)
+      lat2d_new    = b->ULAT
+      lon2d_new    = b->ULON
+      Urotang_new  = b->ANGLE     ; Rotation angle on the U grid
+      lat2d_prev   = a->ULAT
+      lon2d_prev   = a->ULON
+      Urotang_prev = a->ANGLE     ; Rotation angle on the U grid
+  else
+      u_new  = b->$var_to_read_new(0)$(0,::8,::8)
+      v_new  = b->$var_to_read_new(1)$(0,::8,::8)
+      u_prev = a->$var_to_read_prev(0)$(0,::8,::8)
+      v_prev = a->$var_to_read_prev(1)$(0,::8,::8)
+      lat2d_new    = b->ULAT(::8,::8)
+      lon2d_new    = b->ULON(::8,::8)
+      Urotang_new  = b->ANGLE(::8,::8)     ; Rotation angle on the U grid
+      lat2d_prev   = a->ULAT(::8,::8)
+      lon2d_prev   = a->ULON(::8,::8)
+      Urotang_prev = a->ANGLE(::8,::8)     ; Rotation angle on the U grid
+  end if
 
   if (u_new@units.eq."m/s") then
      u_new = u_new*100.
@@ -151,13 +171,6 @@ do jj = 0, nseasons-1       ; Loop through seasonal means
   if (v_prev@units.eq."m/s") then
      v_prev = v_prev*100.
   end if
-
-  lat2d_new    = b->ULAT
-  lon2d_new    = b->ULON
-  Urotang_new  = b->ANGLE     ; Rotation angle on the U grid
-  lat2d_prev   = a->ULAT
-  lon2d_prev   = a->ULON
-  Urotang_prev = a->ANGLE     ; Rotation angle on the U grid
 
 ;--------------------------------------------------------------------
 ; Convert velocities from the POP grid to regular meridional grid
@@ -363,6 +376,9 @@ do jj = 0, nseasons-1       ; Loop through seasonal means
       res@cnLineLabelsOn       = False             ; turn off contour line labels
       res@gsnScalarContour     = True              ; contours desired
 
+      res@trGridType           = "TriangularMesh"
+      res@cnFillMode           = "RasterFill"
+
       res@gsnSpreadColors      = True              ; use full colormap
       res@gsnSpreadColorStart  = 4
       res@gsnSpreadColorEnd    = 23 
@@ -387,13 +403,35 @@ do jj = 0, nseasons-1       ; Loop through seasonal means
       res@mpLandFillColor      = "grey"            ; color of continents
       res@mpLabelFontHeightF   = 0.0015            ; size of map long. labels
 
-      plot(0) = gsn_csm_vector_scalar_map_polar \
-            (wks,urot_new(:,:), vrot_new(:,:), mag_vel_new(:,:), res)
+      if (hires .eq. 0) then
+        plot(0) = gsn_csm_vector_scalar_map_polar \
+                (wks,urot_new(:,:), vrot_new(:,:), mag_vel_new(:,:), res)
+      else
+        delete(res@gsnScalarContour)
+        delete(res@vcRefMagnitudeF)
+        delete(res@vcRefLengthF)
+        delete(res@vcLineArrowColor)
+        delete(res@vcMinDistanceF)
+        delete(res@vcGlyphStyle)
+
+        delete(res@vcLevelSelectionMode)
+        delete(res@vcMinLevelValF)
+        delete(res@vcMaxLevelValF)
+        delete(res@vcLevelSpacingF)
+
+        plot(0) = gsn_csm_contour_map_polar \
+                (wks,mag_vel_new(:,:), res)
+      end if
       res@tiMainString         = center_labels(1)
 
       res@lbLabelBarOn         = True             ; Turns on the individual label bars
-      plot(1) = gsn_csm_vector_scalar_map_polar \
-            (wks,urot_prev(:,:), vrot_prev(:,:), mag_vel_prev(:,:),res)
+      if (hires .eq. 0) then
+        plot(1) = gsn_csm_vector_scalar_map_polar \
+                (wks,urot_prev(:,:), vrot_prev(:,:), mag_vel_prev(:,:),res)
+      else
+        plot(1) = gsn_csm_contour_map_polar \
+                (wks,mag_vel_prev(:,:),res)
+      end if
 ;--------------------------------------------------
 ; Define new scale and colormap for NH difference plot
 ;--------------------------------------------------
@@ -443,8 +481,17 @@ do jj = 0, nseasons-1       ; Loop through seasonal means
 ;--------------------------------------------------
 ; Make difference plot
 ;--------------------------------------------------
-     plot(2) = gsn_csm_vector_scalar_map_polar \
-              (wks,u_diff(:,:), v_diff(:,:), mag_diff(:,:), res)
+     if (hires .eq. 0) then
+         plot(2) = gsn_csm_vector_scalar_map_polar \
+                  (wks,u_diff(:,:), v_diff(:,:), mag_diff(:,:), res)
+     else
+         delete(res@vcRefMagnitudeF)
+         delete(res@vcMinLevelValF)
+         delete(res@vcMaxLevelValF)
+         delete(res@vcLevelSpacingF)
+         plot(2) = gsn_csm_contour_map_polar \
+                  (wks,mag_diff(:,:), res)
+     end if
 ; draw panel without white space
      resP = True
      resP@gsnPaperOrientation = "portrait"  
