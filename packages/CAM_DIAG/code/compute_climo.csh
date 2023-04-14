@@ -74,9 +74,9 @@ echo "-------------------------"
 
 if ( $strip_off_vars == 0 ) then
 #   $nco_dir/ncclimo --no_stdin --model_name=$modelname --var_lst=$var_list --dec_md=$djf_md --case=$casename --yr_srt=$first_yr --yr_end=$yr_end --drc_in=$path_history --drc_out=$path_climo
-   $nco_dir/ncclimo --no_stdin --clm_md=mth -m $modelname -v $var_list -a $djf_md -c $casename -s $first_yr -e $yr_end -i $path_history -o $path_climo
+   $nco_dir/ncclimo --no_stdin --clm_md=mth -m $modelname -v $var_list -a $djf_md -c $casename -s $first_yr -e $yr_end -i $path_history -o $path_climo --lnk_flg='Yes'
 else
-   $nco_dir/ncclimo --no_stdin --clm_md=mth -m $modelname              -a $djf_md -c $casename -s $first_yr -e $yr_end -i $path_history -o $path_climo
+   $nco_dir/ncclimo --no_stdin --clm_md=mth -m $modelname              -a $djf_md -c $casename -s $first_yr -e $yr_end -i $path_history -o $path_climo --lnk_flg='Yes'
 endif
 
 # make climatology for AODVIS and append
@@ -88,7 +88,7 @@ if ( -e $path_climo/derived/${rootname}`printf "%04d" ${first_yr}`-01.nc ) then
    else
      set djf_md = SDD # Seasonally Discontinuous DJF
    endif
-   $nco_dir/ncclimo --no_stdin --clm_md=mth -m $modelname -v AODVIS    -a $djf_md -c $casename -s $first_yr -e $yr_end -i $path_climo/derived -o $path_climo/derived_climo
+   $nco_dir/ncclimo --no_stdin --clm_md=mth -m $modelname -v AODVIS    -a $djf_md -c $casename -s $first_yr -e $yr_end -i $path_climo/derived -o $path_climo/derived_climo --lnk_flg='Yes'
     foreach mth ( 01 02 03 04 05 06 07 08 09 10 11 12 DJF MAM JJA SON ANN )
         # delete fill value attributes to make ncks work
         $nco_dir/ncatted -h -a _FillValue,lat,d,, $path_climo/${casename}_${mth}_climo.nc
