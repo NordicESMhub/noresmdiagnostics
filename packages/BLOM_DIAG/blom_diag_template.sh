@@ -21,6 +21,7 @@ elif [ "$(echo $HOST |grep 'login[0-9]-nird-lmd')" ];then
     export NCARG_ROOT=/usr
     export NCARG_COLORMAPS=$NCARG_ROOT/lib/ncarg/colormaps
     export PATH=/usr/bin:/usr/local/bin
+    module load CDO/1.9.8-intel-2019b
 elif [ "$(echo $HOST |grep 'betzy')" ]; then
      module -q purge
      module -q load NCO/4.9.3-intel-2019b
