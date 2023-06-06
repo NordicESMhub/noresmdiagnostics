@@ -1,4 +1,4 @@
-#!/bin/csh
+#!/bin/env csh
 
 # Version lnd_template4.2.25.csh
 
@@ -6,24 +6,21 @@
 set MACHINE = "`uname -n` `hostname -f`"
 if ( `echo "$MACHINE" |grep 'ipcc'` != '' ) then
     set MACHINE = 'ipcc.nird'
-    setenv NCARG_ROOT /conda/miniconda3
+    setenv NCARG_ROOT /diagnostics/mambaforge
     setenv NCARG_COLORMAPS $NCARG_ROOT/lib/ncarg/colormaps
-    setenv PATH /conda/miniconda3/bin:/usr/local/bin:/usr/bin
-    setenv UDUNITS2_XML_PATH /conda/miniconda3/share/udunits/udunits2.xml
+    setenv PATH /diagnostics/mambaforge/bin:/usr/bin
     setenv ncksbin  `which ncks`
     setenv ncclimo_dir  `dirname $ncksbin`
     setenv ncksbin $ncclimo_dir
 else if ( `echo "$MACHINE" |grep 'login[0-9].nird'` != '' ) then
-    set MACHINE = 'login.nird'
-    setenv NCARG_ROOT /usr
-    setenv NCARG_COLORMAPS $NCARG_ROOT/lib/ncarg/colormaps
-    setenv ncksbin  `which ncks`
-    setenv ncclimo_dir  `dirname $ncksbin`
-    setenv ncksbin $ncclimo_dir
-else if ( `echo "$MACHINE" |grep 'login[0-9]-nird-lmd'` != '' ) then
-    set MACHINE = 'nird-lmd'
-    setenv NCARG_ROOT /usr
-    setenv NCARG_COLORMAPS $NCARG_ROOT/lib/ncarg/colormaps
+    module purge
+    module load CDO/1.9.8-intel-2019b
+    module load NCL/6.6.2-intel-2019b
+    module load NCO/4.9.3-intel-2019b
+    module load UDUNITS/2.2.26-GCCcore-8.3.0
+    #module load ImageMagick/7.0.9-5-GCCcore-8.3.0
+    export NCARG_ROOT=$EBROOTNCL
+    export NCARG_COLORMAPS=$NCARG_ROOT/lib/ncarg/colormaps
     setenv ncksbin  `which ncks`
     setenv ncclimo_dir  `dirname $ncksbin`
     setenv ncksbin $ncclimo_dir

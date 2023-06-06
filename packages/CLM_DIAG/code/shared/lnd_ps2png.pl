@@ -40,10 +40,7 @@
   if ($runtype eq "model1-model2") { $compareModels = 1; }
   else			           { $compareModels = 0; }
 
-if (-e '/usr/bin/convert' ) {
-    $convert = "/usr/bin/convert";}
-else {
-    $convert = `which convert`; }
+  $convert = `which convert`;
 
 $flags = "-density $density -trim +repage";
 $smflags = "-density $density -trim +repage";

@@ -8,17 +8,16 @@
 ## LOAD MODULES AND SET ENVIRONMENTS
 HOST="$(uname -n) $(hostname -f)"
 if [ "$(echo $HOST |grep 'ipcc.nird')" ];then
-    export NCARG_ROOT=/conda/miniconda3
+    export NCARG_ROOT=/diagnostics/mambaforge
     export NCARG_COLORMAPS=$NCARG_ROOT/lib/ncarg/colormaps
-    export PATH=/conda/miniconda3/bin:/usr/local/bin:/usr/bin
-elif [ "$(echo $HOST |grep 'login[0-9].nird')" ];then
-    export NCARG_ROOT=/usr
+    export PATH=/diagnostics/mambaforge/bin:/usr/bin
+elif [ "$(echo $HOST |grep 'login[0-9]-nird')" ];then
+    module load CDO/1.9.8-intel-2019b
+    module load NCL/6.6.2-intel-2019b
+    module load NCO/4.9.3-intel-2019b
+    #module load ImageMagick/7.0.9-5-GCCcore-8.3.0
+    export NCARG_ROOT=$EBROOTNCL
     export NCARG_COLORMAPS=$NCARG_ROOT/lib/ncarg/colormaps
-    export PATH=/usr/bin:/usr/local/bin:/opt
-elif [ "$(echo $HOST |grep 'login[0-9]-nird-lmd')" ];then
-    export NCARG_ROOT=/usr
-    export NCARG_COLORMAPS=$NCARG_ROOT/lib/ncarg/colormaps
-    export PATH=/usr/bin:/usr/local/bin
 elif [ "$(echo $HOST |grep 'betzy')" ]; then
      module -q purge
      module -q load NCO/4.9.3-intel-2019b
