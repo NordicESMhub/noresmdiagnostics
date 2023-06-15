@@ -196,6 +196,7 @@ do i = 0, nvars-1
    end if
    if (compare .eq."OBS") then
       plot = gsn_csm_xy(wks,pyrs1,A,res)
+      draw(plot)
    else
 ;      res@pmLegendHeightF        = 0.12
 ;      res@xyExplicitLegendLabels = (/case1,case2/)
