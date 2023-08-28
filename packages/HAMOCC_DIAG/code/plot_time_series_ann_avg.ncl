@@ -223,6 +223,7 @@ do i = 0, nvars-1
          resB@gsnRightString            = ""
 
          plot(i) = gsn_csm_x2y2(wks,pyrs1_tot,pyrs2_tot,data(0,:),data(1,:),res,resB)
+         delete(data)
       else
          plot2=new(1,graphic)
          res@gsnDraw                    = False
@@ -237,7 +238,6 @@ do i = 0, nvars-1
       end if
    end if
 
-   delete (data)
    delete (A)
    if (isvar("B")) then
        delete (B)
