@@ -168,7 +168,7 @@ vai_mo_BAm = new((/nyears*12/),float)
 vhi_mo_BAm = new((/nyears*12/),float)
 vhs_mo_BAm = new((/nyears*12/),float)
 
-time = new((/nyears*12/),float)
+time = new((/nyears*12/),double)
 
 do nn = 0, nyears-1
 

@@ -490,7 +490,7 @@ do nr=0,nregions-1
           y3 = (/vai_mo_regions_1(nr,:),vai_mean,ice_max_area(nr,:), \
                   ice_min_area(nr,:),ice_mon_area(nr,:)/)
 
-          x1 = vhi_mo_regions_1&time / 365.
+          x1 = tofloat(vhi_mo_regions_1&time) / 365.
           x2 = x1
 
        end if

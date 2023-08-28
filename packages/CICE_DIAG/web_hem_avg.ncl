@@ -401,7 +401,7 @@ if (climatol) then
          vai_mean = fspan(1,1,ntimes_tot)*avg(vai_mo_nh_1)
          y3 = vai_mo_nh_1
 
-         x1 = vhi_mo_nh_1&time / 365.
+         x1 = tofloat(vhi_mo_nh_1&time) / 365.
 
       end if
    else
@@ -436,7 +436,7 @@ if (climatol) then
          vai_mean = fspan(1,1,ntimes_tot)*avg(vai_mo_sh_1)
          y3 = vai_mo_sh_1
 
-         x1 = vhi_mo_sh_1&time / 365.
+         x1 = tofloat(vhi_mo_sh_1&time) / 365.
 
       end if
    end if
