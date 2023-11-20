@@ -8,9 +8,9 @@
 ## LOAD MODULES AND SET ENVIRONMENTS
 HOST="$(uname -n) $(hostname -f)"
 if [ "$(echo $HOST |grep 'ipcc.nird')" ];then
-    export NCARG_ROOT=/diagnostics/mambaforge
+    export NCARG_ROOT=/diagnostics/miniforge3
     export NCARG_COLORMAPS=$NCARG_ROOT/lib/ncarg/colormaps
-    export PATH=/diagnostics/mambaforge/bin:/usr/bin
+    export PATH=/diagnostics/miniforge3/bin:/diagnostics/toolkit/bin:/usr/bin
 elif [ "$(echo $HOST |grep 'login[0-9]-nird')" ];then
     module load CDO/1.9.8-intel-2019b
     module load NCL/6.6.2-intel-2019b
