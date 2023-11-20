@@ -4,7 +4,7 @@
 ## default values
 DIAG_PATH=/cluster/work/users/$USER/diagnostics/out
 LOG_PATH=/cluster/work/users/$USER/diagnostics/logs
-WEB_PATH=/trd-project1/NS2345K/www/diagnostics/noresm/USER
+WEB_PATH=/nird/projects/NS2345K/www/diagnostics/noresm/$USER
 
 if [ $# -eq 0 ] || [ $1 == "-h" ]; then
     echo " "

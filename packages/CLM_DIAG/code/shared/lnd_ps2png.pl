@@ -40,7 +40,11 @@
   if ($runtype eq "model1-model2") { $compareModels = 1; }
   else			           { $compareModels = 0; }
 
-  $convert = `which convert`;
+if (-e '/usr/bin/convert' ) {
+    $convert = "/usr/bin/convert";}
+else {
+    $convert = "/cluster/software/ImageMagick/7.1.0-4-GCCcore-11.2.0/bin/convert"; }
+    #$convert = qx(which convert); }
 
 $flags = "-density $density -trim +repage";
 $smflags = "-density $density -trim +repage";
