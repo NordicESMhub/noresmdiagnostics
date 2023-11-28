@@ -6,7 +6,7 @@
 set MACHINE = "`uname -n` `hostname -f`"
 if ( `echo "$MACHINE" |grep 'ipcc'` != '' ) then
     set MACHINE = 'ipcc.nird'
-    setenv NCARG_ROOT /diagnostics/miniforge3
+    setenv NCARG_ROOT /diagnostics/toolkit
     setenv NCARG_COLORMAPS $NCARG_ROOT/lib/ncarg/colormaps
     setenv PATH /diagnostics/miniforge3/bin:/diagnostics/toolkit/bin:/usr/bin
     setenv ncksbin  `which ncks`
