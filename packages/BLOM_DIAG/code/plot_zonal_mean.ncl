@@ -44,7 +44,7 @@ rgb_filed = rgb_dir+"/bluered2.rgb"
 
 ; CASE 2 MODEL OR OBS
 if (compare .eq. "OBS") then
-  ptr_woa13t = addfile(infile2+"/WOA13/1deg/woa13_decav_t00_01_zm_"+region+".nc","r")
+  ptr_woa13t = addfile(infile2+"/WOA13/1deg/woa13_decav_potmp00_01_zm_"+region+".nc","r")
   ptr_woa13s = addfile(infile2+"/WOA13/1deg/woa13_decav_s00_01_zm_"+region+".nc","r")
 else
   inptr2   = addfile(infile2,"r")
@@ -200,7 +200,7 @@ do i = 0, nvars-1
 ; get the variables
 
    if (vars(i) .eq. "templvl") then
-     B = inptr2->t_an
+     B = inptr2->potmp
      B@long_name = "Temp"
      B@units = "degC"
      assignFillValue(B,B)
