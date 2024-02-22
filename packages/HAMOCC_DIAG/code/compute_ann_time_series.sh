@@ -534,7 +534,7 @@ do
                 first_var=0
                 mv $WKDIR/${var}_${casename}_ANN_${filetype}_${first_yr_prnt}-${last_yr_prnt}.nc $tsdir/$ann_ts_file
             else
-                $NCKS -A -o $tsdir/$ann_ts_file $WKDIR/${var}_${casename}_ANN_${filetype}_${first_yr_prnt}-${last_yr_prnt}.nc
+                $NCKS -A -C -x -v parea -o $tsdir/$ann_ts_file $WKDIR/${var}_${casename}_ANN_${filetype}_${first_yr_prnt}-${last_yr_prnt}.nc
                 rm -f $WKDIR/${var}_${casename}_ANN_${filetype}_${first_yr_prnt}-${last_yr_prnt}.nc
             fi
         else
