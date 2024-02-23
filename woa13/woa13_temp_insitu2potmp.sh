@@ -45,6 +45,7 @@ for (( n = 0; n < ${#tfiles[*]}; n++ )); do
   ncrename -v t_an,potmp $potmpfile
   ncatted -a standard_name,potmp,m,c,"sea_water_potential_temperature" $potmpfile
   ncatted -a long_name,potmp,m,c,"Potential temperature calculated from t_an and s_an, referred to ocean surface" $potmpfile
+  ncatted -a 'units',time,m,c,"months since 0001-01-01 00:00:00" $potmpfile
 
 done
 
