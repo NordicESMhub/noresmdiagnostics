@@ -18,6 +18,15 @@ lyr1       = getenv("LYR1")
 infile2    = getenv("INFILE2")     ; case2 climo input filename
 case1      = getenv("CASE1")
 
+woa_potmp_flag  = getenv("WOA_POTMP")
+if woa_potmp_flag then
+  woa13tf="woa13_decav_potmp00_01.nc"
+  woa13tv="potmp"
+else
+  woa13tf="woa13_decav_t00_01.nc"
+  woa13tv="t_an"
+end if
+
 ; CASE 1 Model
 inptr1 = addfile(infile1,"r")
 yrs_ave1 = fyr1+"-"+lyr1
@@ -59,7 +68,7 @@ rgb_filed = rgb_dir+"/bluered2.rgb"
 
 ; CASE 2 MODEL OR OBS
 if (compare .eq. "OBS") then
-  ptr_woa13t = addfile(infile2+"/WOA13/1deg/woa13_decav_potmp00_01.nc","r")
+  ptr_woa13t = addfile(infile2+"/WOA13/1deg/"+woa13tf,"r")
   ptr_woa13s = addfile(infile2+"/WOA13/1deg/woa13_decav_s00_01.nc","r")
   ptr_woce   = addfile(infile2+"/MLD/mld_clim_WOCE_ANN.nc","r")
   ptr_maxi   = addfile(infile2+"/SSH/MDOT110107.nc","r")
@@ -361,84 +370,84 @@ do i = 0, nvars-1
     B = -999.
     if (vars(i) .eq. "templvl0") then
       delete(B)
-      B = inptr2->potmp(0,{0},:,:)
+      B = inptr2->$woa13tv$(0,{0},:,:)
       B@long_name = "Temperature z=0m"
       B@units = "degC"      
     end if
 
     if (vars(i) .eq. "templvl50") then
       delete(B)
-      B = inptr2->potmp(0,{50},:,:)
+      B = inptr2->$woa13tv$(0,{50},:,:)
       B@long_name = "Temperature z=50m"
       B@units = "degC"
     end if
 
     if (vars(i) .eq. "templvl100") then
       delete(B)
-      B = inptr2->potmp(0,{100},:,:)
+      B = inptr2->$woa13tv$(0,{100},:,:)
       B@long_name = "Temperature z=100m"
       B@units = "degC"      
     end if
 
     if (vars(i) .eq. "templvl250") then
       delete(B)    
-      B = inptr2->potmp(0,{250},:,:)
+      B = inptr2->$woa13tv$(0,{250},:,:)
       B@long_name = "Temperature z=250m"
       B@units = "degC"      
     end if
 
     if (vars(i) .eq. "templvl500") then
       delete(B)    
-      B = inptr2->potmp(0,{500},:,:)
+      B = inptr2->$woa13tv$(0,{500},:,:)
       B@long_name = "Temperature z=500m"
       B@units = "degC"      
     end if
 
     if (vars(i) .eq. "templvl1000") then
       delete(B)    
-      B = inptr2->potmp(0,{1000},:,:)
+      B = inptr2->$woa13tv$(0,{1000},:,:)
       B@long_name = "Temperature z=1000m"
       B@units = "degC"      
     end if
 
     if (vars(i) .eq. "templvl1500") then
       delete(B)    
-      B = inptr2->potmp(0,{1500},:,:)
+      B = inptr2->$woa13tv$(0,{1500},:,:)
       B@long_name = "Temperature z=1500m"
       B@units = "degC"      
     end if
 
     if (vars(i) .eq. "templvl2000") then
       delete(B)    
-      B = inptr2->potmp(0,{2000},:,:)
+      B = inptr2->$woa13tv$(0,{2000},:,:)
       B@long_name = "Temperature z=2000m"
       B@units = "degC"      
     end if
 
     if (vars(i) .eq. "templvl2500") then
       delete(B)    
-      B = inptr2->potmp(0,{2500},:,:)
+      B = inptr2->$woa13tv$(0,{2500},:,:)
       B@long_name = "Temperature z=2500m"
       B@units = "degC"      
     end if
 
     if (vars(i) .eq. "templvl3000") then
       delete(B)    
-      B = inptr2->potmp(0,{3000},:,:)
+      B = inptr2->$woa13tv$(0,{3000},:,:)
       B@long_name = "Temperature z=3000m"
       B@units = "degC"      
     end if
 
     if (vars(i) .eq. "templvl4000") then
       delete(B)    
-      B = inptr2->potmp(0,{4000},:,:)
+      B = inptr2->$woa13tv$(0,{4000},:,:)
       B@long_name = "Temperature z=4000m"
       B@units = "degC"      
     end if
 
     if (vars(i) .eq. "templvl5000") then
       delete(B)    
-      B = inptr2->potmp(0,{5000},:,:)
+      B = inptr2->$woa13tv$(0,{5000},:,:)
       B@long_name = "Temperature z=5000m"
       B@units = "degC"
     end if

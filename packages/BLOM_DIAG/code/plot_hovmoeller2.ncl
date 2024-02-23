@@ -16,6 +16,15 @@ fyrs1      = getenv("FYR1")
 rgb_dir    = getenv("DIAG_RGB")
 obs_dir    = getenv("DIAG_OBS")
 
+woa_potmp_flag  = getenv("WOA_POTMP")
+if woa_potmp_flag then
+  woa13tf="woa13_decav_potmp00_01_gm.nc"
+  woa13tv="potmp"
+else
+  woa13tf="woa13_decav_t00_01_gm.nc"
+  woa13tv="t_an"
+end if
+
 ncases = 1
 inptr1 = addfile(infile1,"r")
 fyr1   = stringtointeger(fyrs1)
@@ -44,7 +53,7 @@ con(1,:)=(/-0.36 ,-0.33 ,-0.3 ,-0.27 ,-0.24 ,-0.21 ,-0.18 ,-0.15 ,-0.12 ,-0.09 ,
 ;print(con)
 
 ; Read WOA13 data
-inptr_WOAt = addfile(obs_dir+"/WOA13/1deg/woa13_decav_potmp00_01_gm.nc","r")
+inptr_WOAt = addfile(obs_dir+"/WOA13/1deg/"+woa13tf,"r")
 inptr_WOAs = addfile(obs_dir+"/WOA13/1deg/woa13_decav_s00_01_gm.nc","r")
 
 ;**********************************************************************
@@ -86,7 +95,7 @@ do i = 0,nvars-1
 
    if (vars(i) .eq. "templvl") then
       A = get_templvl (inptr1)
-      xobs=inptr_WOAt->potmp
+      xobs=inptr_WOAt->$woa13tv$
       zobs=inptr_WOAt->depth
       nzobs = dimsizes(zobs)
    end if

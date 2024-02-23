@@ -123,6 +123,13 @@ NINO_INDICES=3,34
 #export PGRIDPATH=
 
 # ---------------------------------------------------------
+# SELECT GRID FILE (OPTIONAL)
+# ---------------------------------------------------------
+# WOA_POTMP_FLAG :True,  use calculated potential temperature of WOA13
+#                :False, use calculated potential temperature of WOA13
+export WOA_POTMP_FLAG=True
+
+# ---------------------------------------------------------
 # WEB OPTIONS
 # ---------------------------------------------------------
 # Publish the html on the NIRD web server, and set the path

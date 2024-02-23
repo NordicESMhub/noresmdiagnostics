@@ -17,6 +17,15 @@ infile2    = getenv("INFILE2")     ; case2 climo input filename
 case1      = getenv("CASE1")
 region     = getenv("REGION")
 
+woa_potmp_flag  = getenv("WOA_POTMP")
+if woa_potmp_flag then
+  woa13tf="woa13_decav_potmp00_01_zm_"
+  woa13tv="potmp"
+else
+  woa13tf="woa13_decav_t00_01_zm_"
+  woa13tv="t_an"
+end if
+
 ; CASE 1 Model
 inptr1 = addfile(infile1,"r")
 yrs_ave1 = fyr1+"-"+lyr1
@@ -44,7 +53,7 @@ rgb_filed = rgb_dir+"/bluered2.rgb"
 
 ; CASE 2 MODEL OR OBS
 if (compare .eq. "OBS") then
-  ptr_woa13t = addfile(infile2+"/WOA13/1deg/woa13_decav_potmp00_01_zm_"+region+".nc","r")
+  ptr_woa13t = addfile(infile2+"/WOA13/1deg/"+woa13tf+region+".nc","r")
   ptr_woa13s = addfile(infile2+"/WOA13/1deg/woa13_decav_s00_01_zm_"+region+".nc","r")
 else
   inptr2   = addfile(infile2,"r")
@@ -200,7 +209,7 @@ do i = 0, nvars-1
 ; get the variables
 
    if (vars(i) .eq. "templvl") then
-     B = inptr2->potmp
+     B = inptr2->$woa13tv$
      B@long_name = "Temp"
      B@units = "degC"
      assignFillValue(B,B)
