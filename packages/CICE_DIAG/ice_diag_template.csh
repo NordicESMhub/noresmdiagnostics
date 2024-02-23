@@ -41,6 +41,7 @@ else if ( `echo "$MACHINE" |grep 'betzy'` != '' )  then
     module unload HDF/4.2.14-GCCcore-8.3.0
     module -q load ImageMagick/7.1.0-4-GCCcore-11.2.0
     setenv ncclimo_dir  ${EBROOTNCO}/bin
+    setenv ncksbin $ncclimo_dir
 else
     echo "** UNKNOWN MACHINE $MACHINE **"
     echo "**       EXIT         **"
