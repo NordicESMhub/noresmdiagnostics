@@ -125,9 +125,9 @@ NINO_INDICES=3,34
 # ---------------------------------------------------------
 # SELECT GRID FILE (OPTIONAL)
 # ---------------------------------------------------------
-# WOA_POTMP_FLAG :True,  use calculated potential temperature of WOA13
-#                :False, use calculated potential temperature of WOA13
-export WOA_POTMP_FLAG=True
+# WOA_POTMP_FLAG :TRUE,  use calculated potential temperature of WOA13
+#                :FALSE, use calculated potential temperature of WOA13
+export WOA_POTMP_FLAG=TRUE
 
 # ---------------------------------------------------------
 # WEB OPTIONS

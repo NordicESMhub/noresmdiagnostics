@@ -16,8 +16,8 @@ fyrs1      = getenv("FYR1")
 rgb_dir    = getenv("DIAG_RGB")
 obs_dir    = getenv("DIAG_OBS")
 
-woa_potmp_flag  = getenv("WOA_POTMP")
-if woa_potmp_flag then
+woa_potmp_flag  = getenv("WOA_POTMP_FLAG")
+if (woa_potmp_flag .eq. "TRUE") then
   woa13tf="woa13_decav_potmp00_01_gm.nc"
   woa13tv="potmp"
 else

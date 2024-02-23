@@ -17,8 +17,8 @@ infile2    = getenv("INFILE2")     ; case2 climo input filename
 case1      = getenv("CASE1")
 region     = getenv("REGION")
 
-woa_potmp_flag  = getenv("WOA_POTMP")
-if woa_potmp_flag then
+woa_potmp_flag  = getenv("WOA_POTMP_FLAG")
+if (woa_potmp_flag .eq. "TRUE") then
   woa13tf="woa13_decav_potmp00_01_zm_"
   woa13tv="potmp"
 else
