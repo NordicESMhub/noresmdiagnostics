@@ -16,13 +16,15 @@ fyrs1      = getenv("FYR1")
 rgb_dir    = getenv("DIAG_RGB")
 obs_dir    = getenv("DIAG_OBS")
 
-woa_potmp_flag  = getenv("WOA_POTMP_FLAG")
-if (woa_potmp_flag .eq. "TRUE") then
-  woa13tf="woa13_decav_potmp00_01_gm.nc"
-  woa13tv="potmp"
-else
+woa13_temp_flag  = getenv("WOA13_TEMP_FLAG")
+if (.not.ismissing(woa13_temp_flag) .and. woa13_temp_flag .eq. "IN-SITU") then
   woa13tf="woa13_decav_t00_01_gm.nc"
   woa13tv="t_an"
+  print("info: WOA13 in-situ temperature is used for model-obs comparision")
+else
+  woa13tf="woa13_decav_potmp00_01_gm.nc"
+  woa13tv="potmp"
+  print("info: WOA13 calculated potential temperature is used for model-obs comparision")
 end if
 
 ncases = 1

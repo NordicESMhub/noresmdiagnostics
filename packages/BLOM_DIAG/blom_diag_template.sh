@@ -123,11 +123,13 @@ NINO_INDICES=3,34
 #export PGRIDPATH=
 
 # ---------------------------------------------------------
-# SELECT GRID FILE (OPTIONAL)
+# SELECT WOA13 TEMPERATURE TYPE (OPTIONAL)
 # ---------------------------------------------------------
-# WOA_POTMP_FLAG :TRUE,  use calculated potential temperature of WOA13
-#                :FALSE, use calculated potential temperature of WOA13
-export WOA_POTMP_FLAG=TRUE
+# WOA13_TEMP_FLAG   : IN-SITU, use in-situ temperature of WOA13
+#                     if not set, it will use calculated potential temperature of WOA13
+# comment out to use in-situ temperature
+
+#export WOA13_TEMP_FLAG=IN-SITU
 
 # ---------------------------------------------------------
 # WEB OPTIONS
