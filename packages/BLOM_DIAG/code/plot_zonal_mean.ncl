@@ -17,8 +17,8 @@ infile2    = getenv("INFILE2")     ; case2 climo input filename
 case1      = getenv("CASE1")
 region     = getenv("REGION")
 
-woa13_temp_flag  = getenv("WOA13_TEMP_FLAG")
-if (.not.ismissing(woa13_temp_flag) .and. woa13_temp_flag .eq. "IN-SITU") then
+woa13_temp_type  = getenv("WOA13_TEMP_TYPE")
+if (.not.ismissing(woa13_temp_type) .and. woa13_temp_type .eq. "in-situ") then
   woa13tf="woa13_decav_t00_01_zm_"
   woa13tv="t_an"
   print("info: WOA13 in-situ temperature is used for model-obs comparision")

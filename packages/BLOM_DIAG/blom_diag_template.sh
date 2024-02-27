@@ -125,11 +125,11 @@ NINO_INDICES=3,34
 # ---------------------------------------------------------
 # SELECT WOA13 TEMPERATURE TYPE (OPTIONAL)
 # ---------------------------------------------------------
-# WOA13_TEMP_FLAG   : IN-SITU, use in-situ temperature of WOA13
-#                     if not set, it will use calculated potential temperature of WOA13
-# comment out to use in-situ temperature
+# WOA13_TEMP_TYPE   : in-situ, use in-situ temperature of WOA13
+# if not set, it will use calculated potential temperature of WOA13
+# comment out the following line to use in-situ temperature
 
-#export WOA13_TEMP_FLAG=IN-SITU
+#export WOA13_TEMP_TYPE=in-situ
 
 # ---------------------------------------------------------
 # WEB OPTIONS
