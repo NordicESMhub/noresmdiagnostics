@@ -23,7 +23,7 @@ fi
 #fi
 
 # check if symbolic links already exist
-for subfolder in $(cat inputdata.txt |cut -d"/" -f1,2 |sort -u)
+for subfolder in $(cat input_dirs.txt |cut -d"/" -f1,2 |sort -u)
 do
     if [ -L ${diagroot}/packages/$subfolder ]; then
         echo "../packages/$subfolder is already a symbolic link pointing to:"
@@ -44,6 +44,6 @@ do
         &>>/tmp/wget$$.log &
     wait
     [ $? -eq 0 ] && echo $subfolder
-done <./inputdata.txt
+done <./input_dirs.txt
 rm -f /tmp/wget$$.log
 echo "All downloaded"

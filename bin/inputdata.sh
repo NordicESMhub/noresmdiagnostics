@@ -16,7 +16,7 @@ dfolders+=(BLOM_DIAG/grid_files)
 dfolders+=(BLOM_DIAG/obs_data)
 
 cwd=$(pwd)
-rm -f ./inputdata.txt
+rm -f ./input_dirs.txt
 
 if [ -d /trd-project1 ];then
     cd /trd-project1/NS2345K/www/diagnostics/inputdata
@@ -29,7 +29,13 @@ fi
 
 for folder in ${dfolders[*]}
 do
-    find $folder/ -type d -print >>${cwd}/inputdata.txt
+    find $folder/ -type d -print >>/tmp/input_dirs.txt
 done
+sort /tmp/input_dirs.txt >${cwd}/input_dirs.txt
+rm -f /tmp/input_dirs.txt
 echo "Updated inputdata direcotry tree:"
-echo "${cwd}/inputdata.txt"
+echo "${cwd}/input_dirs.txt"
+#
+tree -D --timefmt "%F %H:%M" $folder >${cwd}/input_files.txt
+echo "Updated inputdata file tree:"
+echo "${cwd}/input_files.txt"
